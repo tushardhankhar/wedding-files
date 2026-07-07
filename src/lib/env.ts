@@ -1,0 +1,32 @@
+import { z } from "zod";
+
+/**
+ * Public environment variables — safe to reference in any runtime, including
+ * the browser bundle. NEXT_PUBLIC_* values are statically inlined by Next.js,
+ * so each one must be read as a direct `process.env.NEXT_PUBLIC_X` access.
+ *
+ * Server-only secrets (service-role key, session signing secret) live in
+ * `env.server.ts` and must never appear here.
+ */
+const publicSchema = z.object({
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  // Absolute origin used to build invitation links (e.g. https://example.com).
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
+});
+
+const parsed = publicSchema.safeParse({
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+});
+
+if (!parsed.success) {
+  throw new Error(
+    `Invalid public environment variables:\n${parsed.error.issues
+      .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
+      .join("\n")}`
+  );
+}
+
+export const env = parsed.data;
