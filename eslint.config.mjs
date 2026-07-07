@@ -42,9 +42,21 @@ const allowServerModules = {
   },
 };
 
+// Honor the underscore convention for intentionally-unused bindings (e.g. the
+// prevState/formData args that useActionState forces on Server Actions).
+const unusedVars = {
+  rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+    ],
+  },
+};
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  unusedVars,
   restrictedServerModules,
   allowServerModules,
   globalIgnores([

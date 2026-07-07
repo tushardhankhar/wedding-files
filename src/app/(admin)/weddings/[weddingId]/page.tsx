@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { updateWeddingAction } from "@/modules/weddings/server/actions";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { WeddingForm } from "../wedding-form";
 import { DeleteWeddingButton } from "./delete-wedding-button";
+import { ClientAccess } from "./client-access";
 
 export default async function WeddingDetailPage({
   params,
@@ -18,11 +20,12 @@ export default async function WeddingDetailPage({
   params: Promise<{ weddingId: string }>;
 }) {
   const { weddingId } = await params;
-  const wedding = await getWeddingById(weddingId);
+  const [wedding, isAdmin] = await Promise.all([
+    getWeddingById(weddingId),
+    isCurrentUserAdmin(),
+  ]);
   if (!wedding) notFound();
 
-  // Bind the wedding id into the update action so the form keeps the
-  // (prevState, formData) shape useActionState expects.
   const updateAction = updateWeddingAction.bind(null, wedding.id);
 
   return (
@@ -45,6 +48,7 @@ export default async function WeddingDetailPage({
         <CardContent>
           <WeddingForm
             action={updateAction}
+            canRename={isAdmin}
             values={{
               title: wedding.title,
               partnerOneName: wedding.partnerOneName,
@@ -55,17 +59,39 @@ export default async function WeddingDetailPage({
         </CardContent>
       </Card>
 
-      <Card className="border-destructive/40">
-        <CardHeader>
-          <CardTitle className="text-base">Danger zone</CardTitle>
-          <CardDescription>
-            Deleting a wedding cannot be undone.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DeleteWeddingButton weddingId={wedding.id} title={wedding.title} />
-        </CardContent>
-      </Card>
+      {isAdmin ? (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Client access</CardTitle>
+              <CardDescription>
+                Hand this wedding to your client to manage.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ClientAccess
+                weddingId={wedding.id}
+                claimed={wedding.clientId !== null}
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="border-destructive/40">
+            <CardHeader>
+              <CardTitle className="text-base">Danger zone</CardTitle>
+              <CardDescription>
+                Deleting a wedding cannot be undone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DeleteWeddingButton
+                weddingId={wedding.id}
+                title={wedding.title}
+              />
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
     </div>
   );
 }

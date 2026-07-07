@@ -26,7 +26,10 @@ export const createWeddingSchema = z.object({
     ),
 });
 
-export const updateWeddingSchema = createWeddingSchema;
+// Title is admin-only; clients don't submit it, so it's optional on update.
+export const updateWeddingSchema = createWeddingSchema.extend({
+  title: z.string().trim().min(1).max(120).optional(),
+});
 
 export type CreateWeddingInput = z.infer<typeof createWeddingSchema>;
 export type UpdateWeddingInput = z.infer<typeof updateWeddingSchema>;

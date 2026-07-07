@@ -7,9 +7,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-heading: var(--font-poppins), "Segoe UI", system-ui, sans-serif;
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-navy: var(--navy);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,73 +51,91 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── Utsav — Indian wedding palette (light-first, warm ivory) ─────────────
+   Royal Purple (primary) · Marigold Gold (accent) · Midnight Navy (ink) ·
+   Haldi Ivory (ground). Emerald is reserved for status only. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #faf4ea;      /* haldi ivory */
+  --foreground: #2b2740;      /* midnight navy ink */
+  --card: #fffdf7;
+  --card-foreground: #2b2740;
+  --popover: #fffdf7;
+  --popover-foreground: #2b2740;
+  --primary: #7a3d94;         /* royal purple */
+  --primary-foreground: #ffffff;
+  --secondary: #f4ebda;
+  --secondary-foreground: #2b2740;
+  --muted: #f4ebda;
+  --muted-foreground: #7c7266;
+  --accent: #fbeecb;          /* soft marigold tint (hover surfaces) */
+  --accent-foreground: #6b4e0a;
+  --destructive: #a3322f;     /* deep kumkum red */
+  --border: #ece0c9;          /* gold-tinted hairline */
+  --input: #ece0c9;
+  --ring: #7a3d94;
+  --chart-1: #7a3d94;
+  --chart-2: #f4b31e;
+  --chart-3: #2f7a5c;
+  --chart-4: #b58bd0;
+  --chart-5: #b07d12;
+  --radius: 0.7rem;
+
+  /* brand extras used by motifs/components */
+  --gold: #f4b31e;            /* marigold */
+  --gold-deep: #b07d12;
+  --navy: #2b2740;
+  --gold-line: rgba(176, 125, 18, 0.5);
+
+  --sidebar: #fffdf7;
+  --sidebar-foreground: #2b2740;
+  --sidebar-primary: #7a3d94;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fbeecb;
+  --sidebar-accent-foreground: #6b4e0a;
+  --sidebar-border: #ece0c9;
+  --sidebar-ring: #7a3d94;
 }
 
+/* Dark "mandap night" theme — defined for a future toggle; not auto-enabled,
+   so the signature warm ivory look is what ships today. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #1a1726;
+  --foreground: #f6efe1;
+  --card: #262238;
+  --card-foreground: #f6efe1;
+  --popover: #262238;
+  --popover-foreground: #f6efe1;
+  --primary: #b58bd0;
+  --primary-foreground: #201d31;
+  --secondary: #2f2a44;
+  --secondary-foreground: #f6efe1;
+  --muted: #2f2a44;
+  --muted-foreground: #a89f8d;
+  --accent: #33304a;
+  --accent-foreground: #f6efe1;
+  --destructive: #e06a5f;
+  --border: #3a3450;
+  --input: #3a3450;
+  --ring: #b58bd0;
+  --chart-1: #b58bd0;
+  --chart-2: #f4b31e;
+  --chart-3: #4fb48b;
+  --chart-4: #7a3d94;
+  --chart-5: #f4b31e;
+
+  --gold: #f4b31e;
+  --gold-deep: #d69a2a;
+  --navy: #201d31;
+  --gold-line: rgba(244, 179, 30, 0.42);
+
+  --sidebar: #262238;
+  --sidebar-foreground: #f6efe1;
+  --sidebar-primary: #b58bd0;
+  --sidebar-primary-foreground: #201d31;
+  --sidebar-accent: #33304a;
+  --sidebar-accent-foreground: #f6efe1;
+  --sidebar-border: #3a3450;
+  --sidebar-ring: #b58bd0;
 }
 
 @layer base {
@@ -127,4 +148,28 @@
   html {
     @apply font-sans;
   }
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+  }
+}
+
+/* ── Utsav motifs ─────────────────────────────────────────────────────────
+   Radiating mandala/rangoli watermark, drawn purely with a conic gradient +
+   radial mask so it scales crisply and costs nothing. */
+@utility mandala {
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    var(--gold-line) 0deg 0.5deg,
+    transparent 0.5deg 11.25deg
+  );
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 22%, #000 24%, #000 44%, transparent 46%,
+    #000 48%, #000 62%, transparent 64%
+  );
+  mask: radial-gradient(
+    circle,
+    transparent 22%, #000 24%, #000 44%, transparent 46%,
+    #000 48%, #000 62%, transparent 64%
+  );
 }

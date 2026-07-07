@@ -10,7 +10,7 @@ import {
 import type { CreateWeddingInput, UpdateWeddingInput } from "../schema";
 
 const COLUMNS =
-  "id, owner_id, slug, title, partner_one_name, partner_two_name, event_date, config, theme_id, created_at, updated_at";
+  "id, created_by, client_id, slug, title, partner_one_name, partner_two_name, event_date, config, theme_id, created_at, updated_at";
 
 const UNIQUE_VIOLATION = "23505";
 
@@ -43,7 +43,7 @@ export async function createWedding(
     const { data, error } = await supabase
       .from("weddings")
       .insert({
-        owner_id: user.id,
+        created_by: user.id,
         slug,
         title: input.title,
         partner_one_name: input.partnerOneName ?? null,
@@ -62,22 +62,27 @@ export async function createWedding(
 }
 
 /**
- * Updates an owned wedding's core details. RLS ensures a user can only update
- * their own rows; the id alone is sufficient scoping.
+ * Updates a wedding's details. RLS scopes who may update (admin: any; client:
+ * their own). The wedding name is admin-only, so `title` is written only when
+ * `allowRename` is true — and the DB trigger rejects it otherwise regardless.
  */
 export async function updateWedding(
   id: string,
-  input: UpdateWeddingInput
+  input: UpdateWeddingInput,
+  { allowRename }: { allowRename: boolean }
 ): Promise<Wedding> {
   const supabase = await createSupabaseServerClient();
+
+  const patch: Record<string, unknown> = {
+    partner_one_name: input.partnerOneName ?? null,
+    partner_two_name: input.partnerTwoName ?? null,
+    event_date: input.eventDate ?? null,
+  };
+  if (allowRename) patch.title = input.title;
+
   const { data, error } = await supabase
     .from("weddings")
-    .update({
-      title: input.title,
-      partner_one_name: input.partnerOneName ?? null,
-      partner_two_name: input.partnerTwoName ?? null,
-      event_date: input.eventDate ?? null,
-    })
+    .update(patch)
     .eq("id", id)
     .select(COLUMNS)
     .single();

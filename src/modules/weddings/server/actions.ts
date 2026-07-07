@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { createWeddingSchema, updateWeddingSchema } from "../schema";
 import { createWedding, deleteWedding, updateWedding } from "./mutations";
 
@@ -40,7 +41,8 @@ export async function updateWeddingAction(
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
   }
 
-  await updateWedding(id, parsed.data);
+  const allowRename = await isCurrentUserAdmin();
+  await updateWedding(id, parsed.data, { allowRename });
   revalidatePath("/dashboard");
   revalidatePath(`/weddings/${id}`);
   return { saved: true };

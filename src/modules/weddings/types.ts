@@ -4,7 +4,8 @@
  */
 export interface Wedding {
   id: string;
-  ownerId: string;
+  createdBy: string; // admin who created it
+  clientId: string | null; // assigned client (null until claimed)
   slug: string;
   title: string;
   partnerOneName: string | null;
@@ -19,7 +20,8 @@ export interface Wedding {
 /** Shape as stored in Postgres (snake_case), used only at the DB boundary. */
 export interface WeddingRow {
   id: string;
-  owner_id: string;
+  created_by: string;
+  client_id: string | null;
   slug: string;
   title: string;
   partner_one_name: string | null;
@@ -34,7 +36,8 @@ export interface WeddingRow {
 export function mapWeddingRow(row: WeddingRow): Wedding {
   return {
     id: row.id,
-    ownerId: row.owner_id,
+    createdBy: row.created_by,
+    clientId: row.client_id,
     slug: row.slug,
     title: row.title,
     partnerOneName: row.partner_one_name,

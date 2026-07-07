@@ -11,15 +11,20 @@ they are authorized to see and RSVP to them — without creating accounts.
 - **Supabase Postgres + Auth + RLS** — data, admin auth, admin-side isolation
 - **Cloudflare R2** — wedding photos via presigned direct uploads (later phase)
 
-## Two trust domains
+## Roles & trust domains
 
-The app serves two audiences through one codebase, separated at routing **and**
-authorization:
+Two trust domains at the security layer (Supabase-authenticated vs guest), with
+**three roles**:
 
-| Domain | Who | Auth | DB access |
+| Role | Who | Auth | Powers |
 |---|---|---|---|
-| **Admin / Client** | wedding owners | Supabase Auth (JWT cookies) | user-scoped client → **RLS enforced** |
-| **Guest** | invited families | invitation token → signed HTTP-only session cookie | service-role client → **app-layer authorization** |
+| **Platform Admin** | Viamedia (listed in `admins`) | Supabase Auth | Create weddings, set the **name + theme**, generate client links, monitor + edit **any** wedding |
+| **Client** | the couple's side | Supabase Auth (account claimed via admin invite link) | Manage **their** wedding's content, events, guests, invites — but **cannot** change the name/URL or theme |
+| **Guest** | invited families | invitation token → signed HTTP-only session cookie | View only invited events; RSVP. No account |
+
+DB access: Admin & Client use the **user-scoped client → RLS enforced** (admins
+see all weddings, clients see only their assigned one). Guests use the
+**service-role client → app-layer authorization** (see below).
 
 ### ⚠️ RLS does not protect guests
 
@@ -33,7 +38,10 @@ our defense-in-depth for the admin domain only.
 
 ```
 users (Supabase Auth)
-weddings            (id, owner_id → users, slug, title, config jsonb, theme_id, event_date, …)
+admins              (email)                            -- platform-admin allowlist
+weddings            (id, created_by → users, client_id → users, slug, title,
+                     config jsonb, theme_id, event_date, …)
+client_invites      (id, wedding_id, token_hash, expires_at, accepted_at, accepted_by)
 events              (id, wedding_id, name, starts_at, venue, maps_url, details jsonb, sort_order)
 guest_groups        (id, wedding_id, name, invite_token_hash, invite_token_lookup)
 guests              (id, group_id, name, is_primary)
@@ -41,15 +49,23 @@ group_event_invites (group_id, event_id)              -- the authorization edge
 rsvps               (id, guest_id, event_id, status, note)  -- unique(guest_id, event_id)
 ```
 
-`group_event_invites` **is** the authorization model: "which events can this guest
-see?" = "the events joined to this guest's group." Everything else derives from it.
+`group_event_invites` **is** the guest authorization model: "which events can this
+guest see?" = "the events joined to this guest's group." Everything else derives
+from it. `is_admin()` (checks `admins` by email) drives admin-vs-client RLS.
 
 ### Decided defaults
 
-1. Guest authz is **application-layer**, not RLS. (Approved.)
-2. **One invitation token per guest group**; **RSVP per guest, per event**. (Approved.)
+1. Guest authz is **application-layer**, not RLS.
+2. **One invitation token per guest group**; **RSVP per guest, per event**.
 3. Guest session is a **stateless signed cookie** (HMAC of group_id + issued/expiry)
-   for v1 — no session table, no Redis. Add a revocation table only if needed. (Approved.)
+   for v1 — no session table, no Redis. Add a revocation table only if needed.
+4. **Admins are invite-only** (no public signup); seeded via the `admins` table.
+5. **Clients onboard via a one-time admin link** → claim (set password) → bound to
+   one wedding by the SECURITY DEFINER `claim_client_invite()`.
+6. **Wedding name/URL and theme are admin-only** — enforced in the UI *and* by a DB
+   trigger that rejects `title`/`slug`/`theme_id` changes from non-admins.
+7. **One rendering engine** serves both the owner Preview and the live guest site —
+   fed owner content (Preview) or a guest's authorized content (live).
 
 ## Folder structure
 
@@ -87,10 +103,17 @@ src/
 
 ## Request flows
 
-- **Admin auth** — login (Server Action) → Supabase Auth cookies → middleware refresh
-  → `(admin)` layout `requireUser()` → all admin DB access is RLS-scoped.
-- **Wedding creation** — validated Server Action inserts `weddings` with
-  `owner_id = auth.uid()`; RLS confirms ownership.
+- **Admin/client auth** — login (Server Action) → Supabase Auth cookies → session
+  proxy refresh → `(admin)` layout `requireUser()` → DB access RLS-scoped by role
+  (`is_admin()`: admins see all, clients see their assigned wedding).
+- **Wedding creation** — admin-only Server Action inserts `weddings` with
+  `created_by = auth.uid()`; RLS `with check (is_admin())`.
+- **Client onboarding** — admin generates a one-time link (`client_invites`, token
+  hashed) → client opens `/client/claim/[token]`, signs up (sets password) →
+  `claim_client_invite()` binds `client_id`; the wedding name/theme stay locked.
+- **Theme & Preview** — admin selects a theme (locked from client). The renderer
+  turns `config + theme` into the site; Preview renders the owner's real content
+  without guest auth. The same renderer serves guests in the flows below.
 - **Invitation link** — admin generates a 256-bit random token; we store its **hash**
   (+ a lookup index) only, return the raw token once to build
   `/w/[slug]/invite/[token]` and a `wa.me` prefilled message.
@@ -112,21 +135,35 @@ src/
 4. Invitation tokens: high-entropy, stored hashed, constant-time compared, revocable.
 5. Session token ≠ invite token; signed, HTTP-only, Secure, SameSite, expiring.
 6. All guest inputs re-authorized server-side — never trust client-supplied IDs.
-7. Multi-tenant isolation: every wedding-owned row carries `wedding_id`; admin RLS ties
-   `wedding_id → owner_id`; guest reads always bind `group → wedding` first.
-8. Env validated at boot — a missing secret fails loudly.
+7. Multi-tenant isolation: every wedding-owned row carries `wedding_id`; RLS ties
+   `wedding_id → weddings` (admin sees all via `is_admin()`, client via `client_id`);
+   guest reads always bind `group → wedding` first.
+8. Name/URL/theme are admin-only, enforced by a DB trigger (not just the UI).
+9. Env validated at boot — a missing secret fails loudly.
 
 ## Roadmap
 
-- **Phase 0 — Foundation** ✅ scaffold, env validation, both Supabase clients, middleware,
-  crypto/errors, import-boundary lint, folder skeleton. *(this commit)*
-- **Phase 1 — Admin auth + wedding CRUD**
-- **Phase 2 — Events** (custom, non-hardcoded)
-- **Phase 3 — Guest groups & guests + per-group event invites**
-- **Phase 4 — Invitations & guest session** ⭐ security-critical
-- **Phase 5 — Guest website (config-driven) + event authorization** ⭐
-- **Phase 6 — RSVP** (per guest, per event; admin aggregation)
-- **Phase 7 — Media (Cloudflare R2 presigned uploads)**
-- **Phase 8 — Polish** (remaining sections, themes, hardening)
+- **Phase 0 — Foundation** ✅ scaffold, env validation, both Supabase clients,
+  session proxy, crypto/errors, import-boundary lint, folder skeleton.
+- **Phase 1 — Admin auth + wedding CRUD** ✅
+- **Phase 1.5 — Roles & client onboarding** ✅ `admins` + `is_admin()`, admin/client
+  split (`created_by`/`client_id`), `client_invites` + `claim_client_invite()`,
+  name-lock trigger, invite-only login.
+- **Phase 2 — Events** — client-managed custom events (name, date/time, venue, map
+  link, details); not hardcoded; RLS-scoped.
+- **Phase 3 — Themes, Renderer & Preview** ⭐ theme registry (predefined designs +
+  thumbnails), **admin-only** theme selection (add `theme_id` to the name-lock
+  trigger), the config-driven **rendering engine**, and **live Preview** (admin &
+  client) over real data. *This renderer is reused to serve guests in Phase 7.*
+- **Phase 4 — Website content** — config schema + authoring for bride/groom details,
+  story, venue details, dress code, accommodation, travel, contacts, FAQ.
+- **Phase 5 — Guest groups & guests + per-group event invites** (authorization edges).
+- **Phase 6 — Invitations & guest session** ⭐ secure token links → HTTP-only session
+  cookie; `wa.me` share.
+- **Phase 7 — Guest website + event authorization** ⭐ same renderer served to guests,
+  showing only invited events; uninvited data never leaves the server.
+- **Phase 8 — RSVP** (per guest, per event; admin & client see responses).
+- **Phase 9 — Photos / media** (Cloudflare R2 presigned uploads; gallery section).
+- **Phase 10 — Polish & hardening** (more themes, SEO/OG, final security pass).
 
 Each phase = its own migration(s) + module code + minimal UI, independently deployable.

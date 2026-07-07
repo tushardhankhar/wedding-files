@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 import {
   signInAction,
-  signUpAction,
   type AuthFormState,
 } from "@/modules/auth/server/actions";
 import { Button } from "@/components/ui/button";
@@ -13,21 +12,11 @@ import { Label } from "@/components/ui/label";
 const initialState: AuthFormState = {};
 
 export function LoginForm() {
-  const [signInState, signIn, signInPending] = useActionState(
-    signInAction,
-    initialState
-  );
-  const [signUpState, signUp, signUpPending] = useActionState(
-    signUpAction,
-    initialState
-  );
-
-  const error = signInState.error ?? signUpState.error;
-  const message = signUpState.message;
-  const pending = signInPending || signUpPending;
+  const [state, signIn, pending] = useActionState(signInAction, initialState);
+  const error = state.error;
 
   return (
-    <form className="space-y-4">
+    <form action={signIn} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -57,23 +46,10 @@ export function LoginForm() {
           {error}
         </p>
       ) : null}
-      {message ? (
-        <p className="text-sm text-muted-foreground" role="status">
-          {message}
-        </p>
-      ) : null}
 
-      <div className="flex flex-col gap-2 pt-2">
-        <Button type="submit" formAction={signIn} disabled={pending}>
-          {signInPending ? "Signing in…" : "Sign in"}
-        </Button>
-        <Button
-          type="submit"
-          variant="outline"
-          formAction={signUp}
-          disabled={pending}
-        >
-          {signUpPending ? "Creating account…" : "Create account"}
+      <div className="pt-2">
+        <Button type="submit" className="w-full" disabled={pending}>
+          {pending ? "Signing in…" : "Sign in"}
         </Button>
       </div>
     </form>

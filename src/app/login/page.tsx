@@ -1,12 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/modules/auth/server/user";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { InvitationShell } from "@/components/brand/invitation-shell";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
@@ -15,18 +9,12 @@ export default async function LoginPage() {
   if (user) redirect("/dashboard");
 
   return (
-    <main className="flex min-h-svh items-center justify-center p-6">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Wedding Platform</CardTitle>
-          <CardDescription>
-            Sign in to manage your wedding websites.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LoginForm />
-        </CardContent>
-      </Card>
-    </main>
+    <InvitationShell
+      title="UTSAV"
+      subtitle="Sign in to craft and manage your celebrations."
+      footer="Invited by your planner? Open your link to set up your account."
+    >
+      <LoginForm />
+    </InvitationShell>
   );
 }

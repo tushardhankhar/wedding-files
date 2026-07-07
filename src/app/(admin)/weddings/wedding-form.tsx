@@ -24,10 +24,14 @@ export function WeddingForm({
   action,
   values,
   submitLabel = "Save",
+  canRename = true,
 }: {
   action: WeddingAction;
   values?: WeddingFormValues;
   submitLabel?: string;
+  // Clients cannot change the wedding name; the field renders read-only and is
+  // not submitted. The server action and a DB trigger also enforce this.
+  canRename?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
@@ -35,14 +39,29 @@ export function WeddingForm({
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="title">Wedding title</Label>
-        <Input
-          id="title"
-          name="title"
-          required
-          maxLength={120}
-          defaultValue={values?.title ?? ""}
-          placeholder="e.g. Aisha & Rohan"
-        />
+        {canRename ? (
+          <Input
+            id="title"
+            name="title"
+            required
+            maxLength={120}
+            defaultValue={values?.title ?? ""}
+            placeholder="e.g. Aisha & Rohan"
+          />
+        ) : (
+          <>
+            <Input
+              id="title"
+              value={values?.title ?? ""}
+              readOnly
+              disabled
+            />
+            <p className="text-xs text-muted-foreground">
+              The wedding name is set by your planner and can&apos;t be changed
+              here.
+            </p>
+          </>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

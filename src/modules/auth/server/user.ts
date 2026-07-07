@@ -15,11 +15,23 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 /**
- * Guard for the admin trust domain. Redirects to /login when unauthenticated.
- * The single authorization decision point for admin routes.
+ * Guard for the authenticated app. Redirects to /login when unauthenticated.
+ * The single authorization decision point for the admin/client routes.
  */
 export async function requireUser(): Promise<User> {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   return user;
+}
+
+/**
+ * Whether the current user is a platform admin (Viamedia side). Backed by the
+ * `is_admin()` DB function reading the `admins` allowlist. Non-admin
+ * authenticated users are clients.
+ */
+export async function isCurrentUserAdmin(): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("is_admin");
+  if (error) return false;
+  return data === true;
 }
