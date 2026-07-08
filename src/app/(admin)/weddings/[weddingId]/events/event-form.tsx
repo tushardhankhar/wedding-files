@@ -14,12 +14,14 @@ type EventAction = (
 
 export interface EventFormValues {
   name?: string | null;
+  nameHi?: string | null;
   eventDate?: string | null;
   startTime?: string | null;
   venueName?: string | null;
   venueAddress?: string | null;
   mapsUrl?: string | null;
   description?: string | null;
+  descriptionHi?: string | null;
 }
 
 const initialState: EventFormState = {};
@@ -39,16 +41,28 @@ export function EventForm({
 
   return (
     <form action={formAction} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">Event name</Label>
-        <Input
-          id="name"
-          name="name"
-          required
-          maxLength={120}
-          defaultValue={values?.name ?? ""}
-          placeholder="e.g. Mehendi"
-        />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="name">Event name</Label>
+          <Input
+            id="name"
+            name="name"
+            required
+            maxLength={120}
+            defaultValue={values?.name ?? ""}
+            placeholder="e.g. Mehendi"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="nameHi">Event name (Hindi)</Label>
+          <Input
+            id="nameHi"
+            name="nameHi"
+            maxLength={120}
+            defaultValue={values?.nameHi ?? ""}
+            placeholder="जैसे मेहंदी"
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -114,6 +128,18 @@ export function EventForm({
           maxLength={2000}
           defaultValue={values?.description ?? ""}
           placeholder="Dress code, notes for guests, timings…"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="descriptionHi">Details (Hindi)</Label>
+        <Textarea
+          id="descriptionHi"
+          name="descriptionHi"
+          rows={3}
+          maxLength={2000}
+          defaultValue={values?.descriptionHi ?? ""}
+          placeholder="ड्रेस कोड, मेहमानों के लिए जानकारी…"
         />
       </div>
 

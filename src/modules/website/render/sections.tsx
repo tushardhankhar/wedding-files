@@ -91,8 +91,9 @@ export function Events({ events }: { events: WeddingEvent[] }) {
         <div className="events">
           {events.map((e) => (
             <div className="event" key={e.id}>
-              <p className="tag">{e.name}</p>
-              <h3>{e.name}</h3>
+              <h3>
+                <T value={{ en: e.name, hi: e.nameHi ?? undefined }} />
+              </h3>
               {formatWhen(e.eventDate, e.startTime) || e.venueName ? (
                 <p className="meta">
                   {[formatWhen(e.eventDate, e.startTime), e.venueName]
@@ -101,7 +102,9 @@ export function Events({ events }: { events: WeddingEvent[] }) {
                 </p>
               ) : null}
               {e.description ? (
-                <p className="dress">{e.description}</p>
+                <p className="dress">
+                  <T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} />
+                </p>
               ) : null}
               <div className="row">
                 <div className="rsvp">

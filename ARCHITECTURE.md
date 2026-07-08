@@ -155,8 +155,9 @@ src/
   Ivory Classic over one `.wsite` stylesheet), **admin-only** theme picker, the
   config-driven bilingual **rendering engine** (`modules/website/render`), and a
   full-bleed **owner Preview** at `/preview/[weddingId]`. Reused for guests in Phase 7.
-- **Phase 4 — Website content** — config schema + authoring for bride/groom details,
-  story, venue details, dress code, accommodation, travel, contacts, FAQ.
+- **Phase 4 — Website content** ✅ bilingual (EN/HI) config authoring at
+  `/weddings/[id]/content` (hero, story, gallery, families, FAQ, footer) writing to
+  `weddings.config`; events gained Hindi fields (`name_hi`, `description_hi`).
 - **Phase 5 — Guest groups & guests + per-group event invites** (authorization edges).
 - **Phase 6 — Invitations & guest session** ⭐ secure token links → HTTP-only session
   cookie; `wa.me` share.

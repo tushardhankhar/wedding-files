@@ -3,17 +3,19 @@ import { mapEventRow, type EventRow, type WeddingEvent } from "../types";
 import type { CreateEventInput, UpdateEventInput } from "../schema";
 
 const COLUMNS =
-  "id, wedding_id, name, event_date, start_time, venue_name, venue_address, maps_url, description, sort_order, created_at, updated_at";
+  "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, sort_order, created_at, updated_at";
 
 function toRow(input: CreateEventInput | UpdateEventInput) {
   return {
     name: input.name,
+    name_hi: input.nameHi ?? null,
     event_date: input.eventDate ?? null,
     start_time: input.startTime ?? null,
     venue_name: input.venueName ?? null,
     venue_address: input.venueAddress ?? null,
     maps_url: input.mapsUrl ?? null,
     description: input.description ?? null,
+    description_hi: input.descriptionHi ?? null,
   };
 }
 

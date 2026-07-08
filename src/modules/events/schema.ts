@@ -10,6 +10,7 @@ const optionalText = (max: number) =>
 
 export const createEventSchema = z.object({
   name: z.string().trim().min(1, "Event name is required.").max(120),
+  nameHi: optionalText(120),
   eventDate: z
     .string()
     .optional()
@@ -38,6 +39,7 @@ export const createEventSchema = z.object({
       "Enter a valid link starting with http(s)://"
     ),
   description: optionalText(2000),
+  descriptionHi: optionalText(2000),
 });
 
 export const updateEventSchema = createEventSchema;

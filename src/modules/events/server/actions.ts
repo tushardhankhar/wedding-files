@@ -7,14 +7,17 @@ import { createEvent, deleteEvent, updateEvent } from "./mutations";
 export type EventFormState = { error?: string; saved?: boolean };
 
 function parseForm(formData: FormData) {
+  const value = (key: string) => formData.get(key) ?? undefined;
   return {
-    name: formData.get("name"),
-    eventDate: formData.get("eventDate"),
-    startTime: formData.get("startTime"),
-    venueName: formData.get("venueName"),
-    venueAddress: formData.get("venueAddress"),
-    mapsUrl: formData.get("mapsUrl"),
-    description: formData.get("description"),
+    name: value("name"),
+    nameHi: value("nameHi"),
+    eventDate: value("eventDate"),
+    startTime: value("startTime"),
+    venueName: value("venueName"),
+    venueAddress: value("venueAddress"),
+    mapsUrl: value("mapsUrl"),
+    description: value("description"),
+    descriptionHi: value("descriptionHi"),
   };
 }
 

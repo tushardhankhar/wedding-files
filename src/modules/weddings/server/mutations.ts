@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/server/user";
 import { UnauthorizedError } from "@/lib/errors";
 import { slugify } from "@/lib/slug";
+import type { WebsiteConfig } from "@/modules/website/schema";
 import {
   mapWeddingRow,
   type Wedding,
@@ -110,6 +111,19 @@ export async function updateWeddingTheme(
   const { error } = await supabase
     .from("weddings")
     .update({ theme_id: themeId })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+/** Writes the website content config (jsonb). Editable by admin or client. */
+export async function updateWeddingConfig(
+  id: string,
+  config: WebsiteConfig
+): Promise<void> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("weddings")
+    .update({ config })
     .eq("id", id);
   if (error) throw error;
 }
