@@ -97,3 +97,19 @@ export async function deleteWedding(id: string): Promise<void> {
   const { error } = await supabase.from("weddings").delete().eq("id", id);
   if (error) throw error;
 }
+
+/**
+ * Sets the website theme. Admin-only (the DB name-lock trigger also rejects a
+ * non-admin theme change); callers should gate on role for a clean message.
+ */
+export async function updateWeddingTheme(
+  id: string,
+  themeId: string
+): Promise<void> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("weddings")
+    .update({ theme_id: themeId })
+    .eq("id", id);
+  if (error) throw error;
+}

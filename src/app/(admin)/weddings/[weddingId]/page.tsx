@@ -10,9 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { THEMES, getTheme } from "@/modules/website/themes/registry";
 import { WeddingForm } from "../wedding-form";
 import { DeleteWeddingButton } from "./delete-wedding-button";
 import { ClientAccess } from "./client-access";
+import { ThemePicker } from "./theme-picker";
 
 export default async function WeddingDetailPage({
   params,
@@ -50,6 +53,46 @@ export default async function WeddingDetailPage({
           </CardHeader>
         </Card>
       </Link>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Website</CardTitle>
+          <CardDescription>
+            {isAdmin
+              ? "Choose a design, then preview the live site."
+              : "Preview your live site. The design is set by your planner."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <a
+            href={`/preview/${wedding.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Preview website ↗
+          </a>
+          {isAdmin ? (
+            <ThemePicker
+              weddingId={wedding.id}
+              currentThemeId={getTheme(wedding.themeId).id}
+              themes={THEMES.map((t) => ({
+                id: t.id,
+                name: t.name,
+                description: t.description,
+                swatch: t.swatch,
+              }))}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Current theme:{" "}
+              <span className="font-medium text-foreground">
+                {getTheme(wedding.themeId).name}
+              </span>
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

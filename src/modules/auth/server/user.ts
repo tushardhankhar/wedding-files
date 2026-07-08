@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -5,14 +6,17 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 /**
  * Returns the current admin/client user, or null if not authenticated.
  * Uses getUser() (not getSession()) so the token is verified against Supabase.
+ *
+ * Wrapped in React cache() so the (network) verification runs at most once per
+ * request even when several components/queries need the user.
  */
-export async function getCurrentUser(): Promise<User | null> {
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 /**
  * Guard for the authenticated app. Redirects to /login when unauthenticated.
@@ -29,9 +33,9 @@ export async function requireUser(): Promise<User> {
  * `is_admin()` DB function reading the `admins` allowlist. Non-admin
  * authenticated users are clients.
  */
-export async function isCurrentUserAdmin(): Promise<boolean> {
+export const isCurrentUserAdmin = cache(async (): Promise<boolean> => {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("is_admin");
   if (error) return false;
   return data === true;
-}
+});

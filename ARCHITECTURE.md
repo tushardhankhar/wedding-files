@@ -151,10 +151,10 @@ src/
   name-lock trigger, invite-only login.
 - **Phase 2 — Events** ✅ client-managed custom events (name, date/time, venue, map
   link, details); not hardcoded; RLS-scoped via `can_manage_wedding()`.
-- **Phase 3 — Themes, Renderer & Preview** ⭐ theme registry (predefined designs +
-  thumbnails), **admin-only** theme selection (add `theme_id` to the name-lock
-  trigger), the config-driven **rendering engine**, and **live Preview** (admin &
-  client) over real data. *This renderer is reused to serve guests in Phase 7.*
+- **Phase 3 — Themes, Renderer & Preview** ✅ token-based theme registry (Royal +
+  Ivory Classic over one `.wsite` stylesheet), **admin-only** theme picker, the
+  config-driven bilingual **rendering engine** (`modules/website/render`), and a
+  full-bleed **owner Preview** at `/preview/[weddingId]`. Reused for guests in Phase 7.
 - **Phase 4 — Website content** — config schema + authoring for bride/groom details,
   story, venue details, dress code, accommodation, travel, contacts, FAQ.
 - **Phase 5 — Guest groups & guests + per-group event invites** (authorization edges).

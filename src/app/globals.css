@@ -235,3 +235,142 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Guest wedding site — theme-tokenized styles (see modules/website).
+   Every colour/font is a --w-* token; a theme swaps the token values, so one
+   stylesheet renders every template. Scoped under .wsite.
+   ══════════════════════════════════════════════════════════════════════════ */
+.wsite {
+  --w-radius: 16px;
+  color: var(--w-ink);
+  background: var(--w-bg);
+  font-family: var(--w-sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.wsite[data-lang="en"] .l-hi { display: none !important; }
+.wsite[data-lang="hi"] .l-en { display: none !important; }
+.wsite .l-hi { font-family: var(--w-deva); }
+
+.wsite h1, .wsite h2, .wsite h3, .wsite .serif {
+  font-family: var(--w-serif);
+  font-weight: 600;
+  text-wrap: balance;
+}
+.wsite section { padding: 78px 22px; }
+.wsite .wrap { max-width: 960px; margin: 0 auto; }
+.wsite .center { text-align: center; }
+.wsite .eyebrow {
+  font-family: var(--w-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--w-gold);
+}
+.wsite .h-sec { font-size: 38px; margin: 6px 0 0; }
+.wsite .divider { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 16px 0 38px; color: var(--w-gold); }
+.wsite .divider::before, .wsite .divider::after { content: ""; height: 1px; width: 60px; background: linear-gradient(90deg, transparent, var(--w-gold)); }
+.wsite .divider::after { background: linear-gradient(90deg, var(--w-gold), transparent); }
+.wsite .band-alt { background: var(--w-surface); }
+
+.wsite .w-btn {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-family: var(--w-sans); font-weight: 600; font-size: 13px;
+  padding: 10px 18px; border-radius: 999px; border: 1px solid var(--w-line);
+  text-decoration: none; background: transparent; color: var(--w-ink);
+  transition: transform .15s ease, border-color .2s ease;
+}
+.wsite .w-btn:hover { transform: translateY(-1px); border-color: var(--w-gold); }
+.wsite .w-btn-gold { border-color: transparent; background: linear-gradient(180deg, var(--w-gold-lite), var(--w-gold)); color: #3a2c05; }
+
+/* nav */
+.wsite .w-nav {
+  position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; background: color-mix(in oklch, var(--w-navy) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--w-gold-line, rgba(228,197,106,.25));
+}
+.wsite .w-nav .mono { font-family: var(--w-serif); font-size: 20px; color: #fff; letter-spacing: .04em; }
+.wsite .w-nav .links { display: none; gap: 20px; }
+.wsite .w-nav .links a { color: #eee; text-decoration: none; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+.wsite .w-nav .links a:hover { color: var(--w-gold-lite); opacity: 1; }
+.wsite .w-nav .right { display: flex; align-items: center; gap: 10px; }
+.wsite .w-chip { display: none; font-size: 12px; color: var(--w-gold-lite); border: 1px solid rgba(228,197,106,.35); border-radius: 999px; padding: 4px 10px; }
+.wsite .langtoggle { display: inline-flex; border: 1px solid rgba(228,197,106,.4); border-radius: 999px; overflow: hidden; }
+.wsite .langtoggle button { background: transparent; color: #eee; border: 0; padding: 5px 11px; font-size: 12px; cursor: pointer; font-family: var(--w-sans); }
+.wsite .langtoggle button.on { background: var(--w-gold); color: #2a1f04; font-weight: 700; }
+@media (min-width: 860px) { .wsite .w-nav .links { display: flex; } .wsite .w-chip { display: inline-flex; } }
+
+/* hero */
+.wsite .w-hero { position: relative; overflow: hidden; text-align: center; padding: 92px 22px 100px; background: var(--w-hero-bg); color: var(--w-hero-ink); }
+.wsite .w-hero .mandala { position: absolute; left: 50%; top: -30%; width: 600px; height: 600px; transform: translateX(-50%);
+  background: repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in oklch, var(--w-gold-lite) 60%, transparent) 0 .5deg, transparent .5deg 11.25deg);
+  -webkit-mask: radial-gradient(circle, transparent 30%, #000 32%, #000 48%, transparent 50%); mask: radial-gradient(circle, transparent 30%, #000 32%, #000 48%, transparent 50%);
+  opacity: .18; animation: utsav-spin 120s linear infinite; }
+.wsite .w-hero .invited { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--w-gold-lite); position: relative; }
+.wsite .w-hero h1 { font-size: clamp(44px, 10vw, 96px); line-height: 1; margin: 14px 0 8px; font-weight: 500; position: relative; }
+.wsite .w-hero .amp { color: var(--w-gold-lite); font-style: italic; }
+.wsite .w-hero .date { font-family: var(--w-sans); letter-spacing: .2em; text-transform: uppercase; font-size: 13px; position: relative; opacity: .92; }
+
+/* countdown */
+.wsite .w-count { background: var(--w-navy); color: #fff; padding: 38px 22px; }
+.wsite .cd-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.wsite .cd { min-width: 72px; text-align: center; border: 1px solid rgba(228,197,106,.3); border-radius: 12px; padding: 12px 8px; }
+.wsite .cd b { display: block; font-family: var(--w-serif); font-size: 32px; line-height: 1; color: var(--w-gold-lite); font-variant-numeric: tabular-nums; }
+.wsite .cd span { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #cfc7dd; }
+
+/* timeline */
+.wsite .timeline { position: relative; padding-left: 34px; margin-top: 18px; }
+.wsite .timeline::before { content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(var(--w-gold), var(--w-line)); }
+.wsite .milestone { position: relative; padding-bottom: 28px; }
+.wsite .milestone::before { content: "✦"; position: absolute; left: -33px; top: -2px; color: var(--w-gold); background: var(--w-surface); font-size: 13px; }
+.wsite .milestone .when { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--w-gold); }
+.wsite .milestone h3 { margin: 3px 0 4px; font-size: 24px; }
+.wsite .milestone p { margin: 0; color: var(--w-ink-soft); }
+
+/* events */
+.wsite .note { text-align: center; color: var(--w-ink-soft); font-size: 14px; margin-bottom: 24px; }
+.wsite .note b { color: var(--w-accent); }
+.wsite .events { display: grid; gap: 18px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .wsite .events { grid-template-columns: 1fr 1fr; } }
+.wsite .event { position: relative; overflow: hidden; background: var(--w-surface); border: 1px solid var(--w-line); border-radius: var(--w-radius); padding: 22px; }
+.wsite .event::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--w-gold-lite), var(--w-gold)); }
+.wsite .event .tag { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--w-gold); }
+.wsite .event h3 { margin: 6px 0 2px; font-size: 26px; }
+.wsite .event .meta { font-family: var(--w-sans); font-size: 14px; color: var(--w-ink-soft); font-variant-numeric: tabular-nums; }
+.wsite .event .dress { margin-top: 8px; font-size: 13px; }
+.wsite .event .dress b { color: var(--w-accent); }
+.wsite .event .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+.wsite .rsvp { display: inline-flex; border: 1px solid var(--w-line); border-radius: 999px; overflow: hidden; }
+.wsite .rsvp button { border: 0; background: transparent; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--w-sans); color: var(--w-ink-soft); }
+.wsite .rsvp button.yes.on { background: #2f7a5c; color: #fff; }
+.wsite .rsvp button.no.on { background: #a3453f; color: #fff; }
+
+/* venue + gallery + family + faq */
+.wsite .venue { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .wsite .venue { grid-template-columns: 1fr 1fr; } }
+.wsite .vcard { background: var(--w-surface); border: 1px solid var(--w-line); border-radius: var(--w-radius); overflow: hidden; }
+.wsite .vmap { height: 120px; background: linear-gradient(135deg, #d9cbb0, #eadfca); position: relative; }
+.wsite .vmap::after { content: "📍"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 24px; opacity: .8; }
+.wsite .vcard .vb { padding: 16px 18px; }
+.wsite .vcard h3 { margin: 0 0 2px; font-size: 21px; }
+.wsite .vcard p { margin: 0 0 12px; color: var(--w-ink-soft); font-size: 14px; }
+.wsite .gallery { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 720px) { .wsite .gallery { grid-template-columns: repeat(3, 1fr); } }
+.wsite .photo { aspect-ratio: 4/5; border-radius: 12px; position: relative; overflow: hidden; border: 1px solid var(--w-line); display: flex; align-items: flex-end; background-size: cover; }
+.wsite .photo span { position: relative; z-index: 1; color: #fff; font-size: 12px; padding: 10px 12px; }
+.wsite .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.5)); }
+.wsite .families { display: grid; gap: 24px; grid-template-columns: 1fr; text-align: center; }
+@media (min-width: 720px) { .wsite .families { grid-template-columns: 1fr 1fr; } }
+.wsite .family h3 { font-size: 24px; margin: 0 0 4px; color: var(--w-accent); }
+.wsite .family p { margin: 2px 0; color: var(--w-ink-soft); }
+.wsite .faq { max-width: 680px; margin: 0 auto; }
+.wsite details { border-bottom: 1px solid var(--w-line); padding: 15px 0; }
+.wsite summary { cursor: pointer; list-style: none; font-family: var(--w-serif); font-size: 20px; display: flex; justify-content: space-between; gap: 12px; }
+.wsite summary::-webkit-details-marker { display: none; }
+.wsite summary::after { content: "+"; color: var(--w-gold); font-family: var(--w-sans); }
+.wsite details[open] summary::after { content: "–"; }
+.wsite details p { margin: 10px 0 0; color: var(--w-ink-soft); }
+
+/* footer */
+.wsite .w-foot { background: var(--w-navy); color: #eee; text-align: center; padding: 64px 22px; }
+.wsite .w-foot .hash { font-family: var(--w-serif); font-size: 32px; color: var(--w-gold-lite); margin: 6px 0 16px; }
+.wsite .w-foot .contacts { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 14px; }
+.wsite .w-foot small { display: block; margin-top: 22px; color: #a79fb8; }
