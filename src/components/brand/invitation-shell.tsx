@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Lotus, Mandala, Paisley } from "./motifs";
+import { FloatingPetals } from "./decor";
 
 /**
  * The royal-invitation frame shared by sign-in and client onboarding: an
@@ -25,10 +26,11 @@ export function InvitationShell({
           "radial-gradient(130% 100% at 50% -20%, #4a3560 0%, rgba(74,53,96,0) 58%), linear-gradient(180deg, #2b2740 0%, #201d31 100%)",
       }}
     >
-      <Mandala className="left-1/2 top-[-130px] h-[460px] w-[460px] -translate-x-1/2 opacity-[0.16]" />
+      <Mandala className="spin-slow left-1/2 top-[-130px] h-[460px] w-[460px] -translate-x-1/2 opacity-[0.16]" />
+      <FloatingPetals />
 
       <div
-        className="relative w-full max-w-sm rounded-[5px] bg-card p-8 shadow-[0_34px_66px_-22px_rgba(0,0,0,0.6)]"
+        className="relative w-full max-w-sm rounded-[5px] bg-card p-8 shadow-[0_34px_66px_-22px_rgba(0,0,0,0.6)] duration-700 animate-in fade-in zoom-in-95"
         style={{ outline: "1px solid var(--gold-line)", outlineOffset: "-8px" }}
       >
         <Paisley className="absolute left-3 top-3 h-10 w-10 text-[color:var(--gold-deep)] opacity-60" />
@@ -41,7 +43,7 @@ export function InvitationShell({
           <Lotus className="relative h-9 text-primary" />
         </div>
 
-        <h1 className="mt-2 text-center text-2xl font-semibold tracking-[0.06em]">
+        <h1 className="text-shimmer mt-2 text-center text-2xl font-semibold tracking-[0.06em]">
           {title}
         </h1>
         <p className="mb-5 mt-0.5 text-center text-sm text-muted-foreground">

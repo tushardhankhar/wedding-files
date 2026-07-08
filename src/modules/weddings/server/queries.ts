@@ -24,7 +24,14 @@ export async function listWeddings(): Promise<Wedding[]> {
  * Fetches a single wedding by id. Returns null when it does not exist or is not
  * owned by the current user (RLS filters it out either way).
  */
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getWeddingById(id: string): Promise<Wedding | null> {
+  // A malformed id can never match a row — treat it as not-found rather than
+  // letting Postgres raise an invalid-uuid error.
+  if (!UUID_RE.test(id)) return null;
+
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("weddings")

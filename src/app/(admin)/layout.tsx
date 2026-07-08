@@ -3,6 +3,7 @@ import { requireUser, isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { signOutAction } from "@/modules/auth/server/actions";
 import { Button } from "@/components/ui/button";
 import { Lotus, Mandala } from "@/components/brand/motifs";
+import { PageDecor } from "@/components/brand/decor";
 
 export default async function AdminLayout({
   children,
@@ -17,11 +18,12 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-svh">
+      <PageDecor />
       <header
         className="relative overflow-hidden border-b bg-[color:var(--navy)]"
         style={{ borderColor: "var(--gold-line)" }}
       >
-        <Mandala className="right-[-40px] top-[-120px] h-56 w-56 opacity-[0.13]" />
+        <Mandala className="spin-slow right-[-40px] top-[-120px] h-56 w-56 opacity-[0.13]" />
         <div className="relative mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Link href="/dashboard" className="flex items-center gap-3">
             <Lotus className="h-6 text-[color:var(--gold)]" />
@@ -46,7 +48,9 @@ export default async function AdminLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-5xl px-6 py-8 duration-500 animate-in fade-in slide-in-from-bottom-2">
+        {children}
+      </main>
     </div>
   );
 }

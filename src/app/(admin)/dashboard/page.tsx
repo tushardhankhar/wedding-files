@@ -3,6 +3,7 @@ import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { listWeddings } from "@/modules/weddings/server/queries";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
+import { Lotus } from "@/components/brand/motifs";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Date not set";
@@ -58,24 +59,37 @@ export default async function DashboardPage() {
       </div>
 
       {weddings.length === 0 ? (
-        <Card>
-          <CardHeader>
-            <h2 className="text-lg font-semibold">
-              {isAdmin ? "No weddings yet" : "Nothing here yet"}
+        <Card className="overflow-hidden text-center duration-500 animate-in fade-in zoom-in-95">
+          <CardHeader className="items-center">
+            <Lotus className="mx-auto h-10 text-[color:var(--gold-deep)]" />
+            <h2 className="mt-2 text-lg font-semibold">
+              {isAdmin ? "Let the celebrations begin" : "Nothing here yet"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {isAdmin
                 ? "Create your first wedding to get started."
                 : "Your planner hasn't shared a wedding with you yet."}
             </p>
+            {isAdmin ? (
+              <Link
+                href="/weddings/new"
+                className={`${buttonVariants()} mt-3`}
+              >
+                ＋ New wedding
+              </Link>
+            ) : null}
           </CardHeader>
         </Card>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
-          {weddings.map((w) => (
-            <li key={w.id}>
+          {weddings.map((w, i) => (
+            <li
+              key={w.id}
+              className="duration-500 animate-in fade-in slide-in-from-bottom-3"
+              style={{ animationDelay: `${i * 70}ms` }}
+            >
               <Link href={`/weddings/${w.id}`} className="block">
-                <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
+                <Card className="relative overflow-hidden transition-transform hover:-translate-y-1 hover:border-[color:var(--gold-line)] hover:shadow-[0_14px_34px_-14px_rgba(43,39,64,0.25)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
                   <CardHeader>
                     <h2 className="text-lg font-semibold">{w.title}</h2>
                     <p className="text-sm tabular-nums text-muted-foreground">

@@ -149,8 +149,8 @@ src/
 - **Phase 1.5 — Roles & client onboarding** ✅ `admins` + `is_admin()`, admin/client
   split (`created_by`/`client_id`), `client_invites` + `claim_client_invite()`,
   name-lock trigger, invite-only login.
-- **Phase 2 — Events** — client-managed custom events (name, date/time, venue, map
-  link, details); not hardcoded; RLS-scoped.
+- **Phase 2 — Events** ✅ client-managed custom events (name, date/time, venue, map
+  link, details); not hardcoded; RLS-scoped via `can_manage_wedding()`.
 - **Phase 3 — Themes, Renderer & Preview** ⭐ theme registry (predefined designs +
   thumbnails), **admin-only** theme selection (add `theme_id` to the name-lock
   trigger), the config-driven **rendering engine**, and **live Preview** (admin &

@@ -9,11 +9,14 @@ import { createWedding, deleteWedding, updateWedding } from "./mutations";
 export type WeddingFormState = { error?: string; saved?: boolean };
 
 function parseForm(formData: FormData) {
+  // A field the form omits (e.g. the title, which is read-only for clients)
+  // comes back as null; Zod's .optional() expects undefined, so normalize it.
+  const value = (key: string) => formData.get(key) ?? undefined;
   return {
-    title: formData.get("title"),
-    partnerOneName: formData.get("partnerOneName"),
-    partnerTwoName: formData.get("partnerTwoName"),
-    eventDate: formData.get("eventDate"),
+    title: value("title"),
+    partnerOneName: value("partnerOneName"),
+    partnerTwoName: value("partnerTwoName"),
+    eventDate: value("eventDate"),
   };
 }
 
