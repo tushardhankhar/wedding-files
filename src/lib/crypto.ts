@@ -43,3 +43,35 @@ export function timingSafeEqualHex(a: string, b: string): boolean {
   }
   return mismatch === 0;
 }
+
+/** HMAC-SHA256 of a message with a secret, hex-encoded. */
+export async function hmacSha256Hex(
+  secret: string,
+  message: string
+): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(message)
+  );
+  return toHex(new Uint8Array(sig));
+}
+
+/** URL-safe base64 of a UTF-8 string (used for the signed cookie payload). */
+export function base64UrlEncodeString(str: string): string {
+  return base64UrlEncode(new TextEncoder().encode(str));
+}
+
+export function base64UrlDecodeString(value: string): string {
+  const b64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(b64);
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}

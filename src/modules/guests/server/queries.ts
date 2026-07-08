@@ -1,0 +1,38 @@
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { GroupDetail } from "../types";
+
+interface GroupRow {
+  id: string;
+  name: string;
+  created_at: string;
+  invite_token_hash: string | null;
+  guests: { id: string; name: string; is_primary: boolean }[] | null;
+  group_event_invites: { event_id: string }[] | null;
+}
+
+/**
+ * Lists a wedding's guest groups with their members and invited-event ids.
+ * RLS scopes to manageable weddings.
+ */
+export async function listGroups(weddingId: string): Promise<GroupDetail[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("guest_groups")
+    .select(
+      "id, name, created_at, invite_token_hash, guests(id, name, is_primary), group_event_invites(event_id)"
+    )
+    .eq("wedding_id", weddingId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+
+  return (data as GroupRow[]).map((g) => ({
+    id: g.id,
+    name: g.name,
+    guests: (g.guests ?? [])
+      .map((x) => ({ id: x.id, name: x.name, isPrimary: x.is_primary }))
+      .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)),
+    invitedEventIds: (g.group_event_invites ?? []).map((i) => i.event_id),
+    hasInvite: g.invite_token_hash != null,
+  }));
+}

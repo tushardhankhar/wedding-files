@@ -158,9 +158,13 @@ src/
 - **Phase 4 — Website content** ✅ bilingual (EN/HI) config authoring at
   `/weddings/[id]/content` (hero, story, gallery, families, FAQ, footer) writing to
   `weddings.config`; events gained Hindi fields (`name_hi`, `description_hi`).
-- **Phase 5 — Guest groups & guests + per-group event invites** (authorization edges).
-- **Phase 6 — Invitations & guest session** ⭐ secure token links → HTTP-only session
-  cookie; `wa.me` share.
+- **Phase 5 — Guest groups & guests + per-group event invites** ✅ `guest_groups`,
+  `guests`, `group_event_invites` (the authorization edge) + `can_manage_group()` and
+  a same-wedding invite trigger; manager UI at `/weddings/[id]/guests`.
+- **Phase 6 — Invitations & guest session** ✅ per-group token (stored hashed) +
+  admin generate/regenerate + `wa.me` share; `/w/[slug]/invite/[token]` verifies via
+  service-role client → mints a signed HTTP-only guest cookie → `/w/[slug]`. Authorized
+  data (`guest-access`) returns only invited events. Needs the real service-role key.
 - **Phase 7 — Guest website + event authorization** ⭐ same renderer served to guests,
   showing only invited events; uninvited data never leaves the server.
 - **Phase 8 — RSVP** (per guest, per event; admin & client see responses).
