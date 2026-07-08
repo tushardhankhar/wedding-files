@@ -1,6 +1,18 @@
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteConfig } from "../schema";
+import type { HeroMotif } from "../themes/registry";
 import { T, TT } from "./bilingual";
+import { RsvpControls, type RsvpData } from "./rsvp-controls";
+import { HeroOrnament } from "./hero-ornament";
+
+/** Section divider with the theme's glyph (set via the --w-divider token). */
+export function Divider() {
+  return (
+    <div className="divider" aria-hidden="true">
+      <i />
+    </div>
+  );
+}
 
 function formatWhen(dateIso: string | null, time: string | null): string {
   if (!dateIso) return "";
@@ -21,18 +33,21 @@ function formatWhen(dateIso: string | null, time: string | null): string {
 export function Hero({
   names,
   dateLabel,
+  ornament,
 }: {
   names: string;
   dateLabel: string | null;
+  ornament: HeroMotif;
 }) {
   return (
     <header className="w-hero">
-      <span className="mandala" />
+      <HeroOrnament variant={ornament} />
       <p className="invited">
         <TT en="Together with their families" hi="अपने परिवारों सहित" />
       </p>
       <h1>{names}</h1>
       {dateLabel ? <p className="date">{dateLabel}</p> : null}
+      <div className="flourish">✦</div>
     </header>
   );
 }
@@ -50,7 +65,7 @@ export function Story({ config }: { config: WebsiteConfig }) {
         <h2 className="h-sec center">
           <TT en="How it all began" hi="यह सब कैसे शुरू हुआ" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <div className="timeline">
           {milestones.map((m, i) => (
             <div className="milestone" key={i}>
@@ -70,7 +85,13 @@ export function Story({ config }: { config: WebsiteConfig }) {
 }
 
 // ── Events (invite-gated upstream; this only renders what it's given) ──────
-export function Events({ events }: { events: WeddingEvent[] }) {
+export function Events({
+  events,
+  rsvp,
+}: {
+  events: WeddingEvent[];
+  rsvp?: RsvpData;
+}) {
   if (events.length === 0) return null;
   return (
     <section id="events">
@@ -81,7 +102,7 @@ export function Events({ events }: { events: WeddingEvent[] }) {
         <h2 className="h-sec center">
           <TT en="You're invited to" hi="आप आमंत्रित हैं" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <p className="note">
           <TT
             en="These are the celebrations your family is invited to."
@@ -106,15 +127,23 @@ export function Events({ events }: { events: WeddingEvent[] }) {
                   <T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} />
                 </p>
               ) : null}
+              {rsvp ? (
+                <RsvpControls
+                  slug={rsvp.slug}
+                  eventId={e.id}
+                  guests={rsvp.guests}
+                  initial={rsvp.statuses[e.id] ?? {}}
+                />
+              ) : null}
               <div className="row">
-                <div className="rsvp">
-                  <button type="button" className="yes">
-                    <TT en="Attending" hi="आ रहे हैं" />
-                  </button>
-                  <button type="button" className="no">
-                    <TT en="Can't make it" hi="नहीं आ पाएँगे" />
-                  </button>
-                </div>
+                {rsvp ? null : (
+                  <span className="text-note">
+                    <TT
+                      en="Your guests will RSVP here"
+                      hi="आपके मेहमान यहाँ उत्तर देंगे"
+                    />
+                  </span>
+                )}
                 {e.mapsUrl ? (
                   <a
                     className="w-btn"
@@ -147,7 +176,7 @@ export function Venue({ events }: { events: WeddingEvent[] }) {
         <h2 className="h-sec center">
           <TT en="Venues" hi="स्थान" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <div className="venue">
           {withVenue.map((e) => (
             <div className="vcard" key={e.id}>
@@ -187,7 +216,7 @@ export function Gallery({ config }: { config: WebsiteConfig }) {
         <h2 className="h-sec center">
           <TT en="Gallery" hi="गैलरी" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <div className="gallery">
           {images.map((img, i) => (
             <div
@@ -221,7 +250,7 @@ export function Family({ config }: { config: WebsiteConfig }) {
         <h2 className="h-sec center">
           <TT en="Our Families" hi="हमारे परिवार" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <div className="families">
           {groups.map((g, i) => (
             <div className="family" key={i}>
@@ -259,7 +288,7 @@ export function Faq({ config }: { config: WebsiteConfig }) {
         <h2 className="h-sec center">
           <TT en="FAQ" hi="प्रश्न" />
         </h2>
-        <div className="divider">✦</div>
+        <Divider />
         <div className="faq">
           {items.map((it, i) => (
             <details key={i} open={i === 0}>

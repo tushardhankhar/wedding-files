@@ -269,6 +269,21 @@
 .wsite .divider { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 16px 0 38px; color: var(--w-gold); }
 .wsite .divider::before, .wsite .divider::after { content: ""; height: 1px; width: 60px; background: linear-gradient(90deg, transparent, var(--w-gold)); }
 .wsite .divider::after { background: linear-gradient(90deg, var(--w-gold), transparent); }
+.wsite .divider i { font-style: normal; font-size: 13px; line-height: 1; }
+.wsite .divider i::before { content: var(--w-divider, "✦"); }
+
+/* Per-theme border ribbon under the nav. */
+.wsite .w-pattern { height: 18px; background: var(--w-pattern); }
+
+/* Hero ornaments (line-art motifs behind the names). */
+.wsite .w-hero .hero-svg {
+  position: absolute; left: 50%; top: 7%; transform: translateX(-50%);
+  width: min(560px, 92%); height: auto;
+  color: var(--w-gold-lite); opacity: 0.2; pointer-events: none;
+}
+.wsite .w-hero .hero-garland {
+  top: 0; left: 0; transform: none; width: 100%; opacity: 0.5;
+}
 .wsite .band-alt { background: var(--w-surface); }
 
 .wsite .w-btn {
@@ -342,6 +357,10 @@
 .wsite .rsvp button { border: 0; background: transparent; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: var(--w-sans); color: var(--w-ink-soft); }
 .wsite .rsvp button.yes.on { background: #2f7a5c; color: #fff; }
 .wsite .rsvp button.no.on { background: #a3453f; color: #fff; }
+.wsite .rsvp-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.wsite .rsvp-member { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wsite .rsvp-member > span:first-child { font-size: 14px; }
+.wsite .text-note { font-size: 13px; color: var(--w-ink-soft); font-style: italic; }
 
 /* venue + gallery + family + faq */
 .wsite .venue { display: grid; gap: 16px; grid-template-columns: 1fr; }
@@ -374,3 +393,37 @@
 .wsite .w-foot .hash { font-family: var(--w-serif); font-size: 32px; color: var(--w-gold-lite); margin: 6px 0 16px; }
 .wsite .w-foot .contacts { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; font-size: 14px; }
 .wsite .w-foot small { display: block; margin-top: 22px; color: #a79fb8; }
+
+/* ── Luxury polish ─────────────────────────────────────────────────────────*/
+/* Per-theme display font for the couple names (falls back to the serif). */
+.wsite .w-hero h1 { font-family: var(--w-display, var(--w-serif)); }
+.wsite .w-hero .flourish {
+  position: relative;
+  margin: 16px auto 0;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  color: var(--w-gold-lite); font-size: 13px; opacity: 0.9;
+}
+.wsite .w-hero .flourish::before,
+.wsite .w-hero .flourish::after {
+  content: ""; height: 1px; width: 48px;
+  background: linear-gradient(90deg, transparent, var(--w-gold-lite));
+}
+.wsite .w-hero .flourish::after {
+  background: linear-gradient(90deg, var(--w-gold-lite), transparent);
+}
+
+/* Elegant scroll-reveal — progressive enhancement, off under reduced-motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .wsite section,
+    .wsite .w-count {
+      animation: wsite-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 45%;
+    }
+    @keyframes wsite-reveal {
+      from { opacity: 0; transform: translateY(26px); }
+      to { opacity: 1; transform: none; }
+    }
+  }
+}

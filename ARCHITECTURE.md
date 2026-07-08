@@ -165,10 +165,18 @@ src/
   admin generate/regenerate + `wa.me` share; `/w/[slug]/invite/[token]` verifies via
   service-role client → mints a signed HTTP-only guest cookie → `/w/[slug]`. Authorized
   data (`guest-access`) returns only invited events. Needs the real service-role key.
-- **Phase 7 — Guest website + event authorization** ⭐ same renderer served to guests,
-  showing only invited events; uninvited data never leaves the server.
-- **Phase 8 — RSVP** (per guest, per event; admin & client see responses).
+- **Phase 7 — Guest website + event authorization** ✅ `/w/[slug]` renders the themed
+  bilingual `WebsiteView` from `loadGuestSite` (session-gated, invited events only);
+  no valid session → "A private invitation", site never rendered. `buildSiteProps`
+  shared with the owner Preview.
+- **Phase 8 — RSVP** ✅ per guest, per event. Guests submit via service-role client
+  behind session re-checks (`submitRsvpAction`); DB trigger enforces invited-only.
+  Guest site shows per-member Going/No toggles; admins view responses at
+  `/weddings/[id]/rsvps`.
 - **Phase 9 — Photos / media** (Cloudflare R2 presigned uploads; gallery section).
-- **Phase 10 — Polish & hardening** (more themes, SEO/OG, final security pass).
+- **Phase 10 — Polish & hardening** (in progress) — 6 themes shipped (Royal, Ivory
+  Classic, Chapel Rose/Christian, Phulkari/Punjabi, Kanjeevaram/South Indian,
+  Mewar/Rajasthani) with per-theme display fonts, hero flourish, and scroll-reveal.
+  Remaining: SEO/OG, deploy, final security pass. (Phase 9 media deferred.)
 
 Each phase = its own migration(s) + module code + minimal UI, independently deployable.

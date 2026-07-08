@@ -33,12 +33,13 @@ export async function deleteGroup(id: string): Promise<void> {
 export async function addGuest(
   groupId: string,
   name: string,
-  isPrimary: boolean
+  isPrimary: boolean,
+  phone: string | null
 ): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("guests")
-    .insert({ group_id: groupId, name, is_primary: isPrimary });
+    .insert({ group_id: groupId, name, is_primary: isPrimary, phone });
   if (error) throw error;
 }
 

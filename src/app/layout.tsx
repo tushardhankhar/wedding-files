@@ -4,6 +4,8 @@ import {
   Raleway,
   Cormorant_Garamond,
   Noto_Sans_Devanagari,
+  Playfair_Display,
+  Great_Vibes,
 } from "next/font/google";
 import "./globals.css";
 
@@ -38,6 +40,21 @@ const notoDevanagari = Noto_Sans_Devanagari({
   display: "swap",
 });
 
+// Regal serif + elegant script for the luxury wedding themes.
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Utsav — Wedding Celebrations",
   description: "Craft and manage beautiful Indian wedding websites.",
@@ -51,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${notoDevanagari.variable} h-full antialiased`}
+      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${notoDevanagari.variable} ${playfair.variable} ${greatVibes.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

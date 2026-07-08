@@ -2,6 +2,7 @@ export interface GuestLite {
   id: string;
   name: string;
   isPrimary: boolean;
+  phone: string | null;
 }
 
 /** A group with its members and the set of events it's invited to. */

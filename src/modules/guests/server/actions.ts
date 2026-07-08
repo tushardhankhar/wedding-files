@@ -72,12 +72,18 @@ export async function addGuestAction(
   const parsed = guestSchema.safeParse({
     name: formData.get("name"),
     isPrimary: formData.get("isPrimary") === "on",
+    phone: formData.get("phone") ?? undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
   }
   try {
-    await addGuest(groupId, parsed.data.name, parsed.data.isPrimary);
+    await addGuest(
+      groupId,
+      parsed.data.name,
+      parsed.data.isPrimary,
+      parsed.data.phone ?? null
+    );
   } catch {
     return { error: "Could not add the guest." };
   }

@@ -76,6 +76,17 @@ export default async function WeddingDetailPage({
         </Card>
       </Link>
 
+      <Link href={`/weddings/${wedding.id}/rsvps`} className="block">
+        <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
+          <CardHeader>
+            <CardTitle className="text-base">RSVPs →</CardTitle>
+            <CardDescription>
+              See who&apos;s attending each event.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </Link>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Website</CardTitle>

@@ -20,6 +20,9 @@ export interface GuestSiteData {
   groupName: string;
   wedding: GuestWedding;
   events: WeddingEvent[]; // ONLY the events this group is invited to
+  guests: { id: string; name: string }[]; // group members (for RSVP)
+  // rsvps[eventId][guestId] = "attending" | "declined"
+  rsvps: Record<string, Record<string, "attending" | "declined">>;
 }
 
 interface GroupJoin {
@@ -82,6 +85,34 @@ export async function loadGuestSite(slug: string): Promise<GuestSiteData | null>
       return (a.startTime ?? "").localeCompare(b.startTime ?? "");
     });
 
+  // Group members + their existing RSVPs (for the invited events only).
+  const { data: memberRows } = await svc
+    .from("guests")
+    .select("id, name, is_primary")
+    .eq("group_id", session.groupId);
+  const guests = (memberRows ?? [])
+    .map((g) => ({ id: g.id, name: g.name, isPrimary: g.is_primary }))
+    .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
+    .map(({ id, name }) => ({ id, name }));
+
+  const rsvps: Record<string, Record<string, "attending" | "declined">> = {};
+  if (guests.length > 0) {
+    const { data: rsvpRows } = await svc
+      .from("rsvps")
+      .select("guest_id, event_id, status")
+      .in(
+        "guest_id",
+        guests.map((g) => g.id)
+      );
+    for (const r of (rsvpRows ?? []) as {
+      guest_id: string;
+      event_id: string;
+      status: "attending" | "declined";
+    }[]) {
+      (rsvps[r.event_id] ??= {})[r.guest_id] = r.status;
+    }
+  }
+
   const w = group.weddings;
   return {
     groupName: group.name,
@@ -95,5 +126,7 @@ export async function loadGuestSite(slug: string): Promise<GuestSiteData | null>
       themeId: w.theme_id,
     },
     events,
+    guests,
+    rsvps,
   };
 }

@@ -1,12 +1,21 @@
-import type { Wedding } from "@/modules/weddings/types";
 import type { WeddingEvent } from "@/modules/events/types";
 import { parseWebsiteConfig } from "../schema";
 
+/** The wedding fields the renderer needs — satisfied by both the owner's full
+ * Wedding and the guest's trimmed GuestWedding. */
+export interface SiteWedding {
+  title: string;
+  partnerOneName: string | null;
+  partnerTwoName: string | null;
+  eventDate: string | null;
+  config: Record<string, unknown>;
+}
+
 /**
  * Derives the renderer's props from a wedding + its events. Shared by the owner
- * Preview and (later) the live guest site, so both render identically.
+ * Preview and the live guest site, so both render identically.
  */
-export function buildSiteProps(wedding: Wedding, events: WeddingEvent[]) {
+export function buildSiteProps(wedding: SiteWedding, events: WeddingEvent[]) {
   const one = wedding.partnerOneName?.trim();
   const two = wedding.partnerTwoName?.trim();
 

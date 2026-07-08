@@ -6,7 +6,9 @@ interface GroupRow {
   name: string;
   created_at: string;
   invite_token_hash: string | null;
-  guests: { id: string; name: string; is_primary: boolean }[] | null;
+  guests:
+    | { id: string; name: string; is_primary: boolean; phone: string | null }[]
+    | null;
   group_event_invites: { event_id: string }[] | null;
 }
 
@@ -19,7 +21,7 @@ export async function listGroups(weddingId: string): Promise<GroupDetail[]> {
   const { data, error } = await supabase
     .from("guest_groups")
     .select(
-      "id, name, created_at, invite_token_hash, guests(id, name, is_primary), group_event_invites(event_id)"
+      "id, name, created_at, invite_token_hash, guests(id, name, is_primary, phone), group_event_invites(event_id)"
     )
     .eq("wedding_id", weddingId)
     .order("created_at", { ascending: true });
@@ -30,7 +32,12 @@ export async function listGroups(weddingId: string): Promise<GroupDetail[]> {
     id: g.id,
     name: g.name,
     guests: (g.guests ?? [])
-      .map((x) => ({ id: x.id, name: x.name, isPrimary: x.is_primary }))
+      .map((x) => ({
+        id: x.id,
+        name: x.name,
+        isPrimary: x.is_primary,
+        phone: x.phone,
+      }))
       .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)),
     invitedEventIds: (g.group_event_invites ?? []).map((i) => i.event_id),
     hasInvite: g.invite_token_hash != null,

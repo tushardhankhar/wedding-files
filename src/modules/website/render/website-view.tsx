@@ -6,6 +6,7 @@ import type { Theme } from "../themes/registry";
 import type { WebsiteConfig, Localized } from "../schema";
 import { TT } from "./bilingual";
 import { Countdown } from "./countdown";
+import type { RsvpData } from "./rsvp-controls";
 import {
   Hero,
   Story,
@@ -27,6 +28,8 @@ export interface WebsiteViewProps {
   config: WebsiteConfig;
   /** Nav chip — the signed-in guest group, or a preview label. */
   chip?: Localized | null;
+  /** Present on the live guest site → per-guest RSVP; absent in preview. */
+  rsvp?: RsvpData;
 }
 
 export function WebsiteView({
@@ -38,6 +41,7 @@ export function WebsiteView({
   events,
   config,
   chip,
+  rsvp,
 }: WebsiteViewProps) {
   const [lang, setLang] = useState<"en" | "hi">("en");
 
@@ -88,10 +92,11 @@ export function WebsiteView({
         </div>
       </nav>
 
-      <Hero names={names} dateLabel={dateLabel} />
+      <div className="w-pattern" aria-hidden="true" />
+      <Hero names={names} dateLabel={dateLabel} ornament={theme.heroMotif} />
       {countdownDate ? <Countdown dateIso={countdownDate} /> : null}
       <Story config={config} />
-      <Events events={events} />
+      <Events events={events} rsvp={rsvp} />
       <Venue events={events} />
       <Gallery config={config} />
       <Family config={config} />

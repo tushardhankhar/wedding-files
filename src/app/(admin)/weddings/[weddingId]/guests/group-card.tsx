@@ -63,6 +63,15 @@ export function GroupCard({
       )}`
     : undefined;
 
+  // Pre-addressed WhatsApp link to a specific guest (needs the invite link
+  // generated + that guest's phone). The message carries the group invite URL.
+  function guestWa(g: { name: string; phone: string | null }): string | null {
+    const digits = (g.phone ?? "").replace(/[^0-9]/g, "");
+    if (!inviteUrl || !digits) return null;
+    const text = `Hi ${g.name}! You're invited to ${group.name} 🎉 View your invitation & RSVP: ${inviteUrl}`;
+    return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+  }
+
   // Rename
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(group.name);
@@ -162,32 +171,54 @@ export function GroupCard({
           {group.guests.length === 0 ? (
             <p className="text-sm text-muted-foreground">No members yet.</p>
           ) : (
-            <ul className="flex flex-wrap gap-2">
-              {group.guests.map((g) => (
-                <li
-                  key={g.id}
-                  className="flex items-center gap-1.5 rounded-full border bg-secondary px-3 py-1 text-sm"
-                >
-                  <span>{g.name}</span>
-                  {g.isPrimary ? (
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">
-                      Primary
-                    </span>
-                  ) : null}
-                  <button
-                    type="button"
-                    aria-label={`Remove ${g.name}`}
-                    className="ml-0.5 text-muted-foreground hover:text-destructive"
-                    onClick={() =>
-                      startTransition(() => {
-                        void deleteGuestAction(g.id, weddingId);
-                      })
-                    }
+            <ul className="divide-y rounded-lg border">
+              {group.guests.map((g) => {
+                const wa = guestWa(g);
+                return (
+                  <li
+                    key={g.id}
+                    className="flex items-center justify-between gap-3 px-3 py-2 text-sm"
                   >
-                    ✕
-                  </button>
-                </li>
-              ))}
+                    <div className="min-w-0 truncate">
+                      <span className="font-medium">{g.name}</span>
+                      {g.isPrimary ? (
+                        <span className="ml-2 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                          Primary
+                        </span>
+                      ) : null}
+                      {g.phone ? (
+                        <span className="ml-2 tabular-nums text-muted-foreground">
+                          {g.phone}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      {wa ? (
+                        <a
+                          href={wa}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-medium text-primary hover:underline"
+                        >
+                          WhatsApp →
+                        </a>
+                      ) : null}
+                      <button
+                        type="button"
+                        aria-label={`Remove ${g.name}`}
+                        className="text-muted-foreground hover:text-destructive"
+                        onClick={() =>
+                          startTransition(() => {
+                            void deleteGuestAction(g.id, weddingId);
+                          })
+                        }
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
 
@@ -200,17 +231,28 @@ export function GroupCard({
               name="name"
               required
               maxLength={120}
-              placeholder="Add a guest…"
+              placeholder="Guest name"
               className="flex-1"
+            />
+            <Input
+              name="phone"
+              maxLength={30}
+              placeholder="Phone (optional)"
+              className="sm:w-44"
             />
             <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <input type="checkbox" name="isPrimary" className="size-4" />
-              Primary contact
+              Primary
             </label>
             <Button type="submit" variant="outline" size="sm" disabled={addingGuest}>
               {addingGuest ? "Adding…" : "Add"}
             </Button>
           </form>
+          {group.guests.some((g) => g.phone) && !inviteUrl ? (
+            <p className="text-xs text-muted-foreground">
+              Generate the invite link below to message guests on WhatsApp.
+            </p>
+          ) : null}
           {guestState.error ? (
             <p className="text-sm text-destructive" role="alert">
               {guestState.error}
