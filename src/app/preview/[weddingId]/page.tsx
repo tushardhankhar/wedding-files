@@ -5,7 +5,7 @@ import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
 import { getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
-import { WebsiteView } from "@/modules/website/render/website-view";
+import { SiteView } from "@/modules/website/render/site";
 
 // Owner-only preview of the live guest site — full-bleed, outside the admin
 // chrome. RLS on getWeddingById ensures only the wedding's admin/client can see
@@ -34,7 +34,7 @@ export default async function PreviewPage({
       >
         ← Back to editing
       </Link>
-      <WebsiteView
+      <SiteView
         theme={theme}
         {...props}
         ownerPreview

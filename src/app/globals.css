@@ -274,6 +274,133 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
+   Shared theme scaffolding for the standalone renderers (.gul / .aka / .kly /
+   .vow). Bilingual toggle + one scroll-reveal, reused by all of them.
+   ══════════════════════════════════════════════════════════════════════════ */
+[data-lang="en"] .l-hi { display: none !important; }
+[data-lang="hi"] .l-en { display: none !important; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-tw-reveal] {
+      animation: tw-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+@keyframes tw-reveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── THE GULMOHAR (id "ivory") — bold contemporary fashion editorial ──────── */
+.gul {
+  --g-pink: #e31364;
+  --g-coral: #f05243;
+  --g-verm: #f23838;
+  --g-marigold: #ff9e1b;
+  --g-plum: #702963;
+  --g-leaf: #287a4d;
+  --g-blush: #ffd8da;
+  --g-cream: #fff7ea;
+  --g-ink: #24151d;
+  background: var(--g-cream);
+  color: var(--g-ink);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  overflow-x: clip;
+}
+.gul .g-serif { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
+.gul .g-script { font-family: var(--font-great-vibes), cursive; }
+.gul .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.gul ::selection { background: var(--g-pink); color: #fff; }
+@keyframes gul-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes gul-spin { to { transform: rotate(360deg); } }
+.gul .g-spin { animation: gul-spin 26s linear infinite; }
+
+/* ── THE ANAND KARAJ (id "punjabi") — sacred, warm, familial ──────────────── */
+.aka {
+  --a-cream: #fff8e8;
+  --a-saffron: #d98519;
+  --a-kesari: #e5a63c;
+  --a-burgundy: #641e32;
+  --a-rose: #c8737a;
+  --a-gold: #c39a55;
+  --a-forest: #315c48;
+  --a-charcoal: #302925;
+  --a-ink-soft: #7c6a5a;
+  background: var(--a-cream);
+  color: var(--a-charcoal);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: clip;
+}
+.aka .a-serif { font-family: var(--font-cormorant), Georgia, "Times New Roman", serif; }
+.aka .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.aka ::selection { background: var(--a-saffron); color: #fff; }
+@keyframes aka-draw { to { stroke-dashoffset: 0; } }
+.aka .a-draw path { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: aka-draw 3s ease-out 0.3s forwards; }
+
+/* ── THE KALYANAM (id "south-indian") — architectural South Indian morning ── */
+.kly {
+  --k-ivory: #fff9e9;
+  --k-red: #9d2435;
+  --k-leaf: #356b3f;
+  --k-mango: #668b3c;
+  --k-turmeric: #e3a321;
+  --k-brass: #b68a45;
+  --k-jasmine: #fffef7;
+  --k-wood: #3a251b;
+  --k-ink-soft: #7a6656;
+  background: var(--k-ivory);
+  color: var(--k-wood);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: clip;
+}
+.kly .k-serif { font-family: var(--font-cormorant), Georgia, "Times New Roman", serif; }
+.kly .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.kly ::selection { background: var(--k-turmeric); color: var(--k-wood); }
+@keyframes kly-draw { to { stroke-dashoffset: 0; } }
+.kly .k-draw path, .kly .k-draw circle, .kly .k-draw line { stroke-dasharray: 900; stroke-dashoffset: 900; animation: kly-draw 2.4s ease-out forwards; }
+
+/* ── THE VOW (id "christian") — European editorial, black on white ────────── */
+.vow {
+  --v-white: #fffcf8;
+  --v-champ: #d8c2a0;
+  --v-sage: #7e9278;
+  --v-olive: #354438;
+  --v-black: #181818;
+  --v-grey: #b8b0a7;
+  --v-blush: #e7cbc8;
+  background: var(--v-white);
+  color: var(--v-black);
+  font-family: var(--font-raleway), "Helvetica Neue", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: clip;
+}
+.vow .v-serif { font-family: var(--font-playfair), "Didot", Georgia, serif; }
+.vow .v-script { font-family: var(--font-great-vibes), cursive; }
+.vow .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.vow ::selection { background: var(--v-black); color: var(--v-white); }
+/* signature: black-and-white photograph that colourises as it enters view */
+@keyframes vow-color { from { filter: grayscale(1) contrast(1.04); } to { filter: grayscale(0); } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .vow [data-vcolor] {
+      animation: vow-color linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 55%;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
    Landing page — JOIN THE UTSAV
    A self-contained visual system scoped under .landing. Structural colours are
    Dark Wine + Warm Ivory; Rani Pink / Marigold / Saffron / Emerald are
@@ -388,7 +515,8 @@
     opacity: 0.4;
   }
 }
-.landing .l-cue {
+.landing .l-cue,
+.mhj .l-cue {
   animation: l-cue 2.2s ease-in-out infinite;
 }
 
@@ -406,6 +534,37 @@
   scroll-snap-align: center;
   flex-shrink: 0;
 }
+
+/* Staggered load-in for above-the-fold hero content. Falls back to visible
+   under reduced motion (opacity is only zeroed when motion is allowed). */
+@keyframes l-load {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing .l-load {
+    opacity: 0;
+    animation: l-load 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+/* Editorial marquee ribbon — seamless infinite scroll (content duplicated). */
+@keyframes l-marquee {
+  to { transform: translateX(-50%); }
+}
+.landing .l-marquee {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+  animation: l-marquee 34s linear infinite;
+}
+.landing .l-marquee-rev { animation-direction: reverse; }
+@media (prefers-reduced-motion: reduce) {
+  .landing .l-marquee { animation: none; }
+}
+
+/* Continuous soft glow on the hero wordmark underline. */
+@keyframes l-shimmer { to { background-position: 200% center; } }
 
 /* ── Motion ────────────────────────────────────────────────────────────────
    Gentle, celebratory movement. All of it collapses under reduced-motion. */

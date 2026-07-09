@@ -1,7 +1,7 @@
 import { loadGuestSite } from "@/modules/guest-access/server/guest-site";
 import { getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
-import { WebsiteView } from "@/modules/website/render/website-view";
+import { SiteView } from "@/modules/website/render/site";
 import { Lotus } from "@/components/brand/motifs";
 
 // The live guest site: the Phase 3 renderer fed the Phase 6 authorized data,
@@ -40,7 +40,7 @@ export default async function GuestHome({
 
   if (data.mode === "share") {
     return (
-      <WebsiteView
+      <SiteView
         theme={theme}
         {...props}
         chip={{ en: "Guest" }}
@@ -53,7 +53,7 @@ export default async function GuestHome({
   }
 
   return (
-    <WebsiteView
+    <SiteView
       theme={theme}
       {...props}
       chip={{ en: data.label }}

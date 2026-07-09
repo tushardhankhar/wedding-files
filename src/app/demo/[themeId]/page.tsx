@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { THEMES, getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
-import { WebsiteView } from "@/modules/website/render/website-view";
+import { SiteView } from "@/modules/website/render/site";
 import {
   DEMO_SITE_WEDDING,
   DEMO_SITE_EVENTS,
@@ -52,7 +52,7 @@ export default async function DemoPage({
 
   return (
     <>
-      <WebsiteView
+      <SiteView
         theme={theme}
         {...props}
         ownerPreview
