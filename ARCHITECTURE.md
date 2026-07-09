@@ -66,6 +66,21 @@ from it. `is_admin()` (checks `admins` by email) drives admin-vs-client RLS.
    trigger that rejects `title`/`slug`/`theme_id` changes from non-admins.
 7. **One rendering engine** serves both the owner Preview and the live guest site —
    fed owner content (Preview) or a guest's authorized content (live).
+8. **Per-theme renderers.** `SiteView` (`render/site.tsx`) dispatches by theme id:
+   most themes are token-skins over the shared `WebsiteView`; flagship themes get a
+   standalone renderer with a custom layout honouring the same `WebsiteViewProps`
+   contract (so gating, RSVP, preview and demo work unchanged). First flagship:
+   **The Maharaja** (`render/maharaja/`, CSS scope `.mhj`) — ceremonial door
+   entrance, editorial index nav, asymmetric hero, royal chronicle, monumental
+   countdown, chapter-based itinerary, arch-framed palace section, museum gallery,
+   ceremonial court RSVP, and an original palace-ornament SVG system.
+   Five standalone renderers now ship, each with its own CSS scope + layout:
+   The Maharaja (`royal`/.mhj), The Gulmohar (`ivory`/.gul — bold fashion editorial),
+   The Anand Karaj (`punjabi`/.aka — sacred/warm, joining-paths + family + ceremony),
+   The Kalyanam (`south-indian`/.kly — architectural, kolam, precise ceremony timing),
+   The Vow (`christian`/.vow — B&W→colour editorial, weekend schedule, vows). The
+   Rajputana (`rajasthani`) still uses the shared `WebsiteView`. RSVP behaviour is a
+   shared headless hook (`render/use-rsvp.ts`); each theme renders its own controls.
 
 ## Folder structure
 
