@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PhotoArt, PetalField } from "./art";
 import { PLANS, REALITY_NOTES } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
+import { CountUp } from "./count-up";
 
 /* ── Features — editorial, alternating ────────────────────────────────────── */
 function FeatureRow({
@@ -223,15 +224,15 @@ export function CouplesSection() {
 }
 
 /* ── For planners ─────────────────────────────────────────────────────────── */
-const PLANNER_STATS: [string, string][] = [
-  ["742", "Invited guests"],
-  ["612", "Responded"],
-  ["532", "Wedding attendees"],
-  ["418", "Sangeet attendees"],
-  ["72", "Airport pickups"],
-  ["42", "Vegetarian"],
-  ["6", "Jain meals"],
-  ["26", "Children"],
+const PLANNER_STATS: [number, string][] = [
+  [742, "Invited guests"],
+  [612, "Responded"],
+  [532, "Wedding attendees"],
+  [418, "Sangeet attendees"],
+  [72, "Airport pickups"],
+  [42, "Vegetarian"],
+  [6, "Jain meals"],
+  [26, "Children"],
 ];
 
 export function PlannerSection() {
@@ -267,7 +268,9 @@ export function PlannerSection() {
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {PLANNER_STATS.map(([v, l]) => (
               <div key={l} className="rounded-xl border border-white/10 bg-white/[0.05] p-3.5">
-                <p className="l-display text-2xl font-semibold tabular-nums text-[color:var(--l-gold-lite)]">{v}</p>
+                <p className="l-display text-2xl font-semibold tabular-nums text-[color:var(--l-gold-lite)]">
+                  <CountUp value={v} />
+                </p>
                 <p className="mt-0.5 text-[11px] text-white/65">{l}</p>
               </div>
             ))}

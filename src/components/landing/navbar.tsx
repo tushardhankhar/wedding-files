@@ -21,6 +21,10 @@ export function LandingNavbar() {
     ? "text-[color:var(--l-wine)]/80 hover:text-[color:var(--l-wine)]"
     : "text-[color:var(--l-ivory)]/85 hover:text-white";
 
+  // Gold underline that grows from the left on hover / keyboard focus.
+  const underline =
+    "relative after:pointer-events-none after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-[color:var(--l-gold)] after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100 focus-visible:after:scale-x-100";
+
   return (
     <>
       <header
@@ -44,7 +48,8 @@ export function LandingNavbar() {
                 href={l.href}
                 className={cn(
                   "text-[13px] font-medium tracking-wide transition-colors",
-                  linkTone
+                  linkTone,
+                  underline
                 )}
               >
                 {l.label}
@@ -57,7 +62,7 @@ export function LandingNavbar() {
               href="/demo/royal"
               target="_blank"
               rel="noopener noreferrer"
-              className={cn("text-[13px] font-medium transition-colors", linkTone)}
+              className={cn("text-[13px] font-medium transition-colors", linkTone, underline)}
             >
               View a Live Wedding
             </Link>

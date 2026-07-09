@@ -535,6 +535,37 @@
   flex-shrink: 0;
 }
 
+/* Staggered load-in for above-the-fold hero content. Falls back to visible
+   under reduced motion (opacity is only zeroed when motion is allowed). */
+@keyframes l-load {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing .l-load {
+    opacity: 0;
+    animation: l-load 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+
+/* Editorial marquee ribbon — seamless infinite scroll (content duplicated). */
+@keyframes l-marquee {
+  to { transform: translateX(-50%); }
+}
+.landing .l-marquee {
+  display: inline-flex;
+  width: max-content;
+  will-change: transform;
+  animation: l-marquee 34s linear infinite;
+}
+.landing .l-marquee-rev { animation-direction: reverse; }
+@media (prefers-reduced-motion: reduce) {
+  .landing .l-marquee { animation: none; }
+}
+
+/* Continuous soft glow on the hero wordmark underline. */
+@keyframes l-shimmer { to { background-position: 200% center; } }
+
 /* ── Motion ────────────────────────────────────────────────────────────────
    Gentle, celebratory movement. All of it collapses under reduced-motion. */
 @keyframes utsav-spin {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LandingNavbar } from "@/components/landing/navbar";
 import { LandingHero } from "@/components/landing/hero";
 import { GuestPersonalisationDemo } from "@/components/landing/guest-demo";
+import { Marquee } from "@/components/landing/marquee";
 import {
   BrandStatement,
   HowItWorks,
@@ -32,6 +33,19 @@ export default function LandingPage() {
       <main>
         <LandingHero />
         <BrandStatement />
+        <div className="border-y border-[color:var(--l-gold)]/20 bg-[color:var(--l-wine)] text-[color:var(--l-ivory)]">
+          <Marquee
+            items={[
+              "Haldi",
+              "Mehendi",
+              "Sangeet",
+              "Cocktail",
+              "The Wedding",
+              "Reception",
+              "Vidaai",
+            ]}
+          />
+        </div>
         <GuestPersonalisationDemo />
         <HowItWorks />
         <ExperiencePreview />

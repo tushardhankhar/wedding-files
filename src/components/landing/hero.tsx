@@ -36,11 +36,11 @@ export function LandingHero() {
       <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-5 pb-24 pt-32 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
         {/* Copy */}
         <div className="text-center lg:text-left">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]">
+          <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
             The digital guest experience for Indian weddings
           </p>
 
-          <h1 className="l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]">
+          <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
             Your wedding.
             <br />
             Their invitation.
@@ -66,13 +66,13 @@ export function LandingHero() {
             .
           </h1>
 
-          <p className="mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0">
+          <p className="l-load mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
             Create a beautiful, private wedding experience where every family
             sees only the events they&apos;re invited to — and RSVPs in
             seconds.
           </p>
 
-          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.56s" }}>
             <Link
               href="/demo/royal"
               target="_blank"
@@ -89,13 +89,13 @@ export function LandingHero() {
             </a>
           </div>
 
-          <p className="mt-5 text-xs tracking-wide text-white/55">
+          <p className="l-load mt-5 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
             No app. No guest accounts. Just one beautiful invitation link.
           </p>
         </div>
 
         {/* Floating invitation card */}
-        <div className="relative mx-auto w-full max-w-sm lg:mx-0">
+        <div className="l-load relative mx-auto w-full max-w-sm lg:mx-0" style={{ animationDelay: "0.34s" }}>
           <div ref={cardRef} className="transition-transform duration-300 ease-out">
             <div className="l-float relative rounded-3xl bg-[color:var(--l-ivory)] p-7 shadow-[0_44px_90px_-28px_rgba(0,0,0,.7)]">
               <span
