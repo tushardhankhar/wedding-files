@@ -16,13 +16,16 @@ import {
 export const GUEST_COOKIE = "utsav_guest";
 const TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
-export interface GuestSession {
-  groupId: string;
-  weddingId: string;
-  slug: string;
-}
+export type GuestSession =
+  | { kind: "group"; groupId: string; weddingId: string; slug: string }
+  | { kind: "share"; shareLinkId: string; weddingId: string; slug: string };
 
-interface Payload extends GuestSession {
+interface Payload {
+  kind?: "group" | "share";
+  groupId?: string;
+  shareLinkId?: string;
+  weddingId?: string;
+  slug?: string;
   exp: number; // epoch seconds
 }
 
@@ -62,21 +65,34 @@ export async function readGuestSession(): Promise<GuestSession | null> {
   if (!timingSafeEqualHex(sig, expected)) return null;
 
   try {
-    const payload = JSON.parse(base64UrlDecodeString(body)) as Payload;
+    const p = JSON.parse(base64UrlDecodeString(body)) as Payload;
     if (
-      typeof payload.exp !== "number" ||
-      payload.exp < Date.now() / 1000 ||
-      !payload.groupId ||
-      !payload.weddingId ||
-      !payload.slug
+      typeof p.exp !== "number" ||
+      p.exp < Date.now() / 1000 ||
+      !p.weddingId ||
+      !p.slug
     ) {
       return null;
     }
-    return {
-      groupId: payload.groupId,
-      weddingId: payload.weddingId,
-      slug: payload.slug,
-    };
+    // Share session.
+    if (p.kind === "share" && p.shareLinkId) {
+      return {
+        kind: "share",
+        shareLinkId: p.shareLinkId,
+        weddingId: p.weddingId,
+        slug: p.slug,
+      };
+    }
+    // Group session (kind may be absent on older cookies).
+    if ((p.kind === "group" || !p.kind) && p.groupId) {
+      return {
+        kind: "group",
+        groupId: p.groupId,
+        weddingId: p.weddingId,
+        slug: p.slug,
+      };
+    }
+    return null;
   } catch {
     return null;
   }

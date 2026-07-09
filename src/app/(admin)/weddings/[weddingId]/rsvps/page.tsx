@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
-import { listWeddingRsvps } from "@/modules/rsvp/server/queries";
+import { listWeddingRsvps, listShareRsvps } from "@/modules/rsvp/server/queries";
 import {
   Card,
   CardContent,
@@ -20,9 +20,10 @@ export default async function RsvpsPage({
   const wedding = await getWeddingById(weddingId);
   if (!wedding) notFound();
 
-  const [events, byEvent] = await Promise.all([
+  const [events, byEvent, directByEvent] = await Promise.all([
     listEvents(weddingId),
     listWeddingRsvps(weddingId),
+    listShareRsvps(weddingId),
   ]);
 
   const totalAttending = Object.values(byEvent).reduce(
@@ -60,6 +61,8 @@ export default async function RsvpsPage({
         <ul className="space-y-4">
           {events.map((e) => {
             const r = byEvent[e.id] ?? { attending: [], declined: [] };
+            const direct = directByEvent[e.id] ?? [];
+            const directHeads = direct.reduce((n, d) => n + d.partySize, 0);
             return (
               <li key={e.id}>
                 <Card>
@@ -89,6 +92,19 @@ export default async function RsvpsPage({
                         </p>
                         <p className="text-muted-foreground">
                           {r.declined.map((g) => g.name).join(", ")}
+                        </p>
+                      </div>
+                    ) : null}
+                    {direct.length > 0 ? (
+                      <div>
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[color:var(--gold-deep)]">
+                          Direct responses ({directHeads} guest
+                          {directHeads === 1 ? "" : "s"})
+                        </p>
+                        <p className="text-muted-foreground">
+                          {direct
+                            .map((d) => `${d.name} (${d.partySize})`)
+                            .join(", ")}
                         </p>
                       </div>
                     ) : null}

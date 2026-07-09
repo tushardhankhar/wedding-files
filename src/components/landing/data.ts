@@ -1,0 +1,141 @@
+/**
+ * Landing page content data — kept apart from the visual components.
+ */
+
+// ── Replaceable photography slots ───────────────────────────────────────────
+// Drop licensed Indian-wedding photography here (e.g. files under
+// /public/landing/*.avif) and every PhotoArt placeholder upgrades itself to a
+// real <img>. Until then, editorial gradient art renders in each slot.
+export interface ImageSlot {
+  src: string;
+  alt: string;
+}
+export const IMAGES: Partial<Record<string, ImageSlot>> = {
+  // hero:     { src: "/landing/hero-baraat.avif", alt: "Bride and groom celebrating as guests throw petals" },
+  // couple:   { src: "/landing/couple.avif", alt: "Couple laughing during their reception" },
+  // haldi:    { src: "/landing/haldi.avif", alt: "Vibrant haldi ceremony" },
+  // sangeet:  { src: "/landing/sangeet.avif", alt: "Family dancing at the sangeet" },
+  // mandap:   { src: "/landing/mandap.avif", alt: "Marigold-decorated wedding mandap" },
+};
+
+// ── Guest personalisation demo ─────────────────────────────────────────────
+export interface DemoEvent {
+  id: string;
+  name: string;
+  hi: string;
+  date: string;
+  time: string;
+  venue: string;
+  /** accent used on the event card rail */
+  color: string;
+}
+
+export const DEMO_EVENTS: DemoEvent[] = [
+  { id: "haldi", name: "Haldi", hi: "हल्दी", date: "10 Dec", time: "10:00 AM", venue: "The Garden Lawns", color: "var(--l-saffron)" },
+  { id: "mehendi", name: "Mehendi", hi: "मेहंदी", date: "10 Dec", time: "4:00 PM", venue: "The Courtyard", color: "var(--l-emerald)" },
+  { id: "sangeet", name: "Sangeet", hi: "संगीत", date: "11 Dec", time: "7:00 PM", venue: "The Leela Palace", color: "var(--l-purple)" },
+  { id: "wedding", name: "Wedding", hi: "विवाह", date: "12 Dec", time: "6:30 PM", venue: "The Grand Courtyard", color: "var(--l-red)" },
+  { id: "reception", name: "Reception", hi: "स्वागत", date: "13 Dec", time: "8:00 PM", venue: "The Imperial Ballroom", color: "var(--l-gold)" },
+];
+
+export interface DemoFamily {
+  id: string;
+  label: string;
+  greeting: string;
+  members: string[];
+  eventIds: string[];
+}
+
+export const DEMO_FAMILIES: DemoFamily[] = [
+  {
+    id: "sharma",
+    label: "Sharma Family",
+    greeting: "Namaste Sharma Family",
+    members: ["Rajesh", "Neetu", "Rohan", "Riya"],
+    eventIds: ["sangeet", "wedding", "reception"],
+  },
+  {
+    id: "kapoor",
+    label: "Kapoor Family",
+    greeting: "Namaste Kapoor Family",
+    members: ["Vikram", "Simran", "Aanya"],
+    eventIds: ["haldi", "mehendi", "sangeet", "wedding", "reception"],
+  },
+  {
+    id: "office",
+    label: "Aarav’s Office",
+    greeting: "Hello, Team Aarav",
+    members: ["A table of 12"],
+    eventIds: ["wedding", "reception"],
+  },
+];
+
+// ── Theme showcase ─────────────────────────────────────────────────────────
+export interface ShowcaseTheme {
+  id: string;
+  name: string;
+  vibe: string;
+  tagline: string;
+  art: string; // PhotoArt recipe key
+  palette: string[];
+  /** Registry theme id — powers the live /demo/[themeId] preview. */
+  demo: string;
+}
+
+export const SHOWCASE_THEMES: ShowcaseTheme[] = [
+  { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal" },
+  { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani" },
+  { id: "gulmohar", name: "The Gulmohar", vibe: "Modern Indian", tagline: "Colour in full bloom.", art: "gulmohar", palette: ["#d81b60", "#f4917f", "#fce3c8"], demo: "ivory" },
+  { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi" },
+  { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
+  { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian" },
+];
+
+// ── Pricing ────────────────────────────────────────────────────────────────
+export interface Plan {
+  name: string;
+  prefix?: string;
+  price: string;
+  blurb: string;
+  label?: string;
+  points: string[];
+}
+
+export const PLANS: Plan[] = [
+  {
+    name: "Essential",
+    prefix: "Starting at",
+    price: "₹7,999",
+    blurb: "For intimate celebrations.",
+    points: ["A beautiful wedding site", "Broadcast invitation link", "Event details & RSVP", "English + Hindi"],
+  },
+  {
+    name: "Signature",
+    price: "₹14,999",
+    blurb: "The full guest experience.",
+    label: "Most loved",
+    points: ["Personal family invitations", "Unlimited events", "Bilingual experience", "Advanced RSVP", "Custom domain"],
+  },
+  {
+    name: "Royale",
+    price: "₹29,999",
+    blurb: "For celebrations that deserve something entirely their own.",
+    points: ["Custom visual styling", "Premium motion", "Video hero", "Priority setup"],
+  },
+];
+
+// ── Built around how Indian weddings actually work ─────────────────────────
+export const REALITY_NOTES: string[] = [
+  "Because an invitation is often for a family, not an email address.",
+  "Because 500 guests don’t attend the same five events.",
+  "Because “Sharma uncle ke kitne log aa rahe hain?” should not require six phone calls.",
+];
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+export const NAV_LINKS: { label: string; href: string }[] = [
+  { label: "How it works", href: "#how-it-works" },
+  { label: "For Couples", href: "#for-couples" },
+  { label: "For Planners", href: "#for-planners" },
+  { label: "Themes", href: "#themes" },
+  { label: "Pricing", href: "#pricing" },
+];

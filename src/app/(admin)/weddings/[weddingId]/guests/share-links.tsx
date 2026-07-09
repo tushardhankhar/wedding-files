@@ -1,0 +1,235 @@
+"use client";
+
+import { useActionState, useState, useTransition } from "react";
+import type { ShareLinkDetail } from "@/modules/guests/types";
+import {
+  createShareLinkAction,
+  regenerateShareLinkAction,
+  deleteShareLinkAction,
+  setShareLinkAllEventsAction,
+  toggleShareLinkEventAction,
+  type InviteLinkState,
+} from "@/modules/guests/server/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface EventLite {
+  id: string;
+  name: string;
+}
+
+function LinkBox({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  const wa = `https://wa.me/?text=${encodeURIComponent(
+    `You're invited to our celebrations 🎉 View & RSVP: ${url}`
+  )}`;
+  return (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Input readOnly value={url} className="font-mono text-xs" />
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={async () => {
+            await navigator.clipboard.writeText(url);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          }}
+        >
+          {copied ? "Copied" : "Copy"}
+        </Button>
+      </div>
+      <a
+        href={wa}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm text-primary hover:underline"
+      >
+        Share via WhatsApp →
+      </a>
+    </div>
+  );
+}
+
+function ShareLinkCard({
+  link,
+  weddingId,
+  slug,
+  events,
+}: {
+  link: ShareLinkDetail;
+  weddingId: string;
+  slug: string;
+  events: EventLite[];
+}) {
+  const [pending, startTransition] = useTransition();
+  const [allEvents, setAllEvents] = useState(link.allEvents);
+  const [chosen, setChosen] = useState<Set<string>>(
+    () => new Set(link.eventIds)
+  );
+  const [url, setUrl] = useState<string | null>(null);
+
+  function toggleAll(next: boolean) {
+    setAllEvents(next);
+    startTransition(() => {
+      void setShareLinkAllEventsAction(link.id, weddingId, next);
+    });
+  }
+  function toggleEvent(id: string, on: boolean) {
+    setChosen((prev) => {
+      const s = new Set(prev);
+      if (on) s.add(id);
+      else s.delete(id);
+      return s;
+    });
+    startTransition(() => {
+      void toggleShareLinkEventAction(link.id, id, weddingId, on);
+    });
+  }
+  function getLink() {
+    startTransition(async () => {
+      const res = await regenerateShareLinkAction(link.id, weddingId, slug);
+      if (res.url) setUrl(res.url);
+    });
+  }
+  function remove() {
+    if (!window.confirm(`Delete the "${link.label}" link?`)) return;
+    startTransition(() => {
+      void deleteShareLinkAction(link.id, weddingId);
+    });
+  }
+
+  return (
+    <Card>
+      <CardContent className="space-y-4 pt-6">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-heading text-base font-semibold">{link.label}</h3>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-destructive"
+            onClick={remove}
+            disabled={pending}
+          >
+            Delete
+          </Button>
+        </div>
+
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            className="size-4"
+            checked={allEvents}
+            onChange={(e) => toggleAll(e.target.checked)}
+          />
+          Invite to all events
+        </label>
+
+        {!allEvents ? (
+          <div className="flex flex-wrap gap-2">
+            {events.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Add events first.</p>
+            ) : (
+              events.map((e) => {
+                const on = chosen.has(e.id);
+                return (
+                  <button
+                    key={e.id}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => toggleEvent(e.id, !on)}
+                    className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                      on
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-[color:var(--gold-line)]"
+                    }`}
+                  >
+                    {on ? "✓ " : ""}
+                    {e.name}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        ) : null}
+
+        {url ? (
+          <LinkBox url={url} />
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={getLink}
+            disabled={pending}
+          >
+            Get shareable link
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+const initial: InviteLinkState = {};
+
+export function ShareLinks({
+  weddingId,
+  slug,
+  events,
+  links,
+}: {
+  weddingId: string;
+  slug: string;
+  events: EventLite[];
+  links: ShareLinkDetail[];
+}) {
+  const [state, create, creating] = useActionState(
+    createShareLinkAction.bind(null, weddingId, slug),
+    initial
+  );
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardContent className="space-y-3 pt-6">
+          <form
+            key={links.length}
+            action={create}
+            className="flex flex-col gap-2 sm:flex-row"
+          >
+            <Input
+              name="label"
+              required
+              maxLength={80}
+              placeholder="Link name — e.g. Reception guests"
+              className="flex-1"
+            />
+            <Button type="submit" disabled={creating}>
+              {creating ? "Creating…" : "Create link"}
+            </Button>
+          </form>
+          {state.error ? (
+            <p className="text-sm text-destructive" role="alert">
+              {state.error}
+            </p>
+          ) : null}
+          {state.url ? <LinkBox url={state.url} /> : null}
+        </CardContent>
+      </Card>
+
+      {links.map((link) => (
+        <ShareLinkCard
+          key={link.id}
+          link={link}
+          weddingId={weddingId}
+          slug={slug}
+          events={events}
+        />
+      ))}
+    </div>
+  );
+}

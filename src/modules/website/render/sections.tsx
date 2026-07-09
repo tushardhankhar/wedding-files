@@ -88,9 +88,11 @@ export function Story({ config }: { config: WebsiteConfig }) {
 export function Events({
   events,
   rsvp,
+  previewHint,
 }: {
   events: WeddingEvent[];
   rsvp?: RsvpData;
+  previewHint?: boolean;
 }) {
   if (events.length === 0) return null;
   return (
@@ -136,14 +138,14 @@ export function Events({
                 />
               ) : null}
               <div className="row">
-                {rsvp ? null : (
+                {previewHint && !rsvp ? (
                   <span className="text-note">
                     <TT
                       en="Your guests will RSVP here"
                       hi="आपके मेहमान यहाँ उत्तर देंगे"
                     />
                   </span>
-                )}
+                ) : null}
                 {e.mapsUrl ? (
                   <a
                     className="w-btn"

@@ -174,6 +174,239 @@
   );
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE MAHARAJA — standalone royal theme (registry id: "royal").
+   Unlike the token themes, this theme has its own renderer (MaharajaView) and
+   visual language: palace wine + antique gold on old-ivory paper, monumental
+   Cormorant serif, heavy deliberate motion. Scoped under .mhj.
+   ══════════════════════════════════════════════════════════════════════════ */
+.mhj {
+  --m-wine: #3a0717;
+  --m-maroon: #620f25;
+  --m-red: #8b1835;
+  --m-gold: #b98a3d;
+  --m-gold2: #d1aa62;
+  --m-ivory: #f7ebd3;
+  --m-ivory2: #efdfbe;
+  --m-mahog: #1d090d;
+  --m-emerald: #0e5b48;
+  --m-ink: #2c1218;
+  --m-ink-soft: #7d5f58;
+
+  background: var(--m-ivory);
+  color: var(--m-ink);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: clip;
+}
+.mhj[data-lang="en"] .l-hi { display: none !important; }
+.mhj[data-lang="hi"] .l-en { display: none !important; }
+.mhj .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+
+.mhj .m-serif {
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+}
+.mhj .m-script {
+  font-family: var(--font-great-vibes), "Segoe Script", cursive;
+}
+.mhj ::selection { background: var(--m-gold); color: var(--m-wine); }
+
+/* old handmade paper grain */
+.mhj .m-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.13;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* metallic antique gold text — subtle warm gradient, no yellow neon */
+.mhj .m-goldtext {
+  background: linear-gradient(172deg, #e6c98a 0%, var(--m-gold2) 38%, var(--m-gold) 62%, #8f6828 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ceremonial entrance doors — heavy, slow, deliberate */
+.mhj .m-door {
+  transition: transform 1.6s cubic-bezier(0.72, 0, 0.16, 1);
+}
+.mhj .m-door[data-open="true"][data-side="l"] { transform: translateX(-101%); }
+.mhj .m-door[data-open="true"][data-side="r"] { transform: translateX(101%); }
+.mhj .m-door-content {
+  transition: opacity 0.8s ease;
+}
+.mhj .m-door-content[data-open="true"] { opacity: 0; }
+
+/* very slow cinematic scale on hero/chapter art */
+@keyframes mhj-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+.mhj .m-kenburns { animation: mhj-kenburns 30s ease-out forwards; }
+
+/* editorial scroll reveal — slower and heavier than the landing's */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .mhj [data-mreveal] {
+      animation: mhj-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 38%;
+    }
+  }
+}
+@keyframes mhj-rise {
+  from { opacity: 0; transform: translateY(42px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* gold line that draws itself */
+@keyframes mhj-draw { to { stroke-dashoffset: 0; } }
+.mhj .m-draw path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: mhj-draw 2s ease-out 0.4s forwards;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Landing page — JOIN THE UTSAV
+   A self-contained visual system scoped under .landing. Structural colours are
+   Dark Wine + Warm Ivory; Rani Pink / Marigold / Saffron / Emerald are
+   celebratory accents; Gold is reserved for premium details.
+   ══════════════════════════════════════════════════════════════════════════ */
+.landing {
+  --l-wine: #3b1022;
+  --l-wine-deep: #2a0a18;
+  --l-red: #8e1838;
+  --l-pink: #d81b60;
+  --l-marigold: #f47c20;
+  --l-saffron: #f5a623;
+  --l-purple: #5a236e;
+  --l-emerald: #087f5b;
+  --l-gold: #c99a3d;
+  --l-gold-lite: #e8c877;
+  --l-ivory: #fff8ec;
+  --l-ivory-2: #fbeeda;
+  --l-ink: #3b1022;
+  --l-ink-soft: #86687a;
+  --l-line: #eeddc2;
+  /* lets the shared .mandala utility glow gold inside the landing */
+  --gold-line: rgba(232, 200, 119, 0.5);
+
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  color: var(--l-ink);
+  background: var(--l-ivory);
+  overflow-x: clip;
+}
+.landing .l-display {
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+}
+.landing .l-script {
+  font-family: var(--font-great-vibes), "Segoe Script", cursive;
+}
+.landing .l-deva {
+  font-family: var(--font-noto-deva), var(--font-raleway), sans-serif;
+}
+.landing ::selection {
+  background: var(--l-pink);
+  color: #fff;
+}
+
+/* Film grain — subtle, blended, non-interactive. */
+.landing .l-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Editorial scroll-reveal — progressive enhancement, off under reduced motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .landing [data-reveal] {
+      animation: l-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 42%;
+    }
+  }
+}
+@keyframes l-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Slow float for the hero invitation card & phone mockup. */
+@keyframes l-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.landing .l-float {
+  animation: l-float 7s ease-in-out infinite;
+}
+
+/* Gold underline stroke that draws itself in. */
+@keyframes l-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.landing .l-draw path {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: l-draw 1.4s ease-out 0.5s forwards;
+}
+
+/* Scroll cue. */
+@keyframes l-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.4;
+  }
+}
+.landing .l-cue {
+  animation: l-cue 2.2s ease-in-out infinite;
+}
+
+/* Horizontal theme gallery. */
+.landing .l-gallery {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--l-gold) transparent;
+}
+.landing .l-gallery > * {
+  scroll-snap-align: center;
+  flex-shrink: 0;
+}
+
 /* ── Motion ────────────────────────────────────────────────────────────────
    Gentle, celebratory movement. All of it collapses under reduced-motion. */
 @keyframes utsav-spin {
@@ -361,6 +594,19 @@
 .wsite .rsvp-member { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .wsite .rsvp-member > span:first-child { font-size: 14px; }
 .wsite .text-note { font-size: 13px; color: var(--w-ink-soft); font-style: italic; }
+
+/* self-RSVP (broadcast link) */
+.wsite .self-rsvp { max-width: 540px; margin: 0 auto; }
+.wsite .self-rsvp label { display: block; font-family: var(--w-sans); font-size: 13px; margin-bottom: 6px; color: var(--w-ink); }
+.wsite .self-rsvp input[type="text"], .wsite .self-rsvp input[type="number"] {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--w-line); background: var(--w-surface);
+  color: var(--w-ink); font-family: var(--w-sans); font-size: 14px;
+}
+.wsite .self-rsvp .events-check { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.wsite .self-rsvp .events-check label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; }
+.wsite .self-rsvp .thanks { text-align: center; color: var(--w-ink-soft); max-width: 42ch; margin: 0 auto; }
+.wsite .self-rsvp .space-y-4 > * + * { margin-top: 16px; }
 
 /* venue + gallery + family + faq */
 .wsite .venue { display: grid; gap: 16px; grid-template-columns: 1fr; }

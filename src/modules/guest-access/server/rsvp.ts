@@ -24,7 +24,7 @@ export async function submitRsvpAction(
   }
 
   const session = await readGuestSession();
-  if (!session || session.slug !== slug) {
+  if (!session || session.kind !== "group" || session.slug !== slug) {
     return { error: "Your session has expired — please reopen your invite link." };
   }
 
@@ -54,7 +54,9 @@ export async function submitRsvpAction(
       { guest_id: guestId, event_id: eventId, status },
       { onConflict: "guest_id,event_id" }
     );
-  if (error) return { error: "Could not save your RSVP. Please try again." };
+  if (error) {
+    return { error: `Could not save your RSVP: ${error.message}` };
+  }
 
   revalidatePath(`/w/${slug}`);
   return { ok: true };
