@@ -58,6 +58,66 @@ function toGuestWedding(w: WeddingJoin): GuestWedding {
   };
 }
 
+/**
+ * Public, session-free identity for a wedding site — just the couple's names,
+ * initials, date and theme. Safe to expose by slug because these already appear
+ * on the guest-facing site; it powers the per-wedding favicon, apple icon and
+ * link-share (Open Graph) preview so a shared link carries the couple's
+ * initials instead of the generic app logo. It selects NO gated data
+ * (events/guests/RSVPs stay behind loadGuestSite's session gate).
+ */
+export interface SiteIdentity {
+  names: string;
+  /** Compact monogram for tiny surfaces, e.g. "AM". */
+  initials: string;
+  /** Spaced monogram for larger surfaces, e.g. "A & M". */
+  monogram: string;
+  dateLabel: string | null;
+  themeId: string;
+}
+
+export async function loadSiteIdentity(
+  slug: string
+): Promise<SiteIdentity | null> {
+  const svc = createSupabaseServiceClient();
+  const { data } = await svc
+    .from("weddings")
+    .select("title, partner_one_name, partner_two_name, event_date, theme_id")
+    .eq("slug", slug)
+    .maybeSingle<{
+      title: string;
+      partner_one_name: string | null;
+      partner_two_name: string | null;
+      event_date: string | null;
+      theme_id: string;
+    }>();
+  if (!data) return null;
+
+  const one = data.partner_one_name?.trim();
+  const two = data.partner_two_name?.trim();
+  const letters =
+    one && two
+      ? [one[0], two[0]]
+      : data.title
+          .split(/\s+/)
+          .slice(0, 2)
+          .map((w) => w[0] ?? "");
+
+  return {
+    names: one && two ? `${one} & ${two}` : data.title,
+    initials: letters.join("").toUpperCase(),
+    monogram: letters.join(" & ").toUpperCase(),
+    dateLabel: data.event_date
+      ? new Date(`${data.event_date}T00:00:00`).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : null,
+    themeId: data.theme_id,
+  };
+}
+
 function sortEvents(rows: EventRow[]): WeddingEvent[] {
   return rows.map(mapEventRow).sort((a, b) => {
     const d = (a.eventDate ?? "").localeCompare(b.eventDate ?? "");

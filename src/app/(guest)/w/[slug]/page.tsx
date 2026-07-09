@@ -1,8 +1,36 @@
-import { loadGuestSite } from "@/modules/guest-access/server/guest-site";
+import type { Metadata } from "next";
+import {
+  loadGuestSite,
+  loadSiteIdentity,
+} from "@/modules/guest-access/server/guest-site";
 import { getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
 import { SiteView } from "@/modules/website/render/site";
 import { Lotus } from "@/components/brand/motifs";
+
+// Link-share metadata: the couple's names + date so a shared link previews the
+// wedding (title, description) alongside the generated Open Graph image. Uses
+// the public, session-free identity so crawlers without a guest cookie still
+// get a rich preview.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const identity = await loadSiteIdentity(slug);
+  if (!identity) return { title: "A private invitation · Join the Utsav" };
+
+  const title = identity.dateLabel
+    ? `${identity.names} · ${identity.dateLabel}`
+    : identity.names;
+  const description = `You're invited to the wedding of ${identity.names}.`;
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+  };
+}
 
 // The live guest site: the Phase 3 renderer fed the Phase 6 authorized data,
 // so a guest sees the full wedding but ONLY the events their group is invited to.

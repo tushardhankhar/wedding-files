@@ -188,7 +188,7 @@ export function CouplesSection() {
   return (
     <section id="for-couples" className="scroll-mt-24 bg-[color:var(--l-ivory)] px-5 py-24 sm:px-8">
       <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-        <PhotoArt slot="couple" caption="Your day, your way" className="h-[420px] rounded-[26px] shadow-[0_36px_80px_-32px_rgba(59,16,34,.5)]" />
+        <PhotoArt slot="couple" className="h-[420px] rounded-[26px] shadow-[0_36px_80px_-32px_rgba(59,16,34,.5)]" />
         <div data-reveal>
           <h2 className="l-display text-balance text-[clamp(1.9rem,4vw,3rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
             Your wedding has a hundred moving parts.
