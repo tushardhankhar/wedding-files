@@ -46,7 +46,7 @@ const PATTERN = {
 export const THEMES: Theme[] = [
   {
     id: "royal",
-    name: "Royal",
+    name: "The Maharaja",
     description: "Midnight navy & antique gold, mandala — regal, understated.",
     swatch: ["#221c33", "#b8912f", "#7a3d94"],
     heroMotif: "mandala",
@@ -72,7 +72,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "ivory",
-    name: "Ivory Classic",
+    name: "The Gulmohar",
     description: "Warm cream & rosewood, hairline trim — timeless, minimal.",
     swatch: ["#fbf7f0", "#c2a24a", "#9c6b84"],
     heroMotif: "minimal",
@@ -98,7 +98,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "christian",
-    name: "Chapel Rose",
+    name: "The Vow",
     description:
       "Ivory, blush & champagne, botanical arch & hand-script — garden elegance.",
     swatch: ["#faf6ef", "#c9a86a", "#b76e79"],
@@ -126,7 +126,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "punjabi",
-    name: "Phulkari",
+    name: "The Anand Karaj",
     description:
       "Fuchsia & marigold, hanging garland — joyful, festive, luxe.",
     swatch: ["#8a1746", "#f2a71b", "#d81b60"],
@@ -153,7 +153,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "south-indian",
-    name: "Kanjeevaram",
+    name: "The Kalyanam",
     description:
       "Maroon & temple gold on sandal, gopuram arch — South Indian grandeur.",
     swatch: ["#5c1620", "#c69a2e", "#1f5c3d"],
@@ -180,7 +180,7 @@ export const THEMES: Theme[] = [
   },
   {
     id: "rajasthani",
-    name: "Mewar",
+    name: "The Rajputana",
     description:
       "Royal indigo, gold & vermilion, cusped jharokha arch — haveli opulence.",
     swatch: ["#1e2a5a", "#caa04a", "#b5372e"],

@@ -151,8 +151,8 @@ src/
   name-lock trigger, invite-only login.
 - **Phase 2 — Events** ✅ client-managed custom events (name, date/time, venue, map
   link, details); not hardcoded; RLS-scoped via `can_manage_wedding()`.
-- **Phase 3 — Themes, Renderer & Preview** ✅ token-based theme registry (Royal +
-  Ivory Classic over one `.wsite` stylesheet), **admin-only** theme picker, the
+- **Phase 3 — Themes, Renderer & Preview** ✅ token-based theme registry (The Maharaja +
+  The Gulmohar over one `.wsite` stylesheet), **admin-only** theme picker, the
   config-driven bilingual **rendering engine** (`modules/website/render`), and a
   full-bleed **owner Preview** at `/preview/[weddingId]`. Reused for guests in Phase 7.
 - **Phase 4 — Website content** ✅ bilingual (EN/HI) config authoring at
@@ -174,9 +174,12 @@ src/
   Guest site shows per-member Going/No toggles; admins view responses at
   `/weddings/[id]/rsvps`.
 - **Phase 9 — Photos / media** (Cloudflare R2 presigned uploads; gallery section).
-- **Phase 10 — Polish & hardening** (in progress) — 6 themes shipped (Royal, Ivory
-  Classic, Chapel Rose/Christian, Phulkari/Punjabi, Kanjeevaram/South Indian,
-  Mewar/Rajasthani) with per-theme display fonts, hero flourish, and scroll-reveal.
+- **Phase 10 — Polish & hardening** (in progress) — 6 themes shipped: The Maharaja
+  (id `royal`), The Gulmohar (id `ivory`), The Vow (id `christian`), The Anand Karaj
+  (id `punjabi`), The Kalyanam (id `south-indian`), The Rajputana (id `rajasthani`).
+  Display names match the landing page's marketing names 1:1 (ids kept stable —
+  they're stored as `weddings.theme_id`) — per-theme display fonts, hero flourish,
+  and scroll-reveal.
   Remaining: SEO/OG, deploy, final security pass. (Phase 9 media deferred.)
 
 - **Phase 11 — Shareable (broadcast) links** ✅ per-wedding `share_links` scoped to all
@@ -184,5 +187,23 @@ src/
   guest **self-RSVP** (name + headcount) into `share_rsvps`; admin manages links on the
   guests page and sees direct responses in the RSVP dashboard. Coexists with per-group
   personal links (kept, not removed).
+
+- **Phase 12 — Public landing page ("Join the Utsav")** ✅ marketing site at `/`
+  (statically prerendered; the old `/` → dashboard redirect is gone — sign-in via the
+  nav CTA → `/login`). Self-contained visual system scoped under `.landing` in
+  globals.css (wine/ivory structural + pink/marigold/saffron/emerald accents),
+  garland-U monogram + logo lockup (`components/landing/logo.tsx`) and SVG favicon
+  (`app/icon.svg`). Components in `components/landing/`: navbar (transparent→ivory on
+  scroll, full-screen mobile menu), cinematic hero with floating invitation card,
+  interactive guest-personalisation demo (family switcher), how-it-works, phone
+  experience preview, horizontal theme gallery, editorial features, couples/planner
+  (B2B dashboard mock), privacy, reality notes, pricing, final CTA, footer.
+  Photography ships as structured replaceable slots (`IMAGES` in
+  `components/landing/data.ts`) rendered as editorial gradient art until licensed
+  images are dropped into /public/landing — nothing hotlinked. **Live theme demo:**
+  public `/demo/[themeId]` (statically generated for all registry themes) renders the
+  real `WebsiteView` with a fictional sample wedding (`modules/website/demo-data.ts`)
+  plus a theme-switcher bar; the landing's theme gallery cards and every
+  "Live Wedding" CTA link into it.
 
 Each phase = its own migration(s) + module code + minimal UI, independently deployable.

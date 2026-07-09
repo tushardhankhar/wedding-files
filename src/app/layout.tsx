@@ -56,8 +56,8 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "Utsav — Wedding Celebrations",
-  description: "Craft and manage beautiful Indian wedding websites.",
+  title: "Join the Utsav",
+  description: "The digital guest experience for Indian weddings.",
 };
 
 export default function RootLayout({
