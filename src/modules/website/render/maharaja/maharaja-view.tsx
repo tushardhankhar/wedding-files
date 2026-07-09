@@ -428,8 +428,7 @@ export function MaharajaView({
               <span aria-hidden="true" className="absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-[color:var(--m-gold)]/50 to-transparent lg:block" />
               {milestones.map((m, i) => (
                 <div key={i} className={`relative lg:w-[46%] ${i % 2 ? "lg:ml-auto lg:text-left" : "lg:text-right"}`} data-mreveal>
-                  <span aria-hidden="true" className="m-serif pointer-events-none absolute -top-14 left-1/2 -translate-x-1/2 text-[7rem] font-semibold leading-none text-[color:var(--m-gold)]/15 lg:left-auto lg:translate-x-0 lg:text-[9rem]"
-                    style={i % 2 ? { left: "-2rem" } : { right: "-2rem" }}>
+                  <span aria-hidden="true" className={`m-serif pointer-events-none absolute -top-14 left-1/2 -translate-x-1/2 text-[7rem] font-semibold leading-none text-[color:var(--m-gold)]/15 lg:translate-x-0 lg:text-[9rem] ${i % 2 ? "lg:left-[-2rem] lg:right-auto" : "lg:right-[-2rem] lg:left-auto"}`}>
                     {m.when}
                   </span>
                   <p className="relative text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--m-gold)]">{m.when}</p>

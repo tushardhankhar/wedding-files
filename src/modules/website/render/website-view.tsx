@@ -51,6 +51,7 @@ export function WebsiteView({
   ownerPreview,
 }: WebsiteViewProps) {
   const [lang, setLang] = useState<"en" | "hi">("en");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const hasVenue = events.some((e) => e.venueName || e.venueAddress);
   const links: Array<[string, string, string]> = [];
@@ -67,13 +68,15 @@ export function WebsiteView({
     <div className="wsite" data-lang={lang} style={theme.vars}>
       <nav className="w-nav">
         <span className="mono">{initials}</span>
-        <div className="links">
-          {links.map(([href, en, hi]) => (
-            <a href={href} key={href}>
-              <TT en={en} hi={hi} />
-            </a>
-          ))}
-        </div>
+        {links.length > 0 ? (
+          <div className={menuOpen ? "links open" : "links"} id="w-menu">
+            {links.map(([href, en, hi]) => (
+              <a href={href} key={href} onClick={() => setMenuOpen(false)}>
+                <TT en={en} hi={hi} />
+              </a>
+            ))}
+          </div>
+        ) : null}
         <div className="right">
           {chip ? (
             <span className="w-chip">
@@ -96,6 +99,18 @@ export function WebsiteView({
               हिं
             </button>
           </div>
+          {links.length > 0 ? (
+            <button
+              type="button"
+              className="burger"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              aria-controls="w-menu"
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              {menuOpen ? "✕" : "☰"}
+            </button>
+          ) : null}
         </div>
       </nav>
 
