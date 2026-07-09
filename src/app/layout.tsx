@@ -56,7 +56,7 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "Join the Jashan",
+  title: "Join the Jashn",
   description: "The digital guest experience for Indian weddings.",
 };
 

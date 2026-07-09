@@ -755,7 +755,7 @@ export function MaharajaView({
             <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-[color:var(--m-ivory)]/50">{dateLabel}</p>
           ) : null}
           <p className="mt-10 text-[9px] uppercase tracking-[0.3em] text-[color:var(--m-ivory)]/35">
-            <TT en="Crafted with celebration · Jashan" hi="प्रेम से बनाया गया · जश्न" />
+            <TT en="Crafted with celebration · Jashn" hi="प्रेम से बनाया गया · जश्न" />
           </p>
         </div>
       </footer>

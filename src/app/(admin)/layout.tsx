@@ -28,7 +28,7 @@ export default async function AdminLayout({
           <Link href="/dashboard" className="flex items-center gap-3">
             <Lotus className="h-6 text-[color:var(--gold)]" />
             <span className="font-heading text-lg font-semibold tracking-[0.08em] text-white">
-              JASHAN
+              JASHN
             </span>
             <span className="font-heading text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)]">
               {isAdmin ? "Planner" : "Wedding"}

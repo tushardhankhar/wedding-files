@@ -18,7 +18,7 @@ export default async function LoginPage() {
         ← Back to home
       </Link>
       <InvitationShell
-        title="JASHAN"
+        title="JASHN"
         subtitle="Sign in to craft and manage your celebrations."
         footer="Invited by your planner? Open your link to set up your account."
       >

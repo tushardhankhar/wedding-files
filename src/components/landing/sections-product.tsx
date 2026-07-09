@@ -149,7 +149,7 @@ export function FeatureStory() {
             </p>
             <div className="mt-4 inline-flex items-center gap-2 rounded-2xl rounded-bl-sm bg-[color:var(--l-emerald)]/10 px-4 py-2.5 text-sm text-[color:var(--l-emerald)]">
               <span className="size-2 rounded-full bg-[color:var(--l-emerald)]" />
-              jointhejashan.com/a-meera/…
+              jointhejashn.com/a-meera/…
             </div>
           </div>
           <div className="rounded-2xl border border-[color:var(--l-line)] bg-white p-6">
@@ -215,7 +215,7 @@ export function CouplesSection() {
             href="/login"
             className="mt-8 inline-block rounded-full bg-[color:var(--l-wine)] px-8 py-4 text-sm font-semibold text-[color:var(--l-gold-lite)] transition-transform hover:-translate-y-0.5"
           >
-            Create your Jashan
+            Create your Jashn
           </Link>
         </div>
       </div>
@@ -374,7 +374,7 @@ export function PrivacySection() {
         <div className="mx-auto mt-8 inline-flex items-center gap-3 rounded-full border border-[color:var(--l-line)] bg-white py-2.5 pl-5 pr-2.5 shadow-sm">
           <span aria-hidden="true" className="text-[color:var(--l-gold)]">🔒</span>
           <code className="text-sm text-[color:var(--l-wine)]">
-            jointhejashan.com/a-meera/g/<span className="font-semibold text-[color:var(--l-pink)]">7FK29</span>
+            jointhejashn.com/a-meera/g/<span className="font-semibold text-[color:var(--l-pink)]">7FK29</span>
           </code>
           <span className="rounded-full bg-[color:var(--l-ivory-2)] px-3 py-1.5 text-[11px] font-semibold text-[color:var(--l-ink-soft)]">
             Sharma Family only
@@ -500,14 +500,14 @@ export function PricingPreview() {
           <p className="text-sm text-[color:var(--l-ink-soft)]">
             Planning a destination wedding?{" "}
             <a href="#for-planners" className="font-semibold text-[color:var(--l-pink)] hover:underline">
-              Explore Jashan Concierge →
+              Explore Jashn Concierge →
             </a>
           </p>
           <Link
             href="/login"
             className="mt-6 inline-block rounded-full bg-[color:var(--l-wine)] px-9 py-4 text-sm font-semibold text-[color:var(--l-gold-lite)] transition-transform hover:-translate-y-0.5"
           >
-            Find your Jashan
+            Find your Jashn
           </Link>
         </div>
       </div>
@@ -548,7 +548,7 @@ export function FinalCta() {
             href="/login"
             className="rounded-full border border-white/50 px-8 py-4 text-sm font-semibold text-white transition-colors hover:border-white"
           >
-            Create your Jashan
+            Create your Jashn
           </Link>
         </div>
         <p className="mt-6 text-xs tracking-wide text-white/70">
@@ -621,7 +621,7 @@ export function LandingFooter() {
         </div>
         <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 sm:flex-row">
           <p className="text-xs text-white/45">
-            © {new Date().getFullYear()} Join the Jashan
+            © {new Date().getFullYear()} Join the Jashn
           </p>
           <p className="text-xs text-white/45">Made with celebration in India 🪔</p>
         </div>

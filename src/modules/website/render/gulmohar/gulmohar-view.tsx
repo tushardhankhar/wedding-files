@@ -305,7 +305,7 @@ export function GulmoharView(props: WebsiteViewProps) {
         <p className="g-serif mt-4 text-4xl font-semibold text-[color:var(--g-cream)]">{names}</p>
         {hashtag ? <p className="g-script text-3xl text-[color:var(--g-marigold)]">#{hashtag.replace(/^#/, "")}</p> : null}
         {contacts.length ? <p className="mt-4 text-sm text-[color:var(--g-blush)]">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
-        <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--g-cream)]/70"><TT en="Made with joy · Jashan" hi="ख़ुशी से बनाया गया · जश्न" /></p>
+        <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--g-cream)]/70"><TT en="Made with joy · Jashn" hi="ख़ुशी से बनाया गया · जश्न" /></p>
       </footer>
     </div>
   );

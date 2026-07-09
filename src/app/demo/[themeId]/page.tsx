@@ -28,7 +28,7 @@ export async function generateMetadata({
   const { themeId } = await params;
   const theme = getTheme(themeId);
   return {
-    title: `${theme.name} — Live demo · Join the Jashan`,
+    title: `${theme.name} — Live demo · Join the Jashn`,
     description: `Preview the ${theme.name} wedding theme on a sample celebration.`,
   };
 }
@@ -66,7 +66,7 @@ export default async function DemoPage({
             href="/"
             className="rounded-full px-3 py-1.5 text-xs font-semibold text-white/85 transition-colors hover:text-white"
           >
-            ← Join the Jashan
+            ← Join the Jashn
           </Link>
           <span aria-hidden="true" className="mx-0.5 h-4 w-px bg-white/25" />
           {THEMES.map((t) => {

@@ -84,7 +84,7 @@ export default async function Image({
             textTransform: "uppercase",
           }}
         >
-          Join the Jashan
+          Join the Jashn
         </div>
       </div>
     ),

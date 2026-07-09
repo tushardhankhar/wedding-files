@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * JOIN THE JASHAN — brand mark.
+ * JOIN THE JASHN — brand mark.
  *
  * The monogram is a garland-U: two symmetric strokes (two families) swag down
  * and meet at a single gold bead, with marigold buds at the open ends — the
@@ -35,7 +35,7 @@ export function UtsavMonogram({
 }
 
 /**
- * Full lockup: [ U ] Join the / Jashan. `tone` flips it for dark vs light
+ * Full lockup: [ U ] Join the / Jashn. `tone` flips it for dark vs light
  * grounds; `compact` drops the "Join the" eyebrow.
  */
 export function UtsavLogo({
@@ -69,7 +69,7 @@ export function UtsavLogo({
           </span>
         ) : null}
         <span className={cn("l-display text-[22px] font-semibold tracking-wide", ink)}>
-          Jashan
+          Jashn
         </span>
       </span>
     </span>

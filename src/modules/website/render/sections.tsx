@@ -326,7 +326,7 @@ export function Footer({ config }: { config: WebsiteConfig }) {
         </div>
       ) : null}
       <small>
-        <TT en="Made with love · Jashan" hi="प्रेम से बनाया गया · जश्न" />
+        <TT en="Made with love · Jashn" hi="प्रेम से बनाया गया · जश्न" />
       </small>
     </footer>
   );

@@ -268,7 +268,7 @@ export function KalyanamView(props: WebsiteViewProps) {
         <p className="k-serif mt-4 text-3xl text-[color:var(--k-jasmine)]">{names}</p>
         {dateLabel ? <p className="mt-2 text-[11px] uppercase tracking-[0.35em] text-[color:var(--k-turmeric)]">{dateLabel}</p> : null}
         {contacts.length ? <p className="mt-4 text-sm text-[color:var(--k-jasmine)]/70">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
-        <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--k-jasmine)]/50"><TT en="Sacred · Timeless · Jashan" hi="पावन · कालातीत · जश्न" /></p>
+        <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--k-jasmine)]/50"><TT en="Sacred · Timeless · Jashn" hi="पावन · कालातीत · जश्न" /></p>
       </footer>
     </div>
   );
