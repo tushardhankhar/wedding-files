@@ -263,7 +263,7 @@ export function AnandKarajView(props: WebsiteViewProps) {
         <p className="a-serif mt-4 text-3xl text-[color:var(--a-cream)]">{names}</p>
         {dateLabel ? <p className="mt-2 text-[11px] uppercase tracking-[0.35em] text-[color:var(--a-kesari)]">{dateLabel}</p> : null}
         {contacts.length ? <p className="mt-4 text-sm text-[color:var(--a-cream)]/70">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
-        <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--a-cream)]/50"><TT en="With love · Utsav" hi="प्रेम सहित · उत्सव" /></p>
+        <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--a-cream)]/50"><TT en="With love · Jashan" hi="प्रेम सहित · जश्न" /></p>
       </footer>
     </div>
   );

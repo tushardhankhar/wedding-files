@@ -29,7 +29,7 @@ export function GuestPersonalisationDemo() {
             </span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-            Join the Utsav creates a private wedding experience around every
+            Join the Jashan creates a private wedding experience around every
             guest. Choose a family below and watch their invitation change.
           </p>
         </div>

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Utsav ornament set — lotus emblem, paisley corner flourish, and a mandala
+ * Jashan ornament set — lotus emblem, paisley corner flourish, and a mandala
  * watermark. Strokes use `currentColor`, so color them with a text-* class.
  */
 

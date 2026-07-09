@@ -19,7 +19,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const identity = await loadSiteIdentity(slug);
-  if (!identity) return { title: "A private invitation · Join the Utsav" };
+  if (!identity) return { title: "A private invitation · Join the Jashan" };
 
   const title = identity.dateLabel
     ? `${identity.names} · ${identity.dateLabel}`

@@ -10,7 +10,7 @@ export default async function ClaimPage({
 
   return (
     <InvitationShell
-      title="UTSAV"
+      title="JASHAN"
       subtitle="Set up your account to start managing your wedding."
       footer="You'll use this email and password to sign in later."
     >

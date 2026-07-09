@@ -47,7 +47,7 @@ export function LandingHero() {
             <br />
             One unforgettable{" "}
             <span className="relative inline-block italic text-[color:var(--l-gold-lite)]">
-              Utsav
+              Jashan
               <svg
                 className="l-draw absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 300 14"

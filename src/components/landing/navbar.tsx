@@ -36,7 +36,7 @@ export function LandingNavbar() {
         )}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
-          <Link href="/" aria-label="Join the Utsav — home">
+          <Link href="/" aria-label="Join the Jashan — home">
             <UtsavLogo tone={scrolled ? "dark" : "light"} />
           </Link>
 
@@ -70,7 +70,7 @@ export function LandingNavbar() {
               href="/login"
               className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.7)] transition-transform hover:-translate-y-0.5"
             >
-              Create your Utsav
+              Create your Jashan
             </Link>
           </div>
 
@@ -146,7 +146,7 @@ export function LandingNavbar() {
               className="block rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-6 py-4 text-center text-base font-semibold text-white"
               onClick={() => setOpen(false)}
             >
-              Create your Utsav
+              Create your Jashan
             </Link>
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />

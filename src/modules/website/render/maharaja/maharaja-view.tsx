@@ -192,13 +192,13 @@ export function MaharajaView({
           >
             <RoyalInsignia initials={seal} className="h-32 text-[color:var(--m-gold2)] sm:h-40" />
             {pair ? (
-              <p className="m-serif mt-8 text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase leading-tight tracking-[0.22em] text-[color:var(--m-ivory)]">
-                {pair[0]}
-                <span className="m-goldtext mx-3 normal-case italic tracking-normal">&amp;</span>
+              <p className="m-serif mt-8 max-w-full break-words text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase leading-tight tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
+                {pair[0]}{" "}
+                <span className="m-goldtext mx-3 normal-case italic tracking-normal">&amp;</span>{" "}
                 {pair[1]}
               </p>
             ) : (
-              <p className="m-serif mt-8 text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase tracking-[0.22em] text-[color:var(--m-ivory)]">
+              <p className="m-serif mt-8 max-w-full break-words text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
                 {names}
               </p>
             )}
@@ -340,18 +340,18 @@ export function MaharajaView({
         <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-28 pt-32 sm:px-10">
           {pair ? (
             <>
-              <p className="m-serif self-start text-[clamp(3.2rem,11vw,9rem)] uppercase leading-[0.95] tracking-[0.06em] text-[color:var(--m-ivory)]" data-mreveal>
+              <p className="m-serif max-w-full self-start break-words text-[clamp(3.2rem,11vw,9rem)] uppercase leading-[0.95] tracking-[0.06em] text-[color:var(--m-ivory)]" data-mreveal>
                 {pair[0]}
               </p>
               <div className="my-2 self-center lg:my-0" data-mreveal>
                 <AmpersandSeal className="h-16 w-16 text-[color:var(--m-gold2)] sm:h-20 sm:w-20" />
               </div>
-              <p className="m-serif self-end text-right text-[clamp(3.2rem,11vw,9rem)] uppercase leading-[0.95] tracking-[0.06em] text-[color:var(--m-ivory)]" data-mreveal>
+              <p className="m-serif max-w-full self-end break-words text-right text-[clamp(3.2rem,11vw,9rem)] uppercase leading-[0.95] tracking-[0.06em] text-[color:var(--m-ivory)]" data-mreveal>
                 {pair[1]}
               </p>
             </>
           ) : (
-            <p className="m-serif text-center text-[clamp(2.6rem,9vw,7rem)] uppercase leading-tight tracking-[0.08em] text-[color:var(--m-ivory)]" data-mreveal>
+            <p className="m-serif max-w-full break-words text-center text-[clamp(2.6rem,9vw,7rem)] uppercase leading-tight tracking-[0.08em] text-[color:var(--m-ivory)]" data-mreveal>
               {names}
             </p>
           )}
@@ -755,7 +755,7 @@ export function MaharajaView({
             <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-[color:var(--m-ivory)]/50">{dateLabel}</p>
           ) : null}
           <p className="mt-10 text-[9px] uppercase tracking-[0.3em] text-[color:var(--m-ivory)]/35">
-            <TT en="Crafted with celebration · Utsav" hi="प्रेम से बनाया गया · उत्सव" />
+            <TT en="Crafted with celebration · Jashan" hi="प्रेम से बनाया गया · जश्न" />
           </p>
         </div>
       </footer>
