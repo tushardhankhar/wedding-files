@@ -33,3 +33,32 @@ export async function listWeddingRsvps(
   }
   return byEvent;
 }
+
+export interface DirectRsvp {
+  name: string;
+  partySize: number;
+}
+
+/** Self-RSVP (broadcast link) responses, grouped by event id. */
+export async function listShareRsvps(
+  weddingId: string
+): Promise<Record<string, DirectRsvp[]>> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("share_rsvps")
+    .select("event_id, name, party_size")
+    .eq("wedding_id", weddingId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+
+  const byEvent: Record<string, DirectRsvp[]> = {};
+  for (const r of (data ?? []) as {
+    event_id: string;
+    name: string;
+    party_size: number;
+  }[]) {
+    (byEvent[r.event_id] ??= []).push({ name: r.name, partySize: r.party_size });
+  }
+  return byEvent;
+}

@@ -27,12 +27,25 @@ export function RsvpControls({
   initial: Record<string, RsvpStatus>;
 }) {
   const [state, setState] = useState<Record<string, RsvpStatus>>(initial);
+  const [error, setError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
   function choose(guestId: string, status: RsvpStatus) {
+    const previous = state[guestId];
     setState((prev) => ({ ...prev, [guestId]: status }));
-    startTransition(() => {
-      void submitRsvpAction(slug, eventId, guestId, status);
+    setError(null);
+    startTransition(async () => {
+      const res = await submitRsvpAction(slug, eventId, guestId, status);
+      if (res?.error) {
+        // Revert the optimistic change and show why it failed.
+        setState((prev) => {
+          const next = { ...prev };
+          if (previous) next[guestId] = previous;
+          else delete next[guestId];
+          return next;
+        });
+        setError(res.error);
+      }
     });
   }
 
@@ -40,6 +53,11 @@ export function RsvpControls({
 
   return (
     <div className="rsvp-list">
+      {error ? (
+        <p className="text-note" role="alert" style={{ color: "#a3453f" }}>
+          {error}
+        </p>
+      ) : null}
       {guests.map((g) => (
         <div className="rsvp-member" key={g.id}>
           <span>{g.name}</span>

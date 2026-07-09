@@ -179,4 +179,10 @@ src/
   Mewar/Rajasthani) with per-theme display fonts, hero flourish, and scroll-reveal.
   Remaining: SEO/OG, deploy, final security pass. (Phase 9 media deferred.)
 
+- **Phase 11 — Shareable (broadcast) links** ✅ per-wedding `share_links` scoped to all
+  or chosen events (`0009`), `/w/[slug]/share/[token]` → share-scoped guest session,
+  guest **self-RSVP** (name + headcount) into `share_rsvps`; admin manages links on the
+  guests page and sees direct responses in the RSVP dashboard. Coexists with per-group
+  personal links (kept, not removed).
+
 Each phase = its own migration(s) + module code + minimal UI, independently deployable.

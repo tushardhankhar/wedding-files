@@ -2,11 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
-import { listGroups } from "@/modules/guests/server/queries";
+import { listGroups, listShareLinks } from "@/modules/guests/server/queries";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
 import { AddGroup } from "./add-group";
 import { GroupCard } from "./group-card";
+import { ShareLinks } from "./share-links";
 
 export default async function GuestsPage({
   params,
@@ -17,9 +18,10 @@ export default async function GuestsPage({
   const wedding = await getWeddingById(weddingId);
   if (!wedding) notFound();
 
-  const [events, groups] = await Promise.all([
+  const [events, groups, shareLinks] = await Promise.all([
     listEvents(weddingId),
     listGroups(weddingId),
+    listShareLinks(weddingId),
   ]);
   const eventLite = events.map((e) => ({ id: e.id, name: e.name }));
   const guestCount = groups.reduce((n, g) => n + g.guests.length, 0);
@@ -41,12 +43,27 @@ export default async function GuestsPage({
 
       <div>
         <p className="mb-1 font-heading text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--gold-deep)]">
-          ❁ Guest list
+          ❁ Invitations
         </p>
-        <h1 className="text-2xl font-semibold">Groups &amp; guests</h1>
+        <h1 className="text-2xl font-semibold">Shareable links</h1>
         <p className="text-sm text-muted-foreground">
-          Create a group per family, add its members, and choose which events
-          each group is invited to.
+          Create a broadcast link scoped to all events or a chosen few — anyone
+          with it can view and RSVP with their name and headcount. No guest list
+          needed.
+        </p>
+      </div>
+
+      <ShareLinks
+        weddingId={weddingId}
+        slug={wedding.slug}
+        events={eventLite}
+        links={shareLinks}
+      />
+
+      <div className="pt-4">
+        <h2 className="text-lg font-semibold">Personal invites (optional)</h2>
+        <p className="text-sm text-muted-foreground">
+          Per-family links with each member listed and per-person RSVP.
         </p>
       </div>
 

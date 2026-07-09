@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { GroupDetail } from "../types";
+import type { GroupDetail, ShareLinkDetail } from "../types";
 
 interface GroupRow {
   id: string;
@@ -41,5 +41,33 @@ export async function listGroups(weddingId: string): Promise<GroupDetail[]> {
       .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)),
     invitedEventIds: (g.group_event_invites ?? []).map((i) => i.event_id),
     hasInvite: g.invite_token_hash != null,
+  }));
+}
+
+interface ShareLinkRow {
+  id: string;
+  label: string;
+  all_events: boolean;
+  created_at: string;
+  share_link_events: { event_id: string }[] | null;
+}
+
+/** Lists a wedding's broadcast/share links with their scoped event ids. */
+export async function listShareLinks(
+  weddingId: string
+): Promise<ShareLinkDetail[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("share_links")
+    .select("id, label, all_events, created_at, share_link_events(event_id)")
+    .eq("wedding_id", weddingId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return (data as ShareLinkRow[]).map((s) => ({
+    id: s.id,
+    label: s.label,
+    allEvents: s.all_events,
+    eventIds: (s.share_link_events ?? []).map((e) => e.event_id),
   }));
 }

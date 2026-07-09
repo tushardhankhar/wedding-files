@@ -38,11 +38,25 @@ export default async function GuestHome({
   const theme = getTheme(data.wedding.themeId);
   const props = buildSiteProps(data.wedding, data.events);
 
+  if (data.mode === "share") {
+    return (
+      <WebsiteView
+        theme={theme}
+        {...props}
+        chip={{ en: "Guest" }}
+        selfRsvp={{
+          slug,
+          events: data.events.map((e) => ({ id: e.id, name: e.name })),
+        }}
+      />
+    );
+  }
+
   return (
     <WebsiteView
       theme={theme}
       {...props}
-      chip={{ en: data.groupName }}
+      chip={{ en: data.label }}
       rsvp={{ slug, guests: data.guests, statuses: data.rsvps }}
     />
   );

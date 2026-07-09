@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { resolveInviteToken } from "@/modules/guest-access/server/invite";
+import { resolveShareToken } from "@/modules/guest-access/server/share";
 import {
   createGuestSessionValue,
   guestCookieOptions,
@@ -8,16 +8,15 @@ import {
 } from "@/modules/guest-access/server/session";
 
 /**
- * Invitation landing. Verifies the token for this slug, mints a signed
- * HTTP-only guest session cookie (separate from the token), and redirects to
- * the wedding site. Invalid tokens redirect with ?invalid=1 and set no cookie.
+ * Shareable/broadcast landing. Verifies the share token for this slug, mints a
+ * share-scoped guest session cookie, and redirects to the wedding site.
  */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string; token: string }> }
 ) {
   const { slug, token } = await params;
-  const result = await resolveInviteToken(slug, token);
+  const result = await resolveShareToken(slug, token);
 
   const dest = new URL(`/w/${slug}`, req.url);
   if (!result) dest.searchParams.set("invalid", "1");
@@ -26,8 +25,8 @@ export async function GET(
   if (result) {
     const value = await createGuestSessionValue(
       {
-        kind: "group",
-        groupId: result.groupId,
+        kind: "share",
+        shareLinkId: result.shareLinkId,
         weddingId: result.weddingId,
         slug,
       },

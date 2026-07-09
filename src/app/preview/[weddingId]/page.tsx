@@ -37,6 +37,7 @@ export default async function PreviewPage({
       <WebsiteView
         theme={theme}
         {...props}
+        ownerPreview
         chip={{ en: "Preview", hi: "पूर्वावलोकन" }}
       />
     </>

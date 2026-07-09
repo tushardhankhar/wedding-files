@@ -11,7 +11,17 @@ import {
   deleteGuest,
   setInvite,
   generateGroupInvite,
+  createShareLink,
+  regenerateShareToken,
+  deleteShareLink,
+  setShareLinkAllEvents,
+  toggleShareLinkEvent,
 } from "./mutations";
+
+function shareUrl(slug: string, token: string): string {
+  const base = env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
+  return `${base}/w/${slug}/share/${token}`;
+}
 
 export type FormState = { error?: string; saved?: boolean };
 
@@ -124,4 +134,63 @@ export async function generateInviteLinkAction(
   } catch {
     return { error: "Could not generate an invite link." };
   }
+}
+
+// ── Shareable links ─────────────────────────────────────────────────────────
+export async function createShareLinkAction(
+  weddingId: string,
+  slug: string,
+  _prev: InviteLinkState,
+  formData: FormData
+): Promise<InviteLinkState> {
+  const label = String(formData.get("label") ?? "").trim();
+  if (!label) return { error: "Give the link a name." };
+  try {
+    const { token } = await createShareLink(weddingId, label);
+    revalidate(weddingId);
+    return { url: shareUrl(slug, token) };
+  } catch {
+    return { error: "Could not create the link." };
+  }
+}
+
+export async function regenerateShareLinkAction(
+  id: string,
+  weddingId: string,
+  slug: string
+): Promise<InviteLinkState> {
+  try {
+    const token = await regenerateShareToken(id);
+    revalidate(weddingId);
+    return { url: shareUrl(slug, token) };
+  } catch {
+    return { error: "Could not regenerate the link." };
+  }
+}
+
+export async function deleteShareLinkAction(
+  id: string,
+  weddingId: string
+): Promise<void> {
+  await deleteShareLink(id);
+  revalidate(weddingId);
+}
+
+export async function setShareLinkAllEventsAction(
+  id: string,
+  weddingId: string,
+  all: boolean
+): Promise<void> {
+  await setShareLinkAllEvents(id, all);
+  revalidate(weddingId);
+}
+
+export async function toggleShareLinkEventAction(
+  id: string,
+  eventId: string,
+  weddingId: string,
+  on: boolean
+): Promise<void> {
+  await toggleShareLinkEvent(id, eventId, on);
+  revalidate(weddingId);
 }

@@ -362,6 +362,19 @@
 .wsite .rsvp-member > span:first-child { font-size: 14px; }
 .wsite .text-note { font-size: 13px; color: var(--w-ink-soft); font-style: italic; }
 
+/* self-RSVP (broadcast link) */
+.wsite .self-rsvp { max-width: 540px; margin: 0 auto; }
+.wsite .self-rsvp label { display: block; font-family: var(--w-sans); font-size: 13px; margin-bottom: 6px; color: var(--w-ink); }
+.wsite .self-rsvp input[type="text"], .wsite .self-rsvp input[type="number"] {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--w-line); background: var(--w-surface);
+  color: var(--w-ink); font-family: var(--w-sans); font-size: 14px;
+}
+.wsite .self-rsvp .events-check { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.wsite .self-rsvp .events-check label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; }
+.wsite .self-rsvp .thanks { text-align: center; color: var(--w-ink-soft); max-width: 42ch; margin: 0 auto; }
+.wsite .self-rsvp .space-y-4 > * + * { margin-top: 16px; }
+
 /* venue + gallery + family + faq */
 .wsite .venue { display: grid; gap: 16px; grid-template-columns: 1fr; }
 @media (min-width: 720px) { .wsite .venue { grid-template-columns: 1fr 1fr; } }
