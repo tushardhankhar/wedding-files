@@ -12,6 +12,19 @@ export const localizedSchema = z.object({
 export type Localized = z.infer<typeof localizedSchema>;
 
 /**
+ * How a photo is framed inside a theme's crop. Stored per image and applied by
+ * every renderer, so it is deliberately theme-agnostic: `x`/`y` are the focal
+ * point (0–1, where the subject sits) and `zoom` scales the image up inside the
+ * frame. Absent → centered, no zoom (identical to the pre-focus behaviour).
+ */
+export const focusSchema = z.object({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+  zoom: z.number().min(1).max(4),
+});
+export type Focus = z.infer<typeof focusSchema>;
+
+/**
  * The website content config, stored in weddings.config (jsonb). Everything is
  * optional — sections without content are simply not rendered. Content
  * authoring UI arrives in Phase 4; the renderer already reads all of it.
@@ -34,7 +47,13 @@ export const websiteConfigSchema = z.object({
   gallery: z
     .object({
       images: z
-        .array(z.object({ url: z.string(), caption: localizedSchema.optional() }))
+        .array(
+          z.object({
+            url: z.string(),
+            caption: localizedSchema.optional(),
+            focus: focusSchema.optional(),
+          })
+        )
         .default([]),
     })
     .optional(),

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteViewProps } from "../website-view";
 import { T, TT } from "../bilingual";
+import { focusStyles } from "../image-focus";
 import {
   RoyalInsignia,
   GoldRule,
@@ -618,16 +619,22 @@ export function MaharajaView({
                     : i % 5 === 3
                       ? "col-span-2 aspect-[16/9]"
                       : "aspect-[3/4]";
+                const fs = focusStyles(img.focus);
                 return (
                   <figure key={i} className={`group ${span}`} data-mreveal>
                     <div className="relative h-full w-full overflow-hidden border border-[color:var(--m-gold)]/30 bg-[color:var(--m-ivory2)]">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- couple-provided gallery URLs */}
-                      <img
-                        src={img.url}
-                        alt=""
-                        loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-[2.5s] ease-out group-hover:scale-[1.04]"
-                      />
+                      {/* Zoom wrapper — scales about the focal point; kept
+                          separate so the img's hover transform composes. */}
+                      <div className="h-full w-full" style={fs.zoom}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- couple-provided gallery URLs */}
+                        <img
+                          src={img.url}
+                          alt=""
+                          loading="lazy"
+                          style={fs.image}
+                          className="h-full w-full object-cover transition-transform duration-[2.5s] ease-out group-hover:scale-[1.04]"
+                        />
+                      </div>
                       {img.caption ? (
                         <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-4 pb-3 pt-10 text-[11px] uppercase tracking-[0.2em] text-[color:var(--m-ivory)] opacity-0 transition-opacity duration-700 group-hover:opacity-100">
                           <T value={img.caption} />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { WebsiteConfig } from "@/modules/website/schema";
+import type { WebsiteConfig, Focus } from "@/modules/website/schema";
 import { saveWebsiteConfigAction } from "@/modules/website/server/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ImageUpload } from "@/modules/media/client/image-upload";
+import { FocusPicker } from "@/modules/media/client/focus-picker";
 
 type Loc = { en: string; hi: string };
 const L = (v?: { en: string; hi?: string }): Loc => ({
@@ -26,7 +28,7 @@ const filled = (l: Loc) => l.en.trim() !== "" || l.hi.trim() !== "";
 interface State {
   tagline: Loc;
   milestones: { when: string; title: Loc; text: Loc }[];
-  images: { url: string; caption: Loc }[];
+  images: { url: string; caption: Loc; focus?: Focus }[];
   groups: { name: Loc; members: Loc; relation: Loc }[];
   faqs: { q: Loc; a: Loc }[];
   hashtag: string;
@@ -44,6 +46,7 @@ function normalize(c: WebsiteConfig): State {
     images: (c.gallery?.images ?? []).map((i) => ({
       url: i.url,
       caption: L(i.caption),
+      focus: i.focus,
     })),
     groups: (c.family?.groups ?? []).map((g) => ({
       name: L(g.name),
@@ -70,6 +73,7 @@ function toConfig(s: State): WebsiteConfig {
         .map((i) => ({
           url: i.url.trim(),
           caption: filled(i.caption) ? loc(i.caption) : undefined,
+          focus: i.focus,
         })),
     },
     family: {
@@ -161,10 +165,25 @@ export function ContentEditor({
   initial: WebsiteConfig;
 }) {
   const [s, setS] = useState<State>(() => normalize(initial));
+  const [urlDraft, setUrlDraft] = useState("");
+  const [editFocus, setEditFocus] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<{ error?: string; saved?: boolean }>({});
 
   const set = (patch: Partial<State>) => setS((prev) => ({ ...prev, ...patch }));
+
+  // Functional append so parallel uploads can't clobber each other's writes.
+  const addImage = (url: string) =>
+    setS((prev) => ({
+      ...prev,
+      images: [...prev.images, { url, caption: L() }],
+    }));
+
+  const setFocus = (i: number, focus: Focus) =>
+    setS((prev) => ({
+      ...prev,
+      images: prev.images.map((x, idx) => (idx === i ? { ...x, focus } : x)),
+    }));
 
   function save() {
     setStatus({});
@@ -268,55 +287,117 @@ export function ContentEditor({
         <CardHeader>
           <CardTitle className="text-base">Gallery</CardTitle>
           <CardDescription>
-            Image links for now — direct uploads arrive later.
+            Upload photos in any size — we optimize and crop them to fit each
+            theme automatically.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {s.images.map((img, i) => (
-            <Row
-              key={i}
-              index={i}
-              label="Photo"
-              onRemove={() =>
-                set({ images: s.images.filter((_, idx) => idx !== i) })
-              }
-            >
-              <div className="space-y-1.5">
-                <Label>Image URL</Label>
-                <Input
-                  value={img.url}
-                  placeholder="https://…"
-                  onChange={(e) =>
-                    set({
-                      images: s.images.map((x, idx) =>
-                        idx === i ? { ...x, url: e.target.value } : x
-                      ),
-                    })
+        <CardContent className="space-y-4">
+          <ImageUpload weddingId={weddingId} onUploaded={addImage} />
+
+          {s.images.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {s.images.map((img, i) => (
+                <div key={i} className="space-y-2 rounded-lg border p-3">
+                  <div className="relative">
+                    <div
+                      className="aspect-[4/3] w-full rounded-md bg-muted bg-cover"
+                      style={
+                        img.url
+                          ? {
+                              backgroundImage: `url(${img.url})`,
+                              backgroundPosition: `${(img.focus?.x ?? 0.5) * 100}% ${(img.focus?.y ?? 0.5) * 100}%`,
+                            }
+                          : undefined
+                      }
+                      role="img"
+                      aria-label={`Photo ${i + 1}`}
+                    />
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="absolute right-2 top-2"
+                      onClick={() => {
+                        setEditFocus(null);
+                        set({
+                          images: s.images.filter((_, idx) => idx !== i),
+                        });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+
+                  {img.url ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="w-full"
+                      onClick={() =>
+                        setEditFocus((cur) => (cur === i ? null : i))
+                      }
+                    >
+                      {editFocus === i ? "Done adjusting" : "Adjust framing"}
+                    </Button>
+                  ) : null}
+
+                  {editFocus === i && img.url ? (
+                    <div className="rounded-md border bg-muted/30 p-3">
+                      <FocusPicker
+                        url={img.url}
+                        value={img.focus}
+                        onChange={(f) => setFocus(i, f)}
+                      />
+                    </div>
+                  ) : null}
+
+                  <LocField
+                    label="Caption"
+                    value={img.caption}
+                    onChange={(v) =>
+                      set({
+                        images: s.images.map((x, idx) =>
+                          idx === i ? { ...x, caption: v } : x
+                        ),
+                      })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {/* Fallback: paste an image URL (e.g. an existing hosted photo). */}
+          <div className="space-y-1.5">
+            <Label htmlFor="gallery-url">Or add by URL</Label>
+            <div className="flex gap-2">
+              <Input
+                id="gallery-url"
+                value={urlDraft}
+                placeholder="https://…"
+                onChange={(e) => setUrlDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && urlDraft.trim()) {
+                    e.preventDefault();
+                    addImage(urlDraft.trim());
+                    setUrlDraft("");
                   }
-                />
-              </div>
-              <LocField
-                label="Caption"
-                value={img.caption}
-                onChange={(v) =>
-                  set({
-                    images: s.images.map((x, idx) =>
-                      idx === i ? { ...x, caption: v } : x
-                    ),
-                  })
-                }
+                }}
               />
-            </Row>
-          ))}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() =>
-              set({ images: [...s.images, { url: "", caption: L() }] })
-            }
-          >
-            ＋ Add photo
-          </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!urlDraft.trim()}
+                onClick={() => {
+                  addImage(urlDraft.trim());
+                  setUrlDraft("");
+                }}
+              >
+                Add
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
