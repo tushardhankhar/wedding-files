@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PhotoArt, PetalField } from "./art";
-import { PRICE, PLAN_INCLUDES, COMING_SOON, REALITY_NOTES } from "./data";
+import { PRICE, PLAN_INCLUDES, COMING_SOON, REALITY_NOTES, CONTACT_EMAIL } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { CountUp } from "./count-up";
 
@@ -547,22 +547,21 @@ const FOOTER_COLS: { title: string; links: { label: string; href: string }[] }[]
       { label: "How it works", href: "#how-it-works" },
       { label: "Themes", href: "#themes" },
       { label: "Pricing", href: "#pricing" },
-      { label: "For Couples", href: "#for-couples" },
+      { label: "See a live demo", href: "/demo/royal" },
     ],
   },
   {
     title: "For Planners",
     links: [
-      { label: "Planner Platform", href: "#for-planners" },
-      { label: "Partner With Us", href: "#for-planners" },
-      { label: "Book a Demo", href: "#for-planners" },
+      { label: "Planner tools (soon)", href: "#for-planners" },
+      { label: "Partner with us", href: "#enquire" },
     ],
   },
   {
     title: "Company",
     links: [
-      { label: "About", href: "#demo" },
-      { label: "Contact", href: "#pricing" },
+      { label: "Contact", href: "#enquire" },
+      { label: "Email us", href: `mailto:${CONTACT_EMAIL}` },
       { label: "Privacy", href: "#" },
       { label: "Terms", href: "#" },
     ],
@@ -577,8 +576,18 @@ export function LandingFooter() {
           <div>
             <UtsavLogo tone="light" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
-              The digital guest experience for Indian weddings.
+              Make your own Indian wedding invitation — bilingual, private, and
+              ready to share in minutes. ₹1,599.
             </p>
+            <div className="mt-5 space-y-1 text-sm">
+              <p className="text-white/45">Questions? Say hello.</p>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="font-medium text-[color:var(--l-gold-lite)] transition-colors hover:text-white"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {FOOTER_COLS.map((col) => (

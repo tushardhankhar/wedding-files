@@ -128,10 +128,16 @@ export const REALITY_NOTES: string[] = [
   "Because “Sharma uncle ke kitne log aa rahe hain?” should not require six phone calls.",
 ];
 
+// ── Brand contact details ──────────────────────────────────────────────────
+export const SITE_URL = "https://jointhejashn.com";
+export const SITE_DOMAIN = "jointhejashn.com";
+export const CONTACT_EMAIL = "hello@jointhejashn.com";
+
 // ── Navigation ─────────────────────────────────────────────────────────────
 export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Themes", href: "#themes" },
   { label: "Pricing", href: "#pricing" },
   { label: "For Planners", href: "#for-planners" },
+  { label: "Contact", href: "#enquire" },
 ];

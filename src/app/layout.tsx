@@ -56,8 +56,14 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
+  // Absolute base so relative og:image / icon URLs resolve for link crawlers
+  // (WhatsApp, iMessage). In production NEXT_PUBLIC_SITE_URL must be the live
+  // origin — otherwise previews point at localhost and won't load.
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://jointhejashn.com"
+  ),
   title: "Join the Jashn",
-  description: "The digital guest experience for Indian weddings.",
+  description: "Make your own Indian wedding invitation for ₹1,599.",
 };
 
 export default function RootLayout({
