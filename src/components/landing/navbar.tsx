@@ -58,19 +58,19 @@ export function LandingNavbar() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            <a
+              href="#pricing"
+              className={cn("text-[13px] font-medium transition-colors", linkTone, underline)}
+            >
+              ₹1,599, all in
+            </a>
             <Link
               href="/demo/royal"
               target="_blank"
               rel="noopener noreferrer"
-              className={cn("text-[13px] font-medium transition-colors", linkTone, underline)}
-            >
-              View a Live Wedding
-            </Link>
-            <Link
-              href="/login"
               className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.7)] transition-transform hover:-translate-y-0.5"
             >
-              Create your Jashn
+              See a live demo
             </Link>
           </div>
 
@@ -128,29 +128,21 @@ export function LandingNavbar() {
                 {l.label}
               </a>
             ))}
-            <Link
-              href="/demo/royal"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setOpen(false)}
-              className="l-display text-3xl font-medium text-[color:var(--l-gold-lite)] duration-500 animate-in fade-in slide-in-from-bottom-3"
-              style={{ animationDelay: "440ms" }}
-            >
-              View a Live Wedding
-            </Link>
           </nav>
 
           <div className="mt-auto space-y-4 pb-4">
             <Link
-              href="/login"
+              href="/demo/royal"
+              target="_blank"
+              rel="noopener noreferrer"
               className="block rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-6 py-4 text-center text-base font-semibold text-white"
               onClick={() => setOpen(false)}
             >
-              Create your Jashn
+              See a live demo
             </Link>
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />
-              The digital guest experience for Indian weddings
+              Make your own wedding invitation · ₹1,599
             </p>
           </div>
         </div>

@@ -37,7 +37,7 @@ export function LandingHero() {
         {/* Copy */}
         <div className="text-center lg:text-left">
           <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
-            The digital guest experience for Indian weddings
+            Digital wedding invitations · ₹1,599
           </p>
 
           <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
@@ -67,9 +67,9 @@ export function LandingHero() {
           </h1>
 
           <p className="l-load mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
-            Create a beautiful, private wedding experience where every family
-            sees only the events they&apos;re invited to — and RSVPs in
-            seconds.
+            Make your own wedding website in minutes — add your names, events
+            and photos yourself. Share one private link on WhatsApp, and every
+            family sees only the events they&apos;re invited to.
           </p>
 
           <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.56s" }}>
@@ -79,7 +79,7 @@ export function LandingHero() {
               rel="noopener noreferrer"
               className="w-full rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-8 py-4 text-center text-sm font-semibold text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 sm:w-auto"
             >
-              Experience a Live Wedding
+              See a live demo
             </Link>
             <a
               href="#how-it-works"
@@ -90,7 +90,7 @@ export function LandingHero() {
           </div>
 
           <p className="l-load mt-5 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
-            No app. No guest accounts. Just one beautiful invitation link.
+            Just ₹1,599 · No app · No guest accounts · Ready in minutes.
           </p>
         </div>
 

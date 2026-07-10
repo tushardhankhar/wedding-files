@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PhotoArt, PetalField } from "./art";
-import { PLANS, REALITY_NOTES } from "./data";
+import { PRICE, PLAN_INCLUDES, COMING_SOON, REALITY_NOTES } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { CountUp } from "./count-up";
 
@@ -191,19 +191,20 @@ export function CouplesSection() {
         <PhotoArt slot="couple" className="h-[420px] rounded-[26px] shadow-[0_36px_80px_-32px_rgba(59,16,34,.5)]" />
         <div data-reveal>
           <h2 className="l-display text-balance text-[clamp(1.9rem,4vw,3rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            Your wedding has a hundred moving parts.
+            No designer. No developer.
             <br />
-            <span className="italic text-[color:var(--l-pink)]">Your guests shouldn&apos;t feel any of them.</span>
+            <span className="italic text-[color:var(--l-pink)]">Just you, in a few minutes.</span>
           </h2>
           <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-            Manage your story, events, gallery, guests and RSVPs from one place —
-            while your family and friends enjoy a beautifully simple experience.
+            Add your names, your story, your events and photos yourself — pick a
+            theme you love and it all comes together into one beautiful, private
+            invitation you can share the same day.
           </p>
           <ul className="mt-6 space-y-2.5">
             {[
-              "Your story, beautifully told.",
-              "Your guests, thoughtfully invited.",
-              "Your RSVPs, finally organised.",
+              "Add your own names, dates and events.",
+              "Invite each family to only their events.",
+              "Share one private link on WhatsApp.",
             ].map((p) => (
               <li key={p} className="flex items-center gap-3 text-sm text-[color:var(--l-ink)]">
                 <span className="text-[color:var(--l-gold)]">✦</span>
@@ -212,10 +213,12 @@ export function CouplesSection() {
             ))}
           </ul>
           <Link
-            href="/login"
+            href="/demo/royal"
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-8 inline-block rounded-full bg-[color:var(--l-wine)] px-8 py-4 text-sm font-semibold text-[color:var(--l-gold-lite)] transition-transform hover:-translate-y-0.5"
           >
-            Create your Jashn
+            See a live demo
           </Link>
         </div>
       </div>
@@ -247,14 +250,20 @@ export function PlannerSection() {
     >
       <div className="mx-auto max-w-6xl">
         <div className="max-w-2xl" data-reveal>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[color:var(--l-gold-lite)]">
-            For wedding planners
-          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[color:var(--l-gold-lite)]">
+              For wedding planners
+            </p>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
+              <span className="size-1.5 rounded-full bg-[color:var(--l-gold-lite)]" />
+              Coming soon
+            </span>
+          </div>
           <h2 className="l-display mt-3 text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-semibold leading-tight text-[color:var(--l-ivory)]">
             Still managing 600 guests in Excel and WhatsApp?
           </h2>
           <p className="l-display mt-4 text-xl italic text-[color:var(--l-gold-lite)]">
-            Meet the guest operating system for Indian weddings.
+            A guest operating system for Indian weddings — in the works.
           </p>
         </div>
 
@@ -327,25 +336,9 @@ export function PlannerSection() {
 
         <div className="mt-10 max-w-2xl" data-reveal>
           <p className="text-[15px] leading-relaxed text-white/75">
-            Give every couple a premium digital guest experience while you
-            finally get a clear view of every invitation and RSVP.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/login"
-              className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-7 py-3.5 text-center text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
-            >
-              Join the Planner Pilot
-            </Link>
-            <a
-              href="#pricing"
-              className="rounded-full border border-white/30 px-7 py-3.5 text-center text-sm font-semibold text-white transition-colors hover:border-[color:var(--l-gold-lite)]"
-            >
-              Book a 15-minute demo
-            </a>
-          </div>
-          <p className="mt-4 text-xs text-white/50">
-            Built for planners managing multi-event Indian weddings.
+            A dashboard with every invitation, RSVP and headcount at a glance —
+            plus dietary and logistics — is on the way, built for planners
+            managing multi-event Indian weddings.
           </p>
         </div>
       </div>
@@ -432,84 +425,70 @@ export function RealitySection() {
   );
 }
 
-/* ── Pricing ──────────────────────────────────────────────────────────────── */
+/* ── Pricing — one simple price ───────────────────────────────────────────── */
 export function PricingPreview() {
   return (
     <section id="pricing" className="scroll-mt-24 bg-[color:var(--l-ivory-2)] px-5 py-24 sm:px-8">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-2xl">
         <div className="mx-auto max-w-xl text-center" data-reveal>
           <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            A beautiful experience for{" "}
-            <span className="italic text-[color:var(--l-pink)]">every kind of celebration.</span>
+            One price.{" "}
+            <span className="italic text-[color:var(--l-pink)]">Everything included.</span>
           </h2>
-        </div>
-
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {PLANS.map((plan) => {
-            const featured = Boolean(plan.label);
-            return (
-              <article
-                key={plan.name}
-                className={
-                  featured
-                    ? "relative rounded-[24px] bg-[color:var(--l-wine)] p-8 text-[color:var(--l-ivory)] shadow-[0_40px_80px_-30px_rgba(59,16,34,.75)] lg:-translate-y-3"
-                    : "relative rounded-[24px] border border-[color:var(--l-line)] bg-white p-8"
-                }
-                data-reveal
-              >
-                {/* invitation-card inner border */}
-                <span
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute inset-2.5 rounded-[18px] border ${featured ? "border-[color:var(--l-gold-lite)]/40" : "border-[color:var(--l-gold)]/30"}`}
-                />
-                {plan.label ? (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-4 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
-                    {plan.label}
-                  </span>
-                ) : null}
-                <div className="relative">
-                  <p className={`l-script text-2xl ${featured ? "text-[color:var(--l-gold-lite)]" : "text-[color:var(--l-gold)]"}`}>
-                    {plan.name}
-                  </p>
-                  {plan.prefix ? (
-                    <p className={`mt-3 text-[11px] uppercase tracking-widest ${featured ? "text-white/60" : "text-[color:var(--l-ink-soft)]"}`}>
-                      {plan.prefix}
-                    </p>
-                  ) : (
-                    <p className="mt-3 text-[11px]">&nbsp;</p>
-                  )}
-                  <p className="l-display text-4xl font-semibold tabular-nums">{plan.price}</p>
-                  <p className={`mt-2 text-sm ${featured ? "text-white/75" : "text-[color:var(--l-ink-soft)]"}`}>
-                    {plan.blurb}
-                  </p>
-                  <ul className="mt-6 space-y-2.5">
-                    {plan.points.map((pt) => (
-                      <li key={pt} className={`flex items-start gap-2.5 text-sm ${featured ? "text-white/85" : "text-[color:var(--l-ink)]"}`}>
-                        <span className={featured ? "text-[color:var(--l-gold-lite)]" : "text-[color:var(--l-gold)]"}>✦</span>
-                        {pt}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="mt-10 text-center" data-reveal>
-          <p className="text-sm text-[color:var(--l-ink-soft)]">
-            Planning a destination wedding?{" "}
-            <a href="#for-planners" className="font-semibold text-[color:var(--l-pink)] hover:underline">
-              Explore Jashn Concierge →
-            </a>
+          <p className="mt-4 text-[15px] text-[color:var(--l-ink-soft)]">
+            No tiers, no add-ons, no surprises — the whole invitation for one flat price.
           </p>
-          <Link
-            href="/login"
-            className="mt-6 inline-block rounded-full bg-[color:var(--l-wine)] px-9 py-4 text-sm font-semibold text-[color:var(--l-gold-lite)] transition-transform hover:-translate-y-0.5"
-          >
-            Find your Jashn
-          </Link>
         </div>
+
+        {/* the offer card, styled like an invitation */}
+        <article
+          className="relative mt-12 overflow-hidden rounded-[26px] bg-[color:var(--l-wine)] p-8 text-[color:var(--l-ivory)] shadow-[0_40px_90px_-32px_rgba(59,16,34,.8)] sm:p-10"
+          data-reveal
+        >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-3 rounded-[20px] border border-[color:var(--l-gold-lite)]/35"
+          />
+          <div className="relative text-center">
+            <p className="l-script text-2xl text-[color:var(--l-gold-lite)]">Your wedding invitation</p>
+            <p className="l-display mt-2 text-6xl font-semibold tabular-nums">{PRICE}</p>
+            <p className="mt-2 text-sm text-white/70">one-time · per wedding</p>
+          </div>
+
+          <ul className="relative mx-auto mt-8 grid max-w-lg gap-2.5 sm:grid-cols-2">
+            {PLAN_INCLUDES.map((pt) => (
+              <li key={pt} className="flex items-start gap-2.5 text-sm text-white/90">
+                <span className="mt-0.5 text-[color:var(--l-gold-lite)]">✦</span>
+                {pt}
+              </li>
+            ))}
+          </ul>
+
+          <div className="relative mt-9 text-center">
+            <Link
+              href="/demo/royal"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-full bg-[color:var(--l-ivory)] px-9 py-4 text-sm font-semibold text-[color:var(--l-wine)] shadow-[0_18px_44px_-14px_rgba(0,0,0,.5)] transition-transform hover:-translate-y-0.5"
+            >
+              See a live demo
+            </Link>
+          </div>
+
+          {/* coming-soon extras — clearly not part of the price yet */}
+          <div className="relative mt-8 border-t border-white/12 pt-6">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
+                Coming soon
+              </span>
+              {COMING_SOON.map((c) => (
+                <span key={c} className="rounded-full border border-white/15 px-3.5 py-1.5 text-[11px] font-medium text-white/60">
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+        </article>
       </div>
     </section>
   );
@@ -528,12 +507,13 @@ export function FinalCta() {
     >
       <PetalField count={14} />
       <div className="relative mx-auto max-w-2xl" data-reveal>
-        <p className="l-script text-3xl text-[color:var(--l-gold-lite)]">The celebration awaits</p>
+        <p className="l-script text-3xl text-[color:var(--l-gold-lite)]">See it for yourself</p>
         <h2 className="l-display mt-4 text-balance text-[clamp(2.2rem,5.6vw,4.2rem)] font-semibold leading-tight text-white">
-          The celebration begins before the first dhol beats.
+          Your invitation, live in minutes — just ₹1,599.
         </h2>
         <p className="mt-5 text-base text-white/85">
-          Give your guests an invitation they&apos;ll actually remember.
+          Open a real wedding built on Jashn and see exactly what your guests
+          will experience.
         </p>
         <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
@@ -542,14 +522,14 @@ export function FinalCta() {
             rel="noopener noreferrer"
             className="rounded-full bg-[color:var(--l-ivory)] px-8 py-4 text-sm font-semibold text-[color:var(--l-wine)] shadow-[0_18px_44px_-14px_rgba(0,0,0,.5)] transition-transform hover:-translate-y-0.5"
           >
-            Experience a Live Wedding
+            See a live demo
           </Link>
-          <Link
-            href="/login"
+          <a
+            href="#how-it-works"
             className="rounded-full border border-white/50 px-8 py-4 text-sm font-semibold text-white transition-colors hover:border-white"
           >
-            Create your Jashn
-          </Link>
+            How it works
+          </a>
         </div>
         <p className="mt-6 text-xs tracking-wide text-white/70">
           No app. No guest signup. Just one beautiful link.

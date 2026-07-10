@@ -14,12 +14,12 @@ export const IMAGES: Partial<Record<string, ImageSlot>> = {
   // hero:     { src: "/landing/hero-baraat.avif", alt: "Bride and groom celebrating as guests throw petals" },
   couple: { src: "/landing/couple.png", alt: "Couple celebrating on their wedding day" },
   // Live-demo screenshots power the theme gallery cards (see SHOWCASE_THEMES).
-  maharaja: { src: "/landing/themes/royal.png", alt: "The Maharaja theme — royal wine and gold wedding site" },
-  rajputana: { src: "/landing/themes/rajasthani.png", alt: "The Rajputana theme — Rajasthan heritage wedding site" },
-  gulmohar: { src: "/landing/themes/ivory.png", alt: "The Gulmohar theme — modern Indian wedding site" },
-  punjabi: { src: "/landing/themes/punjabi.png", alt: "The Anand Karaj theme — Punjabi & Sikh wedding site" },
-  south: { src: "/landing/themes/south-indian.png", alt: "The Kalyanam theme — South Indian wedding site" },
-  vow: { src: "/landing/themes/christian.png", alt: "The Vow theme — Christian & contemporary wedding site" },
+  // maharaja: { src: "/landing/themes/royal.png", alt: "The Maharaja theme — royal wine and gold wedding site" },
+  // rajputana: { src: "/landing/themes/rajasthani.png", alt: "The Rajputana theme — Rajasthan heritage wedding site" },
+  // gulmohar: { src: "/landing/themes/ivory.png", alt: "The Gulmohar theme — modern Indian wedding site" },
+  // punjabi: { src: "/landing/themes/punjabi.png", alt: "The Anand Karaj theme — Punjabi & Sikh wedding site" },
+  // south: { src: "/landing/themes/south-indian.png", alt: "The Kalyanam theme — South Indian wedding site" },
+  // vow: { src: "/landing/themes/christian.png", alt: "The Vow theme — Christian & contemporary wedding site" },
   // haldi:    { src: "/landing/haldi.avif", alt: "Vibrant haldi ceremony" },
   // sangeet:  { src: "/landing/sangeet.avif", alt: "Family dancing at the sangeet" },
   // mandap:   { src: "/landing/mandap.avif", alt: "Marigold-decorated wedding mandap" },
@@ -99,36 +99,26 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
 ];
 
 // ── Pricing ────────────────────────────────────────────────────────────────
-export interface Plan {
-  name: string;
-  prefix?: string;
-  price: string;
-  blurb: string;
-  label?: string;
-  points: string[];
-}
+// One simple price. The couple builds the whole invitation themselves.
+export const PRICE = "₹1,599";
 
-export const PLANS: Plan[] = [
-  {
-    name: "Essential",
-    prefix: "Starting at",
-    price: "₹7,999",
-    blurb: "For intimate celebrations.",
-    points: ["A beautiful wedding site", "Broadcast invitation link", "Event details & RSVP", "English + Hindi"],
-  },
-  {
-    name: "Signature",
-    price: "₹14,999",
-    blurb: "The full guest experience.",
-    label: "Most loved",
-    points: ["Personal family invitations", "Unlimited events", "Bilingual experience", "Advanced RSVP", "Custom domain"],
-  },
-  {
-    name: "Royale",
-    price: "₹29,999",
-    blurb: "For celebrations that deserve something entirely their own.",
-    points: ["Custom visual styling", "Premium motion", "Video hero", "Priority setup"],
-  },
+export const PLAN_INCLUDES: string[] = [
+  "Your own bilingual wedding website (EN + हिं)",
+  "Six designer themes — onetime selection",
+  "Unlimited events, from Haldi to Reception",
+  "Personal invitation links for every family",
+  "Selective events — each family sees only theirs",
+  "Guest RSVP, event by event",
+  "Photo gallery, story, venue maps, countdown & FAQ",
+  "One private link, shared on WhatsApp",
+];
+
+// Marketed as on the way — surfaced with a "Coming soon" tag, not sold yet.
+export const COMING_SOON: string[] = [
+  "Planner dashboard & guest analytics",
+  "Dietary & logistics collection",
+  "Custom domain",
+  "Video hero",
 ];
 
 // ── Built around how Indian weddings actually work ─────────────────────────
@@ -141,8 +131,7 @@ export const REALITY_NOTES: string[] = [
 // ── Navigation ─────────────────────────────────────────────────────────────
 export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "How it works", href: "#how-it-works" },
-  { label: "For Couples", href: "#for-couples" },
-  { label: "For Planners", href: "#for-planners" },
   { label: "Themes", href: "#themes" },
   { label: "Pricing", href: "#pricing" },
+  { label: "For Planners", href: "#for-planners" },
 ];

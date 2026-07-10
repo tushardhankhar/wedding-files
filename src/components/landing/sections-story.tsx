@@ -41,10 +41,10 @@ export function BrandStatement() {
 
 /* ── How it works ─────────────────────────────────────────────────────────── */
 const STEPS = [
-  { n: "01", title: "Invite", text: "Send a private invitation link to a family — or share a broadcast invitation." },
-  { n: "02", title: "Welcome", text: "Guests open the link and are welcomed personally, by name." },
-  { n: "03", title: "Celebrate", text: "They discover the events, venues and moments selected for them." },
-  { n: "04", title: "RSVP", text: "Guests respond event by event. No login. No confusion." },
+  { n: "01", title: "Pick a theme", text: "Choose from six bilingual designs made for Indian weddings." },
+  { n: "02", title: "Make it yours", text: "Add your names, story, events, photos and venues — yourself, in minutes." },
+  { n: "03", title: "Choose who sees what", text: "Invite each family to only the events they're part of." },
+  { n: "04", title: "Share on WhatsApp", text: "Send one private link. Guests open it and RSVP — no app, no login." },
 ];
 
 export function HowItWorks() {
@@ -53,7 +53,7 @@ export function HowItWorks() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-xl text-center" data-reveal>
           <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            From WhatsApp to RSVP.
+            You make it. You share it.
             <br />
             <span className="italic text-[color:var(--l-marigold)]">Beautifully simple.</span>
           </h2>

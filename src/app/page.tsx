@@ -21,9 +21,9 @@ import {
 } from "@/components/landing/sections-product";
 
 export const metadata: Metadata = {
-  title: "Join the Jashn — The digital guest experience for Indian weddings",
+  title: "Join the Jashn — Make your own Indian wedding invitation for ₹1,599",
   description:
-    "Create a beautiful, private wedding experience where every family sees only the events they're invited to — and RSVPs in seconds. No app. No guest accounts. Just one beautiful invitation link.",
+    "Design your own bilingual wedding website in minutes — add your names, events and photos yourself, then share one private link on WhatsApp. Every family sees only the events they're invited to, and RSVPs in seconds. One price, ₹1,599. No app, no guest accounts.",
 };
 
 export default function LandingPage() {
