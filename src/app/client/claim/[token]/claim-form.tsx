@@ -52,7 +52,7 @@ export function ClaimForm({ token }: { token: string }) {
       ) : null}
 
       <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Setting up…" : "Set up my wedding"}
+        {pending ? "Setting up…" : "Set up my account"}
       </Button>
     </form>
   );

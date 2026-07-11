@@ -7,16 +7,19 @@ import { Button } from "@/components/ui/button";
 export function DeleteWeddingButton({
   weddingId,
   title,
+  occasion,
 }: {
   weddingId: string;
   title: string;
+  /** Lowercase occasion noun for copy, e.g. "wedding", "baby shower". */
+  occasion: string;
 }) {
   const [pending, startTransition] = useTransition();
 
   function onDelete() {
     if (
       !window.confirm(
-        `Delete "${title}"? This permanently removes the wedding and everything under it.`
+        `Delete "${title}"? This permanently removes the ${occasion} and everything under it.`
       )
     ) {
       return;
@@ -33,7 +36,7 @@ export function DeleteWeddingButton({
       onClick={onDelete}
       disabled={pending}
     >
-      {pending ? "Deleting…" : "Delete wedding"}
+      {pending ? "Deleting…" : `Delete ${occasion}`}
     </Button>
   );
 }

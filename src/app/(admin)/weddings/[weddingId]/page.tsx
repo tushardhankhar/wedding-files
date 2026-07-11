@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
-import { THEMES, getTheme } from "@/modules/website/themes/registry";
+import { THEMES, getTheme, occasionNoun } from "@/modules/website/themes/registry";
 import { WeddingForm } from "../wedding-form";
 import { DeleteWeddingButton } from "./delete-wedding-button";
 import { ClientAccess } from "./client-access";
@@ -29,6 +29,7 @@ export default async function WeddingDetailPage({
   ]);
   if (!wedding) notFound();
 
+  const theme = getTheme(wedding.themeId);
   const updateAction = updateWeddingAction.bind(null, wedding.id);
 
   return (
@@ -43,16 +44,18 @@ export default async function WeddingDetailPage({
         <span className="text-sm text-muted-foreground">/w/{wedding.slug}</span>
       </div>
 
-      <Link href={`/weddings/${wedding.id}/events`} className="block">
-        <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
-          <CardHeader>
-            <CardTitle className="text-base">Events →</CardTitle>
-            <CardDescription>
-              Manage the celebrations — Haldi, Mehendi, wedding, reception.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </Link>
+      {theme.supports.events ? (
+        <Link href={`/weddings/${wedding.id}/events`} className="block">
+          <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
+            <CardHeader>
+              <CardTitle className="text-base">Events →</CardTitle>
+              <CardDescription>
+                Manage the celebrations — Haldi, Mehendi, wedding, reception.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      ) : null}
 
       <Link href={`/weddings/${wedding.id}/content`} className="block">
         <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
@@ -160,6 +163,7 @@ export default async function WeddingDetailPage({
               <ClientAccess
                 weddingId={wedding.id}
                 claimed={wedding.clientId !== null}
+                occasion={occasionNoun(wedding.themeId)}
               />
             </CardContent>
           </Card>
@@ -168,13 +172,14 @@ export default async function WeddingDetailPage({
             <CardHeader>
               <CardTitle className="text-base">Danger zone</CardTitle>
               <CardDescription>
-                Deleting a wedding cannot be undone.
+                Deleting this {occasionNoun(wedding.themeId)} cannot be undone.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <DeleteWeddingButton
                 weddingId={wedding.id}
                 title={wedding.title}
+                occasion={occasionNoun(wedding.themeId)}
               />
             </CardContent>
           </Card>

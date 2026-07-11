@@ -4,7 +4,7 @@ import { getTheme } from "@/modules/website/themes/registry";
 
 // The link-share preview card (WhatsApp / iMessage / social): the couple's
 // monogram, names and date on their theme's colours.
-export const alt = "Wedding invitation";
+export const alt = "You're invited";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -521,16 +521,63 @@ export interface CategoryInfo {
   label: string;
   blurb: string;
   emoji: string;
+  /** Lowercase occasion word for inline copy — "the {noun} of …", "New {noun}". */
+  noun: string;
 }
 
 export const CATEGORIES: CategoryInfo[] = [
-  { id: "wedding", label: "Wedding", blurb: "The full multi-event celebration.", emoji: "💍" },
-  { id: "save-the-date", label: "Save the Date", blurb: "An elegant early announcement.", emoji: "✦" },
-  { id: "kids-birthday", label: "Kids' Birthday", blurb: "Playful, interactive & magical.", emoji: "🎂" },
-  { id: "baby-shower", label: "Baby Shower", blurb: "Dreamy & celestial. Gender-neutral.", emoji: "🌙" },
-  { id: "housewarming", label: "Housewarming", blurb: "Griha Pravesh, puja & family.", emoji: "🪔" },
-  { id: "party", label: "Party", blurb: "Bachelor/ette & nightlife.", emoji: "⚡" },
+  { id: "wedding", label: "Wedding", blurb: "The full multi-event celebration.", emoji: "💍", noun: "wedding" },
+  { id: "save-the-date", label: "Save the Date", blurb: "An elegant early announcement.", emoji: "✦", noun: "save the date" },
+  { id: "kids-birthday", label: "Kids' Birthday", blurb: "Playful, interactive & magical.", emoji: "🎂", noun: "birthday" },
+  { id: "baby-shower", label: "Baby Shower", blurb: "Dreamy & celestial. Gender-neutral.", emoji: "🌙", noun: "baby shower" },
+  { id: "housewarming", label: "Housewarming", blurb: "Griha Pravesh, puja & family.", emoji: "🪔", noun: "housewarming" },
+  { id: "party", label: "Party", blurb: "Bachelor/ette & nightlife.", emoji: "⚡", noun: "party" },
 ];
+
+const CATEGORY_INFO: Record<ThemeCategory, CategoryInfo> = Object.fromEntries(
+  CATEGORIES.map((c) => [c.id, c])
+) as Record<ThemeCategory, CategoryInfo>;
+
+/** The occasion category for a theme id (falls back to the default theme). */
+export function occasionCategory(themeId: string | null | undefined): CategoryInfo {
+  return CATEGORY_INFO[getTheme(themeId).category];
+}
+
+/** Human label for a theme's occasion, e.g. "Save the Date". */
+export function occasionLabel(themeId: string | null | undefined): string {
+  return occasionCategory(themeId).label;
+}
+
+/** Lowercase occasion noun for a theme, e.g. "save the date", "birthday". */
+export function occasionNoun(themeId: string | null | undefined): string {
+  return occasionCategory(themeId).noun;
+}
+
+/**
+ * The link-share / invite sentence for an occasion, grammatically tuned per
+ * category (weddings read "the wedding of A & B"; a save-the-date reads
+ * "Save the date for A & B"; the rest are possessive).
+ */
+export function occasionInvite(
+  themeId: string | null | undefined,
+  names: string
+): string {
+  const { id } = occasionCategory(themeId);
+  switch (id) {
+    case "wedding":
+      return `You're invited to the wedding of ${names}.`;
+    case "save-the-date":
+      return `Save the date for ${names}.`;
+    case "kids-birthday":
+      return `You're invited to ${names}'s birthday!`;
+    case "baby-shower":
+      return `You're invited to ${names}'s baby shower.`;
+    case "housewarming":
+      return `You're invited to ${names}'s housewarming.`;
+    case "party":
+      return `You're invited to ${names}'s party.`;
+  }
+}
 
 /** Themes belonging to a category, in registry order. */
 export function themesForCategory(cat: ThemeCategory): Theme[] {

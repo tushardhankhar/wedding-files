@@ -31,7 +31,7 @@ export default async function AdminLayout({
               JASHN
             </span>
             <span className="font-heading text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--gold)]">
-              {isAdmin ? "Planner" : "Wedding"}
+              {isAdmin ? "Planner" : "Client"}
             </span>
           </Link>
           <div className="flex shrink-0 items-center gap-3">

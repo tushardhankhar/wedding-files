@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
 import { createEventAction } from "@/modules/events/server/actions";
+import { getTheme } from "@/modules/website/themes/registry";
 import {
   Card,
   CardContent,
@@ -22,6 +23,9 @@ export default async function EventsPage({
   const { weddingId } = await params;
   const wedding = await getWeddingById(weddingId);
   if (!wedding) notFound();
+  // Themes like Save the Date have no events — the section is hidden and the
+  // route is unreachable, matching the registry's `supports.events` flag.
+  if (!getTheme(wedding.themeId).supports.events) notFound();
 
   const events = await listEvents(weddingId);
 

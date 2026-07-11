@@ -13,9 +13,12 @@ const initialState: GenerateInviteState = {};
 export function ClientAccess({
   weddingId,
   claimed,
+  occasion,
 }: {
   weddingId: string;
   claimed: boolean;
+  /** Lowercase occasion noun for copy, e.g. "wedding", "baby shower". */
+  occasion: string;
 }) {
   const action = generateClientInviteAction.bind(null, weddingId);
   const [state, formAction, pending] = useActionState(action, initialState);
@@ -30,7 +33,7 @@ export function ClientAccess({
 
   const waHref = state.url
     ? `https://wa.me/?text=${encodeURIComponent(
-        `You're invited to set up your wedding website: ${state.url}`
+        `You're invited to set up your ${occasion} website: ${state.url}`
       )}`
     : undefined;
 
@@ -38,13 +41,13 @@ export function ClientAccess({
     <div className="space-y-3">
       {claimed ? (
         <p className="text-sm text-muted-foreground">
-          A client has already claimed this wedding. Generating a new link lets
-          a different person take over management.
+          A client has already claimed this {occasion}. Generating a new link
+          lets a different person take over management.
         </p>
       ) : (
         <p className="text-sm text-muted-foreground">
           Generate a one-time link (valid 30 days) and send it to your client so
-          they can set up and manage this wedding.
+          they can set up and manage this {occasion}.
         </p>
       )}
 

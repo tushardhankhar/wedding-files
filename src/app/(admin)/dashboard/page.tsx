@@ -4,6 +4,7 @@ import { listWeddings } from "@/modules/weddings/server/queries";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
+import { occasionLabel } from "@/modules/website/themes/registry";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Date not set";
@@ -43,17 +44,17 @@ export default async function DashboardPage() {
             ❁ {isAdmin ? "Planner" : "Your celebration"}
           </p>
           <h1 className="text-2xl font-semibold">
-            {isAdmin ? "All weddings" : "Your wedding"}
+            {isAdmin ? "All invitations" : "Your celebration"}
           </h1>
           <p className="text-sm text-muted-foreground">
             {isAdmin
-              ? "Create weddings and follow each client's progress."
-              : "Manage your wedding website."}
+              ? "Create invitations and follow each client's progress."
+              : "Manage your invitation website."}
           </p>
         </div>
         {isAdmin ? (
           <Link href="/weddings/new" className={buttonVariants()}>
-            ＋ New wedding
+            ＋ New invitation
           </Link>
         ) : null}
       </div>
@@ -67,15 +68,15 @@ export default async function DashboardPage() {
             </h2>
             <p className="text-sm text-muted-foreground">
               {isAdmin
-                ? "Create your first wedding to get started."
-                : "Your planner hasn't shared a wedding with you yet."}
+                ? "Create your first invitation to get started."
+                : "Your planner hasn't shared an invitation with you yet."}
             </p>
             {isAdmin ? (
               <Link
                 href="/weddings/new"
                 className={`${buttonVariants()} mt-3`}
               >
-                ＋ New wedding
+                ＋ New invitation
               </Link>
             ) : null}
           </CardHeader>
@@ -91,7 +92,10 @@ export default async function DashboardPage() {
               <Link href={`/weddings/${w.id}`} className="block">
                 <Card className="relative overflow-hidden transition-transform hover:-translate-y-1 hover:border-[color:var(--gold-line)] hover:shadow-[0_14px_34px_-14px_rgba(43,39,64,0.25)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
                   <CardHeader>
-                    <h2 className="text-lg font-semibold">{w.title}</h2>
+                    <span className="inline-flex w-fit items-center rounded-full border border-[color:var(--gold-line)] bg-[color:var(--accent)] px-2.5 py-0.5 font-heading text-[10px] font-semibold uppercase tracking-wide text-[color:var(--gold-deep)]">
+                      {occasionLabel(w.themeId)}
+                    </span>
+                    <h2 className="mt-2 text-lg font-semibold">{w.title}</h2>
                     <p className="text-sm tabular-nums text-muted-foreground">
                       {formatDate(w.eventDate)} ·{" "}
                       <span className="font-medium text-primary">

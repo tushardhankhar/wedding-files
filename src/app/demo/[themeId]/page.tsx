@@ -25,7 +25,7 @@ export async function generateMetadata({
   const theme = getTheme(themeId);
   return {
     title: `${theme.name} — Live demo · Join the Jashn`,
-    description: `Preview the ${theme.name} wedding theme on a sample celebration.`,
+    description: `Preview the ${theme.name} theme on a sample invitation.`,
   };
 }
 

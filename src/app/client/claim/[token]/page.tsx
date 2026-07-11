@@ -11,7 +11,7 @@ export default async function ClaimPage({
   return (
     <InvitationShell
       title="JASHN"
-      subtitle="Set up your account to start managing your wedding."
+      subtitle="Set up your account to start managing your invitation."
       footer="You'll use this email and password to sign in later."
     >
       <ClaimForm token={token} />

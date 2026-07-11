@@ -3,7 +3,7 @@ import {
   loadGuestSite,
   loadSiteIdentity,
 } from "@/modules/guest-access/server/guest-site";
-import { getTheme } from "@/modules/website/themes/registry";
+import { getTheme, occasionInvite } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
 import { SiteView } from "@/modules/website/render/site";
 import { Lotus } from "@/components/brand/motifs";
@@ -24,7 +24,7 @@ export async function generateMetadata({
   const title = identity.dateLabel
     ? `${identity.names} · ${identity.dateLabel}`
     : identity.names;
-  const description = `You're invited to the wedding of ${identity.names}.`;
+  const description = occasionInvite(identity.themeId, identity.names);
   return {
     title,
     description,
@@ -56,7 +56,7 @@ export default async function GuestHome({
           <p className="text-sm text-muted-foreground">
             {invalid
               ? "That invitation link is invalid or has expired. Please ask your host for a fresh link."
-              : "Please open the personal invitation link you were sent to view this wedding."}
+              : "Please open the personal invitation link you were sent to view this invitation."}
           </p>
         </div>
       </main>
