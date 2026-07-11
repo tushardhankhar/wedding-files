@@ -13,7 +13,13 @@ export type HeroMotif =
   | "botanical"
   | "garland"
   | "temple"
-  | "jharokha";
+  | "jharokha"
+  // "Experience" themes render fully bespoke heroes and ignore HeroOrnament;
+  // these literals exist only so the registry entry type-checks.
+  | "neon"
+  | "giftbox"
+  | "celestial"
+  | "doorway";
 
 export interface Theme {
   id: string;
@@ -29,6 +35,11 @@ const PLAYFAIR = "var(--font-playfair), Georgia, 'Times New Roman', serif";
 const SCRIPT = "var(--font-great-vibes), 'Segoe Script', cursive";
 const SANS = "var(--font-raleway), 'Segoe UI', system-ui, sans-serif";
 const DEVA = "var(--font-noto-deva), var(--font-raleway), system-ui, serif";
+// "Experience" theme fonts.
+const SPACE = "var(--font-space-grotesk), 'Segoe UI', system-ui, sans-serif";
+const FREDOKA = "var(--font-fredoka), 'Segoe UI', system-ui, sans-serif";
+const NUNITO = "var(--font-nunito), var(--font-raleway), system-ui, sans-serif";
+const DM_SERIF = "var(--font-dm-serif), Georgia, 'Times New Roman', serif";
 
 // Repeating border ribbons (18px tall band), each reading as a cultural trim.
 const PATTERN = {
@@ -203,6 +214,146 @@ export const THEMES: Theme[] = [
       "--w-deva": DEVA,
       "--w-divider": '"❁"',
       "--w-pattern": PATTERN.scallop,
+    } as CSSProperties,
+  },
+
+  /* ── "Experience" themes — non-wedding, fully bespoke interactive renderers ── */
+  {
+    id: "afterparty",
+    name: "The Afterparty",
+    description:
+      "Near-black neon, VIP pass & classified location — nightlife, bachelor/ette.",
+    swatch: ["#09090B", "#7C3AED", "#EC4899"],
+    heroMotif: "neon",
+    vars: {
+      // theme-specific palette (consumed by the bespoke renderer)
+      "--ap-black": "#09090B",
+      "--ap-violet": "#7C3AED",
+      "--ap-pink": "#EC4899",
+      "--ap-lime": "#C6FF00",
+      "--ap-white": "#FAFAFA",
+      "--ap-glass": "rgba(255,255,255,0.06)",
+      "--ap-glass-line": "rgba(255,255,255,0.14)",
+      // --w-* fallback tokens (shared WebsiteView safety net)
+      "--w-navy": "#09090B",
+      "--w-bg": "#09090B",
+      "--w-surface": "#141317",
+      "--w-ink": "#FAFAFA",
+      "--w-ink-soft": "#a1a1aa",
+      "--w-accent": "#EC4899",
+      "--w-gold": "#7C3AED",
+      "--w-gold-lite": "#C6FF00",
+      "--w-line": "rgba(255,255,255,0.14)",
+      "--w-hero-ink": "#FAFAFA",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 0%, rgba(124,58,237,0.55) 0%, rgba(124,58,237,0) 60%), radial-gradient(70% 60% at 80% 20%, rgba(236,72,153,0.4) 0%, rgba(236,72,153,0) 55%), #09090B",
+      "--w-serif": SPACE,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"⚡"',
+      "--w-pattern":
+        "repeating-linear-gradient(90deg, var(--ap-violet) 0 12px, transparent 12px 24px, var(--ap-pink) 24px 36px, transparent 36px 48px)",
+    } as CSSProperties,
+  },
+  {
+    id: "confetti",
+    name: "The Confetti",
+    description:
+      "Sky-blue & sunshine, tap-to-open gift, balloons & star game — kids' birthdays.",
+    swatch: ["#60A5FA", "#FACC15", "#FB7185"],
+    heroMotif: "giftbox",
+    vars: {
+      "--cf-sky": "#60A5FA",
+      "--cf-sun": "#FACC15",
+      "--cf-coral": "#FB7185",
+      "--cf-lavender": "#A78BFA",
+      "--cf-cream": "#FFFDF5",
+      "--w-navy": "#3b4a63",
+      "--w-bg": "#FFFDF5",
+      "--w-surface": "#ffffff",
+      "--w-ink": "#3b4a63",
+      "--w-ink-soft": "#7c88a1",
+      "--w-accent": "#FB7185",
+      "--w-gold": "#FACC15",
+      "--w-gold-lite": "#fde68a",
+      "--w-line": "#e8edf6",
+      "--w-hero-ink": "#3b4a63",
+      "--w-hero-bg":
+        "radial-gradient(80% 70% at 50% 0%, rgba(96,165,250,0.28) 0%, rgba(96,165,250,0) 60%), radial-gradient(70% 60% at 85% 15%, rgba(167,139,250,0.28) 0%, rgba(167,139,250,0) 55%), #FFFDF5",
+      "--w-serif": FREDOKA,
+      "--w-sans": NUNITO,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern":
+        "radial-gradient(circle, var(--cf-sun) 2px, transparent 2.5px) 0 0/22px 100% repeat-x, radial-gradient(circle, var(--cf-coral) 2px, transparent 2.5px) 11px 0/22px 100% repeat-x",
+    } as CSSProperties,
+  },
+  {
+    id: "little-miracle",
+    name: "The Little Miracle",
+    description:
+      "Celestial night sky, wish-upon-a-star & optional reveal — baby showers, gender-neutral.",
+    swatch: ["#DCEAF7", "#F6D6D6", "#C5A46D"],
+    heroMotif: "celestial",
+    vars: {
+      "--lm-blush": "#F6D6D6",
+      "--lm-cloud": "#DCEAF7",
+      "--lm-cream": "#FFF9F0",
+      "--lm-gold": "#C5A46D",
+      "--lm-cocoa": "#594A42",
+      "--lm-night": "#2b2d42",
+      "--w-navy": "#2b2d42",
+      "--w-bg": "#FFF9F0",
+      "--w-surface": "#ffffff",
+      "--w-ink": "#594A42",
+      "--w-ink-soft": "#9a8a80",
+      "--w-accent": "#C5A46D",
+      "--w-gold": "#C5A46D",
+      "--w-gold-lite": "#e0c69a",
+      "--w-line": "#ece2d6",
+      "--w-hero-ink": "#FFF9F0",
+      "--w-hero-bg":
+        "radial-gradient(90% 80% at 50% 110%, rgba(197,164,109,0.25) 0%, rgba(197,164,109,0) 55%), linear-gradient(180deg, #23263b 0%, #3a3d5a 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": DM_SERIF,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern":
+        "radial-gradient(circle, var(--lm-gold) 1px, transparent 1.5px) center/20px 100% repeat-x",
+    } as CSSProperties,
+  },
+  {
+    id: "shubh-aarambh",
+    name: "The Shubh Aarambh",
+    description:
+      "Terracotta & teal, opening doors, rangoli & diyas — griha pravesh, housewarming.",
+    swatch: ["#B55233", "#D99A2B", "#174C4F"],
+    heroMotif: "doorway",
+    vars: {
+      "--sa-terracotta": "#B55233",
+      "--sa-saffron": "#D99A2B",
+      "--sa-ivory": "#FFF8EA",
+      "--sa-teal": "#174C4F",
+      "--sa-charcoal": "#342C28",
+      "--w-navy": "#174C4F",
+      "--w-bg": "#FFF8EA",
+      "--w-surface": "#fffdf6",
+      "--w-ink": "#342C28",
+      "--w-ink-soft": "#8a7d6f",
+      "--w-accent": "#174C4F",
+      "--w-gold": "#D99A2B",
+      "--w-gold-lite": "#eac06a",
+      "--w-line": "#eaddc6",
+      "--w-hero-ink": "#FFF8EA",
+      "--w-hero-bg":
+        "radial-gradient(70% 60% at 50% 40%, rgba(217,154,43,0.5) 0%, rgba(217,154,43,0) 60%), linear-gradient(180deg, #6d2f1c 0%, #B55233 100%)",
+      "--w-serif": CORMORANT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"◇"',
+      "--w-pattern":
+        "conic-gradient(from 45deg, var(--sa-saffron) 0 25%, transparent 0 50%, var(--sa-saffron) 0 75%, transparent 0) 0 0/16px 16px",
     } as CSSProperties,
   },
 ];

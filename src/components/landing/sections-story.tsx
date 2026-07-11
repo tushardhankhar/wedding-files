@@ -147,12 +147,12 @@ export function ThemeShowcase() {
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="max-w-xl" data-reveal>
           <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            One celebration.
+            A designer theme for
             <br />
-            <span className="italic text-[color:var(--l-purple)]">Many ways to tell its story.</span>
+            <span className="italic text-[color:var(--l-purple)]">every celebration.</span>
           </h2>
           <p className="mt-4 text-[15px] text-[color:var(--l-ink-soft)]">
-            Choose a world that feels like you.
+            Weddings, birthdays, baby showers, housewarmings &amp; more — tap any theme to explore a live, interactive invitation.
           </p>
         </div>
       </div>

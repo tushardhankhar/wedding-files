@@ -4,11 +4,7 @@ import { notFound } from "next/navigation";
 import { THEMES, getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
 import { SiteView } from "@/modules/website/render/site";
-import {
-  DEMO_SITE_WEDDING,
-  DEMO_SITE_EVENTS,
-  DEMO_SITE_CONFIG,
-} from "@/modules/website/demo-data";
+import { getDemoData } from "@/modules/website/demo-data";
 
 /**
  * PUBLIC live theme demo — the real guest-site renderer fed a fictional sample
@@ -42,13 +38,8 @@ export default async function DemoPage({
   if (!THEMES.some((t) => t.id === themeId)) notFound();
   const theme = getTheme(themeId);
 
-  const props = buildSiteProps(
-    {
-      ...DEMO_SITE_WEDDING,
-      config: DEMO_SITE_CONFIG as Record<string, unknown>,
-    },
-    DEMO_SITE_EVENTS
-  );
+  const { wedding, events } = getDemoData(themeId);
+  const props = buildSiteProps(wedding, events);
 
   return (
     <>

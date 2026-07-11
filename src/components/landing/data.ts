@@ -96,6 +96,11 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi" },
   { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
   { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian" },
+  // Beyond weddings — interactive celebration themes.
+  { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty" },
+  { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti" },
+  { id: "little-miracle", name: "The Little Miracle", vibe: "Baby shower & naming", tagline: "A wish upon a star.", art: "little-miracle", palette: ["#DCEAF7", "#F6D6D6", "#C5A46D"], demo: "little-miracle" },
+  { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#B55233", "#D99A2B", "#174C4F"], demo: "shubh-aarambh" },
 ];
 
 // ── Pricing ────────────────────────────────────────────────────────────────

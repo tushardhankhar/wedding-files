@@ -4,6 +4,10 @@ import { GulmoharView } from "./gulmohar/gulmohar-view";
 import { AnandKarajView } from "./anand-karaj/anand-karaj-view";
 import { KalyanamView } from "./kalyanam/kalyanam-view";
 import { VowView } from "./vow/vow-view";
+import { AfterpartyView } from "./afterparty/afterparty-view";
+import { ConfettiView } from "./confetti/confetti-view";
+import { LittleMiracleView } from "./little-miracle/little-miracle-view";
+import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
 
 /**
  * Per-theme renderer dispatch. Each flagship theme has a standalone renderer
@@ -23,6 +27,14 @@ export function SiteView(props: WebsiteViewProps) {
       return <KalyanamView {...props} />;
     case "christian": // The Vow
       return <VowView {...props} />;
+    case "afterparty": // The Afterparty
+      return <AfterpartyView {...props} />;
+    case "confetti": // The Confetti
+      return <ConfettiView {...props} />;
+    case "little-miracle": // The Little Miracle
+      return <LittleMiracleView {...props} />;
+    case "shubh-aarambh": // The Shubh Aarambh
+      return <ShubhAarambhView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }

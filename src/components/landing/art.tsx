@@ -58,6 +58,23 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     bg: "radial-gradient(80% 60% at 50% 20%, rgba(255,255,255,.7), transparent 60%), linear-gradient(155deg, #f5f2ea 0%, #dde3d3 55%, #c9d4bf 115%)",
     motif: "❦",
   },
+  // "Experience" themes (non-wedding celebrations).
+  afterparty: {
+    bg: "radial-gradient(80% 60% at 28% 15%, rgba(124,58,237,.55), transparent 60%), radial-gradient(70% 60% at 82% 26%, rgba(236,72,153,.45), transparent 60%), linear-gradient(165deg, #16121f 0%, #09090b 100%)",
+    motif: "⚡",
+  },
+  confetti: {
+    bg: "radial-gradient(70% 55% at 28% 18%, rgba(96,165,250,.55), transparent 60%), radial-gradient(70% 60% at 80% 30%, rgba(251,113,133,.5), transparent 60%), linear-gradient(150deg, #facc15 0%, #a78bfa 125%)",
+    motif: "★",
+  },
+  "little-miracle": {
+    bg: "radial-gradient(90% 55% at 50% 118%, rgba(197,164,109,.45), transparent 55%), linear-gradient(180deg, #23263b 0%, #3a3d5a 100%)",
+    motif: "☾",
+  },
+  "shubh-aarambh": {
+    bg: "radial-gradient(70% 60% at 50% 28%, rgba(217,154,43,.55), transparent 60%), linear-gradient(165deg, #6d2f1c 0%, #b55233 58%, #174c4f 130%)",
+    motif: "◇",
+  },
 };
 
 export function PhotoArt({

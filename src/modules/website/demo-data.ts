@@ -1,5 +1,6 @@
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteConfig } from "./schema";
+import type { SiteWedding } from "./render/build";
 
 /**
  * Sample wedding fed to the PUBLIC theme demo (/demo/[themeId]). Entirely
@@ -169,3 +170,191 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
     ],
   },
 };
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * "Experience" theme demos — each non-wedding theme gets its own fictional
+ * sample (host, date, timeline, and theme-specific interactive content). The
+ * bespoke renderers read config.experience.<theme>; the wedding-level fields
+ * (names, dateLabel, events) still power the shared shell / countdown.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+interface DemoDataset {
+  wedding: SiteWedding;
+  events: WeddingEvent[];
+}
+
+const ev = (
+  id: string,
+  name: string,
+  startTime: string | null,
+  extra: Partial<WeddingEvent> = {}
+): WeddingEvent => ({
+  id,
+  weddingId: "demo",
+  name,
+  nameHi: null,
+  eventDate: extra.eventDate ?? null,
+  startTime,
+  venueName: null,
+  venueAddress: null,
+  mapsUrl: null,
+  description: null,
+  descriptionHi: null,
+  sortOrder: 0,
+  ...stamp,
+  ...extra,
+});
+
+// 7 · The Afterparty
+const AFTERPARTY: DemoDataset = {
+  wedding: {
+    title: "Rohan's Last Night of Freedom",
+    partnerOneName: "Rohan",
+    partnerTwoName: null,
+    eventDate: "2026-08-15",
+    config: {
+      experience: {
+        afterparty: {
+          eventTitle: { en: "ROHAN'S LAST NIGHT OF FREEDOM" },
+          guestLabel: "THE CREW",
+          passTier: "VIP ACCESS",
+          location: {
+            venue: "KITTY SU",
+            city: "MUMBAI",
+            mapsUrl: "https://maps.google.com/?q=Kitty+Su+Mumbai",
+          },
+          partyRule: {
+            en: "WHAT HAPPENS AT THE PARTY, STAYS AT THE PARTY.",
+          },
+        },
+      },
+      footer: { hashtag: "RohanUnfiltered" },
+    } as Record<string, unknown>,
+  },
+  events: [
+    ev("ap-1", "Pre Drinks", "20:00", { eventDate: "2026-08-15" }),
+    ev("ap-2", "Dinner", "22:00", { eventDate: "2026-08-15" }),
+    ev("ap-3", "The Chaos Begins", "23:30", { eventDate: "2026-08-15" }),
+    ev("ap-4", "What Happens Here Stays Here", null, {
+      eventDate: "2026-08-16",
+    }),
+  ],
+};
+
+// 8 · The Confetti
+const CONFETTI: DemoDataset = {
+  wedding: {
+    title: "Aarav is turning 6",
+    partnerOneName: "Aarav",
+    partnerTwoName: null,
+    eventDate: "2026-08-02",
+    config: {
+      experience: {
+        confetti: {
+          childName: "Aarav",
+          age: 6,
+          surprise: { en: "A little surprise is waiting for you", hi: "एक छोटा सा सरप्राइज़ आपका इंतज़ार कर रहा है" },
+          secretStar: { en: "You found a secret star!" },
+          cards: [
+            { icon: "🎂", label: { en: "Birthday" }, value: { en: "Aarav turns 6" } },
+            { icon: "📍", label: { en: "Venue" }, value: { en: "FunCity, Bandra" } },
+            { icon: "🕐", label: { en: "Time" }, value: { en: "4:00 PM onwards" } },
+            { icon: "🎈", label: { en: "Theme" }, value: { en: "Space Explorers" } },
+          ],
+        },
+      },
+    } as Record<string, unknown>,
+  },
+  events: [ev("cf-1", "The Party", "16:00", { eventDate: "2026-08-02", venueName: "FunCity", venueAddress: "Bandra, Mumbai" })],
+};
+
+// 9 · The Little Miracle
+const LITTLE_MIRACLE: DemoDataset = {
+  wedding: {
+    title: "Aisha & Kabir",
+    partnerOneName: "Aisha",
+    partnerTwoName: "Kabir",
+    eventDate: "2026-09-20",
+    config: {
+      experience: {
+        littleMiracle: {
+          parents: "Aisha & Kabir",
+          title: { en: "A little miracle is on the way" },
+          wishPrompt: { en: "Make a wish for the little one" },
+          genderReveal: {
+            enabled: true,
+            reveal: { en: "The surprise continues 🤍" },
+            accent: "#C5A46D",
+          },
+        },
+      },
+    } as Record<string, unknown>,
+  },
+  events: [
+    ev("lm-1", "Godh Bharai", "11:00", {
+      eventDate: "2026-09-20",
+      venueName: "Home",
+      venueAddress: "Koregaon Park, Pune",
+    }),
+    ev("lm-2", "Lunch & Blessings", "13:00", { eventDate: "2026-09-20" }),
+  ],
+};
+
+// 10 · The Shubh Aarambh
+const SHUBH_AARAMBH: DemoDataset = {
+  wedding: {
+    title: "The Sharma Family",
+    partnerOneName: null,
+    partnerTwoName: null,
+    eventDate: "2026-08-30",
+    config: {
+      experience: {
+        shubhAarambh: {
+          familyName: { en: "The Sharma Family", hi: "शर्मा परिवार" },
+          title: { en: "Griha Pravesh", hi: "गृह प्रवेश" },
+          blessing: {
+            en: "Welcome to our new home",
+            hi: "नए घर में आपका स्वागत है",
+          },
+          rangoliColors: ["#D99A2B", "#B55233", "#174C4F", "#C2185B", "#2E7D32", "#7C3AED"],
+        },
+      },
+      footer: { hashtag: "SharmaGrihaPravesh" },
+    } as Record<string, unknown>,
+  },
+  events: [
+    ev("sa-1", "Ganesh Puja", "09:00", { eventDate: "2026-08-30", nameHi: "गणेश पूजा" }),
+    ev("sa-2", "Griha Pravesh", "10:30", { eventDate: "2026-08-30", nameHi: "गृह प्रवेश" }),
+    ev("sa-3", "Satyanarayan Katha", "12:00", { eventDate: "2026-08-30", nameHi: "सत्यनारायण कथा" }),
+    ev("sa-4", "Prasad & Lunch", "13:30", {
+      eventDate: "2026-08-30",
+      nameHi: "प्रसाद और भोजन",
+      venueName: "12 Sunrise Villa",
+      venueAddress: "Whitefield, Bengaluru",
+      mapsUrl: "https://maps.google.com/?q=Whitefield+Bengaluru",
+    }),
+  ],
+};
+
+const EXPERIENCE_DEMOS: Record<string, DemoDataset> = {
+  afterparty: AFTERPARTY,
+  confetti: CONFETTI,
+  "little-miracle": LITTLE_MIRACLE,
+  "shubh-aarambh": SHUBH_AARAMBH,
+};
+
+/** Sample wedding/experience data for a demo theme. Falls back to the wedding
+ * sample for the six wedding themes. */
+export function getDemoData(themeId: string): DemoDataset {
+  return (
+    EXPERIENCE_DEMOS[themeId] ?? {
+      wedding: {
+        ...DEMO_SITE_WEDDING,
+        partnerOneName: DEMO_SITE_WEDDING.partnerOneName,
+        partnerTwoName: DEMO_SITE_WEDDING.partnerTwoName,
+        config: DEMO_SITE_CONFIG as Record<string, unknown>,
+      },
+      events: DEMO_SITE_EVENTS,
+    }
+  );
+}

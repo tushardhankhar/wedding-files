@@ -29,8 +29,84 @@ export type Focus = z.infer<typeof focusSchema>;
  * optional — sections without content are simply not rendered. Content
  * authoring UI arrives in Phase 4; the renderer already reads all of it.
  */
+/**
+ * Theme-specific interactive content for the non-wedding "experience" themes
+ * (afterparty / confetti / little-miracle / shubh-aarambh). Each bespoke
+ * renderer reads only its own block; everything is optional so a theme falls
+ * back to the wedding-level fields (names, dateLabel, events) when absent.
+ * Colours are configurable (never hardcoded per gender/occasion).
+ */
+export const experienceSchema = z
+  .object({
+    /** The Afterparty — bachelor/bachelorette/nightlife. */
+    afterparty: z
+      .object({
+        eventTitle: localizedSchema.optional(), // "…'s LAST NIGHT OF FREEDOM"
+        guestLabel: z.string().optional(), // name printed on the VIP pass
+        passTier: z.string().optional(), // e.g. "VIP ACCESS"
+        location: z
+          .object({
+            venue: z.string(),
+            city: z.string().optional(),
+            mapsUrl: z.string().optional(),
+          })
+          .optional(),
+        partyRule: localizedSchema.optional(), // hold-to-reveal payload
+      })
+      .optional(),
+
+    /** The Confetti — children's birthday. */
+    confetti: z
+      .object({
+        childName: z.string().optional(),
+        age: z.number().int().min(1).max(120).optional(),
+        surprise: localizedSchema.optional(), // hero pre-open line
+        secretStar: localizedSchema.optional(), // reward on the lucky balloon
+        cards: z
+          .array(
+            z.object({
+              icon: z.string(), // emoji
+              label: localizedSchema,
+              value: localizedSchema,
+            })
+          )
+          .default([]),
+      })
+      .optional(),
+
+    /** The Little Miracle — baby shower / godh bharai / naming. */
+    littleMiracle: z
+      .object({
+        parents: z.string().optional(),
+        title: localizedSchema.optional(),
+        wishPrompt: localizedSchema.optional(),
+        genderReveal: z
+          .object({
+            enabled: z.boolean().default(false),
+            reveal: localizedSchema, // "IT'S A BOY 💙" / "…GIRL 🌸" / "…SURPRISE 🤍"
+            accent: z.string().optional(), // configurable hex — never hardcoded
+          })
+          .optional(),
+      })
+      .optional(),
+
+    /** The Shubh Aarambh — griha pravesh / housewarming / puja. */
+    shubhAarambh: z
+      .object({
+        familyName: localizedSchema.optional(),
+        title: localizedSchema.optional(),
+        blessing: localizedSchema.optional(), // Hindi with English fallback
+        rangoliColors: z.array(z.string()).default([]), // palette dots (hex)
+      })
+      .optional(),
+  })
+  .optional();
+
+export type Experience = z.infer<typeof experienceSchema>;
+
 export const websiteConfigSchema = z.object({
   hero: z.object({ tagline: localizedSchema.optional() }).optional(),
+  experience: experienceSchema,
   story: z
     .object({
       milestones: z
