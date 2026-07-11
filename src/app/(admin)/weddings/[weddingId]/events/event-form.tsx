@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import type { EventFormState } from "@/modules/events/server/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +39,18 @@ export function EventForm({
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  // Controlled — a post-save revalidate re-renders with the saved values, which
+  // would trip Base UI's "uncontrolled defaultValue changed" warning otherwise.
+  const [name, setName] = useState(values?.name ?? "");
+  const [nameHi, setNameHi] = useState(values?.nameHi ?? "");
+  const [eventDate, setEventDate] = useState(values?.eventDate ?? "");
+  const [startTime, setStartTime] = useState(values?.startTime?.slice(0, 5) ?? "");
+  const [venueName, setVenueName] = useState(values?.venueName ?? "");
+  const [venueAddress, setVenueAddress] = useState(values?.venueAddress ?? "");
+  const [mapsUrl, setMapsUrl] = useState(values?.mapsUrl ?? "");
+  const [description, setDescription] = useState(values?.description ?? "");
+  const [descriptionHi, setDescriptionHi] = useState(values?.descriptionHi ?? "");
+
   return (
     <form action={formAction} className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -49,7 +61,8 @@ export function EventForm({
             name="name"
             required
             maxLength={120}
-            defaultValue={values?.name ?? ""}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Mehendi"
           />
         </div>
@@ -59,7 +72,8 @@ export function EventForm({
             id="nameHi"
             name="nameHi"
             maxLength={120}
-            defaultValue={values?.nameHi ?? ""}
+            value={nameHi}
+            onChange={(e) => setNameHi(e.target.value)}
             placeholder="जैसे मेहंदी"
           />
         </div>
@@ -72,7 +86,8 @@ export function EventForm({
             id="eventDate"
             name="eventDate"
             type="date"
-            defaultValue={values?.eventDate ?? ""}
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
           />
         </div>
         <div className="space-y-2">
@@ -81,7 +96,8 @@ export function EventForm({
             id="startTime"
             name="startTime"
             type="time"
-            defaultValue={values?.startTime?.slice(0, 5) ?? ""}
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
           />
         </div>
       </div>
@@ -92,7 +108,8 @@ export function EventForm({
           id="venueName"
           name="venueName"
           maxLength={160}
-          defaultValue={values?.venueName ?? ""}
+          value={venueName}
+          onChange={(e) => setVenueName(e.target.value)}
           placeholder="e.g. The Leela Palace"
         />
       </div>
@@ -103,7 +120,8 @@ export function EventForm({
           id="venueAddress"
           name="venueAddress"
           maxLength={300}
-          defaultValue={values?.venueAddress ?? ""}
+          value={venueAddress}
+          onChange={(e) => setVenueAddress(e.target.value)}
           placeholder="Street, city"
         />
       </div>
@@ -114,7 +132,8 @@ export function EventForm({
           id="mapsUrl"
           name="mapsUrl"
           type="url"
-          defaultValue={values?.mapsUrl ?? ""}
+          value={mapsUrl}
+          onChange={(e) => setMapsUrl(e.target.value)}
           placeholder="https://maps.google.com/…"
         />
       </div>
@@ -126,7 +145,8 @@ export function EventForm({
           name="description"
           rows={3}
           maxLength={2000}
-          defaultValue={values?.description ?? ""}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           placeholder="Dress code, notes for guests, timings…"
         />
       </div>
@@ -138,7 +158,8 @@ export function EventForm({
           name="descriptionHi"
           rows={3}
           maxLength={2000}
-          defaultValue={values?.descriptionHi ?? ""}
+          value={descriptionHi}
+          onChange={(e) => setDescriptionHi(e.target.value)}
           placeholder="ड्रेस कोड, मेहमानों के लिए जानकारी…"
         />
       </div>

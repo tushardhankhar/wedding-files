@@ -87,6 +87,16 @@ export function ConfettiView(props: WebsiteViewProps) {
   const secret = cf?.secretStar?.en ?? "You found a secret star!";
   const cards = cf?.cards ?? [];
   const primary = events[0];
+  // Real uploaded photos when present; playful placeholders otherwise.
+  const galleryImages = config.gallery?.images ?? [];
+  const memories: CarouselItem[] =
+    galleryImages.length > 0
+      ? galleryImages.map((i) => ({
+          url: i.url,
+          caption: i.caption?.en,
+          focus: i.focus,
+        }))
+      : DEMO_MEMORIES;
 
   const [armed, setArmed] = useState(false);
   const [opened, setOpened] = useState(false);
@@ -211,7 +221,7 @@ export function ConfettiView(props: WebsiteViewProps) {
           <h2 className="mb-2 text-center font-fredoka text-3xl font-semibold text-[color:var(--cf-coral)]">
             Sweet memories
           </h2>
-          <PhotoCarousel items={DEMO_MEMORIES} captionColor="#7c88a1" />
+          <PhotoCarousel items={memories} captionColor="#7c88a1" />
         </section>
 
         {/* ── Countdown ──────────────────────────────────────────────────── */}

@@ -22,6 +22,36 @@ export type HeroMotif =
   | "doorway"
   | "seal";
 
+export type ThemeCategory =
+  | "wedding"
+  | "save-the-date"
+  | "party"
+  | "kids-birthday"
+  | "baby-shower"
+  | "housewarming";
+
+/** Which subject (name) inputs a theme's create/edit form should show. */
+export interface SubjectSpec {
+  names: 0 | 1 | 2;
+  labels: string[];
+  extras?: Array<"age">;
+}
+
+/**
+ * Which content sections/fields a theme exposes. Drives the authoring form
+ * (e.g. hide the image/gallery upload when `gallery` is false) and can gate the
+ * renderer — one source of truth per theme, so adding a theme is a single edit.
+ */
+export interface ThemeSupports {
+  taglineHero: boolean;
+  story: boolean;
+  gallery: boolean;
+  family: boolean;
+  faq: boolean;
+  events: boolean;
+  countdown: boolean;
+}
+
 export interface Theme {
   id: string;
   name: string;
@@ -29,7 +59,17 @@ export interface Theme {
   swatch: string[];
   heroMotif: HeroMotif;
   vars: CSSProperties;
+  /** Event category — birthdays, weddings, housewarmings… */
+  category: ThemeCategory;
+  /** How many names to collect and what to label them. */
+  subjectSpec: SubjectSpec;
+  /** Which content sections the authoring form should offer. */
+  supports: ThemeSupports;
 }
+
+/** A theme's visual/token definition, before category/subject/capability
+ * metadata is merged on (see THEME_META). */
+type ThemeBase = Omit<Theme, "category" | "subjectSpec" | "supports">;
 
 const CORMORANT = "var(--font-cormorant), Georgia, 'Times New Roman', serif";
 const PLAYFAIR = "var(--font-playfair), Georgia, 'Times New Roman', serif";
@@ -55,7 +95,7 @@ const PATTERN = {
     "radial-gradient(circle at 9px 20px, transparent 8px, var(--w-gold) 8px 9px, transparent 10px) 0 0/18px 18px repeat-x",
 };
 
-export const THEMES: Theme[] = [
+const THEME_BASES: ThemeBase[] = [
   {
     id: "royal",
     name: "The Maharaja",
@@ -393,6 +433,75 @@ export const THEMES: Theme[] = [
   },
 ];
 
+const WEDDING_SUBJECT: SubjectSpec = {
+  names: 2,
+  labels: ["Partner one", "Partner two"],
+};
+const WEDDING_SUPPORTS: ThemeSupports = {
+  taglineHero: true,
+  story: true,
+  gallery: true,
+  family: true,
+  faq: true,
+  events: true,
+  countdown: true,
+};
+/** Non-wedding baseline: countdown only; each theme turns on what it needs. */
+const MINIMAL_SUPPORTS: ThemeSupports = {
+  taglineHero: false,
+  story: false,
+  gallery: false,
+  family: false,
+  faq: false,
+  events: false,
+  countdown: true,
+};
+
+/** Category + subject + capability metadata, merged onto THEME_BASES below.
+ * Adding a theme = add its base literal above and one entry here. */
+const THEME_META: Record<
+  string,
+  Pick<Theme, "category" | "subjectSpec" | "supports">
+> = {
+  royal: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  ivory: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  christian: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  punjabi: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  "south-indian": { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  rajasthani: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  "save-the-date": {
+    category: "save-the-date",
+    subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
+    supports: MINIMAL_SUPPORTS,
+  },
+  afterparty: {
+    category: "party",
+    subjectSpec: { names: 1, labels: ["Guest of honour"] },
+    supports: { ...MINIMAL_SUPPORTS, events: true },
+  },
+  confetti: {
+    category: "kids-birthday",
+    subjectSpec: { names: 1, labels: ["Child's name"], extras: ["age"] },
+    supports: { ...MINIMAL_SUPPORTS, gallery: true },
+  },
+  "little-miracle": {
+    category: "baby-shower",
+    subjectSpec: { names: 2, labels: ["Parent one", "Parent two"] },
+    supports: { ...MINIMAL_SUPPORTS, gallery: true, events: true },
+  },
+  "shubh-aarambh": {
+    category: "housewarming",
+    subjectSpec: { names: 1, labels: ["Family name"] },
+    supports: { ...MINIMAL_SUPPORTS, events: true },
+  },
+};
+
+export const THEMES: Theme[] = THEME_BASES.map((t) => {
+  const meta = THEME_META[t.id];
+  if (!meta) throw new Error(`registry: no THEME_META for theme "${t.id}"`);
+  return { ...t, ...meta };
+});
+
 export const DEFAULT_THEME_ID = "royal";
 
 export function getTheme(themeId: string | null | undefined): Theme {
@@ -401,4 +510,29 @@ export function getTheme(themeId: string | null | undefined): Theme {
     THEMES.find((t) => t.id === DEFAULT_THEME_ID) ??
     THEMES[0]
   );
+}
+
+/* ── Celebration categories ──────────────────────────────────────────────────
+ * The first-class grouping shown in the "New invitation" wizard. Each category
+ * holds one or more themes (add more themes per category over time — they show
+ * up here automatically). Order = display order in the occasion picker. */
+export interface CategoryInfo {
+  id: ThemeCategory;
+  label: string;
+  blurb: string;
+  emoji: string;
+}
+
+export const CATEGORIES: CategoryInfo[] = [
+  { id: "wedding", label: "Wedding", blurb: "The full multi-event celebration.", emoji: "💍" },
+  { id: "save-the-date", label: "Save the Date", blurb: "An elegant early announcement.", emoji: "✦" },
+  { id: "kids-birthday", label: "Kids' Birthday", blurb: "Playful, interactive & magical.", emoji: "🎂" },
+  { id: "baby-shower", label: "Baby Shower", blurb: "Dreamy & celestial. Gender-neutral.", emoji: "🌙" },
+  { id: "housewarming", label: "Housewarming", blurb: "Griha Pravesh, puja & family.", emoji: "🪔" },
+  { id: "party", label: "Party", blurb: "Bachelor/ette & nightlife.", emoji: "⚡" },
+];
+
+/** Themes belonging to a category, in registry order. */
+export function themesForCategory(cat: ThemeCategory): Theme[] {
+  return THEMES.filter((t) => t.category === cat);
 }

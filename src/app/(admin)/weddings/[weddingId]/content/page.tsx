@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { parseWebsiteConfig } from "@/modules/website/schema";
+import { getTheme } from "@/modules/website/themes/registry";
 import { ContentEditor } from "./content-editor";
 
 export default async function ContentPage({
@@ -14,6 +15,7 @@ export default async function ContentPage({
   if (!wedding) notFound();
 
   const config = parseWebsiteConfig(wedding.config);
+  const theme = getTheme(wedding.themeId);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -45,7 +47,12 @@ export default async function ContentPage({
         </p>
       </div>
 
-      <ContentEditor weddingId={weddingId} initial={config} />
+      <ContentEditor
+        weddingId={weddingId}
+        initial={config}
+        supports={theme.supports}
+        category={theme.category}
+      />
     </div>
   );
 }

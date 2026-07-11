@@ -13,8 +13,11 @@ const optionalTrimmed = z
 
 export const createWeddingSchema = z.object({
   title: z.string().trim().min(1, "Title is required.").max(120),
-  partnerOneName: optionalTrimmed,
-  partnerTwoName: optionalTrimmed,
+  // The theme chosen in the create wizard (validated against the registry in the
+  // action). Optional so the update schema/flow, which never submits it, is fine.
+  themeId: z.string().optional(),
+  name1: optionalTrimmed,
+  name2: optionalTrimmed,
   // HTML date inputs submit "" when empty; treat that as no date.
   eventDate: z
     .string()

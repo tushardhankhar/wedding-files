@@ -9,8 +9,8 @@ const EVENT_COLS =
 export interface GuestWedding {
   slug: string;
   title: string;
-  partnerOneName: string | null;
-  partnerTwoName: string | null;
+  name1: string | null;
+  name2: string | null;
   eventDate: string | null;
   config: Record<string, unknown>;
   themeId: string;
@@ -19,15 +19,15 @@ export interface GuestWedding {
 type WeddingJoin = {
   slug: string;
   title: string;
-  partner_one_name: string | null;
-  partner_two_name: string | null;
+  name1: string | null;
+  name2: string | null;
   event_date: string | null;
   config: Record<string, unknown> | null;
   theme_id: string;
 };
 
 const WEDDING_COLS =
-  "slug, title, partner_one_name, partner_two_name, event_date, config, theme_id";
+  "slug, title, name1, name2, event_date, config, theme_id";
 
 export type GuestSiteData =
   | {
@@ -50,8 +50,8 @@ function toGuestWedding(w: WeddingJoin): GuestWedding {
   return {
     slug: w.slug,
     title: w.title,
-    partnerOneName: w.partner_one_name,
-    partnerTwoName: w.partner_two_name,
+    name1: w.name1,
+    name2: w.name2,
     eventDate: w.event_date,
     config: w.config ?? {},
     themeId: w.theme_id,
@@ -82,29 +82,30 @@ export async function loadSiteIdentity(
   const svc = createSupabaseServiceClient();
   const { data } = await svc
     .from("weddings")
-    .select("title, partner_one_name, partner_two_name, event_date, theme_id")
+    .select("title, name1, name2, event_date, theme_id")
     .eq("slug", slug)
     .maybeSingle<{
       title: string;
-      partner_one_name: string | null;
-      partner_two_name: string | null;
+      name1: string | null;
+      name2: string | null;
       event_date: string | null;
       theme_id: string;
     }>();
   if (!data) return null;
 
-  const one = data.partner_one_name?.trim();
-  const two = data.partner_two_name?.trim();
+  const one = data.name1?.trim();
+  const two = data.name2?.trim();
+  const parts = [one, two].filter((n): n is string => !!n);
   const letters =
-    one && two
-      ? [one[0], two[0]]
+    parts.length > 0
+      ? parts.map((n) => n[0])
       : data.title
           .split(/\s+/)
           .slice(0, 2)
           .map((w) => w[0] ?? "");
 
   return {
-    names: one && two ? `${one} & ${two}` : data.title,
+    names: parts.length > 0 ? parts.join(" & ") : data.title,
     initials: letters.join("").toUpperCase(),
     monogram: letters.join(" & ").toUpperCase(),
     dateLabel: data.event_date

@@ -48,6 +48,7 @@ interface ShareLinkRow {
   id: string;
   label: string;
   all_events: boolean;
+  token: string | null;
   created_at: string;
   share_link_events: { event_id: string }[] | null;
 }
@@ -59,7 +60,9 @@ export async function listShareLinks(
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("share_links")
-    .select("id, label, all_events, created_at, share_link_events(event_id)")
+    .select(
+      "id, label, all_events, token, created_at, share_link_events(event_id)"
+    )
     .eq("wedding_id", weddingId)
     .order("created_at", { ascending: true });
 
@@ -69,5 +72,6 @@ export async function listShareLinks(
     label: s.label,
     allEvents: s.all_events,
     eventIds: (s.share_link_events ?? []).map((e) => e.event_id),
+    token: s.token,
   }));
 }

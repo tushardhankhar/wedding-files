@@ -130,16 +130,17 @@ export default async function WeddingDetailPage({
       <Card>
         <CardHeader>
           <CardTitle>{wedding.title}</CardTitle>
-          <CardDescription>Edit the core wedding details.</CardDescription>
+          <CardDescription>Edit the core details.</CardDescription>
         </CardHeader>
         <CardContent>
           <WeddingForm
             action={updateAction}
             canRename={isAdmin}
+            subject={getTheme(wedding.themeId).subjectSpec}
             values={{
               title: wedding.title,
-              partnerOneName: wedding.partnerOneName,
-              partnerTwoName: wedding.partnerTwoName,
+              name1: wedding.name1,
+              name2: wedding.name2,
               eventDate: wedding.eventDate,
             }}
           />

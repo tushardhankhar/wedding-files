@@ -9,8 +9,8 @@ import type { SiteWedding } from "./render/build";
 
 export const DEMO_SITE_WEDDING = {
   title: "Aarav & Meera",
-  partnerOneName: "Aarav",
-  partnerTwoName: "Meera",
+  name1: "Aarav",
+  name2: "Meera",
   eventDate: "2026-12-12",
 };
 
@@ -209,8 +209,8 @@ const ev = (
 const AFTERPARTY: DemoDataset = {
   wedding: {
     title: "Rohan's Last Night of Freedom",
-    partnerOneName: "Rohan",
-    partnerTwoName: null,
+    name1: "Rohan",
+    name2: null,
     eventDate: "2026-08-15",
     config: {
       experience: {
@@ -245,8 +245,8 @@ const AFTERPARTY: DemoDataset = {
 const CONFETTI: DemoDataset = {
   wedding: {
     title: "Aarav is turning 6",
-    partnerOneName: "Aarav",
-    partnerTwoName: null,
+    name1: "Aarav",
+    name2: null,
     eventDate: "2026-08-02",
     config: {
       experience: {
@@ -272,8 +272,8 @@ const CONFETTI: DemoDataset = {
 const LITTLE_MIRACLE: DemoDataset = {
   wedding: {
     title: "Aisha & Kabir",
-    partnerOneName: "Aisha",
-    partnerTwoName: "Kabir",
+    name1: "Aisha",
+    name2: "Kabir",
     eventDate: "2026-09-20",
     config: {
       experience: {
@@ -304,8 +304,8 @@ const LITTLE_MIRACLE: DemoDataset = {
 const SHUBH_AARAMBH: DemoDataset = {
   wedding: {
     title: "The Sharma Family",
-    partnerOneName: null,
-    partnerTwoName: null,
+    name1: null,
+    name2: null,
     eventDate: "2026-08-30",
     config: {
       experience: {
@@ -350,8 +350,8 @@ export function getDemoData(themeId: string): DemoDataset {
     EXPERIENCE_DEMOS[themeId] ?? {
       wedding: {
         ...DEMO_SITE_WEDDING,
-        partnerOneName: DEMO_SITE_WEDDING.partnerOneName,
-        partnerTwoName: DEMO_SITE_WEDDING.partnerTwoName,
+        name1: DEMO_SITE_WEDDING.name1,
+        name2: DEMO_SITE_WEDDING.name2,
         config: DEMO_SITE_CONFIG as Record<string, unknown>,
       },
       events: DEMO_SITE_EVENTS,

@@ -34,8 +34,10 @@ export default async function AdminLayout({
               {isAdmin ? "Planner" : "Wedding"}
             </span>
           </Link>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-white/75">{user.email}</span>
+          <div className="flex shrink-0 items-center gap-3">
+            <span className="hidden max-w-[40vw] truncate text-sm text-white/75 sm:inline">
+              {user.email}
+            </span>
             <form action={signOutAction}>
               <Button
                 type="submit"

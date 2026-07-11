@@ -11,6 +11,11 @@ export interface ShareLinkDetail {
   label: string;
   allEvents: boolean;
   eventIds: string[];
+  /**
+   * Plaintext token for re-displaying the link. Null for links created before
+   * tokens were persisted — those must be regenerated to be revealed again.
+   */
+  token: string | null;
 }
 
 /** A group with its members and the set of events it's invited to. */

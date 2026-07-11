@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { WebsiteConfig, Focus } from "@/modules/website/schema";
+import type { WebsiteConfig, Focus, Experience } from "@/modules/website/schema";
+import type {
+  ThemeSupports,
+  ThemeCategory,
+} from "@/modules/website/themes/registry";
 import { saveWebsiteConfigAction } from "@/modules/website/server/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,6 +103,144 @@ function toConfig(s: State): WebsiteConfig {
   };
 }
 
+// ── Theme-specific ("experience") fields ────────────────────────────────────
+type DetailCard = { icon: string; label: Loc; value: Loc };
+
+interface ExpState {
+  // afterparty (party)
+  eventTitle: Loc;
+  guestLabel: string;
+  passTier: string;
+  venue: string;
+  city: string;
+  mapsUrl: string;
+  partyRule: Loc;
+  // confetti (kids-birthday)
+  childName: string;
+  age: string;
+  surprise: Loc;
+  secretStar: Loc;
+  cards: DetailCard[];
+  // little-miracle (baby-shower)
+  parents: string;
+  lmTitle: Loc;
+  wishPrompt: Loc;
+  grEnabled: boolean;
+  grReveal: Loc;
+  grAccent: string;
+  // shubh-aarambh (housewarming)
+  familyName: Loc;
+  saTitle: Loc;
+  blessing: Loc;
+  rangoli: string[];
+}
+
+function normalizeExp(x: Experience): ExpState {
+  const ap = x?.afterparty;
+  const cf = x?.confetti;
+  const lm = x?.littleMiracle;
+  const sa = x?.shubhAarambh;
+  return {
+    eventTitle: L(ap?.eventTitle),
+    guestLabel: ap?.guestLabel ?? "",
+    passTier: ap?.passTier ?? "",
+    venue: ap?.location?.venue ?? "",
+    city: ap?.location?.city ?? "",
+    mapsUrl: ap?.location?.mapsUrl ?? "",
+    partyRule: L(ap?.partyRule),
+    childName: cf?.childName ?? "",
+    age: cf?.age != null ? String(cf.age) : "",
+    surprise: L(cf?.surprise),
+    secretStar: L(cf?.secretStar),
+    cards: (cf?.cards ?? []).map((c) => ({
+      icon: c.icon,
+      label: L(c.label),
+      value: L(c.value),
+    })),
+    parents: lm?.parents ?? "",
+    lmTitle: L(lm?.title),
+    wishPrompt: L(lm?.wishPrompt),
+    grEnabled: lm?.genderReveal?.enabled ?? false,
+    grReveal: L(lm?.genderReveal?.reveal),
+    grAccent: lm?.genderReveal?.accent ?? "#C5A46D",
+    familyName: L(sa?.familyName),
+    saTitle: L(sa?.title),
+    blessing: L(sa?.blessing),
+    rangoli: sa?.rangoliColors ?? [],
+  };
+}
+
+/** Serialize the editable block for the given category. Returns undefined for
+ * wedding/save-the-date (no experience block). */
+function serializeExp(
+  e: ExpState,
+  category: ThemeCategory
+): WebsiteConfig["experience"] {
+  switch (category) {
+    case "party":
+      return {
+        afterparty: {
+          eventTitle: filled(e.eventTitle) ? loc(e.eventTitle) : undefined,
+          guestLabel: e.guestLabel.trim() || undefined,
+          passTier: e.passTier.trim() || undefined,
+          location: e.venue.trim()
+            ? {
+                venue: e.venue.trim(),
+                city: e.city.trim() || undefined,
+                mapsUrl: e.mapsUrl.trim() || undefined,
+              }
+            : undefined,
+          partyRule: filled(e.partyRule) ? loc(e.partyRule) : undefined,
+        },
+      };
+    case "kids-birthday": {
+      const n = parseInt(e.age, 10);
+      return {
+        confetti: {
+          childName: e.childName.trim() || undefined,
+          age: Number.isFinite(n) && n >= 1 && n <= 120 ? n : undefined,
+          surprise: filled(e.surprise) ? loc(e.surprise) : undefined,
+          secretStar: filled(e.secretStar) ? loc(e.secretStar) : undefined,
+          cards: e.cards
+            .filter((c) => c.icon.trim() || filled(c.label) || filled(c.value))
+            .map((c) => ({
+              icon: c.icon.trim() || "🎉",
+              label: loc(c.label),
+              value: loc(c.value),
+            })),
+        },
+      };
+    }
+    case "baby-shower":
+      return {
+        littleMiracle: {
+          parents: e.parents.trim() || undefined,
+          title: filled(e.lmTitle) ? loc(e.lmTitle) : undefined,
+          wishPrompt: filled(e.wishPrompt) ? loc(e.wishPrompt) : undefined,
+          genderReveal:
+            e.grEnabled || filled(e.grReveal)
+              ? {
+                  enabled: e.grEnabled,
+                  reveal: loc(e.grReveal),
+                  accent: e.grAccent.trim() || undefined,
+                }
+              : undefined,
+        },
+      };
+    case "housewarming":
+      return {
+        shubhAarambh: {
+          familyName: filled(e.familyName) ? loc(e.familyName) : undefined,
+          title: filled(e.saTitle) ? loc(e.saTitle) : undefined,
+          blessing: filled(e.blessing) ? loc(e.blessing) : undefined,
+          rangoliColors: e.rangoli.map((c) => c.trim()).filter(Boolean),
+        },
+      };
+    default:
+      return undefined;
+  }
+}
+
 // ── small building blocks ──────────────────────────────────────────────────
 function LocField({
   label,
@@ -157,14 +299,344 @@ function Row({
   );
 }
 
+/** The one theme-specific section, shown only for experience categories. */
+function ExperienceEditor({
+  category,
+  exp,
+  setExp,
+}: {
+  category: ThemeCategory;
+  exp: ExpState;
+  setExp: React.Dispatch<React.SetStateAction<ExpState>>;
+}) {
+  const up = (patch: Partial<ExpState>) =>
+    setExp((prev) => ({ ...prev, ...patch }));
+
+  if (category === "party") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Party details</CardTitle>
+          <CardDescription>
+            Powers the VIP pass, the classified-location scratch card and the
+            hold-to-reveal rule.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <LocField
+            label="Event title"
+            value={exp.eventTitle}
+            onChange={(v) => up({ eventTitle: v })}
+          />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label>Guest label (on the pass)</Label>
+              <Input
+                value={exp.guestLabel}
+                placeholder="THE CREW"
+                onChange={(e) => up({ guestLabel: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Pass tier</Label>
+              <Input
+                value={exp.passTier}
+                placeholder="VIP ACCESS"
+                onChange={(e) => up({ passTier: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <div className="space-y-1.5">
+              <Label>Venue</Label>
+              <Input
+                value={exp.venue}
+                placeholder="Kitty Su"
+                onChange={(e) => up({ venue: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>City</Label>
+              <Input
+                value={exp.city}
+                onChange={(e) => up({ city: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Maps URL</Label>
+              <Input
+                value={exp.mapsUrl}
+                placeholder="https://…"
+                onChange={(e) => up({ mapsUrl: e.target.value })}
+              />
+            </div>
+          </div>
+          <LocField
+            label="Party rule (hold to reveal)"
+            multiline
+            value={exp.partyRule}
+            onChange={(v) => up({ partyRule: v })}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (category === "kids-birthday") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Birthday details</CardTitle>
+          <CardDescription>
+            The gift-box reveal, secret star and floating party cards.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label>Child&apos;s name</Label>
+              <Input
+                value={exp.childName}
+                onChange={(e) => up({ childName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Age turning</Label>
+              <Input
+                type="number"
+                min={1}
+                max={120}
+                value={exp.age}
+                onChange={(e) => up({ age: e.target.value })}
+              />
+            </div>
+          </div>
+          <LocField
+            label="Surprise line (before the gift opens)"
+            value={exp.surprise}
+            onChange={(v) => up({ surprise: v })}
+          />
+          <LocField
+            label="Secret-star reward"
+            value={exp.secretStar}
+            onChange={(v) => up({ secretStar: v })}
+          />
+          <div className="space-y-3">
+            <Label>Party detail cards</Label>
+            {exp.cards.map((c, i) => (
+              <Row
+                key={i}
+                index={i}
+                label="Card"
+                onRemove={() =>
+                  up({ cards: exp.cards.filter((_, idx) => idx !== i) })
+                }
+              >
+                <div className="space-y-1.5">
+                  <Label>Icon (emoji)</Label>
+                  <Input
+                    value={c.icon}
+                    placeholder="🎂"
+                    onChange={(e) =>
+                      up({
+                        cards: exp.cards.map((x, idx) =>
+                          idx === i ? { ...x, icon: e.target.value } : x
+                        ),
+                      })
+                    }
+                  />
+                </div>
+                <LocField
+                  label="Label"
+                  value={c.label}
+                  onChange={(v) =>
+                    up({
+                      cards: exp.cards.map((x, idx) =>
+                        idx === i ? { ...x, label: v } : x
+                      ),
+                    })
+                  }
+                />
+                <LocField
+                  label="Value"
+                  value={c.value}
+                  onChange={(v) =>
+                    up({
+                      cards: exp.cards.map((x, idx) =>
+                        idx === i ? { ...x, value: v } : x
+                      ),
+                    })
+                  }
+                />
+              </Row>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                up({ cards: [...exp.cards, { icon: "", label: L(), value: L() }] })
+              }
+            >
+              ＋ Add card
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (category === "baby-shower") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Baby shower details</CardTitle>
+          <CardDescription>
+            Parents, wish prompt and the optional gender reveal.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <Label>Parents</Label>
+            <Input
+              value={exp.parents}
+              placeholder="Aisha & Kabir"
+              onChange={(e) => up({ parents: e.target.value })}
+            />
+          </div>
+          <LocField
+            label="Title"
+            value={exp.lmTitle}
+            onChange={(v) => up({ lmTitle: v })}
+          />
+          <LocField
+            label="Wish prompt"
+            value={exp.wishPrompt}
+            onChange={(v) => up({ wishPrompt: v })}
+          />
+          <div className="space-y-3 rounded-lg border p-3">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={exp.grEnabled}
+                onChange={(e) => up({ grEnabled: e.target.checked })}
+              />
+              Enable gender reveal (scratch card)
+            </label>
+            {exp.grEnabled ? (
+              <>
+                <LocField
+                  label="Reveal text"
+                  value={exp.grReveal}
+                  onChange={(v) => up({ grReveal: v })}
+                />
+                <div className="space-y-1.5">
+                  <Label>Accent colour</Label>
+                  <input
+                    type="color"
+                    value={exp.grAccent}
+                    onChange={(e) => up({ grAccent: e.target.value })}
+                    className="h-9 w-16 rounded border"
+                    aria-label="Gender reveal accent colour"
+                  />
+                </div>
+              </>
+            ) : null}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (category === "housewarming") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Ceremony details</CardTitle>
+          <CardDescription>
+            Family name, blessing and the rangoli colour palette.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <LocField
+            label="Family name"
+            value={exp.familyName}
+            onChange={(v) => up({ familyName: v })}
+          />
+          <LocField
+            label="Title"
+            value={exp.saTitle}
+            onChange={(v) => up({ saTitle: v })}
+          />
+          <LocField
+            label="Blessing (Hindi + English)"
+            multiline
+            value={exp.blessing}
+            onChange={(v) => up({ blessing: v })}
+          />
+          <div className="space-y-3">
+            <Label>Rangoli colours</Label>
+            <div className="flex flex-wrap items-center gap-2">
+              {exp.rangoli.map((c, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <input
+                    type="color"
+                    value={c}
+                    onChange={(e) =>
+                      up({
+                        rangoli: exp.rangoli.map((x, idx) =>
+                          idx === i ? e.target.value : x
+                        ),
+                      })
+                    }
+                    className="h-9 w-12 rounded border"
+                    aria-label={`Rangoli colour ${i + 1}`}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      up({ rangoli: exp.rangoli.filter((_, idx) => idx !== i) })
+                    }
+                  >
+                    ✕
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => up({ rangoli: [...exp.rangoli, "#D99A2B"] })}
+            >
+              ＋ Add colour
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return null;
+}
+
 export function ContentEditor({
   weddingId,
   initial,
+  supports,
+  category,
 }: {
   weddingId: string;
   initial: WebsiteConfig;
+  /** Which content sections this theme exposes (from the theme registry). */
+  supports: ThemeSupports;
+  /** Theme category — decides which theme-specific section (if any) to show. */
+  category: ThemeCategory;
 }) {
   const [s, setS] = useState<State>(() => normalize(initial));
+  const [exp, setExp] = useState<ExpState>(() =>
+    normalizeExp(initial.experience)
+  );
   const [urlDraft, setUrlDraft] = useState("");
   const [editFocus, setEditFocus] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
@@ -187,19 +659,27 @@ export function ContentEditor({
 
   function save() {
     setStatus({});
+    const experience = serializeExp(exp, category);
+    const cfg: WebsiteConfig = experience
+      ? { ...toConfig(s), experience }
+      : toConfig(s);
     startTransition(async () => {
-      const res = await saveWebsiteConfigAction(weddingId, toConfig(s));
+      const res = await saveWebsiteConfigAction(weddingId, cfg);
       setStatus(res);
     });
   }
 
   return (
     <div className="space-y-5">
+      {/* Theme-specific section (parties, birthdays, baby showers, pujas) */}
+      <ExperienceEditor category={category} exp={exp} setExp={setExp} />
+
       {/* Hero */}
+      {supports.taglineHero ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Hero</CardTitle>
-          <CardDescription>A short line under the couple&apos;s names.</CardDescription>
+          <CardDescription>A short line under the names.</CardDescription>
         </CardHeader>
         <CardContent>
           <LocField
@@ -209,8 +689,10 @@ export function ContentEditor({
           />
         </CardContent>
       </Card>
+      ) : null}
 
       {/* Story */}
+      {supports.story ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Our story</CardTitle>
@@ -281,8 +763,10 @@ export function ContentEditor({
           </Button>
         </CardContent>
       </Card>
+      ) : null}
 
       {/* Gallery */}
+      {supports.gallery ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Gallery</CardTitle>
@@ -400,8 +884,10 @@ export function ContentEditor({
           </div>
         </CardContent>
       </Card>
+      ) : null}
 
       {/* Family */}
+      {supports.family ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Families</CardTitle>
@@ -467,8 +953,10 @@ export function ContentEditor({
           </Button>
         </CardContent>
       </Card>
+      ) : null}
 
       {/* FAQ */}
+      {supports.faq ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">FAQ</CardTitle>
@@ -517,6 +1005,7 @@ export function ContentEditor({
           </Button>
         </CardContent>
       </Card>
+      ) : null}
 
       {/* Footer */}
       <Card>
@@ -529,7 +1018,7 @@ export function ContentEditor({
             <Input
               id="hashtag"
               value={s.hashtag}
-              placeholder="AishaKiRohaniyat"
+              placeholder="OurCelebration2026"
               onChange={(e) => set({ hashtag: e.target.value })}
             />
           </div>

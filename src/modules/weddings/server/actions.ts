@@ -20,8 +20,9 @@ function parseForm(formData: FormData) {
   const value = (key: string) => formData.get(key) ?? undefined;
   return {
     title: value("title"),
-    partnerOneName: value("partnerOneName"),
-    partnerTwoName: value("partnerTwoName"),
+    themeId: value("themeId"),
+    name1: value("name1"),
+    name2: value("name2"),
     eventDate: value("eventDate"),
   };
 }
@@ -33,6 +34,10 @@ export async function createWeddingAction(
   const parsed = createWeddingSchema.safeParse(parseForm(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+  // Guard the chosen theme against the registry (the id comes from the client).
+  if (parsed.data.themeId && !THEMES.some((t) => t.id === parsed.data.themeId)) {
+    return { error: "Please choose a theme." };
   }
 
   const wedding = await createWedding(parsed.data);

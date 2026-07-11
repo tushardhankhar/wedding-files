@@ -10,6 +10,7 @@ import {
   toggleShareLinkEventAction,
   type InviteLinkState,
 } from "@/modules/guests/server/actions";
+import { shareUrl } from "@/modules/guests/share-url";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -69,7 +70,10 @@ function ShareLinkCard({
   const [chosen, setChosen] = useState<Set<string>>(
     () => new Set(link.eventIds)
   );
-  const [url, setUrl] = useState<string | null>(null);
+  // Show the saved link straight away; regenerating replaces it in place.
+  const [url, setUrl] = useState<string | null>(
+    link.token ? shareUrl(slug, link.token) : null
+  );
 
   function toggleAll(next: boolean) {
     setAllEvents(next);
@@ -89,6 +93,14 @@ function ShareLinkCard({
     });
   }
   function getLink() {
+    if (
+      url &&
+      !window.confirm(
+        "Regenerate this link? The current link will stop working."
+      )
+    ) {
+      return;
+    }
     startTransition(async () => {
       const res = await regenerateShareLinkAction(link.id, weddingId, slug);
       if (res.url) setUrl(res.url);
@@ -157,7 +169,19 @@ function ShareLinkCard({
         ) : null}
 
         {url ? (
-          <LinkBox url={url} />
+          <div className="space-y-2">
+            <LinkBox url={url} />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground"
+              onClick={getLink}
+              disabled={pending}
+            >
+              Regenerate link
+            </Button>
+          </div>
         ) : (
           <Button
             type="button"

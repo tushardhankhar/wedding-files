@@ -1,17 +1,9 @@
 import Link from "next/link";
-import { createWeddingAction } from "@/modules/weddings/server/actions";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { WeddingForm } from "../wedding-form";
+import { CreateWizard } from "./create-wizard";
 
-export default function NewWeddingPage() {
+export default function NewInvitationPage() {
   return (
-    <div className="mx-auto max-w-xl space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <Link
           href="/dashboard"
@@ -20,17 +12,13 @@ export default function NewWeddingPage() {
           ← Back to dashboard
         </Link>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>New wedding</CardTitle>
-          <CardDescription>
-            A shareable URL is generated automatically from the title.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <WeddingForm action={createWeddingAction} submitLabel="Create wedding" />
-        </CardContent>
-      </Card>
+      <div>
+        <h1 className="text-2xl font-semibold">New invitation</h1>
+        <p className="text-sm text-muted-foreground">
+          Choose an occasion, pick a theme, then fill in the details.
+        </p>
+      </div>
+      <CreateWizard />
     </div>
   );
 }

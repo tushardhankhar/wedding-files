@@ -10,6 +10,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import type { WebsiteViewProps } from "../website-view";
+import type { Focus } from "../../schema";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { ScratchReveal } from "../experience/scratch-reveal";
@@ -61,13 +62,17 @@ function MoonCountdown({ dateIso, time }: { dateIso: string; time?: string }) {
 }
 
 function CloudFrame({
+  url,
+  focus,
   bg,
   emoji,
   caption,
   delay,
 }: {
-  bg: string;
-  emoji: string;
+  url?: string;
+  focus?: Focus;
+  bg?: string;
+  emoji?: string;
   caption: string;
   delay: number;
 }) {
@@ -84,10 +89,19 @@ function CloudFrame({
       <div className="lm-frame-float" style={{ animationDelay: `${delay}s` }}>
         <div className="lm-frame">
           <div
-            className="flex h-full w-full items-center justify-center rounded-[18px] text-5xl"
-            style={{ background: bg }}
+            className="flex h-full w-full items-center justify-center rounded-[18px] bg-cover text-5xl"
+            style={
+              url
+                ? {
+                    backgroundImage: `url(${url})`,
+                    backgroundPosition: focus
+                      ? `${(focus.x * 100).toFixed(1)}% ${(focus.y * 100).toFixed(1)}%`
+                      : "center",
+                  }
+                : { background: bg }
+            }
           >
-            <span aria-hidden>{emoji}</span>
+            {!url && emoji ? <span aria-hidden>{emoji}</span> : null}
           </div>
         </div>
       </div>
@@ -256,18 +270,32 @@ export function LittleMiracleView(props: WebsiteViewProps) {
             Our little adventure begins
           </h2>
           <div className="mx-auto flex max-w-2xl flex-wrap items-start justify-center gap-8">
-            <CloudFrame
-              bg="linear-gradient(135deg,#F6D6D6,#DCEAF7)"
-              emoji="🌙"
-              caption="Dreaming of you"
-              delay={0}
-            />
-            <CloudFrame
-              bg="linear-gradient(135deg,#DCEAF7,#C5A46D)"
-              emoji="👶"
-              caption="Almost here"
-              delay={0.25}
-            />
+            {(config.gallery?.images ?? []).length > 0 ? (
+              config.gallery!.images!.slice(0, 3).map((img, i) => (
+                <CloudFrame
+                  key={i}
+                  url={img.url}
+                  focus={img.focus}
+                  caption={img.caption?.en ?? ""}
+                  delay={i * 0.2}
+                />
+              ))
+            ) : (
+              <>
+                <CloudFrame
+                  bg="linear-gradient(135deg,#F6D6D6,#DCEAF7)"
+                  emoji="🌙"
+                  caption="Dreaming of you"
+                  delay={0}
+                />
+                <CloudFrame
+                  bg="linear-gradient(135deg,#DCEAF7,#C5A46D)"
+                  emoji="👶"
+                  caption="Almost here"
+                  delay={0.25}
+                />
+              </>
+            )}
           </div>
         </section>
 

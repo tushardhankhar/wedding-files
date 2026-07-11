@@ -8,8 +8,8 @@ export interface Wedding {
   clientId: string | null; // assigned client (null until claimed)
   slug: string;
   title: string;
-  partnerOneName: string | null;
-  partnerTwoName: string | null;
+  name1: string | null;
+  name2: string | null;
   eventDate: string | null; // ISO date (YYYY-MM-DD)
   config: Record<string, unknown>;
   themeId: string;
@@ -24,8 +24,8 @@ export interface WeddingRow {
   client_id: string | null;
   slug: string;
   title: string;
-  partner_one_name: string | null;
-  partner_two_name: string | null;
+  name1: string | null;
+  name2: string | null;
   event_date: string | null;
   config: Record<string, unknown>;
   theme_id: string;
@@ -40,8 +40,8 @@ export function mapWeddingRow(row: WeddingRow): Wedding {
     clientId: row.client_id,
     slug: row.slug,
     title: row.title,
-    partnerOneName: row.partner_one_name,
-    partnerTwoName: row.partner_two_name,
+    name1: row.name1,
+    name2: row.name2,
     eventDate: row.event_date,
     config: row.config ?? {},
     themeId: row.theme_id,

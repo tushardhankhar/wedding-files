@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { env } from "@/lib/env";
+import { shareUrl } from "../share-url";
 import { groupSchema, guestSchema } from "../schema";
 import {
   createGroup,
@@ -17,11 +18,6 @@ import {
   setShareLinkAllEvents,
   toggleShareLinkEvent,
 } from "./mutations";
-
-function shareUrl(slug: string, token: string): string {
-  const base = env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
-  return `${base}/w/${slug}/share/${token}`;
-}
 
 export type FormState = { error?: string; saved?: boolean };
 

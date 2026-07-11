@@ -79,6 +79,7 @@ export async function createShareLink(
     .insert({
       wedding_id: weddingId,
       label,
+      token,
       token_hash: tokenHash,
       all_events: true,
     })
@@ -94,7 +95,7 @@ export async function regenerateShareToken(id: string): Promise<string> {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("share_links")
-    .update({ token_hash: tokenHash })
+    .update({ token, token_hash: tokenHash })
     .eq("id", id);
   if (error) throw error;
   return token;

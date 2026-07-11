@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/server/user";
 import { UnauthorizedError } from "@/lib/errors";
 import { slugify } from "@/lib/slug";
+import { DEFAULT_THEME_ID } from "@/modules/website/themes/registry";
 import type { WebsiteConfig } from "@/modules/website/schema";
 import {
   mapWeddingRow,
@@ -11,7 +12,7 @@ import {
 import type { CreateWeddingInput, UpdateWeddingInput } from "../schema";
 
 const COLUMNS =
-  "id, created_by, client_id, slug, title, partner_one_name, partner_two_name, event_date, config, theme_id, created_at, updated_at";
+  "id, created_by, client_id, slug, title, name1, name2, event_date, config, theme_id, created_at, updated_at";
 
 const UNIQUE_VIOLATION = "23505";
 
@@ -37,7 +38,7 @@ export async function createWedding(
   if (!user) throw new UnauthorizedError();
 
   const supabase = await createSupabaseServerClient();
-  const base = slugify(input.title) || "wedding";
+  const base = slugify(input.title) || "invite";
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const slug = attempt === 0 ? base : `${base}-${randomSuffix()}`;
@@ -47,8 +48,9 @@ export async function createWedding(
         created_by: user.id,
         slug,
         title: input.title,
-        partner_one_name: input.partnerOneName ?? null,
-        partner_two_name: input.partnerTwoName ?? null,
+        theme_id: input.themeId ?? DEFAULT_THEME_ID,
+        name1: input.name1 ?? null,
+        name2: input.name2 ?? null,
         event_date: input.eventDate ?? null,
       })
       .select(COLUMNS)
@@ -75,8 +77,8 @@ export async function updateWedding(
   const supabase = await createSupabaseServerClient();
 
   const patch: Record<string, unknown> = {
-    partner_one_name: input.partnerOneName ?? null,
-    partner_two_name: input.partnerTwoName ?? null,
+    name1: input.name1 ?? null,
+    name2: input.name2 ?? null,
     event_date: input.eventDate ?? null,
   };
   if (allowRename) patch.title = input.title;
@@ -121,9 +123,19 @@ export async function updateWeddingConfig(
   config: WebsiteConfig
 ): Promise<void> {
   const supabase = await createSupabaseServerClient();
+  // Shallow-merge onto the stored config so blocks the content editor doesn't
+  // manage (e.g. theme-specific `experience.*`) are preserved rather than wiped
+  // on every save. Incoming keys (hero/story/gallery/family/faq/footer) overwrite.
+  const { data: existing } = await supabase
+    .from("weddings")
+    .select("config")
+    .eq("id", id)
+    .single();
+  const prev = (existing?.config ?? {}) as Record<string, unknown>;
+  const merged = { ...prev, ...config };
   const { error } = await supabase
     .from("weddings")
-    .update({ config })
+    .update({ config: merged })
     .eq("id", id);
   if (error) throw error;
 }
