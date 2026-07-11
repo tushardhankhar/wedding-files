@@ -19,7 +19,7 @@ export function BrandStatement() {
           className="l-display text-balance text-[clamp(1.9rem,4.4vw,3.2rem)] font-medium leading-tight text-[color:var(--l-wine)]"
           data-reveal
         >
-          Indian weddings were never meant to feel generic.
+          Indian celebrations were never meant to feel generic.
         </p>
         <div className="mx-auto mt-10 h-14 w-px bg-gradient-to-b from-[color:var(--l-gold)] to-transparent" aria-hidden="true" />
         <p
@@ -76,7 +76,7 @@ export function ExperiencePreview() {
             <br />
             It&apos;s their{" "}
             <span className="italic text-[color:var(--l-gold-lite)]">first moment</span> at your
-            wedding.
+            celebration.
           </h2>
         </div>
 
@@ -164,7 +164,7 @@ export function ThemeShowcase() {
             href={`/demo/${t.demo}`}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Preview the ${t.name} theme on a live demo wedding (opens in a new tab)`}
+            aria-label={`Preview the ${t.name} theme on a live demo celebration (opens in a new tab)`}
             className="group relative block h-[500px] w-[80vw] overflow-hidden rounded-[26px] sm:w-[400px]"
           >
             <PhotoArt

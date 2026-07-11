@@ -19,7 +19,8 @@ export type HeroMotif =
   | "neon"
   | "giftbox"
   | "celestial"
-  | "doorway";
+  | "doorway"
+  | "seal";
 
 export interface Theme {
   id: string;
@@ -214,6 +215,40 @@ export const THEMES: Theme[] = [
       "--w-deva": DEVA,
       "--w-divider": '"❁"',
       "--w-pattern": PATTERN.scallop,
+    } as CSSProperties,
+  },
+
+  {
+    id: "save-the-date",
+    name: "The Overture",
+    description:
+      "Save the Date — deep emerald & animated gold foil, live countdown, add-to-calendar. Traditional, elegant.",
+    swatch: ["#0e3b2c", "#c9a23f", "#f7f0e0"],
+    heroMotif: "seal",
+    vars: {
+      "--std-emerald": "#0e3b2c",
+      "--std-emerald-2": "#124a37",
+      "--std-gold": "#c9a23f",
+      "--std-gold-lite": "#e8cd7e",
+      "--std-ivory": "#f7f0e0",
+      "--w-navy": "#0e3b2c",
+      "--w-bg": "#0e3b2c",
+      "--w-surface": "#124a37",
+      "--w-ink": "#f7f0e0",
+      "--w-ink-soft": "#c8d6cd",
+      "--w-accent": "#c9a23f",
+      "--w-gold": "#c9a23f",
+      "--w-gold-lite": "#e8cd7e",
+      "--w-line": "rgba(201,162,63,0.25)",
+      "--w-hero-ink": "#f7f0e0",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 0%, rgba(201,162,63,0.25), transparent 55%), linear-gradient(180deg, #0e3b2c 0%, #082018 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": SCRIPT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern": PATTERN.hairline,
     } as CSSProperties,
   },
 

@@ -114,7 +114,7 @@ export function FeatureStory() {
           <FeatureRow
             eyebrow="RSVP, event by event"
             title="Know exactly who's coming to everything in between."
-            text="Haldi, Sangeet, the Wedding — every event has its own headcount, updated the moment a family responds."
+            text="Every event has its own headcount — updated the moment a family responds, from the smallest puja to the big day."
             visual={
               <div className="mx-auto max-w-sm space-y-4 rounded-2xl border border-[color:var(--l-line)] bg-white p-6 shadow-[0_24px_50px_-24px_rgba(59,16,34,.3)]">
                 {rsvpBars.map((r) => (
@@ -252,7 +252,7 @@ export function PlannerSection() {
         <div className="max-w-2xl" data-reveal>
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[color:var(--l-gold-lite)]">
-              For wedding planners
+              For event planners
             </p>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
               <span className="size-1.5 rounded-full bg-[color:var(--l-gold-lite)]" />
@@ -263,7 +263,7 @@ export function PlannerSection() {
             Still managing 600 guests in Excel and WhatsApp?
           </h2>
           <p className="l-display mt-4 text-xl italic text-[color:var(--l-gold-lite)]">
-            A guest operating system for Indian weddings — in the works.
+            A guest operating system for Indian celebrations — in the works.
           </p>
         </div>
 
@@ -338,7 +338,7 @@ export function PlannerSection() {
           <p className="text-[15px] leading-relaxed text-white/75">
             A dashboard with every invitation, RSVP and headcount at a glance —
             plus dietary and logistics — is on the way, built for planners
-            managing multi-event Indian weddings.
+            managing multi-event Indian celebrations.
           </p>
         </div>
       </div>
@@ -360,7 +360,7 @@ export function PrivacySection() {
           <span className="italic text-[color:var(--l-emerald)]">Personal by nature.</span>
         </h2>
         <p className="mx-auto mt-5 max-w-lg text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-          Wedding details shouldn&apos;t be public pages floating around the
+          Celebration details shouldn&apos;t be public pages floating around the
           internet. Every guest arrives through their own private link.
         </p>
 
@@ -403,7 +403,7 @@ export function RealitySection() {
     <section className="bg-[color:var(--l-ivory)] px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-4xl">
         <h2 className="l-display text-center text-[clamp(1.8rem,4vw,2.8rem)] font-semibold text-[color:var(--l-wine)]" data-reveal>
-          Built around how Indian weddings{" "}
+          Built around how Indian celebrations{" "}
           <span className="italic text-[color:var(--l-marigold)]">actually work.</span>
         </h2>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -450,9 +450,9 @@ export function PricingPreview() {
             className="pointer-events-none absolute inset-3 rounded-[20px] border border-[color:var(--l-gold-lite)]/35"
           />
           <div className="relative text-center">
-            <p className="l-script text-2xl text-[color:var(--l-gold-lite)]">Your wedding invitation</p>
+            <p className="l-script text-2xl text-[color:var(--l-gold-lite)]">Your celebration invitation</p>
             <p className="l-display mt-2 text-6xl font-semibold tabular-nums">{PRICE}</p>
-            <p className="mt-2 text-sm text-white/70">one-time · per wedding</p>
+            <p className="mt-2 text-sm text-white/70">one-time · per celebration</p>
           </div>
 
           <ul className="relative mx-auto mt-8 grid max-w-lg gap-2.5 sm:grid-cols-2">
@@ -512,7 +512,7 @@ export function FinalCta() {
           Your invitation, live in minutes — just ₹1,599.
         </h2>
         <p className="mt-5 text-base text-white/85">
-          Open a real wedding built on Jashn and see exactly what your guests
+          Open a real celebration built on Jashn and see exactly what your guests
           will experience.
         </p>
         <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
@@ -576,7 +576,7 @@ export function LandingFooter() {
           <div>
             <UtsavLogo tone="light" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
-              Make your own Indian wedding invitation — bilingual, private, and
+              Make your own Indian celebration invitation — bilingual, private, and
               ready to share in minutes. ₹1,599.
             </p>
             <div className="mt-5 space-y-1 text-sm">

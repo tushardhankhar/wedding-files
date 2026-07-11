@@ -142,7 +142,7 @@ export function LandingNavbar() {
             </Link>
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />
-              Make your own wedding invitation · ₹1,599
+              Make your own celebration invitation · ₹1,599
             </p>
           </div>
         </div>

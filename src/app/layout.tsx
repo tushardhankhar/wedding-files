@@ -97,7 +97,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://jointhejashn.com"
   ),
   title: "Join the Jashn",
-  description: "Make your own Indian wedding invitation for ₹1,599.",
+  description: "Make your own invitation for any Indian celebration — ₹1,599.",
 };
 
 export default function RootLayout({

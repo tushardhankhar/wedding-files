@@ -57,7 +57,7 @@ export function EnquirySection() {
             <span className="italic text-[color:var(--l-gold-lite)]">We&apos;d love to help.</span>
           </h2>
           <p className="mt-6 max-w-md text-base leading-relaxed text-white/85">
-            Planning a wedding, or just curious how it works? Drop your details
+            Planning a celebration, or just curious how it works? Drop your details
             and we&apos;ll get back to you personally — usually within a day.
           </p>
           <p className="mt-6 text-sm text-white/75">

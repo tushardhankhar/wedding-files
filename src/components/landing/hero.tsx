@@ -37,13 +37,13 @@ export function LandingHero() {
         {/* Copy */}
         <div className="text-center lg:text-left">
           <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
-            Digital wedding invitations · ₹1,599
+            Invitations for every celebration · ₹1,599
           </p>
 
           <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
-            Your wedding.
+            Your celebration.
             <br />
-            Their invitation.
+            Their first impression.
             <br />
             One unforgettable{" "}
             <span className="relative inline-block italic text-[color:var(--l-gold-lite)]">
@@ -67,9 +67,9 @@ export function LandingHero() {
           </h1>
 
           <p className="l-load mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
-            Make your own wedding website in minutes — add your names, events
-            and photos yourself. Share one private link on WhatsApp, and every
-            family sees only the events they&apos;re invited to.
+            Make your own celebration website in minutes — add your details,
+            events and photos yourself. Share one private link on WhatsApp, and
+            every family sees only the events they&apos;re invited to.
           </p>
 
           <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.56s" }}>
@@ -130,18 +130,6 @@ export function LandingHero() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Scroll cue */}
-      <div className="relative pb-8">
-        <div className="flex flex-col items-center gap-2 text-white/60">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em]">
-            Scroll to join the celebration
-          </span>
-          <svg className="l-cue" width="14" height="20" viewBox="0 0 14 20" fill="none" aria-hidden="true">
-            <path d="M7 2v14m0 0l-5-5m5 5l5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
         </div>
       </div>
     </section>

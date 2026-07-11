@@ -20,7 +20,7 @@ export function GuestPersonalisationDemo() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center" data-reveal>
           <h2 className="l-display text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            One wedding.
+            One celebration.
             <br />
             Hundreds of guests.
             <br />
@@ -29,7 +29,7 @@ export function GuestPersonalisationDemo() {
             </span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-            Join the Jashn creates a private wedding experience around every
+            Join the Jashn creates a private celebration experience around every
             guest. Choose a family below and watch their invitation change.
           </p>
         </div>

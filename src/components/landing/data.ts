@@ -96,6 +96,7 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi" },
   { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
   { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian" },
+  { id: "overture", name: "The Overture", vibe: "Save the Date", tagline: "Mark your calendars.", art: "overture", palette: ["#0e3b2c", "#c9a23f", "#f7f0e0"], demo: "save-the-date" },
   // Beyond weddings — interactive celebration themes.
   { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty" },
   { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti" },
@@ -108,9 +109,9 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
 export const PRICE = "₹1,599";
 
 export const PLAN_INCLUDES: string[] = [
-  "Your own bilingual wedding website (EN + हिं)",
-  "Six designer themes — onetime selection",
-  "Unlimited events, from Haldi to Reception",
+  "Your own bilingual celebration website (EN + हिं)",
+  "Ten designer themes — onetime selection",
+  "Unlimited events, big and small",
   "Personal invitation links for every family",
   "Selective events — each family sees only theirs",
   "Guest RSVP, event by event",

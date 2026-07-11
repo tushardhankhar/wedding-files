@@ -8,6 +8,7 @@ import { AfterpartyView } from "./afterparty/afterparty-view";
 import { ConfettiView } from "./confetti/confetti-view";
 import { LittleMiracleView } from "./little-miracle/little-miracle-view";
 import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
+import { SaveTheDateView } from "./save-the-date/save-the-date-view";
 
 /**
  * Per-theme renderer dispatch. Each flagship theme has a standalone renderer
@@ -35,6 +36,8 @@ export function SiteView(props: WebsiteViewProps) {
       return <LittleMiracleView {...props} />;
     case "shubh-aarambh": // The Shubh Aarambh
       return <ShubhAarambhView {...props} />;
+    case "save-the-date": // The Overture — Save the Date
+      return <SaveTheDateView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }
