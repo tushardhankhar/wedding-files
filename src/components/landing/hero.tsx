@@ -37,17 +37,17 @@ export function LandingHero() {
         {/* Copy */}
         <div className="text-center lg:text-left">
           <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
-            Invitations for every celebration · ₹1,599
+            Personal invitation websites · ₹1,599
           </p>
 
           <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
-            Your celebration.
+            Your whole celebration,
             <br />
-            Their first impression.
+            in one beautiful
             <br />
-            One unforgettable{" "}
+            invitation{" "}
             <span className="relative inline-block italic text-[color:var(--l-gold-lite)]">
-              Jashn
+              website
               <svg
                 className="l-draw absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 300 14"
@@ -67,9 +67,9 @@ export function LandingHero() {
           </h1>
 
           <p className="l-load mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
-            Make your own celebration website in minutes — add your details,
-            events and photos yourself. Share one private link on WhatsApp, and
-            every family sees only the events they&apos;re invited to.
+            Build your own celebration site in minutes, then share one private
+            link on WhatsApp. Every family gets an invitation made just for
+            them — showing only the events they&apos;re invited to.
           </p>
 
           <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.56s" }}>

@@ -110,7 +110,7 @@ export const PRICE = "₹1,599";
 
 export const PLAN_INCLUDES: string[] = [
   "Your own bilingual celebration website (EN + हिं)",
-  "Ten designer themes — onetime selection",
+  "Designer themes for every occasion",
   "Unlimited events, big and small",
   "Personal invitation links for every family",
   "Selective events — each family sees only theirs",
@@ -141,9 +141,8 @@ export const CONTACT_EMAIL = "hello@jointhejashn.com";
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 export const NAV_LINKS: { label: string; href: string }[] = [
-  { label: "How it works", href: "#how-it-works" },
   { label: "Themes", href: "#themes" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "Pricing", href: "#pricing" },
-  { label: "For Planners", href: "#for-planners" },
   { label: "Contact", href: "#enquire" },
 ];

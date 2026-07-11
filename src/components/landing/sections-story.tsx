@@ -146,51 +146,104 @@ export function ThemeShowcase() {
     <section id="themes" className="scroll-mt-24 overflow-hidden bg-[color:var(--l-ivory)] py-24">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="max-w-xl" data-reveal>
-          <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
+            What you&apos;ll create
+          </p>
+          <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
             A designer theme for
             <br />
             <span className="italic text-[color:var(--l-purple)]">every celebration.</span>
           </h2>
           <p className="mt-4 text-[15px] text-[color:var(--l-ink-soft)]">
-            Weddings, birthdays, baby showers, housewarmings &amp; more — tap any theme to explore a live, interactive invitation.
+            Polished themes for weddings, birthdays, baby showers, housewarmings &amp; more. Tap any one to open a live, interactive invitation.
           </p>
         </div>
       </div>
 
-      <div className="l-gallery mt-12 px-5 sm:px-8 lg:px-[max(2rem,calc((100vw-72rem)/2))]">
+      <div className="l-gallery mt-14 px-5 sm:px-8 lg:px-[max(2rem,calc((100vw-72rem)/2))]">
         {SHOWCASE_THEMES.map((t) => (
-          <Link
-            key={t.id}
-            href={`/demo/${t.demo}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Preview the ${t.name} theme on a live demo celebration (opens in a new tab)`}
-            className="group relative block h-[500px] w-[80vw] overflow-hidden rounded-[26px] sm:w-[400px]"
-          >
-            <PhotoArt
-              slot={t.art}
-              className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-            />
-            <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-7 transition-transform duration-500 group-hover:-translate-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75">{t.vibe}</p>
-              <h3 className="l-display mt-1 text-3xl font-semibold text-white">{t.name}</h3>
-              <p className="l-script mt-1 text-xl text-[color:var(--l-gold-lite)]">{t.tagline}</p>
-              <div className="mt-3 flex items-center gap-2">
-                {t.palette.map((c) => (
-                  <span key={c} className="size-3.5 rounded-full border border-white/40" style={{ background: c }} />
-                ))}
-                <span className="ml-auto rounded-full border border-white/40 px-3.5 py-1.5 text-[11px] font-semibold text-white opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 group-hover:opacity-100">
-                  Preview theme →
+          <div key={t.id} className="flex w-[272px] flex-col items-center">
+            {/* iPhone frame showing the real theme, live */}
+            <div className="group relative rounded-[2.5rem] border border-black/10 bg-[#0d0710] p-2 shadow-[0_44px_90px_-32px_rgba(59,16,34,.6)] ring-1 ring-white/5">
+              {/* side buttons */}
+              <span aria-hidden="true" className="absolute -left-[3px] top-24 h-12 w-[3px] rounded-l bg-black/30" />
+              <span aria-hidden="true" className="absolute -right-[3px] top-20 h-8 w-[3px] rounded-r bg-black/30" />
+
+              <div className="relative h-[520px] w-[248px] overflow-hidden rounded-[2rem] bg-[color:var(--l-ivory)]">
+                {/* notch */}
+                <span
+                  aria-hidden="true"
+                  className="absolute left-1/2 top-2 z-30 h-5 w-20 -translate-x-1/2 rounded-full bg-black"
+                />
+                {/* live status pill */}
+                <span className="absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white backdrop-blur-sm">
+                  <span className="size-1.5 rounded-full bg-[#37d67a]" />
+                  Live
                 </span>
+
+                {/* the actual guest site, rendered live and non-interactive */}
+                <iframe
+                  src={`/demo/${t.demo}?embed=1`}
+                  title={`${t.name} theme — live preview`}
+                  loading="lazy"
+                  scrolling="no"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 h-full w-full border-0"
+                />
+
+                {/* tap-the-screen affordance → opens the full demo in a new tab */}
+                <Link
+                  href={`/demo/${t.demo}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open the ${t.name} theme live demo (opens in a new tab)`}
+                  className="absolute inset-0 z-20 flex items-end justify-center bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-0 transition-opacity duration-300 focus-visible:opacity-100 group-hover:opacity-100"
+                >
+                  <span className="mb-7 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold text-[color:var(--l-wine)] shadow-lg">
+                    Open live demo →
+                  </span>
+                </Link>
               </div>
             </div>
-          </Link>
+
+            {/* Theme name + vibe, below the phone */}
+            <div className="mt-6 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
+                {t.vibe}
+              </p>
+              <h3 className="l-display mt-1 text-2xl font-semibold text-[color:var(--l-wine)]">
+                {t.name}
+              </h3>
+              <p className="l-script text-lg text-[color:var(--l-pink)]">{t.tagline}</p>
+            </div>
+
+            {/* palette + explicit Live preview button */}
+            <div className="mt-3 flex items-center gap-2">
+              {t.palette.map((c) => (
+                <span
+                  key={c}
+                  aria-hidden="true"
+                  className="size-3 rounded-full border border-[color:var(--l-line)]"
+                  style={{ background: c }}
+                />
+              ))}
+            </div>
+            <Link
+              href={`/demo/${t.demo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border border-[color:var(--l-line)] bg-white px-6 py-3 text-sm font-semibold text-[color:var(--l-wine)] shadow-[0_10px_24px_-16px_rgba(59,16,34,.5)] transition-all hover:-translate-y-0.5 hover:border-[color:var(--l-gold)]"
+            >
+              <span aria-hidden="true" className="text-[color:var(--l-pink)]">▶</span>
+              Live preview
+            </Link>
+          </div>
         ))}
       </div>
 
-      <p className="mt-6 px-5 text-center text-xs text-[color:var(--l-ink-soft)] sm:px-8">
-        Swipe to explore · every theme is bilingual and fully yours
+      <p className="mt-8 px-5 text-center text-xs text-[color:var(--l-ink-soft)] sm:px-8">
+        Swipe to explore · tap any screen for a live preview · every theme is bilingual and fully yours
       </p>
     </section>
   );

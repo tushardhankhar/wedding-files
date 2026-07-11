@@ -16,9 +16,9 @@ import {
 } from "@/components/landing/sections-product";
 import { EnquirySection } from "@/components/landing/enquiry";
 
-const TITLE = "Join the Jashn — Make your own Indian celebration invitation for ₹1,599";
+const TITLE = "Join the Jashn — Personal invitation websites for every celebration · ₹1,599";
 const DESCRIPTION =
-  "Design your own bilingual invitation website for any celebration — weddings, birthdays, baby showers, housewarmings & more. Add your details, events and photos yourself, then share one private link on WhatsApp. Every family sees only the events they're invited to, and RSVPs in seconds. One price, ₹1,599. No app, no guest accounts.";
+  "Build your own bilingual invitation website for any celebration — weddings, birthdays, baby showers, housewarmings & more. Share one private WhatsApp link, and every family gets an invitation made just for them, showing only the events they're invited to. One price, ₹1,599. No app, no guest accounts.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -49,9 +49,9 @@ export default function LandingPage() {
     <div className="landing">
       <LandingNavbar />
       <main>
-        {/* Promise → how it works → the hook → craft → reassurance → offer.
-            Purpose-first: the ProcessFlow explainer sits right under the hero so
-            a first-time visitor understands the service before anything else.
+        {/* Narrative: what it is (hero) → what you'll create (themes) → why it's
+            different (per-family personalisation) → how it works (process) →
+            supporting features → reassurance → the offer.
             (ExperiencePreview, CouplesSection, RealitySection and FinalCta were
             removed as redundant; their components remain in the codebase.) */}
         <LandingHero />
@@ -68,9 +68,9 @@ export default function LandingPage() {
             ]}
           />
         </div>
-        <ProcessFlow />
         <ThemeShowcase />
         <GuestPersonalisationDemo />
+        <ProcessFlow />
         {/* <BrandStatement /> — commented out per request */}
         <FeatureStory />
         <PrivacySection />

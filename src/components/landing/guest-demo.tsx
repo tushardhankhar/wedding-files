@@ -19,7 +19,10 @@ export function GuestPersonalisationDemo() {
     <section className="bg-[color:var(--l-ivory)] px-5 py-24 sm:px-8" id="demo">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center" data-reveal>
-          <h2 className="l-display text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
+            Why Jashn is different
+          </p>
+          <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
             One celebration.
             <br />
             Hundreds of guests.
@@ -29,8 +32,8 @@ export function GuestPersonalisationDemo() {
             </span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-            Join the Jashn creates a private celebration experience around every
-            guest. Choose a family below and watch their invitation change.
+            Most invites send everyone the same page. Jashn gives every family
+            their own — pick one below and watch the invitation change.
           </p>
         </div>
 

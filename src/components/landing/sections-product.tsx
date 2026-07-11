@@ -48,7 +48,10 @@ export function FeatureStory() {
     <section className="bg-[color:var(--l-ivory-2)] px-5 py-24 sm:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-xl text-center" data-reveal>
-          <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
+            Built for the celebration
+          </p>
+          <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
             Everything your guests need.
             <br />
             <span className="italic text-[color:var(--l-emerald)]">Nothing they don&apos;t.</span>
@@ -57,64 +60,9 @@ export function FeatureStory() {
 
         <div className="mt-16 space-y-20">
           <FeatureRow
-            eyebrow="Personal family invitations"
-            title="Welcome every household by name."
-            text="A Sharma-family link greets the Sharmas — with every invited member listed, from Dadi to the youngest cousin."
-            visual={
-              <div className="mx-auto max-w-sm rounded-2xl border border-[color:var(--l-line)] bg-white p-6 shadow-[0_24px_50px_-24px_rgba(59,16,34,.3)]">
-                <p className="l-script text-xl text-[color:var(--l-gold)]">Namaste</p>
-                <p className="l-display text-2xl font-semibold text-[color:var(--l-wine)]">Sharma Family</p>
-                <ul className="mt-4 space-y-2">
-                  {["Rajesh", "Neetu", "Rohan", "Riya"].map((m) => (
-                    <li key={m} className="flex items-center gap-2.5 text-sm text-[color:var(--l-ink-soft)]">
-                      <span className="size-1.5 rounded-full bg-[color:var(--l-marigold)]" />
-                      {m}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            }
-          />
-
-          <FeatureRow
-            flip
-            eyebrow="Event-level privacy"
-            title="Every guest sees only their invited celebrations."
-            text="Tick the events each household is invited to. Everything else never reaches their screen — not hidden, simply never sent."
-            visual={
-              <div className="mx-auto max-w-sm rounded-2xl border border-[color:var(--l-line)] bg-white p-6 shadow-[0_24px_50px_-24px_rgba(59,16,34,.3)]">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--l-ink-soft)]">
-                  Sharma Family · invited to
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {[
-                    ["Haldi", false],
-                    ["Mehendi", false],
-                    ["Sangeet", true],
-                    ["Wedding", true],
-                    ["Reception", true],
-                  ].map(([name, on]) => (
-                    <span
-                      key={String(name)}
-                      className={
-                        on
-                          ? "rounded-full bg-[color:var(--l-emerald)]/12 px-3.5 py-1.5 text-xs font-semibold text-[color:var(--l-emerald)]"
-                          : "rounded-full border border-dashed border-[color:var(--l-line)] px-3.5 py-1.5 text-xs text-[color:var(--l-ink-soft)]/60 line-through"
-                      }
-                    >
-                      {on ? "✓ " : ""}
-                      {String(name)}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            }
-          />
-
-          <FeatureRow
             eyebrow="RSVP, event by event"
-            title="Know exactly who's coming to everything in between."
-            text="Every event has its own headcount — updated the moment a family responds, from the smallest puja to the big day."
+            title="Know exactly who's coming to what."
+            text="Every event keeps its own headcount — updated the moment a family responds, from the smallest puja to the big day."
             visual={
               <div className="mx-auto max-w-sm space-y-4 rounded-2xl border border-[color:var(--l-line)] bg-white p-6 shadow-[0_24px_50px_-24px_rgba(59,16,34,.3)]">
                 {rsvpBars.map((r) => (

@@ -73,7 +73,10 @@ export function ProcessFlow() {
       className="scroll-mt-24 bg-[color:var(--l-ivory-2)] px-5 py-24 sm:px-8"
     >
       <div className="mx-auto max-w-xl text-center" data-reveal>
-        <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
+          How it works
+        </p>
+        <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
           You make it. You share it.
           <br />
           <span className="italic text-[color:var(--l-marigold)]">Beautifully simple.</span>

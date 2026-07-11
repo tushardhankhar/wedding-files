@@ -31,15 +31,24 @@ export async function generateMetadata({
 
 export default async function DemoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ themeId: string }>;
+  searchParams: Promise<{ embed?: string }>;
 }) {
   const { themeId } = await params;
+  const { embed } = await searchParams;
   if (!THEMES.some((t) => t.id === themeId)) notFound();
   const theme = getTheme(themeId);
 
   const { wedding, events } = getDemoData(themeId);
   const props = buildSiteProps(wedding, events);
+
+  // Embedded mode powers the landing page's phone previews: render just the
+  // live site, no navigation chrome, so it reads as a real screen.
+  if (embed) {
+    return <SiteView theme={theme} {...props} ownerPreview chip={{ en: "Live demo", hi: "डेमो" }} />;
+  }
 
   return (
     <>
