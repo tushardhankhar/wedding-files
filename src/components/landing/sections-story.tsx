@@ -39,54 +39,6 @@ export function BrandStatement() {
   );
 }
 
-/* ── How it works ─────────────────────────────────────────────────────────── */
-const STEPS = [
-  { n: "01", title: "Pick a theme", text: "Choose from six bilingual designs made for Indian weddings." },
-  { n: "02", title: "Make it yours", text: "Add your names, story, events, photos and venues — yourself, in minutes." },
-  { n: "03", title: "Choose who sees what", text: "Invite each family to only the events they're part of." },
-  { n: "04", title: "Share on WhatsApp", text: "Send one private link. Guests open it and RSVP — no app, no login." },
-];
-
-export function HowItWorks() {
-  return (
-    <section id="how-it-works" className="scroll-mt-24 bg-[color:var(--l-ivory-2)] px-5 py-24 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-xl text-center" data-reveal>
-          <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            You make it. You share it.
-            <br />
-            <span className="italic text-[color:var(--l-marigold)]">Beautifully simple.</span>
-          </h2>
-        </div>
-
-        <ol className="relative mt-16 grid gap-10 lg:grid-cols-4 lg:gap-6">
-          {/* connecting garland thread (desktop) */}
-          <span
-            aria-hidden="true"
-            className="absolute left-[12%] right-[12%] top-7 hidden border-t border-dashed border-[color:var(--l-gold)]/50 lg:block"
-          />
-          {STEPS.map((s, i) => (
-            <li key={s.n} className="relative text-center lg:text-left" data-reveal>
-              <span className="relative z-10 inline-flex h-14 w-14 items-center justify-center rounded-full border border-[color:var(--l-gold)]/50 bg-[color:var(--l-ivory)] shadow-sm">
-                <span className="l-display text-lg font-semibold text-[color:var(--l-gold)]">{s.n}</span>
-              </span>
-              <h3 className="l-display mt-4 text-2xl font-semibold text-[color:var(--l-wine)]">{s.title}</h3>
-              <p className="mx-auto mt-2 max-w-[26ch] text-sm leading-relaxed text-[color:var(--l-ink-soft)] lg:mx-0">
-                {s.text}
-              </p>
-              {i < STEPS.length - 1 ? (
-                <span aria-hidden="true" className="mx-auto mt-6 block text-[color:var(--l-gold)]/60 lg:hidden">
-                  ↓
-                </span>
-              ) : null}
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
 /* ── Live wedding experience preview ──────────────────────────────────────── */
 function PhoneEvent({ name, date, time, venue }: { name: string; date: string; time: string; venue: string }) {
   return (

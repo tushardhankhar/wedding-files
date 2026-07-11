@@ -5,10 +5,10 @@ import { GuestPersonalisationDemo } from "@/components/landing/guest-demo";
 import { Marquee } from "@/components/landing/marquee";
 import {
   BrandStatement,
-  HowItWorks,
   ExperiencePreview,
   ThemeShowcase,
 } from "@/components/landing/sections-story";
+import { ProcessFlow } from "@/components/landing/process-flow";
 import {
   FeatureStory,
   CouplesSection,
@@ -70,7 +70,7 @@ export default function LandingPage() {
           />
         </div>
         <GuestPersonalisationDemo />
-        <HowItWorks />
+        <ProcessFlow />
         <ExperiencePreview />
         <ThemeShowcase />
         <FeatureStory />

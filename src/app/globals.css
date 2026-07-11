@@ -520,6 +520,20 @@
   animation: l-cue 2.2s ease-in-out infinite;
 }
 
+/* Process-flow auto-advance progress bar (fills over the step dwell time). */
+@keyframes pf-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.landing .pf-bar {
+  transform-origin: left;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing .pf-bar-run {
+    animation: pf-fill linear forwards;
+  }
+}
+
 /* Horizontal theme gallery. */
 .landing .l-gallery {
   display: flex;
