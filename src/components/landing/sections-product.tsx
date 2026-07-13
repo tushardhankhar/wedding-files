@@ -398,6 +398,9 @@ export function PricingPreview() {
             className="pointer-events-none absolute inset-3 rounded-[20px] border border-[color:var(--l-gold-lite)]/35"
           />
           <div className="relative text-center">
+            <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
+              ✦ Introductory offer
+            </span>
             <p className="l-script text-2xl text-[color:var(--l-gold-lite)]">Your celebration invitation</p>
             <p className="l-display mt-2 text-6xl font-semibold tabular-nums">{PRICE}</p>
             <p className="mt-2 text-sm text-white/70">one-time · per celebration</p>
@@ -508,10 +511,11 @@ const FOOTER_COLS: { title: string; links: { label: string; href: string }[] }[]
   {
     title: "Company",
     links: [
+      { label: "About us", href: "/about" },
       { label: "Contact", href: "#enquire" },
       { label: "Email us", href: `mailto:${CONTACT_EMAIL}` },
       { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
+      { label: "Terms", href: "/terms" },
     ],
   },
 ];

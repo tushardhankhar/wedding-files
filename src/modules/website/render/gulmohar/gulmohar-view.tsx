@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime, compactDate, gcalUrl } from "../format";
 import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
@@ -306,6 +307,7 @@ export function GulmoharView(props: WebsiteViewProps) {
         {hashtag ? <p className="g-script text-3xl text-[color:var(--g-marigold)]">#{hashtag.replace(/^#/, "")}</p> : null}
         {contacts.length ? <p className="mt-4 text-sm text-[color:var(--g-blush)]">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--g-cream)]/70"><TT en="Made with joy · Jashn" hi="ख़ुशी से बनाया गया · जश्न" /></p>
+        <JashnCredit className="mt-3 text-[color:var(--g-cream)]/55" />
       </footer>
     </div>
   );

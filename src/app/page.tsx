@@ -15,6 +15,7 @@ import {
   LandingFooter,
 } from "@/components/landing/sections-product";
 import { EnquirySection } from "@/components/landing/enquiry";
+import { GoToTop } from "@/modules/website/render/go-to-top";
 
 const TITLE = "Join the Jashn — Personal invitation websites for every celebration · ₹1,599";
 const DESCRIPTION =
@@ -80,6 +81,8 @@ export default function LandingPage() {
         <PlannerSection />
       </main>
       <LandingFooter />
+      {/* Back-to-top — deep wine circle + gold arrow to match the landing. */}
+      <GoToTop bg="#3b1022" ring="#c99a3d" />
     </div>
   );
 }

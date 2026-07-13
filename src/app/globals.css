@@ -1358,3 +1358,23 @@
   .std-ring { animation: std-spin 44s linear infinite; }
   @keyframes std-spin { to { transform: rotate(360deg); } }
 }
+
+/* ── Back-to-top button (shared across all themed guest sites) ─────────────── */
+.gtt {
+  position: fixed; right: 22px; bottom: 22px; z-index: 60;
+  width: 46px; height: 46px; border-radius: 999px;
+  display: grid; place-items: center;
+  border: 0; cursor: pointer; color: #fff;
+  opacity: 0; transform: translateY(16px) scale(0.85); pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.gtt-on { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.gtt-on:hover { transform: translateY(-3px) scale(1.06); }
+.gtt-on:active { transform: translateY(-1px) scale(0.98); }
+.gtt-arrow { transition: transform 0.25s ease; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes gtt-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  .gtt-on .gtt-arrow { animation: gtt-bob 1.8s ease-in-out infinite; }
+  .gtt-on:hover .gtt-arrow { animation: none; transform: translateY(-2px); }
+}

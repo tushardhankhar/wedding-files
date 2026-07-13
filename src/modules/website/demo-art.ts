@@ -29,9 +29,16 @@ interface Palette {
 const W = 1200;
 const H = 1500;
 
-/** Encode an SVG string as a data URI usable anywhere a URL is (img/bg). */
+/** Encode an SVG string as a data URI usable anywhere a URL is (img/bg).
+ * encodeURIComponent leaves "(" and ")" literal — fine in <img src>, but in CSS
+ * `background-image: url(...)` the first ")" (from rgba()/translate() in the SVG)
+ * closes the url() early and breaks the image. So we percent-encode parens too,
+ * making the URI safe in both <img> and unquoted CSS url(). */
 function uri(svg: string): string {
-  return `data:image/svg+xml,${encodeURIComponent(svg.replace(/\s+/g, " ").trim())}`;
+  const enc = encodeURIComponent(svg.replace(/\s+/g, " ").trim())
+    .replace(/\(/g, "%28")
+    .replace(/\)/g, "%29");
+  return `data:image/svg+xml,${enc}`;
 }
 
 function frame(defs: string, body: string): string {

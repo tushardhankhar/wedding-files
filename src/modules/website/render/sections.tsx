@@ -4,6 +4,7 @@ import type { HeroMotif } from "../themes/registry";
 import { T, TT } from "./bilingual";
 import { RsvpControls, type RsvpData } from "./rsvp-controls";
 import { HeroOrnament } from "./hero-ornament";
+import { JashnCredit } from "./jashn-credit";
 
 /** Section divider with the theme's glyph (set via the --w-divider token). */
 export function Divider() {
@@ -328,6 +329,7 @@ export function Footer({ config }: { config: WebsiteConfig }) {
       <small>
         <TT en="Made with love · Jashn" hi="प्रेम से बनाया गया · जश्न" />
       </small>
+      <JashnCredit className="mt-3 text-[color:var(--w-gold-lite)]/60" />
     </footer>
   );
 }

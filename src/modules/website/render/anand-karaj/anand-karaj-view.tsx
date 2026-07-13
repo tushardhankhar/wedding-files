@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime } from "../format";
 import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
@@ -264,6 +265,7 @@ export function AnandKarajView(props: WebsiteViewProps) {
         {dateLabel ? <p className="mt-2 text-[11px] uppercase tracking-[0.35em] text-[color:var(--a-kesari)]">{dateLabel}</p> : null}
         {contacts.length ? <p className="mt-4 text-sm text-[color:var(--a-cream)]/70">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--a-cream)]/50"><TT en="With love · Jashn" hi="प्रेम सहित · जश्न" /></p>
+        <JashnCredit className="mt-3 text-[color:var(--a-cream)]/40" />
       </footer>
     </div>
   );

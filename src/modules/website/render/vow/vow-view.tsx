@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime, weekday, compactDate, gcalUrl } from "../format";
 import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
@@ -223,6 +224,7 @@ export function VowView(props: WebsiteViewProps) {
         <p className="v-script mt-2 text-3xl text-[color:var(--v-champ)]">{compactDate(countdownDate, ".") || dateLabel}</p>
         {contacts.length ? <p className="mt-6 text-sm text-white/55">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-white/40"><TT en="Forever starts here · Jashn" hi="हमेशा यहीं से · जश्न" /></p>
+        <JashnCredit className="mt-3 text-white/35" />
       </footer>
     </div>
   );

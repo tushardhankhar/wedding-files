@@ -3,6 +3,7 @@
 import { m } from "motion/react";
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { FlipCountdown } from "../experience/flip-countdown";
@@ -99,6 +100,8 @@ export function SaveTheDateView(props: WebsiteViewProps) {
   const city = cityOf(events);
   const weekday = weekdayOf(countdownDate);
   const calUrl = gcalUrl(countdownDate, `Save the Date — ${names}`);
+  // Two names → stack them: first name, then "& second name" on its own line.
+  const nameParts = names.split(" & ");
 
   return (
     <MotionProvider>
@@ -149,7 +152,17 @@ export function SaveTheDateView(props: WebsiteViewProps) {
             transition={{ delay: 1.6, duration: 0.9, ease: "easeOut" }}
             className="std-foil mt-5 text-[clamp(2.6rem,9vw,5.2rem)] font-semibold leading-[1.05]"
           >
-            {names}
+            {nameParts.length === 2 ? (
+              <>
+                {nameParts[0]}
+                <br />
+                <span className="font-normal text-[0.62em]">&amp;</span>
+                <br />
+                {nameParts[1]}
+              </>
+            ) : (
+              names
+            )}
           </m.h1>
 
           {/* divider */}
@@ -232,6 +245,7 @@ export function SaveTheDateView(props: WebsiteViewProps) {
               #{config.footer.hashtag}
             </p>
           ) : null}
+          <JashnCredit className="mt-5 text-[color:var(--std-ivory)]/45" />
         </footer>
       </div>
     </MotionProvider>

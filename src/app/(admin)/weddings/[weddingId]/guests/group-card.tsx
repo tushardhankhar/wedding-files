@@ -57,6 +57,44 @@ export function GroupCard({
     setTimeout(() => setCopied(false), 1500);
   }
 
+  // ── Invitation PDF — ON HOLD ─────────────────────────────────────────────
+  // Paused pending a website-faithful rendering approach. Handler + button are
+  // kept (commented) for easy resume; the /api/.../invite-pdf route and
+  // modules/website/pdf/* remain but are now unused. To re-enable: uncomment
+  // this handler and the button below.
+  /*
+  const [pdfLoading, setPdfLoading] = useState(false);
+  async function downloadPdf() {
+    if (!inviteUrl) return;
+    setPdfLoading(true);
+    setInviteErr(null);
+    try {
+      const res = await fetch(
+        `/api/weddings/${weddingId}/groups/${group.id}/invite-pdf`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ inviteUrl }),
+        }
+      );
+      if (!res.ok) throw new Error(String(res.status));
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${slug}-invitation.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setInviteErr("Could not generate the PDF. Please try again.");
+    } finally {
+      setPdfLoading(false);
+    }
+  }
+  */
+
   const waHref = inviteUrl
     ? `https://wa.me/?text=${encodeURIComponent(
         `You're invited to ${group.name ? "our celebrations" : "our wedding"}! View your invitation & RSVP: ${inviteUrl}`
@@ -333,6 +371,8 @@ export function GroupCard({
                   {copied ? "Copied" : "Copy"}
                 </Button>
               </div>
+              {/* "Download PDF ↓" button is ON HOLD — see the commented
+                  downloadPdf handler above. */}
               {waHref ? (
                 <a
                   href={waHref}

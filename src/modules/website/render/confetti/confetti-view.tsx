@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { ConfettiBurst } from "../experience/confetti-burst";
 import { BounceCountdown } from "../experience/bounce-countdown";
@@ -318,6 +319,7 @@ export function ConfettiView(props: WebsiteViewProps) {
               {primary?.venueName ?? ""}
             </span>
           )}
+          <JashnCredit className="text-[color:var(--w-ink-soft)]" />
         </footer>
       </div>
     </MotionProvider>

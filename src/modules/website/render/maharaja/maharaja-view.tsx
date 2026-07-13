@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { focusStyles } from "../image-focus";
 import {
@@ -764,6 +765,7 @@ export function MaharajaView({
           <p className="mt-10 text-[9px] uppercase tracking-[0.3em] text-[color:var(--m-ivory)]/35">
             <TT en="Crafted with celebration · Jashn" hi="प्रेम से बनाया गया · जश्न" />
           </p>
+          <JashnCredit className="mt-3 text-[color:var(--m-gold2)]/45" />
         </div>
       </footer>
     </div>

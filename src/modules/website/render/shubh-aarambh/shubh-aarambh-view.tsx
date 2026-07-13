@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { AnimatedDoorReveal } from "../experience/animated-door-reveal";
 import { InteractiveRangoli } from "../experience/interactive-rangoli";
@@ -359,6 +360,7 @@ export function ShubhAarambhView(props: WebsiteViewProps) {
               #{config.footer.hashtag}
             </span>
           ) : null}
+          <JashnCredit className="text-[color:var(--sa-terracotta)]/55" />
         </footer>
       </div>
     </MotionProvider>

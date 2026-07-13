@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, m, useTransform } from "motion/react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { ConfettiBurst } from "../experience/confetti-burst";
@@ -393,6 +394,7 @@ export function AfterpartyView(props: WebsiteViewProps) {
               #{config.footer.hashtag}
             </span>
           ) : null}
+          <JashnCredit className="text-white/35" />
         </footer>
 
         {/* Access-granted full-screen flash */}

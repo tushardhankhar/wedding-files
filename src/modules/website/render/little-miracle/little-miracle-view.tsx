@@ -10,6 +10,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import type { WebsiteViewProps } from "../website-view";
+import { JashnCredit } from "../jashn-credit";
 import type { Focus } from "../../schema";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
@@ -207,10 +208,10 @@ export function LittleMiracleView(props: WebsiteViewProps) {
               </m.p>
               <m.div
                 aria-hidden
-                initial={{ x: "-130%" }}
-                animate={{ x: "130%" }}
-                transition={{ delay: 0.3, duration: 2.6, ease: "easeInOut" }}
-                className="lm-cloud-sweep absolute top-1/2 h-14 w-40 -translate-y-1/2"
+                initial={{ x: -260, opacity: 0 }}
+                animate={{ x: [-260, 0, 260], opacity: [0, 1, 0] }}
+                transition={{ delay: 0.5, duration: 2.3, ease: "easeInOut", times: [0, 0.5, 1] }}
+                className="lm-cloud-sweep absolute inset-0 m-auto h-14 w-40"
               />
             </div>
 
@@ -404,6 +405,7 @@ export function LittleMiracleView(props: WebsiteViewProps) {
               #{config.footer.hashtag}
             </span>
           ) : null}
+          <JashnCredit className="text-[color:var(--lm-gold)]/60" />
         </footer>
       </div>
     </MotionProvider>

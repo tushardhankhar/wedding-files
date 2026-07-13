@@ -9,6 +9,7 @@ import { ConfettiView } from "./confetti/confetti-view";
 import { LittleMiracleView } from "./little-miracle/little-miracle-view";
 import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
 import { SaveTheDateView } from "./save-the-date/save-the-date-view";
+import { GoToTop } from "./go-to-top";
 
 /**
  * Per-theme renderer dispatch. Each flagship theme has a standalone renderer
@@ -16,7 +17,7 @@ import { SaveTheDateView } from "./save-the-date/save-the-date-view";
  * contract (so gating, RSVP, preview and demo work unchanged). The Rajputana
  * (id "rajasthani") still uses the shared token-based WebsiteView for now.
  */
-export function SiteView(props: WebsiteViewProps) {
+function ThemeView(props: WebsiteViewProps) {
   switch (props.theme.id) {
     case "royal":
       return <MaharajaView {...props} />;
@@ -41,4 +42,17 @@ export function SiteView(props: WebsiteViewProps) {
     default:
       return <WebsiteView {...props} />;
   }
+}
+
+export function SiteView(props: WebsiteViewProps) {
+  // The button is theme-agnostic; feed it the theme's deep + gold tokens so it
+  // always sits well against the palette (deep bg reads on every theme; a gold
+  // ring + arrow ties it to the design).
+  const vars = props.theme.vars as Record<string, string | undefined>;
+  return (
+    <>
+      <ThemeView {...props} />
+      <GoToTop bg={vars["--w-navy"]} ring={vars["--w-gold"]} />
+    </>
+  );
 }
