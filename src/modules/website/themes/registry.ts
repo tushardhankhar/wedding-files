@@ -230,33 +230,34 @@ const THEME_BASES: ThemeBase[] = [
       "--w-pattern": PATTERN.temple,
     } as CSSProperties,
   },
-  {
-    id: "rajasthani",
-    name: "The Rajputana",
-    description:
-      "Royal indigo, gold & vermilion, cusped jharokha arch — haveli opulence.",
-    swatch: ["#1e2a5a", "#caa04a", "#b5372e"],
-    heroMotif: "jharokha",
-    vars: {
-      "--w-navy": "#1e2a5a",
-      "--w-bg": "#f7f1e3",
-      "--w-surface": "#fffdf6",
-      "--w-ink": "#20264a",
-      "--w-ink-soft": "#6f7392",
-      "--w-accent": "#b5372e",
-      "--w-gold": "#c19a3e",
-      "--w-gold-lite": "#e6c56a",
-      "--w-line": "#e6dcc4",
-      "--w-hero-ink": "#ffffff",
-      "--w-hero-bg":
-        "radial-gradient(120% 100% at 50% -10%, #34479a 0%, rgba(52,71,154,0) 55%), linear-gradient(180deg, #1e2a5a 0%, #141d40 100%)",
-      "--w-serif": PLAYFAIR,
-      "--w-sans": SANS,
-      "--w-deva": DEVA,
-      "--w-divider": '"❁"',
-      "--w-pattern": PATTERN.scallop,
-    } as CSSProperties,
-  },
+  // Temporarily disabled — The Rajputana is hidden for now.
+  // {
+  //   id: "rajasthani",
+  //   name: "The Rajputana",
+  //   description:
+  //     "Royal indigo, gold & vermilion, cusped jharokha arch — haveli opulence.",
+  //   swatch: ["#1e2a5a", "#caa04a", "#b5372e"],
+  //   heroMotif: "jharokha",
+  //   vars: {
+  //     "--w-navy": "#1e2a5a",
+  //     "--w-bg": "#f7f1e3",
+  //     "--w-surface": "#fffdf6",
+  //     "--w-ink": "#20264a",
+  //     "--w-ink-soft": "#6f7392",
+  //     "--w-accent": "#b5372e",
+  //     "--w-gold": "#c19a3e",
+  //     "--w-gold-lite": "#e6c56a",
+  //     "--w-line": "#e6dcc4",
+  //     "--w-hero-ink": "#ffffff",
+  //     "--w-hero-bg":
+  //       "radial-gradient(120% 100% at 50% -10%, #34479a 0%, rgba(52,71,154,0) 55%), linear-gradient(180deg, #1e2a5a 0%, #141d40 100%)",
+  //     "--w-serif": PLAYFAIR,
+  //     "--w-sans": SANS,
+  //     "--w-deva": DEVA,
+  //     "--w-divider": '"❁"',
+  //     "--w-pattern": PATTERN.scallop,
+  //   } as CSSProperties,
+  // },
 
   {
     id: "save-the-date",
@@ -468,7 +469,7 @@ const THEME_META: Record<
   christian: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
   punjabi: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
   "south-indian": { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
-  rajasthani: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
+  // rajasthani: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS }, // The Rajputana — temporarily disabled
   "save-the-date": {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },

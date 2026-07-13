@@ -1,6 +1,8 @@
 import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteConfig } from "./schema";
 import type { SiteWedding } from "./render/build";
+import { getTheme } from "./themes/registry";
+import { weddingGallery, confettiGallery, littleMiracleGallery, type DemoImage } from "./demo-art";
 
 /**
  * Sample wedding fed to the PUBLIC theme demo (/demo/[themeId]). Entirely
@@ -95,30 +97,44 @@ export const DEMO_SITE_EVENTS: WeddingEvent[] = [
 ];
 
 export const DEMO_SITE_CONFIG: WebsiteConfig = {
+  hero: {
+    tagline: {
+      en: "Two families, a hundred little moments, and one big yes — we can't wait to celebrate with you.",
+      hi: "दो परिवार, सैकड़ों छोटे-छोटे पल, और एक बड़ी 'हाँ' — हम आपके साथ जश्न मनाने के लिए बेताब हैं।",
+    },
+  },
   story: {
     milestones: [
       {
-        when: "2019",
+        when: "2018",
         title: { en: "A chance meeting", hi: "एक अनोखी मुलाक़ात" },
         text: {
-          en: "A crowded chai stall in Bangalore, one shared umbrella, and a conversation that didn't end.",
-          hi: "बेंगलुरु की एक चाय की टपरी, एक छतरी और एक बातचीत जो कभी ख़त्म ही नहीं हुई।",
+          en: "A crowded chai stall in Bengaluru, one shared umbrella in the first monsoon rain, and a conversation that simply refused to end.",
+          hi: "बेंगलुरु की एक भीड़भाड़ वाली चाय की टपरी, पहली मानसूनी बारिश में साझा की गई एक छतरी, और एक बातचीत जो कभी ख़त्म ही नहीं हुई।",
+        },
+      },
+      {
+        when: "2020",
+        title: { en: "Cities apart", hi: "दूर-दूर शहरों में" },
+        text: {
+          en: "Two years, three time zones and a thousand late-night calls later, we knew distance was no match for us.",
+          hi: "दो साल, तीन टाइम ज़ोन और हज़ारों देर रात की बातें — तब हमें यक़ीन हो गया कि दूरी हमें अलग नहीं कर सकती।",
         },
       },
       {
         when: "2023",
         title: { en: "The proposal", hi: "प्रस्ताव" },
         text: {
-          en: "On a rooftop in Udaipur, under fairy lights and a full moon.",
-          hi: "उदयपुर की एक छत पर, रोशनी और पूरे चाँद के नीचे।",
+          en: "On a rooftop in Udaipur, under fairy lights and a full moon, one of us finally asked — and the other had already said yes in their heart.",
+          hi: "उदयपुर की एक छत पर, रोशनी और पूरे चाँद के नीचे, आख़िरकार एक ने पूछा — और दूसरे ने तो दिल में कब की 'हाँ' कह दी थी।",
         },
       },
       {
         when: "2026",
         title: { en: "Forever begins", hi: "हमेशा की शुरुआत" },
         text: {
-          en: "And now, we'd love for you to celebrate with us.",
-          hi: "और अब, हम चाहते हैं कि आप हमारे साथ जश्न मनाएँ।",
+          en: "And now, surrounded by everyone we love, forever begins. We'd be honoured to have you beside us.",
+          hi: "और अब, अपने सभी प्रियजनों के बीच, हमेशा की शुरुआत होती है। आपकी उपस्थिति हमारे लिए सम्मान की बात होगी।",
         },
       },
     ],
@@ -127,13 +143,21 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
     groups: [
       {
         name: { en: "The Kapoors", hi: "कपूर परिवार" },
-        members: { en: "Mr. & Mrs. Kapoor" },
+        members: { en: "Mr. Vikram & Mrs. Anjali Kapoor", hi: "श्री विक्रम एवं श्रीमती अंजलि कपूर" },
         relation: { en: "Parents of the bride", hi: "वधू के माता-पिता" },
       },
       {
         name: { en: "The Mehtas", hi: "मेहता परिवार" },
-        members: { en: "Mr. & Mrs. Mehta" },
+        members: { en: "Mr. Sanjay & Mrs. Rekha Mehta", hi: "श्री संजय एवं श्रीमती रेखा मेहता" },
         relation: { en: "Parents of the groom", hi: "वर के माता-पिता" },
+      },
+      {
+        name: { en: "With the blessings of", hi: "आशीर्वाददाता" },
+        members: {
+          en: "Late Shri Mohanlal Kapoor & Smt. Kamla Kapoor · Shri Ramesh & Smt. Sushila Mehta",
+          hi: "स्व. श्री मोहनलाल कपूर एवं श्रीमती कमला कपूर · श्री रमेश एवं श्रीमती सुशीला मेहता",
+        },
+        relation: { en: "Our grandparents", hi: "हमारे दादा-दादी एवं नाना-नानी" },
       },
     ],
   },
@@ -142,22 +166,36 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
       {
         q: { en: "What should I wear?", hi: "क्या पहनें?" },
         a: {
-          en: "Each event lists its dress code above. When in doubt, Indian festive is always perfect.",
-          hi: "हर आयोजन का परिधान ऊपर दिया गया है। संशय हो तो भारतीय पारंपरिक परिधान सर्वोत्तम है।",
+          en: "Each event lists its dress code above — think bright and festive by day, and your dressiest Indian formals for the evenings. When in doubt, Indian festive is always perfect.",
+          hi: "हर आयोजन का परिधान ऊपर दिया गया है — दिन में चटख और उत्सवमय, और शामों के लिए अपने बेहतरीन भारतीय परिधान। संशय हो तो भारतीय पारंपरिक परिधान सर्वोत्तम है।",
         },
       },
       {
         q: { en: "Where should I stay?", hi: "कहाँ ठहरें?" },
         a: {
-          en: "We've blocked rooms at Jai Mahal Palace at a special rate — mention \"Aarav & Meera\" when booking.",
-          hi: "जय महल पैलेस में विशेष दर पर कमरे आरक्षित हैं — बुकिंग के समय \"आरव और मीरा\" बताएँ।",
+          en: "We've blocked rooms at Jai Mahal Palace at a special family rate — mention \"Aarav & Meera\" when booking. A shuttle will run to every venue.",
+          hi: "जय महल पैलेस में विशेष पारिवारिक दर पर कमरे आरक्षित हैं — बुकिंग के समय \"आरव और मीरा\" बताएँ। हर स्थल के लिए शटल सेवा उपलब्ध रहेगी।",
         },
       },
       {
         q: { en: "Can I bring my kids?", hi: "क्या बच्चों को ला सकते हैं?" },
         a: {
-          en: "Absolutely — your whole family is invited. Please include them in your RSVP.",
-          hi: "बिल्कुल — आपका पूरा परिवार आमंत्रित है। कृपया उन्हें अपने उत्तर में शामिल करें।",
+          en: "Absolutely — your whole family is invited, and we'll have a kids' corner at the reception. Please include them in your RSVP.",
+          hi: "बिल्कुल — आपका पूरा परिवार आमंत्रित है, और स्वागत समारोह में बच्चों के लिए एक विशेष कोना होगा। कृपया उन्हें अपने उत्तर में शामिल करें।",
+        },
+      },
+      {
+        q: { en: "How do I reach the venues?", hi: "स्थलों तक कैसे पहुँचें?" },
+        a: {
+          en: "Every event card has an \"Open in Maps\" button. Jaipur airport is 30 minutes away, and we're happy to arrange pickups for out-of-town guests.",
+          hi: "हर आयोजन कार्ड पर \"मैप खोलें\" का बटन है। जयपुर हवाई अड्डा 30 मिनट की दूरी पर है, और बाहर से आने वाले मेहमानों के लिए हम गाड़ी की व्यवस्था कर सकते हैं।",
+        },
+      },
+      {
+        q: { en: "Are you registered for gifts?", hi: "उपहारों के बारे में?" },
+        a: {
+          en: "Your presence is the only present we need. If you'd still like to bless us, a note or a small contribution to our first home means the world.",
+          hi: "आपकी उपस्थिति ही हमारे लिए सबसे बड़ा उपहार है। फिर भी यदि आप आशीर्वाद देना चाहें, तो आपका एक स्नेहभरा संदेश ही हमारे लिए अनमोल है।",
         },
       },
     ],
@@ -165,8 +203,8 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
   footer: {
     hashtag: "AaravKiMeera",
     contacts: [
-      { name: "Rohan", phone: "+91 98xxx xxxxx" },
-      { name: "Riya", phone: "+91 97xxx xxxxx" },
+      { name: "Rohan (Groom's brother)", phone: "+91 98100 12345" },
+      { name: "Riya (Bride's sister)", phone: "+91 97110 67890" },
     ],
   },
 };
@@ -232,11 +270,19 @@ const AFTERPARTY: DemoDataset = {
     } as Record<string, unknown>,
   },
   events: [
-    ev("ap-1", "Pre Drinks", "20:00", { eventDate: "2026-08-15" }),
-    ev("ap-2", "Dinner", "22:00", { eventDate: "2026-08-15" }),
-    ev("ap-3", "The Chaos Begins", "23:30", { eventDate: "2026-08-15" }),
-    ev("ap-4", "What Happens Here Stays Here", null, {
+    ev("ap-1", "Pre-Drinks & Roasts", "20:00", {
+      eventDate: "2026-08-15",
+      venueName: "The Rooftop",
+      description: "Dress code: all black. Come thirsty, leave legendary.",
+    }),
+    ev("ap-2", "Dinner (if we make it)", "22:00", { eventDate: "2026-08-15" }),
+    ev("ap-3", "The Chaos Begins", "23:30", {
+      eventDate: "2026-08-15",
+      description: "Bottle service, bad decisions, best night ever.",
+    }),
+    ev("ap-4", "What Happens Here, Stays Here", null, {
       eventDate: "2026-08-16",
+      description: "Recovery brunch for the survivors. 12 noon-ish.",
     }),
   ],
 };
@@ -293,10 +339,19 @@ const LITTLE_MIRACLE: DemoDataset = {
   events: [
     ev("lm-1", "Godh Bharai", "11:00", {
       eventDate: "2026-09-20",
-      venueName: "Home",
+      venueName: "Aisha's Parents' Home",
       venueAddress: "Koregaon Park, Pune",
+      mapsUrl: "https://maps.google.com/?q=Koregaon+Park+Pune",
+      description: "A morning of blessings, bangles and old lullabies.",
     }),
-    ev("lm-2", "Lunch & Blessings", "13:00", { eventDate: "2026-09-20" }),
+    ev("lm-2", "Lunch & Blessings", "13:00", {
+      eventDate: "2026-09-20",
+      description: "A homemade feast — do come hungry.",
+    }),
+    ev("lm-3", "High Tea & Games", "16:00", {
+      eventDate: "2026-09-20",
+      description: "Guess-the-craving, baby-photo bingo and lots of cake.",
+    }),
   ],
 };
 
@@ -343,18 +398,43 @@ const EXPERIENCE_DEMOS: Record<string, DemoDataset> = {
   "shubh-aarambh": SHUBH_AARAMBH,
 };
 
+/** The gallery a theme should show in the demo, matched to its palette/occasion. */
+function galleryFor(themeId: string): DemoImage[] {
+  if (themeId === "confetti") return confettiGallery();
+  if (themeId === "little-miracle") return littleMiracleGallery();
+  return weddingGallery(themeId);
+}
+
 /** Sample wedding/experience data for a demo theme. Falls back to the wedding
- * sample for the six wedding themes. */
+ * sample for the classic wedding themes. Galleries are injected per theme (only
+ * when the theme actually supports one) so every demo shows real-feeling art. */
 export function getDemoData(themeId: string): DemoDataset {
-  return (
-    EXPERIENCE_DEMOS[themeId] ?? {
+  const supportsGallery = getTheme(themeId).supports.gallery;
+  const preset = EXPERIENCE_DEMOS[themeId];
+
+  if (preset) {
+    if (!supportsGallery) return preset;
+    return {
+      ...preset,
       wedding: {
-        ...DEMO_SITE_WEDDING,
-        name1: DEMO_SITE_WEDDING.name1,
-        name2: DEMO_SITE_WEDDING.name2,
-        config: DEMO_SITE_CONFIG as Record<string, unknown>,
+        ...preset.wedding,
+        config: {
+          ...preset.wedding.config,
+          gallery: { images: galleryFor(themeId) },
+        },
       },
-      events: DEMO_SITE_EVENTS,
-    }
-  );
+    };
+  }
+
+  const config: WebsiteConfig = { ...DEMO_SITE_CONFIG };
+  if (supportsGallery) config.gallery = { images: galleryFor(themeId) };
+  return {
+    wedding: {
+      ...DEMO_SITE_WEDDING,
+      name1: DEMO_SITE_WEDDING.name1,
+      name2: DEMO_SITE_WEDDING.name2,
+      config: config as Record<string, unknown>,
+    },
+    events: DEMO_SITE_EVENTS,
+  };
 }

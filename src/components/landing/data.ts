@@ -91,7 +91,7 @@ export interface ShowcaseTheme {
 
 export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal" },
-  { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani" },
+  // { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani" }, // temporarily disabled
   { id: "gulmohar", name: "The Gulmohar", vibe: "Modern Indian", tagline: "Colour in full bloom.", art: "gulmohar", palette: ["#d81b60", "#f4917f", "#fce3c8"], demo: "ivory" },
   { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi" },
   { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
