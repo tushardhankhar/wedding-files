@@ -51,27 +51,54 @@ export async function claimClientInviteAction(
   // identity — the new client account should own this wedding.
   await supabase.auth.signOut();
 
-  const { data, error } = await supabase.auth.signUp(parsed.data);
-  if (error) {
-    return {
-      error:
-        error.message.toLowerCase().includes("already registered") ||
-        error.message.toLowerCase().includes("already exists")
-          ? "That email already has an account. Sign in instead, then reopen this link."
-          : error.message,
-    };
+  // Try to create the account. A returning client already has one — created on
+  // a previous attempt, or after confirming their email — so fall back to
+  // signing them in. Either way we need a session before we can claim.
+  let session = null;
+  const { data: signUpData, error: signUpError } =
+    await supabase.auth.signUp(parsed.data);
+
+  if (signUpError) {
+    const message = signUpError.message.toLowerCase();
+    const alreadyExists =
+      message.includes("already registered") ||
+      message.includes("already exists");
+    if (!alreadyExists) {
+      return { error: signUpError.message };
+    }
+
+    // Existing account: sign in with the same credentials and continue.
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword(parsed.data);
+    if (signInError) {
+      // Account exists but the email isn't confirmed yet — guide them to
+      // confirm rather than blaming the password.
+      if (signInError.message.toLowerCase().includes("not confirmed")) {
+        return {
+          message:
+            "Your account isn't confirmed yet. Open the confirmation email we sent, then reopen this link to finish setup.",
+        };
+      }
+      return {
+        error:
+          "That email already has an account, but the password didn't match. Enter the password you chose when you first opened this link.",
+      };
+    }
+    session = signInData.session;
+  } else {
+    session = signUpData.session;
   }
 
-  // With email confirmation on, there is no session yet — the client can't
-  // claim until confirmed. Guide them instead of failing silently.
-  if (!data.session) {
+  // With email confirmation on, a brand-new sign-up has no session yet — the
+  // client can't claim until confirmed. Guide them instead of failing silently.
+  if (!session) {
     return {
       message:
         "Account created. Confirm your email, then open this link again to finish setup.",
     };
   }
 
-  // Bind this freshly authenticated client to the wedding (SECURITY DEFINER).
+  // Bind this authenticated client to the wedding (SECURITY DEFINER).
   const { error: claimError } = await supabase.rpc("claim_client_invite", {
     p_token: token,
   });

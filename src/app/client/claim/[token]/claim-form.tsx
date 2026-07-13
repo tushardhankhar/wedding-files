@@ -29,15 +29,19 @@ export function ClaimForm({ token }: { token: string }) {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Create a password</Label>
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           name="password"
           type="password"
-          autoComplete="new-password"
+          autoComplete="current-password"
           required
           placeholder="At least 8 characters"
         />
+        <p className="text-xs text-muted-foreground">
+          New here? Choose a password. Already set one up? Enter the same
+          password to continue.
+        </p>
       </div>
 
       {state.error ? (
