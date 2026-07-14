@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { Mandala } from "@/components/brand/motifs";
 import { PetalField } from "./art";
 import { UtsavMonogram } from "./logo";
+import { BookNowButton } from "./book-now";
 
 const HERO_BG =
   "radial-gradient(90% 70% at 72% 18%, rgba(216,27,96,.40), transparent 60%), radial-gradient(70% 60% at 12% 88%, rgba(244,124,32,.30), transparent 60%), radial-gradient(120% 80% at 50% 118%, rgba(201,154,61,.28), transparent 55%), linear-gradient(168deg, #3b1022 0%, #57122e 48%, #2a0a18 100%)";
@@ -87,6 +88,11 @@ export function LandingHero() {
             >
               See how it works
             </a>
+            {/* Mobile-only WhatsApp CTA, under "See how it works". */}
+            <BookNowButton
+              label="Get Started on WhatsApp"
+              className="w-full px-8 py-4 text-sm sm:hidden"
+            />
           </div>
 
           <p className="l-load mt-5 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
