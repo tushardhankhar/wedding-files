@@ -97,6 +97,7 @@ export const DEMO_SITE_EVENTS: WeddingEvent[] = [
 ];
 
 export const DEMO_SITE_CONFIG: WebsiteConfig = {
+  eventTime: "18:30",
   hero: {
     tagline: {
       en: "Two families, a hundred little moments, and one big yes — we can't wait to celebrate with you.",

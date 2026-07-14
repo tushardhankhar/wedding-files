@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
+import { BookNowButton } from "./book-now";
 
 export function LandingNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -72,6 +73,7 @@ export function LandingNavbar() {
             >
               See a live demo
             </Link>
+            <BookNowButton />
           </div>
 
           {/* Mobile menu button */}
@@ -131,6 +133,10 @@ export function LandingNavbar() {
           </nav>
 
           <div className="mt-auto space-y-4 pb-4">
+            <BookNowButton
+              label="Get Started on WhatsApp"
+              className="w-full px-6 py-4 text-base"
+            />
             <Link
               href="/demo/royal"
               target="_blank"

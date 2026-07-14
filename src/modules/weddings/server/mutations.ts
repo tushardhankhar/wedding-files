@@ -52,6 +52,8 @@ export async function createWedding(
         name1: input.name1 ?? null,
         name2: input.name2 ?? null,
         event_date: input.eventDate ?? null,
+        // Countdown time (HH:MM) lives in config; event_date is date-only.
+        config: input.eventTime ? { eventTime: input.eventTime } : {},
       })
       .select(COLUMNS)
       .single();
@@ -76,10 +78,22 @@ export async function updateWedding(
 ): Promise<Wedding> {
   const supabase = await createSupabaseServerClient();
 
+  // Merge the countdown time into the stored config jsonb without wiping the
+  // content the editor manages (hero/story/gallery/…).
+  const { data: existing } = await supabase
+    .from("weddings")
+    .select("config")
+    .eq("id", id)
+    .single();
+  const config = { ...((existing?.config ?? {}) as Record<string, unknown>) };
+  if (input.eventTime) config.eventTime = input.eventTime;
+  else delete config.eventTime;
+
   const patch: Record<string, unknown> = {
     name1: input.name1 ?? null,
     name2: input.name2 ?? null,
     event_date: input.eventDate ?? null,
+    config,
   };
   if (allowRename) patch.title = input.title;
 

@@ -27,6 +27,16 @@ export const createWeddingSchema = z.object({
       (v) => v === undefined || /^\d{4}-\d{2}-\d{2}$/.test(v),
       "Use a valid date."
     ),
+  // Optional time of day (HH:MM) so countdowns target the exact moment. Stored
+  // in the wedding's config jsonb (event_date is a date-only column).
+  eventTime: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined))
+    .refine(
+      (v) => v === undefined || /^\d{2}:\d{2}$/.test(v),
+      "Use a valid time."
+    ),
 });
 
 // Title is admin-only; clients don't submit it, so it's optional on update.

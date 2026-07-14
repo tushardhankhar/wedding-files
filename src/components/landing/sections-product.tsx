@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BookNowButton } from "./book-now";
 import { PhotoArt, PetalField } from "./art";
 import { PRICE, PLAN_INCLUDES, COMING_SOON, REALITY_NOTES, CONTACT_EMAIL } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
@@ -415,7 +416,11 @@ export function PricingPreview() {
             ))}
           </ul>
 
-          <div className="relative mt-9 text-center">
+          <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <BookNowButton
+              label="Get Started"
+              className="px-9 py-4 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
+            />
             <Link
               href="/demo/royal"
               target="_blank"

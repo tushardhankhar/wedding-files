@@ -105,6 +105,9 @@ export const experienceSchema = z
 export type Experience = z.infer<typeof experienceSchema>;
 
 export const websiteConfigSchema = z.object({
+  /** Time of day (HH:MM) for the event — makes theme countdowns exact. Stored
+   * alongside the wedding's date (which is a date-only column). */
+  eventTime: z.string().optional(),
   hero: z.object({ tagline: localizedSchema.optional() }).optional(),
   experience: experienceSchema,
   story: z

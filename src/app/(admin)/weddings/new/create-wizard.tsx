@@ -235,9 +235,18 @@ export function CreateWizard() {
                 ) : null}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="eventDate">Event date</Label>
-                <Input id="eventDate" name="eventDate" type="date" />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="eventDate">Event date</Label>
+                  <Input id="eventDate" name="eventDate" type="date" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="eventTime">
+                    Event time{" "}
+                    <span className="font-normal text-muted-foreground">(optional)</span>
+                  </Label>
+                  <Input id="eventTime" name="eventTime" type="time" />
+                </div>
               </div>
 
               {state.error ? (

@@ -207,6 +207,7 @@ export function SaveTheDateView(props: WebsiteViewProps) {
             >
               <FlipCountdown
                 dateIso={countdownDate}
+                time={config.eventTime ? `${config.eventTime}:00` : undefined}
                 tileClassName="std-flip"
                 labelClassName="text-[color:var(--std-gold-lite)]/70"
               />

@@ -145,6 +145,10 @@ export default async function WeddingDetailPage({
               name1: wedding.name1,
               name2: wedding.name2,
               eventDate: wedding.eventDate,
+              eventTime:
+                typeof wedding.config?.eventTime === "string"
+                  ? wedding.config.eventTime
+                  : null,
             }}
           />
         </CardContent>

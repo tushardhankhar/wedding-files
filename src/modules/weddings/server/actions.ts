@@ -24,6 +24,7 @@ function parseForm(formData: FormData) {
     name1: value("name1"),
     name2: value("name2"),
     eventDate: value("eventDate"),
+    eventTime: value("eventTime"),
   };
 }
 

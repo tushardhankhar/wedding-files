@@ -17,6 +17,8 @@ export interface WeddingFormValues {
   name1?: string | null;
   name2?: string | null;
   eventDate?: string | null;
+  /** HH:MM — optional time of day, powers an exact countdown. */
+  eventTime?: string | null;
 }
 
 const initialState: WeddingFormState = {};
@@ -52,6 +54,7 @@ export function WeddingForm({
   const [name1, setName1] = useState(values?.name1 ?? "");
   const [name2, setName2] = useState(values?.name2 ?? "");
   const [eventDate, setEventDate] = useState(values?.eventDate ?? "");
+  const [eventTime, setEventTime] = useState(values?.eventTime ?? "");
 
   return (
     <form action={formAction} className="space-y-4">
@@ -102,15 +105,33 @@ export function WeddingForm({
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="eventDate">Event date</Label>
-        <Input
-          id="eventDate"
-          name="eventDate"
-          type="date"
-          value={eventDate}
-          onChange={(e) => setEventDate(e.target.value)}
-        />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="eventDate">Event date</Label>
+          <Input
+            id="eventDate"
+            name="eventDate"
+            type="date"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="eventTime">
+            Event time{" "}
+            <span className="font-normal text-muted-foreground">(optional)</span>
+          </Label>
+          <Input
+            id="eventTime"
+            name="eventTime"
+            type="time"
+            value={eventTime}
+            onChange={(e) => setEventTime(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Sets an exact countdown. Defaults to 8:00 PM if left blank.
+          </p>
+        </div>
       </div>
 
       {state.error ? (
