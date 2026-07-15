@@ -9,6 +9,7 @@ import { ConfettiView } from "./confetti/confetti-view";
 import { LittleMiracleView } from "./little-miracle/little-miracle-view";
 import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
 import { SaveTheDateView } from "./save-the-date/save-the-date-view";
+import { MuhuratView } from "./muhurat/muhurat-view";
 import { GoToTop } from "./go-to-top";
 
 /**
@@ -39,6 +40,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <ShubhAarambhView {...props} />;
     case "save-the-date": // The Overture — Save the Date
       return <SaveTheDateView {...props} />;
+    case "muhurat": // The Muhurat — Save the Date
+      return <MuhuratView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }

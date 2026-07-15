@@ -293,6 +293,40 @@ const THEME_BASES: ThemeBase[] = [
     } as CSSProperties,
   },
 
+  {
+    id: "muhurat",
+    name: "The Muhurat",
+    description:
+      "Save the Date — royal maroon & antique gold, a rotating mandala seal & hanging toran, live countdown. Traditional Indian, elegant & luxe.",
+    swatch: ["#4a0d1f", "#c9a23f", "#f7f0e0"],
+    heroMotif: "seal",
+    vars: {
+      "--mht-maroon": "#4a0d1f",
+      "--mht-maroon-2": "#6a132b",
+      "--mht-gold": "#c9a23f",
+      "--mht-gold-lite": "#e8cd7e",
+      "--mht-ivory": "#f7f0e0",
+      "--w-navy": "#4a0d1f",
+      "--w-bg": "#4a0d1f",
+      "--w-surface": "#6a132b",
+      "--w-ink": "#f7f0e0",
+      "--w-ink-soft": "#e4c9b8",
+      "--w-accent": "#c9a23f",
+      "--w-gold": "#c9a23f",
+      "--w-gold-lite": "#e8cd7e",
+      "--w-line": "rgba(201,162,63,0.25)",
+      "--w-hero-ink": "#f7f0e0",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 0%, rgba(201,162,63,0.28), transparent 55%), linear-gradient(180deg, #4a0d1f 0%, #2c0712 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": SCRIPT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern": PATTERN.hairline,
+    } as CSSProperties,
+  },
+
   /* ── "Experience" themes — non-wedding, fully bespoke interactive renderers ── */
   {
     id: "afterparty",
@@ -471,6 +505,11 @@ const THEME_META: Record<
   "south-indian": { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS },
   // rajasthani: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS }, // The Rajputana — temporarily disabled
   "save-the-date": {
+    category: "save-the-date",
+    subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
+    supports: MINIMAL_SUPPORTS,
+  },
+  muhurat: {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
     supports: MINIMAL_SUPPORTS,

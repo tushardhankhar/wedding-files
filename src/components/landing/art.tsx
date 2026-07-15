@@ -62,6 +62,10 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     bg: "radial-gradient(80% 60% at 50% 12%, rgba(201,162,63,.5), transparent 60%), linear-gradient(165deg, #124a37 0%, #0e3b2c 55%, #082018 120%)",
     motif: "✦",
   },
+  muhurat: {
+    bg: "radial-gradient(80% 60% at 50% 12%, rgba(201,162,63,.5), transparent 60%), linear-gradient(165deg, #6a132b 0%, #4a0d1f 55%, #2c0712 120%)",
+    motif: "✦",
+  },
   // "Experience" themes (non-wedding celebrations).
   afterparty: {
     bg: "radial-gradient(80% 60% at 28% 15%, rgba(124,58,237,.55), transparent 60%), radial-gradient(70% 60% at 82% 26%, rgba(236,72,153,.45), transparent 60%), linear-gradient(165deg, #16121f 0%, #09090b 100%)",

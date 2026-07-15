@@ -13,6 +13,8 @@ import {
   Jali,
   AmpersandSeal,
   CornerFiligree,
+  ElephantProcession,
+  MarigoldFall,
 } from "./ornaments";
 import {
   MaharajaGroupRsvp,
@@ -152,7 +154,7 @@ export function MaharajaView({
   const links: Array<[string, string, string]> = [];
   if (milestones.length) links.push(["#story", "Our Story", "हमारी कहानी"]);
   if (events.length) links.push(["#celebrations", "Celebrations", "आयोजन"]);
-  if (venues.length) links.push(["#palace", "Palace", "महल"]);
+  // if (venues.length) links.push(["#palace", "Palace", "महल"]); // Palace section — temporarily disabled
   if (images.length) links.push(["#gallery", "Gallery", "गैलरी"]);
   if (faqs.length || contacts.length) links.push(["#details", "Details", "विवरण"]);
   if (hasRsvp) links.push(["#rsvp", "RSVP", "उत्तर"]);
@@ -194,11 +196,11 @@ export function MaharajaView({
           >
             <RoyalInsignia initials={seal} className="h-32 text-[color:var(--m-gold2)] sm:h-40" />
             {pair ? (
-              <p className="m-serif mt-8 max-w-full break-words text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase leading-tight tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
-                {pair[0]}{" "}
-                <span className="m-goldtext mx-3 normal-case italic tracking-normal">&amp;</span>{" "}
-                {pair[1]}
-              </p>
+              <div className="m-serif mt-8 max-w-full break-words text-center text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase leading-tight tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
+                <span className="block">{pair[0]}</span>
+                <span className="m-goldtext my-1 block text-[0.8em] normal-case italic tracking-normal">&amp;</span>
+                <span className="block">{pair[1]}</span>
+              </div>
             ) : (
               <p className="m-serif mt-8 max-w-full break-words text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
                 {names}
@@ -337,7 +339,9 @@ export function MaharajaView({
       <section id="top" className="m-grain relative flex min-h-svh flex-col overflow-hidden" style={{ background: "var(--m-mahog)" }}>
         <div className="m-kenburns absolute inset-0" style={{ background: HERO_ART }} />
         <Jali className="text-[color:var(--m-gold)] opacity-[0.05]" />
+        <MarigoldFall className="text-[color:var(--m-gold2)]" />
         <ArchColonnade className="absolute bottom-0 left-1/2 w-[140%] max-w-none -translate-x-1/2 text-[color:var(--m-gold)] opacity-[0.13]" />
+        <ElephantProcession className="bottom-[5.25rem] text-[color:var(--m-gold)] opacity-[0.12]" />
 
         <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-28 pt-32 sm:px-10">
           {pair ? (
@@ -359,7 +363,7 @@ export function MaharajaView({
           )}
         </div>
 
-        <div className="relative border-t border-[color:var(--m-gold)]/25">
+        <div className="relative border-[color:var(--m-gold)]/25 sm:border-t">
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-[10px] uppercase tracking-[0.34em] text-[color:var(--m-gold2)] sm:flex-row sm:px-10">
             <span>{sealDate(countdownDate) ?? dateLabel ?? ""}</span>
             <span className="text-[color:var(--m-ivory)]/60">
@@ -509,8 +513,12 @@ export function MaharajaView({
                   ) : null}
                   <div className={`mt-10 flex flex-wrap gap-3 ${i % 2 ? "justify-end" : ""}`} data-mreveal>
                     {e.mapsUrl ? (
-                      <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className={btnGhost}>
-                        <TT en="View the palace" hi="स्थान देखें" />
+                      <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className={`${btnGhost} gap-2`}>
+                        <svg width="12" height="14" viewBox="0 0 12 14" fill="none" aria-hidden="true">
+                          <path d="M6 .5C3.24.5 1 2.74 1 5.5c0 3.5 5 8 5 8s5-4.5 5-8C11 2.74 8.76.5 6 .5Z" stroke="currentColor" strokeWidth="1.1" />
+                          <circle cx="6" cy="5.5" r="1.6" stroke="currentColor" strokeWidth="1.1" />
+                        </svg>
+                        <TT en="View the venue" hi="स्थान देखें" />
                       </a>
                     ) : null}
                     {cal ? (
@@ -531,7 +539,7 @@ export function MaharajaView({
         </section>
       ) : null}
 
-      {/* ── THE PALACE — venue ───────────────────────────────────────────── */}
+      {/* ── THE PALACE — venue — temporarily disabled
       {venues.length > 0 ? (
         <section id="palace" className="scroll-mt-16 bg-[color:var(--m-ivory)] px-6 py-24 sm:py-32">
           <div className="mx-auto max-w-5xl">
@@ -572,7 +580,6 @@ export function MaharajaView({
                       </a>
                     ) : null}
                   </div>
-                  {/* arch-framed architectural panel */}
                   <div className="mx-auto w-full max-w-sm">
                     <div className="m-grain relative overflow-hidden rounded-t-[11rem] border border-[color:var(--m-gold)]/60 p-2.5">
                       <div
@@ -597,6 +604,7 @@ export function MaharajaView({
           </div>
         </section>
       ) : null}
+      */}
 
       {/* ── PORTRAITS OF US — museum gallery ─────────────────────────────── */}
       {images.length > 0 ? (

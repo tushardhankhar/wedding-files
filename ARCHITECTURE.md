@@ -1,8 +1,18 @@
 # Wedding Platform — Architecture
 
-A multi-tenant wedding website platform. Wedding clients/admins create and manage
-personalized, config-driven wedding websites; invited guests view only the events
-they are authorized to see and RSVP to them — without creating accounts.
+> **Update (2026-07): now beyond weddings.** The platform has generalized into a
+> multi-event-type invitation builder — **12 themes across 6 categories** (weddings,
+> save-the-date, parties, kids' birthdays, baby showers, housewarmings). The core
+> security/DB/trust model below is unchanged. For the **current end-to-end flows,
+> the theme registry model, and the step-by-step "how to add a theme" playbook**,
+> see **`FLOWS.md`**; for the generalization work itself see **`INVITATION-TYPES-PLAN.md`**.
+> Notable deltas since this doc was written: `weddings.partner_one_name/two` →
+> `name1/name2` (migration `0010`); themes carry `category`/`subjectSpec`/`supports`
+> metadata; theme-specific content lives in `config.experience.<theme>`.
+
+A multi-tenant invitation platform (originally weddings). Clients/admins create and
+manage personalized, config-driven invitation sites; invited guests view only the
+events they are authorized to see and RSVP to them — without creating accounts.
 
 ## Stack
 

@@ -273,6 +273,39 @@
   animation: mhj-draw 2s ease-out 0.4s forwards;
 }
 
+/* royal elephant procession — a slow, seamless amble across the hero base */
+@keyframes mhj-parade { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.mhj .m-parade { animation: mhj-parade 120s linear infinite; }
+@keyframes mhj-amble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.mhj .m-amble { animation: mhj-amble 3.4s ease-in-out infinite; }
+
+/* drifting marigold blossoms — soft gold, slow, always falling */
+.mhj .m-petal {
+  border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
+  background: radial-gradient(circle at 32% 30%, var(--m-gold2), var(--m-gold) 68%, transparent 100%);
+  box-shadow: 0 0 4px rgba(209, 170, 98, 0.35);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: mhj-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes mhj-fall {
+  0% { transform: translate3d(0, -6vh, 0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.45; }
+  100% { transform: translate3d(var(--drift, 12px), 106vh, 0) rotate(230deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mhj .m-parade,
+  .mhj .m-amble { animation: none; }
+  .mhj .m-petal { display: none; }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    Shared theme scaffolding for the standalone renderers (.gul / .aka / .kly /
    .vow). Bilingual toggle + one scroll-reveal, reused by all of them.
@@ -1357,6 +1390,65 @@
   @keyframes std-shimmer { to { background-position: -220% 0; } }
   .std-ring { animation: std-spin 44s linear infinite; }
   @keyframes std-spin { to { transform: rotate(360deg); } }
+}
+
+/* ── The Muhurat — Save the Date (royal maroon + antique gold, mandala) ───── */
+.mht {
+  background: var(--mht-maroon, #4a0d1f);
+  color: var(--mht-ivory, #f7f0e0);
+  font-family: var(--font-cormorant), Georgia, serif;
+  min-height: 100dvh; overflow-x: clip;
+  background-image:
+    radial-gradient(95% 60% at 50% -5%, rgba(201,162,63,0.24), transparent 55%),
+    radial-gradient(70% 50% at 50% 112%, rgba(201,162,63,0.14), transparent 55%);
+}
+.mht-sans { font-family: var(--font-raleway), system-ui, sans-serif; }
+.mht-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+.mht-deva { font-family: var(--font-noto-deva), var(--font-raleway), serif; }
+.mht ::selection { background: var(--mht-gold); color: #4a0d1f; }
+
+.mht-foil {
+  font-family: var(--font-cormorant), Georgia, serif;
+  background: linear-gradient(100deg, #b98a3d 0%, #e8cd7e 22%, #fff4d0 34%, #e8cd7e 46%, #b98a3d 70%, #e8cd7e 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.mht-seal {
+  display: grid; place-items: center;
+  width: clamp(82px, 22vw, 104px); height: clamp(82px, 22vw, 104px);
+  border-radius: 50%; border: 1.5px solid var(--mht-gold);
+  box-shadow: 0 0 0 4px rgba(201,162,63,0.12), inset 0 0 24px rgba(201,162,63,0.2);
+  background: radial-gradient(circle at 50% 35%, rgba(74,13,31,0.85), rgba(74,13,31,0.5) 70%);
+}
+.mht-seal-mono {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: clamp(1.5rem, 5.5vw, 2rem); letter-spacing: 0.04em;
+  color: var(--mht-gold-lite);
+}
+.mht-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--mht-gold), transparent); }
+.mht-datecard {
+  border: 1px solid rgba(201,162,63,0.35); border-radius: 4px;
+  background: rgba(201,162,63,0.06);
+}
+.mht-flip {
+  --flip-bg: #360a17; --flip-ink: #e8cd7e;
+  --flip-line: rgba(201,162,63,0.28); --flip-shadow: rgba(0,0,0,0.6);
+}
+.mht-btn {
+  font-family: var(--font-raleway), system-ui, sans-serif;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: #4a0d1f; border-radius: 999px; padding: 0.85rem 2rem;
+  background: linear-gradient(120deg, var(--mht-gold), var(--mht-gold-lite));
+  box-shadow: 0 14px 30px -12px rgba(201,162,63,0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mht-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(201,162,63,0.8); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mht-foil { animation: mht-shimmer 6s linear infinite; }
+  @keyframes mht-shimmer { to { background-position: -220% 0; } }
+  .mht-mandala { animation: mht-spin 90s linear infinite; transform-origin: center; }
+  @keyframes mht-spin { to { transform: rotate(360deg); } }
 }
 
 /* ── Back-to-top button (shared across all themed guest sites) ─────────────── */

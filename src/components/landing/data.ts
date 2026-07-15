@@ -97,6 +97,7 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
   { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian" },
   { id: "overture", name: "The Overture", vibe: "Save the Date", tagline: "Mark your calendars.", art: "overture", palette: ["#0e3b2c", "#c9a23f", "#f7f0e0"], demo: "save-the-date" },
+  { id: "muhurat", name: "The Muhurat", vibe: "Save the Date · Indian", tagline: "The auspicious date is set.", art: "muhurat", palette: ["#4a0d1f", "#c9a23f", "#f7f0e0"], demo: "muhurat" },
   // Beyond weddings — interactive celebration themes.
   { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty" },
   { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti" },
