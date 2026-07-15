@@ -15,6 +15,9 @@ export function VowView(props: WebsiteViewProps) {
 
   const pair = splitNames(names);
   const milestones = config.story?.milestones ?? [];
+  const familyMembers = config.family?.members ?? [];
+  const groomFamily = familyMembers.filter((m) => m.side !== "bride");
+  const brideFamily = familyMembers.filter((m) => m.side === "bride");
   const images = config.gallery?.images ?? [];
   const contacts = config.footer?.contacts ?? [];
   const venues = events.filter((e) => e.venueName);
@@ -25,6 +28,7 @@ export function VowView(props: WebsiteViewProps) {
 
   const links: Array<[string, string, string]> = [];
   if (milestones.length) links.push(["#story", "Story", "कहानी"]);
+  if (familyMembers.length) links.push(["#family", "Family", "परिवार"]);
   if (events.length) links.push(["#weekend", "Weekend", "आयोजन"]);
   if (venues.length) links.push(["#location", "Location", "स्थान"]);
   if (images.length) links.push(["#gallery", "Gallery", "गैलरी"]);
@@ -125,6 +129,46 @@ export function VowView(props: WebsiteViewProps) {
         </div>
       </section>
 
+      {/* FAMILY */}
+      {familyMembers.length > 0 ? (
+        <section id="family" className="scroll-mt-20 border-t border-black/10 px-6 py-28 sm:px-10">
+          <div className="mx-auto max-w-3xl">
+            <div className="text-center" data-tw-reveal>
+              <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-black/50"><TT en="With the blessings of" hi="आशीर्वाद सहित" /></p>
+              <h2 className="v-serif mt-1 text-[clamp(2rem,5vw,3.2rem)] font-medium"><TT en="our families" hi="हमारे परिवार" /></h2>
+            </div>
+            <div className={`mt-16 grid gap-12 ${groomFamily.length && brideFamily.length ? "sm:grid-cols-2 sm:divide-x sm:divide-black/12" : ""}`}>
+              {groomFamily.length > 0 ? (
+                <div className="text-center sm:px-8" data-tw-reveal>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-black/45"><TT en="Groom's Family" hi="वर पक्ष" /></p>
+                  <div className="mt-6 space-y-4">
+                    {groomFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="v-serif text-xl font-medium"><T value={m.name} /></h3>
+                        {m.relation ? <p className="mt-0.5 text-sm italic text-black/55"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {brideFamily.length > 0 ? (
+                <div className="text-center sm:px-8" data-tw-reveal>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.3em] text-black/45"><TT en="Bride's Family" hi="वधू पक्ष" /></p>
+                  <div className="mt-6 space-y-4">
+                    {brideFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="v-serif text-xl font-medium"><T value={m.name} /></h3>
+                        {m.relation ? <p className="mt-0.5 text-sm italic text-black/55"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* COUNTDOWN — minimal */}
       {countdownDate ? <VowCountdown dateIso={countdownDate} /> : null}
 
@@ -222,7 +266,7 @@ export function VowView(props: WebsiteViewProps) {
       <footer className="bg-[color:var(--v-black)] px-6 py-16 text-center text-[color:var(--v-white)]">
         <p className="v-serif text-4xl font-medium">{names}</p>
         <p className="v-script mt-2 text-3xl text-[color:var(--v-champ)]">{compactDate(countdownDate, ".") || dateLabel}</p>
-        {contacts.length ? <p className="mt-6 text-sm text-white/55">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
+        {contacts.length ? <p className="mt-6 text-sm text-white/55">{contacts.map((c) => `${c.name}${c.relation ? ` (${c.relation})` : ""} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-white/40"><TT en="Forever starts here · Jashn" hi="हमेशा यहीं से · जश्न" /></p>
         <JashnCredit className="mt-3 text-white/35" />
       </footer>

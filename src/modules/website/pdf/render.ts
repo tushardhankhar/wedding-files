@@ -93,10 +93,10 @@ export async function renderInvitePdf({
     dress: e.description ?? undefined,
   }));
 
-  const families: PdfFamily[] = (config.family?.groups ?? []).map((g) => ({
-    name: g.name.en,
-    members: g.members?.en,
-    relation: g.relation?.en,
+  const families: PdfFamily[] = (config.family?.members ?? []).map((m) => ({
+    name: m.name.en,
+    relation: m.relation?.en,
+    side: m.side,
   }));
 
   // High error-correction so the QR still scans after printing.

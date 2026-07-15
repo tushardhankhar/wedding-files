@@ -138,12 +138,14 @@ export const websiteConfigSchema = z.object({
     .optional(),
   family: z
     .object({
-      groups: z
+      members: z
         .array(
           z.object({
             name: localizedSchema,
-            members: localizedSchema.optional(),
             relation: localizedSchema.optional(),
+            /** Which side of the family this member belongs to — drives the
+             * groom's-side / bride's-side split on themes that render it. */
+            side: z.enum(["groom", "bride"]).default("groom"),
           })
         )
         .default([]),
@@ -158,7 +160,13 @@ export const websiteConfigSchema = z.object({
     .object({
       hashtag: z.string().optional(),
       contacts: z
-        .array(z.object({ name: z.string(), phone: z.string() }))
+        .array(
+          z.object({
+            name: z.string(),
+            phone: z.string(),
+            relation: z.string().optional(),
+          })
+        )
         .default([]),
     })
     .optional(),

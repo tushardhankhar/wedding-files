@@ -141,24 +141,36 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
     ],
   },
   family: {
-    groups: [
+    members: [
       {
-        name: { en: "The Kapoors", hi: "कपूर परिवार" },
-        members: { en: "Mr. Vikram & Mrs. Anjali Kapoor", hi: "श्री विक्रम एवं श्रीमती अंजलि कपूर" },
-        relation: { en: "Parents of the bride", hi: "वधू के माता-पिता" },
+        name: { en: "Mr. Sanjay Mehta", hi: "श्री संजय मेहता" },
+        relation: { en: "Father of the groom", hi: "वर के पिता" },
+        side: "groom",
       },
       {
-        name: { en: "The Mehtas", hi: "मेहता परिवार" },
-        members: { en: "Mr. Sanjay & Mrs. Rekha Mehta", hi: "श्री संजय एवं श्रीमती रेखा मेहता" },
-        relation: { en: "Parents of the groom", hi: "वर के माता-पिता" },
+        name: { en: "Mrs. Rekha Mehta", hi: "श्रीमती रेखा मेहता" },
+        relation: { en: "Mother of the groom", hi: "वर की माता" },
+        side: "groom",
       },
       {
-        name: { en: "With the blessings of", hi: "आशीर्वाददाता" },
-        members: {
-          en: "Late Shri Mohanlal Kapoor & Smt. Kamla Kapoor · Shri Ramesh & Smt. Sushila Mehta",
-          hi: "स्व. श्री मोहनलाल कपूर एवं श्रीमती कमला कपूर · श्री रमेश एवं श्रीमती सुशीला मेहता",
-        },
-        relation: { en: "Our grandparents", hi: "हमारे दादा-दादी एवं नाना-नानी" },
+        name: { en: "Shri Ramesh Mehta", hi: "श्री रमेश मेहता" },
+        relation: { en: "Grandfather of the groom", hi: "वर के दादा" },
+        side: "groom",
+      },
+      {
+        name: { en: "Mr. Vikram Kapoor", hi: "श्री विक्रम कपूर" },
+        relation: { en: "Father of the bride", hi: "वधू के पिता" },
+        side: "bride",
+      },
+      {
+        name: { en: "Mrs. Anjali Kapoor", hi: "श्रीमती अंजलि कपूर" },
+        relation: { en: "Mother of the bride", hi: "वधू की माता" },
+        side: "bride",
+      },
+      {
+        name: { en: "Late Shri Mohanlal Kapoor", hi: "स्व. श्री मोहनलाल कपूर" },
+        relation: { en: "Grandfather of the bride", hi: "वधू के दादा" },
+        side: "bride",
       },
     ],
   },
@@ -204,8 +216,8 @@ export const DEMO_SITE_CONFIG: WebsiteConfig = {
   footer: {
     hashtag: "AaravKiMeera",
     contacts: [
-      { name: "Rohan (Groom's brother)", phone: "+91 98100 12345" },
-      { name: "Riya (Bride's sister)", phone: "+91 97110 67890" },
+      { name: "Rohan", relation: "Groom's brother", phone: "+91 98100 12345" },
+      { name: "Riya", relation: "Bride's sister", phone: "+91 97110 67890" },
     ],
   },
 };

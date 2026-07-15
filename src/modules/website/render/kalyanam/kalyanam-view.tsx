@@ -34,6 +34,9 @@ export function KalyanamView(props: WebsiteViewProps) {
 
   const pair = splitNames(names);
   const milestones = config.story?.milestones ?? [];
+  const familyMembers = config.family?.members ?? [];
+  const groomFamily = familyMembers.filter((m) => m.side !== "bride");
+  const brideFamily = familyMembers.filter((m) => m.side === "bride");
   const faqs = config.faq?.items ?? [];
   const images = config.gallery?.images ?? [];
   const contacts = config.footer?.contacts ?? [];
@@ -52,6 +55,7 @@ export function KalyanamView(props: WebsiteViewProps) {
 
   const links: Array<[string, string, string]> = [];
   if (milestones.length) links.push(["#story", "Story", "कहानी"]);
+  if (familyMembers.length) links.push(["#family", "Family", "परिवार"]);
   if (events.length) links.push(["#ceremonies", "Ceremonies", "समारोह"]);
   if (venues.length) links.push(["#venue", "Venue", "स्थल"]);
   if (images.length) links.push(["#gallery", "Gallery", "गैलरी"]);
@@ -145,6 +149,47 @@ export function KalyanamView(props: WebsiteViewProps) {
                   <p className="mt-2 text-[15px] leading-relaxed text-[color:var(--k-ink-soft)]"><T value={m.text} /></p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* FAMILY */}
+      {familyMembers.length > 0 ? (
+        <section id="family" className="scroll-mt-16 px-6 py-24 sm:px-10" style={{ background: "var(--k-ivory)" }}>
+          <div className="mx-auto max-w-4xl">
+            <div className="text-center" data-tw-reveal>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-[color:var(--k-red)]"><TT en="With blessings" hi="आशीर्वाद सहित" /></p>
+              <h2 className="k-serif mt-1 text-[clamp(2rem,5vw,3.6rem)] text-[color:var(--k-wood)]"><TT en="Our Families" hi="हमारे परिवार" /></h2>
+              <Kolam className="mx-auto mt-4 h-10 w-10 text-[color:var(--k-turmeric)]" />
+            </div>
+            <div className={`mt-14 grid gap-10 ${groomFamily.length && brideFamily.length ? "sm:grid-cols-2" : ""}`}>
+              {groomFamily.length > 0 ? (
+                <div className={`text-center ${brideFamily.length > 0 ? "sm:border-r sm:border-[color:var(--k-brass)]/25 sm:pr-10" : ""}`} data-tw-reveal>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--k-brass)]"><TT en="Groom's Family" hi="वर पक्ष" /></p>
+                  <div className="mt-6 space-y-5">
+                    {groomFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="k-serif text-xl uppercase tracking-[0.06em] text-[color:var(--k-red)]"><T value={m.name} /></h3>
+                        {m.relation ? <p className="mt-1 text-sm text-[color:var(--k-ink-soft)]"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {brideFamily.length > 0 ? (
+                <div className="text-center" data-tw-reveal>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--k-brass)]"><TT en="Bride's Family" hi="वधू पक्ष" /></p>
+                  <div className="mt-6 space-y-5">
+                    {brideFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="k-serif text-xl uppercase tracking-[0.06em] text-[color:var(--k-red)]"><T value={m.name} /></h3>
+                        {m.relation ? <p className="mt-1 text-sm text-[color:var(--k-ink-soft)]"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </section>
@@ -268,7 +313,7 @@ export function KalyanamView(props: WebsiteViewProps) {
         <Kolam className="mx-auto h-20 w-20 text-[color:var(--k-turmeric)]" />
         <p className="k-serif mt-4 text-3xl text-[color:var(--k-jasmine)]">{names}</p>
         {dateLabel ? <p className="mt-2 text-[11px] uppercase tracking-[0.35em] text-[color:var(--k-turmeric)]">{dateLabel}</p> : null}
-        {contacts.length ? <p className="mt-4 text-sm text-[color:var(--k-jasmine)]/70">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
+        {contacts.length ? <p className="mt-4 text-sm text-[color:var(--k-jasmine)]/70">{contacts.map((c) => `${c.name}${c.relation ? ` (${c.relation})` : ""} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-[color:var(--k-jasmine)]/50"><TT en="Sacred · Timeless · Jashn" hi="पावन · कालातीत · जश्न" /></p>
         <JashnCredit className="mt-3 text-[color:var(--k-jasmine)]/40" />
       </footer>

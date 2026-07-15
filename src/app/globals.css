@@ -353,14 +353,18 @@
 @keyframes gul-spin { to { transform: rotate(360deg); } }
 .gul .g-spin { animation: gul-spin 26s linear infinite; }
 
-/* ── THE ANAND KARAJ (id "punjabi") — sacred, warm, familial ──────────────── */
+/* ── THE ANAND KARAJ (id "punjabi") — festive, rich, celebratory ──────────── */
 .aka {
   --a-cream: #fff8e8;
   --a-saffron: #d98519;
   --a-kesari: #e5a63c;
   --a-burgundy: #641e32;
+  --a-deep: #45091f;       /* deepest burgundy — rich panels & footer */
+  --a-fuchsia: #c2185b;    /* rani pink — the loud, joyful accent */
+  --a-marigold: #f2a71b;   /* bright genda-phool marigold */
   --a-rose: #c8737a;
   --a-gold: #c39a55;
+  --a-gold-lite: #f0cd76;  /* brighter foil highlight */
   --a-forest: #315c48;
   --a-charcoal: #302925;
   --a-ink-soft: #7c6a5a;
@@ -373,9 +377,59 @@
 }
 .aka .a-serif { font-family: var(--font-cormorant), Georgia, "Times New Roman", serif; }
 .aka .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
-.aka ::selection { background: var(--a-saffron); color: #fff; }
+.aka ::selection { background: var(--a-fuchsia); color: #fff; }
 @keyframes aka-draw { to { stroke-dashoffset: 0; } }
 .aka .a-draw path { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: aka-draw 3s ease-out 0.3s forwards; }
+
+/* shimmering antique-gold foil text — warm, moving, never neon */
+.aka .a-goldtext {
+  background: linear-gradient(100deg, #a5762a 0%, var(--a-gold-lite) 22%, #fff3cf 32%, var(--a-gold-lite) 44%, #a5762a 66%, var(--a-gold-lite) 86%, #a5762a 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .aka .a-goldtext { animation: aka-shimmer 6.5s linear infinite; }
+}
+@keyframes aka-shimmer { to { background-position: -220% center; } }
+
+/* hanging marigold toran — a slow, gentle sway pivoting from the rod */
+.aka .a-sway { transform-origin: top center; animation: aka-sway 6s ease-in-out infinite; }
+@keyframes aka-sway { 0%, 100% { transform: rotate(-1.3deg); } 50% { transform: rotate(1.3deg); } }
+
+/* slow ceremonial rotation for the emblem's filigree ring */
+.aka .a-spin { animation: aka-spin 44s linear infinite; }
+@keyframes aka-spin { to { transform: rotate(360deg); } }
+
+/* soft pulsing halo behind focal points */
+.aka .a-glow { animation: aka-glow 4.5s ease-in-out infinite; }
+@keyframes aka-glow { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.07); } }
+
+/* drifting marigold petals over the hero */
+.aka .a-petal {
+  position: absolute;
+  top: -6vh;
+  border-radius: 60% 40% 55% 45% / 58% 46% 54% 42%;
+  background: radial-gradient(circle at 32% 28%, var(--a-marigold), #e07a12 70%, transparent 100%);
+  box-shadow: 0 0 5px rgba(224, 122, 18, 0.4);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: aka-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes aka-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0); opacity: 0; }
+  12% { opacity: 0.85; }
+  88% { opacity: 0.7; }
+  100% { transform: translate3d(var(--drift, 14px), 114vh, 0) rotate(260deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aka .a-sway, .aka .a-spin, .aka .a-glow { animation: none; }
+  .aka .a-petal { display: none; }
+}
 
 /* ── THE KALYANAM (id "south-indian") — architectural South Indian morning ── */
 .kly {
@@ -858,6 +912,8 @@
 .wsite .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.5)); }
 .wsite .families { display: grid; gap: 24px; grid-template-columns: 1fr; text-align: center; }
 @media (min-width: 720px) { .wsite .families { grid-template-columns: 1fr 1fr; } }
+.wsite .family-side { display: flex; flex-direction: column; gap: 20px; }
+.wsite .family-side .eyebrow { margin-bottom: 4px; }
 .wsite .family h3 { font-size: clamp(20px, 4.5vw, 24px); margin: 0 0 4px; color: var(--w-accent); }
 .wsite .family p { margin: 2px 0; color: var(--w-ink-soft); }
 .wsite .faq { max-width: 680px; margin: 0 auto; }

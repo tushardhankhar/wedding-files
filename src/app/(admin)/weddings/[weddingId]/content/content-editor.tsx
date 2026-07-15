@@ -29,14 +29,16 @@ const L = (v?: { en: string; hi?: string }): Loc => ({
 const loc = (l: Loc) => ({ en: l.en.trim(), hi: l.hi.trim() || undefined });
 const filled = (l: Loc) => l.en.trim() !== "" || l.hi.trim() !== "";
 
+type FamilySide = "groom" | "bride";
+
 interface State {
   tagline: Loc;
   milestones: { when: string; title: Loc; text: Loc }[];
   images: { url: string; caption: Loc; focus?: Focus }[];
-  groups: { name: Loc; members: Loc; relation: Loc }[];
+  familyMembers: { name: Loc; relation: Loc; side: FamilySide }[];
   faqs: { q: Loc; a: Loc }[];
   hashtag: string;
-  contacts: { name: string; phone: string }[];
+  contacts: { name: string; phone: string; relation: string }[];
 }
 
 function normalize(c: WebsiteConfig): State {
@@ -52,14 +54,18 @@ function normalize(c: WebsiteConfig): State {
       caption: L(i.caption),
       focus: i.focus,
     })),
-    groups: (c.family?.groups ?? []).map((g) => ({
-      name: L(g.name),
-      members: L(g.members),
-      relation: L(g.relation),
+    familyMembers: (c.family?.members ?? []).map((m) => ({
+      name: L(m.name),
+      relation: L(m.relation),
+      side: m.side ?? "groom",
     })),
     faqs: (c.faq?.items ?? []).map((f) => ({ q: L(f.q), a: L(f.a) })),
     hashtag: c.footer?.hashtag ?? "",
-    contacts: (c.footer?.contacts ?? []).map((x) => ({ ...x })),
+    contacts: (c.footer?.contacts ?? []).map((x) => ({
+      name: x.name,
+      phone: x.phone,
+      relation: x.relation ?? "",
+    })),
   };
 }
 
@@ -81,12 +87,12 @@ function toConfig(s: State): WebsiteConfig {
         })),
     },
     family: {
-      groups: s.groups
-        .filter((g) => g.name.en.trim())
-        .map((g) => ({
-          name: loc(g.name),
-          members: filled(g.members) ? loc(g.members) : undefined,
-          relation: filled(g.relation) ? loc(g.relation) : undefined,
+      members: s.familyMembers
+        .filter((m) => m.name.en.trim())
+        .map((m) => ({
+          name: loc(m.name),
+          relation: filled(m.relation) ? loc(m.relation) : undefined,
+          side: m.side,
         })),
     },
     faq: {
@@ -98,7 +104,11 @@ function toConfig(s: State): WebsiteConfig {
       hashtag: s.hashtag.trim() || undefined,
       contacts: s.contacts
         .filter((c) => c.name.trim())
-        .map((c) => ({ name: c.name.trim(), phone: c.phone.trim() })),
+        .map((c) => ({
+          name: c.name.trim(),
+          phone: c.phone.trim(),
+          relation: c.relation.trim() || undefined,
+        })),
     },
   };
 }
@@ -269,6 +279,28 @@ function LocField({
           placeholder="हिंदी"
         />
       </div>
+    </div>
+  );
+}
+
+function SideSelect({
+  value,
+  onChange,
+}: {
+  value: FamilySide;
+  onChange: (v: FamilySide) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>Side</Label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as FamilySide)}
+        className="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+      >
+        <option value="groom">Groom&apos;s side</option>
+        <option value="bride">Bride&apos;s side</option>
+      </select>
     </div>
   );
 }
@@ -890,47 +922,51 @@ export function ContentEditor({
       {supports.family ? (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Families</CardTitle>
+          <CardTitle className="text-base">Family</CardTitle>
+          <CardDescription>
+            Add family members one by one — pick which side each belongs to.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          {s.groups.map((g, i) => (
+          {s.familyMembers.map((m, i) => (
             <Row
               key={i}
               index={i}
-              label="Family"
+              label="Member"
               onRemove={() =>
-                set({ groups: s.groups.filter((_, idx) => idx !== i) })
+                set({
+                  familyMembers: s.familyMembers.filter((_, idx) => idx !== i),
+                })
               }
             >
               <LocField
                 label="Name"
-                value={g.name}
+                value={m.name}
                 onChange={(v) =>
                   set({
-                    groups: s.groups.map((x, idx) =>
+                    familyMembers: s.familyMembers.map((x, idx) =>
                       idx === i ? { ...x, name: v } : x
                     ),
                   })
                 }
               />
               <LocField
-                label="Members"
-                value={g.members}
+                label="Relation"
+                value={m.relation}
                 onChange={(v) =>
                   set({
-                    groups: s.groups.map((x, idx) =>
-                      idx === i ? { ...x, members: v } : x
+                    familyMembers: s.familyMembers.map((x, idx) =>
+                      idx === i ? { ...x, relation: v } : x
                     ),
                   })
                 }
               />
-              <LocField
-                label="Relation"
-                value={g.relation}
+              <SideSelect
+                value={m.side}
                 onChange={(v) =>
                   set({
-                    groups: s.groups.map((x, idx) =>
-                      idx === i ? { ...x, relation: v } : x
+                    familyMembers: s.familyMembers.map((x, idx) =>
+                      idx === i ? { ...x, side: v } : x
                     ),
                   })
                 }
@@ -942,14 +978,14 @@ export function ContentEditor({
             variant="outline"
             onClick={() =>
               set({
-                groups: [
-                  ...s.groups,
-                  { name: L(), members: L(), relation: L() },
+                familyMembers: [
+                  ...s.familyMembers,
+                  { name: L(), relation: L(), side: "groom" },
                 ],
               })
             }
           >
-            ＋ Add family
+            ＋ Add member
           </Button>
         </CardContent>
       </Card>
@@ -1031,7 +1067,7 @@ export function ContentEditor({
                 set({ contacts: s.contacts.filter((_, idx) => idx !== i) })
               }
             >
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-3">
                 <Input
                   value={c.name}
                   placeholder="Name"
@@ -1039,6 +1075,17 @@ export function ContentEditor({
                     set({
                       contacts: s.contacts.map((x, idx) =>
                         idx === i ? { ...x, name: e.target.value } : x
+                      ),
+                    })
+                  }
+                />
+                <Input
+                  value={c.relation}
+                  placeholder="Relation (optional)"
+                  onChange={(e) =>
+                    set({
+                      contacts: s.contacts.map((x, idx) =>
+                        idx === i ? { ...x, relation: e.target.value } : x
                       ),
                     })
                   }
@@ -1061,7 +1108,12 @@ export function ContentEditor({
             type="button"
             variant="outline"
             onClick={() =>
-              set({ contacts: [...s.contacts, { name: "", phone: "" }] })
+              set({
+                contacts: [
+                  ...s.contacts,
+                  { name: "", phone: "", relation: "" },
+                ],
+              })
             }
           >
             ＋ Add contact

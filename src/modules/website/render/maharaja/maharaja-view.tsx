@@ -136,6 +136,9 @@ export function MaharajaView({
   const pair = splitNames(names);
   const seal = initials.replace(/\s*&\s*/, " · ");
   const milestones = config.story?.milestones ?? [];
+  const familyMembers = config.family?.members ?? [];
+  const groomFamily = familyMembers.filter((m) => m.side !== "bride");
+  const brideFamily = familyMembers.filter((m) => m.side === "bride");
   const images = config.gallery?.images ?? [];
   const faqs = config.faq?.items ?? [];
   const contacts = config.footer?.contacts ?? [];
@@ -153,6 +156,7 @@ export function MaharajaView({
 
   const links: Array<[string, string, string]> = [];
   if (milestones.length) links.push(["#story", "Our Story", "हमारी कहानी"]);
+  if (familyMembers.length) links.push(["#family", "Families", "परिवार"]);
   if (events.length) links.push(["#celebrations", "Celebrations", "आयोजन"]);
   // if (venues.length) links.push(["#palace", "Palace", "महल"]); // Palace section — temporarily disabled
   if (images.length) links.push(["#gallery", "Gallery", "गैलरी"]);
@@ -451,6 +455,67 @@ export function MaharajaView({
         </section>
       ) : null}
 
+      {/* ── FAMILIES — with the blessings of both houses ─────────────────── */}
+      {familyMembers.length > 0 ? (
+        <section id="family" className="scroll-mt-16 bg-[color:var(--m-ivory)] px-6 py-24 sm:py-32">
+          <div className="mx-auto max-w-4xl">
+            <div className="text-center" data-mreveal>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-[color:var(--m-gold)]">
+                <TT en="With blessings" hi="आशीर्वाद सहित" />
+              </p>
+              <h2 className="m-serif mt-3 text-[clamp(2.2rem,6vw,4rem)] uppercase tracking-[0.12em] text-[color:var(--m-wine)]">
+                <TT en="Our Families" hi="हमारे परिवार" />
+              </h2>
+              <GoldRule className="mx-auto mt-6 text-[color:var(--m-gold)]" />
+            </div>
+            <div className={`mt-16 grid gap-14 ${groomFamily.length && brideFamily.length ? "md:grid-cols-2" : ""}`}>
+              {groomFamily.length > 0 ? (
+                <div className={`text-center ${brideFamily.length > 0 ? "md:border-r md:border-[color:var(--m-gold)]/30 md:pr-14" : ""}`} data-mreveal>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--m-gold)]">
+                    <TT en="Groom's Family" hi="वर पक्ष" />
+                  </p>
+                  <div className="mt-6 space-y-5">
+                    {groomFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="m-serif text-xl uppercase tracking-[0.08em] text-[color:var(--m-wine)]">
+                          <T value={m.name} />
+                        </h3>
+                        {m.relation ? (
+                          <p className="mt-1 text-sm italic text-[color:var(--m-ink-soft)]">
+                            <T value={m.relation} />
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {brideFamily.length > 0 ? (
+                <div className="text-center" data-mreveal>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--m-gold)]">
+                    <TT en="Bride's Family" hi="वधू पक्ष" />
+                  </p>
+                  <div className="mt-6 space-y-5">
+                    {brideFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="m-serif text-xl uppercase tracking-[0.08em] text-[color:var(--m-wine)]">
+                          <T value={m.name} />
+                        </h3>
+                        {m.relation ? (
+                          <p className="mt-1 text-sm italic text-[color:var(--m-ink-soft)]">
+                            <T value={m.relation} />
+                          </p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* ── COUNTDOWN ────────────────────────────────────────────────────── */}
       {countdownDate ? <RoyalCountdown dateIso={countdownDate} /> : null}
 
@@ -694,7 +759,7 @@ export function MaharajaView({
                 <div className="mt-3 flex flex-wrap justify-center gap-x-10 gap-y-2">
                   {contacts.map((c, i) => (
                     <p key={i} className="m-serif text-lg text-[color:var(--m-wine)]">
-                      {c.name} <span className="text-[color:var(--m-ink-soft)]">· {c.phone}</span>
+                      {c.name}{c.relation ? <span className="text-[color:var(--m-ink-soft)]"> ({c.relation})</span> : null} <span className="text-[color:var(--m-ink-soft)]">· {c.phone}</span>
                     </p>
                   ))}
                 </div>

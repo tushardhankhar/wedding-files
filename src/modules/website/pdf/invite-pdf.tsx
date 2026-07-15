@@ -37,8 +37,8 @@ export interface PdfEvent {
 
 export interface PdfFamily {
   name: string;
-  members?: string;
   relation?: string;
+  side?: "groom" | "bride";
 }
 
 export interface InvitePdfProps {
@@ -57,6 +57,8 @@ export interface InvitePdfProps {
 export function InvitePdfDocument(props: InvitePdfProps) {
   const { names, initials, dateLabel, tagline, groupName, events, families, qrDataUrl, inviteUrl, palette: p } =
     props;
+  const groomFamily = families.filter((f) => f.side !== "bride");
+  const brideFamily = families.filter((f) => f.side === "bride");
 
   const s = StyleSheet.create({
     page: {
@@ -159,6 +161,16 @@ export function InvitePdfDocument(props: InvitePdfProps) {
     eventMeta: { color: p.inkSoft, marginTop: 2 },
     eventDress: { color: p.ink, marginTop: 3, fontFamily: "Times-Italic", fontSize: 10 },
     // Family
+    familyRow: { flexDirection: "row", justifyContent: "center", gap: 28 },
+    familySide: { textAlign: "center" },
+    familySideLabel: {
+      fontFamily: "Helvetica-Bold",
+      fontSize: 7.5,
+      letterSpacing: 2,
+      textTransform: "uppercase",
+      color: p.accent,
+      marginBottom: 6,
+    },
     family: { textAlign: "center", marginBottom: 6 },
     familyRelation: {
       fontFamily: "Helvetica-Bold",
@@ -168,7 +180,6 @@ export function InvitePdfDocument(props: InvitePdfProps) {
       color: p.gold,
     },
     familyName: { fontFamily: "Times-Bold", fontSize: 13, color: p.heading, marginTop: 2 },
-    familyMembers: { color: p.inkSoft, marginTop: 1 },
     // RSVP block
     rsvp: {
       marginTop: 4,
@@ -248,13 +259,30 @@ export function InvitePdfDocument(props: InvitePdfProps) {
         {families.length > 0 ? (
           <View>
             <View style={s.rule} />
-            {families.map((f, i) => (
-              <View style={s.family} key={i} wrap={false}>
-                {f.relation ? <Text style={s.familyRelation}>{f.relation}</Text> : null}
-                <Text style={s.familyName}>{f.name}</Text>
-                {f.members ? <Text style={s.familyMembers}>{f.members}</Text> : null}
-              </View>
-            ))}
+            <View style={s.familyRow} wrap={false}>
+              {groomFamily.length > 0 ? (
+                <View style={s.familySide}>
+                  <Text style={s.familySideLabel}>Groom&apos;s Family</Text>
+                  {groomFamily.map((f, i) => (
+                    <View style={s.family} key={i}>
+                      <Text style={s.familyName}>{f.name}</Text>
+                      {f.relation ? <Text style={s.familyRelation}>{f.relation}</Text> : null}
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+              {brideFamily.length > 0 ? (
+                <View style={s.familySide}>
+                  <Text style={s.familySideLabel}>Bride&apos;s Family</Text>
+                  {brideFamily.map((f, i) => (
+                    <View style={s.family} key={i}>
+                      <Text style={s.familyName}>{f.name}</Text>
+                      {f.relation ? <Text style={s.familyRelation}>{f.relation}</Text> : null}
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+            </View>
           </View>
         ) : null}
 

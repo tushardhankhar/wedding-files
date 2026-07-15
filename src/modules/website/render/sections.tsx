@@ -242,8 +242,10 @@ export function Gallery({ config }: { config: WebsiteConfig }) {
 
 // ── Family ───────────────────────────────────────────────────────────────
 export function Family({ config }: { config: WebsiteConfig }) {
-  const groups = config.family?.groups ?? [];
-  if (groups.length === 0) return null;
+  const members = config.family?.members ?? [];
+  if (members.length === 0) return null;
+  const groomFamily = members.filter((m) => m.side !== "bride");
+  const brideFamily = members.filter((m) => m.side === "bride");
   return (
     <section id="family" className="band-alt">
       <div className="wrap">
@@ -255,23 +257,44 @@ export function Family({ config }: { config: WebsiteConfig }) {
         </h2>
         <Divider />
         <div className="families">
-          {groups.map((g, i) => (
-            <div className="family" key={i}>
-              <h3>
-                <T value={g.name} />
-              </h3>
-              {g.members ? (
-                <p>
-                  <T value={g.members} />
-                </p>
-              ) : null}
-              {g.relation ? (
-                <p>
-                  <T value={g.relation} />
-                </p>
-              ) : null}
+          {groomFamily.length > 0 ? (
+            <div className="family-side">
+              <p className="eyebrow center">
+                <TT en="Groom's Family" hi="वर पक्ष" />
+              </p>
+              {groomFamily.map((m, i) => (
+                <div className="family" key={i}>
+                  <h3>
+                    <T value={m.name} />
+                  </h3>
+                  {m.relation ? (
+                    <p>
+                      <T value={m.relation} />
+                    </p>
+                  ) : null}
+                </div>
+              ))}
             </div>
-          ))}
+          ) : null}
+          {brideFamily.length > 0 ? (
+            <div className="family-side">
+              <p className="eyebrow center">
+                <TT en="Bride's Family" hi="वधू पक्ष" />
+              </p>
+              {brideFamily.map((m, i) => (
+                <div className="family" key={i}>
+                  <h3>
+                    <T value={m.name} />
+                  </h3>
+                  {m.relation ? (
+                    <p>
+                      <T value={m.relation} />
+                    </p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
     </section>
@@ -322,7 +345,7 @@ export function Footer({ config }: { config: WebsiteConfig }) {
       {contacts.length > 0 ? (
         <div className="contacts">
           {contacts.map((c, i) => (
-            <span key={i}>📞 {c.name} · {c.phone}</span>
+            <span key={i}>📞 {c.name}{c.relation ? ` (${c.relation})` : ""} · {c.phone}</span>
           ))}
         </div>
       ) : null}

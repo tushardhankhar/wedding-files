@@ -45,6 +45,9 @@ export function GulmoharView(props: WebsiteViewProps) {
 
   const pair = splitNames(names);
   const milestones = config.story?.milestones ?? [];
+  const familyMembers = config.family?.members ?? [];
+  const groomFamily = familyMembers.filter((m) => m.side !== "bride");
+  const brideFamily = familyMembers.filter((m) => m.side === "bride");
   const images = config.gallery?.images ?? [];
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
@@ -54,6 +57,7 @@ export function GulmoharView(props: WebsiteViewProps) {
 
   const links: Array<[string, string, string]> = [];
   if (milestones.length) links.push(["#story", "Our Thing", "हमारी कहानी"]);
+  if (familyMembers.length) links.push(["#family", "The Fam", "परिवार"]);
   if (events.length) links.push(["#party", "The Party", "आयोजन"]);
   if (images.length) links.push(["#looks", "The Looks", "गैलरी"]);
   if (venues.length) links.push(["#place", "The Place", "स्थान"]);
@@ -193,6 +197,49 @@ export function GulmoharView(props: WebsiteViewProps) {
         </section>
       ) : null}
 
+      {/* FAMILY — the people who made this happen */}
+      {familyMembers.length > 0 ? (
+        <section id="family" className="scroll-mt-24 px-6 py-24 sm:px-10">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="g-serif text-center text-[clamp(2.5rem,8vw,5.5rem)] font-semibold leading-none text-[color:var(--g-pink)]" data-tw-reveal>
+              <TT en="With love from" hi="प्रेम सहित" /> <span className="italic text-[color:var(--g-plum)]"><TT en="our families" hi="हमारे परिवार" /></span>
+            </h2>
+            <div className={`mt-16 grid gap-12 ${groomFamily.length && brideFamily.length ? "sm:grid-cols-2" : ""}`}>
+              {groomFamily.length > 0 ? (
+                <div data-tw-reveal>
+                  <span className="rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-white" style={{ background: "var(--g-pink)" }}>
+                    <TT en="Groom's Family" hi="वर पक्ष" />
+                  </span>
+                  <div className="mt-6 space-y-4">
+                    {groomFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="g-serif text-2xl font-semibold text-[color:var(--g-ink)]"><T value={m.name} /></h3>
+                        {m.relation ? <p className="text-sm italic text-[color:var(--g-ink)]/60"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {brideFamily.length > 0 ? (
+                <div data-tw-reveal>
+                  <span className="rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-white" style={{ background: "var(--g-plum)" }}>
+                    <TT en="Bride's Family" hi="वधू पक्ष" />
+                  </span>
+                  <div className="mt-6 space-y-4">
+                    {brideFamily.map((m, i) => (
+                      <div key={i}>
+                        <h3 className="g-serif text-2xl font-semibold text-[color:var(--g-ink)]"><T value={m.name} /></h3>
+                        {m.relation ? <p className="text-sm italic text-[color:var(--g-ink)]/60"><T value={m.relation} /></p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* COUNTDOWN */}
       {countdownDate ? <GulCountdown dateIso={countdownDate} /> : null}
 
@@ -305,7 +352,7 @@ export function GulmoharView(props: WebsiteViewProps) {
         <Bloom className="mx-auto h-20 w-20" colors={["#FFF7EA", "#FF9E1B", "#FFD8DA"]} />
         <p className="g-serif mt-4 text-4xl font-semibold text-[color:var(--g-cream)]">{names}</p>
         {hashtag ? <p className="g-script text-3xl text-[color:var(--g-marigold)]">#{hashtag.replace(/^#/, "")}</p> : null}
-        {contacts.length ? <p className="mt-4 text-sm text-[color:var(--g-blush)]">{contacts.map((c) => `${c.name} · ${c.phone}`).join("   ")}</p> : null}
+        {contacts.length ? <p className="mt-4 text-sm text-[color:var(--g-blush)]">{contacts.map((c) => `${c.name}${c.relation ? ` (${c.relation})` : ""} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--g-cream)]/70"><TT en="Made with joy · Jashn" hi="ख़ुशी से बनाया गया · जश्न" /></p>
         <JashnCredit className="mt-3 text-[color:var(--g-cream)]/55" />
       </footer>
