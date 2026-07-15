@@ -144,7 +144,12 @@ export function MaharajaView({
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
   const venues = events.filter((e) => e.venueName);
-  const hasRsvp = Boolean(rsvp || selfRsvp || ownerPreview);
+  // A group RSVP with no guests would render the section heading with
+  // nothing beneath it (no guests to loop over) — hide it entirely rather
+  // than show a confusing blank block.
+  const hasRsvp = Boolean(
+    (rsvp && rsvp.guests.length > 0) || selfRsvp || ownerPreview
+  );
   // Real family name on personal invitations; a dignified stand-in on
   // preview/demo so the welcome section still demonstrates itself.
   const family =
