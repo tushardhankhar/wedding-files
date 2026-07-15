@@ -4,6 +4,11 @@ import { getTheme } from "@/modules/website/themes/registry";
 
 // A per-wedding favicon: the couple's initials in their theme's colours, so a
 // shared link shows the couple — not the generic app logo — in the browser tab.
+//
+// Forced dynamic: same reasoning as opengraph-image.tsx — no request-time API
+// and a dynamic [slug] segment mean this would otherwise render once and
+// cache indefinitely, going stale after a theme/name change.
+export const dynamic = "force-dynamic";
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 

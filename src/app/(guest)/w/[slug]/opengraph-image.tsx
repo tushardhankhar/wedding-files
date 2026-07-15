@@ -4,6 +4,12 @@ import { getTheme } from "@/modules/website/themes/registry";
 
 // The link-share preview card (WhatsApp / iMessage / social): the couple's
 // monogram, names and date on their theme's colours.
+//
+// Forced dynamic: this route has no request-time API (no cookies/headers) and
+// a dynamic [slug] segment with no generateStaticParams, so without this it
+// gets rendered once and cached indefinitely — a couple changing their theme
+// or names later would keep sharing a stale preview until redeploy.
+export const dynamic = "force-dynamic";
 export const alt = "You're invited";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
