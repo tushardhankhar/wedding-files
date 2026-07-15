@@ -363,6 +363,7 @@ export function AnandKarajView(props: WebsiteViewProps) {
                     {e.venueName ? <p className="opacity-80">{e.venueName}</p> : null}
                   </div>
                   {e.description ? <p className="a-serif mx-auto mt-5 max-w-lg text-lg italic opacity-85" data-tw-reveal><T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} /></p> : null}
+                  {e.hostedByEnabled && e.hostedBy ? <p className="mt-3 text-[11px] uppercase tracking-[0.25em] opacity-70" data-tw-reveal><TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}</p> : null}
                   <div className="mt-8 flex flex-wrap justify-center gap-3" data-tw-reveal>
                     {e.mapsUrl ? <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className="border px-6 py-2.5 text-[11px] font-semibold uppercase tracking-widest" style={{ borderColor: t.accent, color: t.accent }}><TT en="Directions" hi="दिशा" /></a> : null}
                     {hasRsvp ? <a href="#rsvp" className="px-6 py-2.5 text-[11px] font-semibold uppercase tracking-widest" style={{ background: t.accent, color: t.bg.includes("cream") || i % 4 === 2 ? "#302925" : "#fff8e8" }}><TT en="RSVP" hi="उत्तर दें" /></a> : null}

@@ -33,6 +33,7 @@ export interface PdfEvent {
   venue?: string;
   address?: string;
   dress?: string;
+  hostedBy?: string;
 }
 
 export interface PdfFamily {
@@ -249,6 +250,7 @@ export function InvitePdfDocument(props: InvitePdfProps) {
                     </Text>
                   ) : null}
                   {e.dress ? <Text style={s.eventDress}>{e.dress}</Text> : null}
+                  {e.hostedBy ? <Text style={s.eventMeta}>Hosted by {e.hostedBy}</Text> : null}
                 </View>
               </View>
             ))}

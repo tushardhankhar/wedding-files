@@ -16,7 +16,12 @@ export const DEMO_SITE_WEDDING = {
   eventDate: "2026-12-12",
 };
 
-const stamp = { createdAt: "", updatedAt: "" };
+const stamp = {
+  createdAt: "",
+  updatedAt: "",
+  hostedBy: null as string | null,
+  hostedByEnabled: false,
+};
 
 export const DEMO_SITE_EVENTS: WeddingEvent[] = [
   {
@@ -63,6 +68,8 @@ export const DEMO_SITE_EVENTS: WeddingEvent[] = [
     descriptionHi: "परिधान: इंडियन कॉकटेल। अपने बेहतरीन ठुमके लाइए।",
     sortOrder: 2,
     ...stamp,
+    hostedBy: "The Mehta Family",
+    hostedByEnabled: true,
   },
   {
     id: "demo-wedding",

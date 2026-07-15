@@ -130,6 +130,11 @@ export function Events({
                   <T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} />
                 </p>
               ) : null}
+              {e.hostedByEnabled && e.hostedBy ? (
+                <p className="meta">
+                  <TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}
+                </p>
+              ) : null}
               {rsvp ? (
                 <RsvpControls
                   slug={rsvp.slug}

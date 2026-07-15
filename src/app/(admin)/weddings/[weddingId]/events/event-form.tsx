@@ -22,6 +22,8 @@ export interface EventFormValues {
   mapsUrl?: string | null;
   description?: string | null;
   descriptionHi?: string | null;
+  hostedBy?: string | null;
+  hostedByEnabled?: boolean;
 }
 
 const initialState: EventFormState = {};
@@ -50,6 +52,8 @@ export function EventForm({
   const [mapsUrl, setMapsUrl] = useState(values?.mapsUrl ?? "");
   const [description, setDescription] = useState(values?.description ?? "");
   const [descriptionHi, setDescriptionHi] = useState(values?.descriptionHi ?? "");
+  const [hostedBy, setHostedBy] = useState(values?.hostedBy ?? "");
+  const [hostedByEnabled, setHostedByEnabled] = useState(values?.hostedByEnabled ?? false);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -136,6 +140,33 @@ export function EventForm({
           onChange={(e) => setMapsUrl(e.target.value)}
           placeholder="https://maps.google.com/…"
         />
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            name="hostedByEnabled"
+            className="size-4"
+            checked={hostedByEnabled}
+            onChange={(e) => setHostedByEnabled(e.target.checked)}
+          />
+          Show &quot;Hosted by&quot; on the invite
+        </label>
+        {hostedByEnabled ? (
+          <Input
+            id="hostedBy"
+            name="hostedBy"
+            maxLength={160}
+            value={hostedBy}
+            onChange={(e) => setHostedBy(e.target.value)}
+            placeholder="e.g. Mr. & Mrs. Sharma"
+          />
+        ) : (
+          // Keep the field in the form even while hidden, so a previously
+          // saved name survives toggling the checkbox off and back on.
+          <input type="hidden" name="hostedBy" value={hostedBy} />
+        )}
       </div>
 
       <div className="space-y-2">

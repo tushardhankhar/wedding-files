@@ -18,6 +18,8 @@ function parseForm(formData: FormData) {
     mapsUrl: value("mapsUrl"),
     description: value("description"),
     descriptionHi: value("descriptionHi"),
+    hostedBy: value("hostedBy"),
+    hostedByEnabled: value("hostedByEnabled"),
   };
 }
 

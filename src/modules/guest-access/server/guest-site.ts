@@ -4,7 +4,7 @@ import { mapEventRow, type EventRow, type WeddingEvent } from "@/modules/events/
 import { readGuestSession, type GuestSession } from "./session";
 
 const EVENT_COLS =
-  "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, sort_order, created_at, updated_at";
+  "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, hosted_by, hosted_by_enabled, sort_order, created_at, updated_at";
 
 export interface GuestWedding {
   slug: string;

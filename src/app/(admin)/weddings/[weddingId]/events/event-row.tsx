@@ -88,6 +88,11 @@ export function EventRow({
               {event.description}
             </p>
           ) : null}
+          {event.hostedByEnabled && event.hostedBy ? (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Hosted by {event.hostedBy}
+            </p>
+          ) : null}
         </div>
         <div className="flex shrink-0 flex-col gap-2">
           <Button

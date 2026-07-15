@@ -91,6 +91,7 @@ export async function renderInvitePdf({
     venue: e.venueName ?? undefined,
     address: e.venueAddress ?? undefined,
     dress: e.description ?? undefined,
+    hostedBy: e.hostedByEnabled ? e.hostedBy ?? undefined : undefined,
   }));
 
   const families: PdfFamily[] = (config.family?.members ?? []).map((m) => ({

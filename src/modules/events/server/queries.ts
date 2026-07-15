@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { mapEventRow, type EventRow, type WeddingEvent } from "../types";
 
 const COLUMNS =
-  "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, sort_order, created_at, updated_at";
+  "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, hosted_by, hosted_by_enabled, sort_order, created_at, updated_at";
 
 /**
  * Lists a wedding's events in timeline order. RLS (`can_manage_wedding`) ensures

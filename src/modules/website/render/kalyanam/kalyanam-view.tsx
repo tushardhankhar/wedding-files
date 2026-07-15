@@ -219,6 +219,7 @@ export function KalyanamView(props: WebsiteViewProps) {
                       <h3 className={`k-serif uppercase tracking-[0.08em] text-[color:var(--k-wood)] ${primary ? "text-4xl" : "text-2xl"}`}><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
                       {e.venueName ? <p className="mt-1 text-sm text-[color:var(--k-ink-soft)]">{e.venueName}</p> : null}
                       {e.description ? <p className="mt-2 border-l-2 border-[color:var(--k-turmeric)] pl-3 text-sm font-medium text-[color:var(--k-leaf)]"><T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} /></p> : null}
+                      {e.hostedByEnabled && e.hostedBy ? <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-[color:var(--k-ink-soft)]"><TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}</p> : null}
                       <div className="mt-4 flex flex-wrap gap-3">
                         {e.mapsUrl ? <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className="border border-[color:var(--k-wood)]/30 px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--k-wood)]"><TT en="Map" hi="नक़्शा" /></a> : null}
                         {hasRsvp ? <a href="#rsvp" className="bg-[color:var(--k-red)] px-4 py-2 text-[10px] font-semibold uppercase tracking-widest text-white"><TT en="RSVP" hi="उत्तर" /></a> : null}

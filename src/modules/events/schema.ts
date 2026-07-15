@@ -40,6 +40,10 @@ export const createEventSchema = z.object({
     ),
   description: optionalText(2000),
   descriptionHi: optionalText(2000),
+  hostedBy: optionalText(160),
+  hostedByEnabled: z
+    .union([z.literal("on"), z.literal(""), z.undefined()])
+    .transform((v) => v === "on"),
 });
 
 export const updateEventSchema = createEventSchema;

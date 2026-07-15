@@ -10,6 +10,8 @@ export interface WeddingEvent {
   mapsUrl: string | null;
   description: string | null;
   descriptionHi: string | null;
+  hostedBy: string | null;
+  hostedByEnabled: boolean;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
@@ -27,6 +29,8 @@ export interface EventRow {
   maps_url: string | null;
   description: string | null;
   description_hi: string | null;
+  hosted_by: string | null;
+  hosted_by_enabled: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -45,6 +49,8 @@ export function mapEventRow(row: EventRow): WeddingEvent {
     mapsUrl: row.maps_url,
     description: row.description,
     descriptionHi: row.description_hi,
+    hostedBy: row.hosted_by,
+    hostedByEnabled: row.hosted_by_enabled,
     sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

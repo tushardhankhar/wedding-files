@@ -576,6 +576,11 @@ export function MaharajaView({
                       <T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} />
                     </p>
                   ) : null}
+                  {e.hostedByEnabled && e.hostedBy ? (
+                    <p className={`mt-3 text-[10px] font-semibold uppercase tracking-[0.32em] text-[color:var(--m-gold2)]/80 ${i % 2 ? "text-right" : ""}`} data-mreveal>
+                      <TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}
+                    </p>
+                  ) : null}
                   <div className={`mt-10 flex flex-wrap gap-3 ${i % 2 ? "justify-end" : ""}`} data-mreveal>
                     {e.mapsUrl ? (
                       <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className={`${btnGhost} gap-2`}>

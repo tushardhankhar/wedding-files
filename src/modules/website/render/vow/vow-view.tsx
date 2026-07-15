@@ -192,6 +192,7 @@ export function VowView(props: WebsiteViewProps) {
                       <h3 className="v-serif text-3xl font-medium"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
                       {e.venueName ? <p className="mt-1 text-sm uppercase tracking-[0.15em] text-black/60">{e.venueName}</p> : null}
                       {e.description ? <p className="mt-1 text-sm italic text-black/55"><T value={{ en: e.description, hi: e.descriptionHi ?? undefined }} /></p> : null}
+                      {e.hostedByEnabled && e.hostedBy ? <p className="mt-1 text-[11px] uppercase tracking-[0.2em] text-black/45"><TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}</p> : null}
                     </div>
                     <div className="flex gap-4 text-[11px] font-medium uppercase tracking-[0.2em]">
                       {e.mapsUrl ? <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className="border-b border-black/30 pb-0.5 hover:border-black"><TT en="Directions" hi="दिशा" /></a> : null}

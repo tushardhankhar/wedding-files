@@ -272,6 +272,9 @@ export function GulmoharView(props: WebsiteViewProps) {
                     {e.venueName ? (
                       <div><dt className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-70"><TT en="Where" hi="कहाँ" /></dt><dd className="mt-1 font-semibold">{e.venueName}</dd></div>
                     ) : null}
+                    {e.hostedByEnabled && e.hostedBy ? (
+                      <div><dt className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-70"><TT en="Hosted by" hi="मेज़बान" /></dt><dd className="mt-1 font-semibold">{e.hostedBy}</dd></div>
+                    ) : null}
                   </dl>
                   <div className="mt-8 flex flex-wrap gap-3" data-tw-reveal>
                     {e.mapsUrl ? <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className="rounded-full border-2 px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest" style={{ borderColor: ink, color: ink }}><TT en="Map" hi="नक़्शा" /></a> : null}
