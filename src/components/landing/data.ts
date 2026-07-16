@@ -78,6 +78,8 @@ export const DEMO_FAMILIES: DemoFamily[] = [
 ];
 
 // ── Theme showcase ─────────────────────────────────────────────────────────
+export type ThemeCategory = "wedding" | "save-the-date" | "other";
+
 export interface ShowcaseTheme {
   id: string;
   name: string;
@@ -87,27 +89,31 @@ export interface ShowcaseTheme {
   palette: string[];
   /** Registry theme id — powers the live /demo/[themeId] preview. */
   demo: string;
+  /** Occasion group — drives the theme gallery filter. */
+  category: ThemeCategory;
 }
 
 export const SHOWCASE_THEMES: ShowcaseTheme[] = [
-  { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal" },
-  // { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani" }, // temporarily disabled
-  { id: "gulmohar", name: "The Gulmohar", vibe: "Modern Indian", tagline: "Colour in full bloom.", art: "gulmohar", palette: ["#d81b60", "#f4917f", "#fce3c8"], demo: "ivory" },
-  { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi" },
-  { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian" },
-  { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian" },
-  { id: "overture", name: "The Overture", vibe: "Save the Date", tagline: "Mark your calendars.", art: "overture", palette: ["#0e3b2c", "#c9a23f", "#f7f0e0"], demo: "save-the-date" },
-  { id: "muhurat", name: "The Muhurat", vibe: "Save the Date · Indian", tagline: "The auspicious date is set.", art: "muhurat", palette: ["#4a0d1f", "#c9a23f", "#f7f0e0"], demo: "muhurat" },
-  { id: "gulistan", name: "The Gulistan", vibe: "Save the Date · Romantic", tagline: "Two hearts, one beginning.", art: "gulistan", palette: ["#f6d3d9", "#c9a24a", "#7a1f38"], demo: "gulistan" },
+  { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal", category: "wedding" },
+  { id: "jharokha", name: "The Jharokha", vibe: "Royal · Romantic", tagline: "A palace of love.", art: "jharokha", palette: ["#7a1f38", "#c9a24a", "#f8dbe0"], demo: "jharokha", category: "wedding" },
+  // { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani", category: "wedding" }, // temporarily disabled
+  { id: "gulmohar", name: "The Gulmohar", vibe: "Modern Indian", tagline: "Colour in full bloom.", art: "gulmohar", palette: ["#d81b60", "#f4917f", "#fce3c8"], demo: "ivory", category: "wedding" },
+  { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi", category: "wedding" },
+  { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian", category: "wedding" },
+  { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian", category: "wedding" },
+  { id: "overture", name: "The Overture", vibe: "Save the Date", tagline: "Mark your calendars.", art: "overture", palette: ["#0e3b2c", "#c9a23f", "#f7f0e0"], demo: "save-the-date", category: "save-the-date" },
+  { id: "muhurat", name: "The Muhurat", vibe: "Save the Date · Indian", tagline: "The auspicious date is set.", art: "muhurat", palette: ["#4a0d1f", "#c9a23f", "#f7f0e0"], demo: "muhurat", category: "save-the-date" },
+  { id: "gulistan", name: "The Gulistan", vibe: "Save the Date · Romantic", tagline: "Two hearts, one beginning.", art: "gulistan", palette: ["#f6d3d9", "#c9a24a", "#7a1f38"], demo: "gulistan", category: "save-the-date" },
   // Beyond weddings — interactive celebration themes.
-  { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty" },
-  { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti" },
-  { id: "little-miracle", name: "The Little Miracle", vibe: "Baby shower & naming", tagline: "A wish upon a star.", art: "little-miracle", palette: ["#DCEAF7", "#F6D6D6", "#C5A46D"], demo: "little-miracle" },
-  { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#B55233", "#D99A2B", "#174C4F"], demo: "shubh-aarambh" },
+  { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty", category: "other" },
+  { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti", category: "other" },
+  { id: "little-miracle", name: "The Little Miracle", vibe: "Baby shower & naming", tagline: "A wish upon a star.", art: "little-miracle", palette: ["#DCEAF7", "#F6D6D6", "#C5A46D"], demo: "little-miracle", category: "other" },
+  { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#B55233", "#D99A2B", "#174C4F"], demo: "shubh-aarambh", category: "other" },
 ];
 
 // ── Pricing ────────────────────────────────────────────────────────────────
-// One simple price. The couple builds the whole invitation themselves.
+// Simple, transparent pricing. PRICE remains the flagship invitation price and
+// is still referenced by the hero, navbar & final CTA.
 export const PRICE = "₹1,599";
 
 export const PLAN_INCLUDES: string[] = [
@@ -119,6 +125,57 @@ export const PLAN_INCLUDES: string[] = [
   "Guest RSVP, event by event",
   "Photo gallery, story, venue maps, countdown & FAQ",
   "One private link, shared on WhatsApp",
+];
+
+// The three ways to buy. The bundle is highlighted as the best value.
+export type PricingPlan = {
+  id: string;
+  name: string;
+  price: string;
+  note: string;
+  blurb: string;
+  features: string[];
+  featured?: boolean;
+  badge?: string;
+};
+
+export const PRICING_PLANS: PricingPlan[] = [
+  {
+    id: "save-the-date",
+    name: "Save the Date",
+    price: "₹1,099",
+    note: "one-time",
+    blurb: "Announce your date, beautifully.",
+    features: [
+      "Designer save-the-date site (EN + हिं)",
+      "Your date, venue city & live countdown",
+      "One private link, shared on WhatsApp",
+      "Upgrade to the full invitation anytime",
+    ],
+  },
+  {
+    id: "invitation",
+    name: "Wedding/ Other Events Invitation",
+    price: PRICE,
+    note: "one-time",
+    blurb: "The complete invitation — everything, in one link.",
+    features: PLAN_INCLUDES,
+  },
+  {
+    id: "bundle",
+    name: "Wedding + Save the Date",
+    price: "₹2,199",
+    note: "one-time · save ₹499",
+    blurb: "Both, together — share your date now, invite later.",
+    features: [
+      "Everything in the Wedding Invitation",
+      "A matching Save the Date site",
+      "Announce now, send the full invite later",
+      "One theme & story, start to finish",
+    ],
+    featured: true,
+    badge: "Best value",
+  },
 ];
 
 // Marketed as on the way — surfaced with a "Coming soon" tag, not sold yet.

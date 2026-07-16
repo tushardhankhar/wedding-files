@@ -9,18 +9,18 @@ import { m } from "motion/react";
  * cascading from the corners, hanging temple bells, a domed palace mirrored in
  * a dusk lake, an illustrated couple on the balcony, and gold lanterns aglow.
  *
- * Everything is hand-drawn SVG line/fill art driven by the theme's --gul-*
+ * Everything is hand-drawn SVG line/fill art driven by the theme's --glt-*
  * tokens — no external images — so it stays crisp at any size, recolours with
  * the palette, and animates (draw-in, sway, flicker, drift). Continuous motion
- * lives in CSS (.gul-* classes) and collapses under prefers-reduced-motion;
+ * lives in CSS (.glt-* classes) and collapses under prefers-reduced-motion;
  * one-shot entrances use Framer's `m`.
  */
 
-const GOLD = "var(--gul-gold)";
-const GOLD_LITE = "var(--gul-gold-lite)";
-const ROSE = "var(--gul-rose)";
-const ROSE_DEEP = "var(--gul-rose-deep)";
-const LEAF = "var(--gul-leaf)";
+const GOLD = "var(--glt-gold)";
+const GOLD_LITE = "var(--glt-gold-lite)";
+const ROSE = "var(--glt-rose)";
+const ROSE_DEEP = "var(--glt-rose-deep)";
+const LEAF = "var(--glt-leaf)";
 
 /* ── a single rose blossom (layered petals + gold heart) ─────────────────── */
 function Blossom({
@@ -209,7 +209,7 @@ export function Ganesha({ className }: { className?: string }) {
 /* ── a single hanging temple bell ─────────────────────────────────────────── */
 function Bell({ x, len }: { x: number; len: number }) {
   return (
-    <g transform={`translate(${x} 0)`} className="gul-bell">
+    <g transform={`translate(${x} 0)`} className="glt-bell">
       <line x1="0" y1="0" x2="0" y2={len} stroke={GOLD} strokeWidth="1.2" opacity="0.7" />
       <g transform={`translate(0 ${len})`}>
         <path
@@ -275,8 +275,8 @@ export function PalaceScene({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 800 360" fill="none" aria-hidden className={className} preserveAspectRatio="xMidYMax slice">
       {/* far silhouette + near silhouette for depth */}
-      {skyline(196, "var(--gul-palace-far)", 0.55)}
-      {skyline(200, "var(--gul-palace)", 0.92)}
+      {skyline(196, "var(--glt-palace-far)", 0.55)}
+      {skyline(200, "var(--glt-palace)", 0.92)}
       {/* twinkling window/garden lights along the bank */}
       {Array.from({ length: 40 }).map((_, i) => (
         <circle
@@ -285,13 +285,13 @@ export function PalaceScene({ className }: { className?: string }) {
           cy={182 + (i % 3) * 6}
           r={i % 4 === 0 ? 2 : 1.3}
           fill={GOLD_LITE}
-          className="gul-twinkle"
+          className="glt-twinkle"
           style={{ animationDelay: `${(i % 7) * 0.4}s` }}
         />
       ))}
       {/* the lake — reflection of the skyline, softened + rippling */}
       <g transform="translate(0 400) scale(1 -1)" opacity="0.28">
-        {skyline(200, "var(--gul-palace)", 0.9)}
+        {skyline(200, "var(--glt-palace)", 0.9)}
       </g>
       <g stroke={GOLD_LITE} strokeWidth="1" opacity="0.25">
         {[236, 268, 300, 332].map((y, i) => (
@@ -320,22 +320,22 @@ export function Couple({ className }: { className?: string }) {
         {/* body / sherwani */}
         <path
           d="M110 300 C104 250 104 200 112 168 C116 150 128 142 140 142 C152 142 162 152 165 170 C170 205 168 255 164 300 Z"
-          fill="var(--gul-cream)"
-          stroke="var(--gul-gold)"
+          fill="var(--glt-cream)"
+          stroke="var(--glt-gold)"
           strokeWidth="1.4"
         />
         {/* arm around bride */}
         <path
           d="M162 176 C182 172 198 176 206 190 C199 190 190 190 182 194 C174 198 168 196 162 190 Z"
-          fill="var(--gul-cream)"
-          stroke="var(--gul-gold)"
+          fill="var(--glt-cream)"
+          stroke="var(--glt-gold)"
           strokeWidth="1.2"
         />
         {/* neck + head */}
-        <rect x="132" y="120" width="16" height="18" fill="var(--gul-cream)" />
-        <circle cx="140" cy="108" r="18" fill="var(--gul-skin)" />
+        <rect x="132" y="120" width="16" height="18" fill="var(--glt-cream)" />
+        <circle cx="140" cy="108" r="18" fill="var(--glt-skin)" />
         {/* hair (back of head) */}
-        <path d="M122 106 C122 92 132 84 140 84 C148 84 158 92 158 106 C150 98 130 98 122 106 Z" fill="var(--gul-hair)" />
+        <path d="M122 106 C122 92 132 84 140 84 C148 84 158 92 158 106 C150 98 130 98 122 106 Z" fill="var(--glt-hair)" />
         {/* embroidery dots */}
         {[
           [128, 200],
@@ -344,7 +344,7 @@ export function Couple({ className }: { className?: string }) {
           [132, 250],
           [146, 270],
         ].map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="1.6" fill="var(--gul-gold)" opacity="0.7" />
+          <circle key={i} cx={x} cy={y} r="1.6" fill="var(--glt-gold)" opacity="0.7" />
         ))}
       </g>
 
@@ -353,28 +353,28 @@ export function Couple({ className }: { className?: string }) {
         {/* flared skirt */}
         <path
           d="M150 300 C150 250 156 210 168 186 C174 174 186 172 194 174 C204 176 210 188 214 210 C220 244 222 274 224 300 Z"
-          fill="var(--gul-rose)"
-          stroke="var(--gul-gold)"
+          fill="var(--glt-rose)"
+          stroke="var(--glt-gold)"
           strokeWidth="1.4"
         />
         {/* dupatta over shoulder */}
         <path
           d="M180 158 C196 150 214 156 222 176 C214 176 206 180 200 188 C194 180 186 168 180 158 Z"
-          fill="var(--gul-rose-deep)"
+          fill="var(--glt-rose-deep)"
           opacity="0.9"
-          stroke="var(--gul-gold)"
+          stroke="var(--glt-gold)"
           strokeWidth="1"
         />
         {/* neck + head */}
-        <rect x="180" y="132" width="13" height="16" fill="var(--gul-skin)" />
-        <circle cx="186" cy="122" r="16" fill="var(--gul-skin)" />
+        <rect x="180" y="132" width="13" height="16" fill="var(--glt-skin)" />
+        <circle cx="186" cy="122" r="16" fill="var(--glt-skin)" />
         {/* long hair down the back */}
         <path
           d="M172 118 C170 104 178 96 186 96 C194 96 202 104 200 118 C202 150 198 186 190 210 C188 186 184 150 186 128 C182 150 180 186 178 208 C172 184 170 148 172 118 Z"
-          fill="var(--gul-hair)"
+          fill="var(--glt-hair)"
         />
         {/* maang tikka / hair jewel */}
-        <circle cx="186" cy="106" r="2.4" fill="var(--gul-gold-lite)" />
+        <circle cx="186" cy="106" r="2.4" fill="var(--glt-gold-lite)" />
         {/* lehenga embroidery */}
         {[
           [176, 220],
@@ -384,10 +384,10 @@ export function Couple({ className }: { className?: string }) {
           [198, 280],
           [172, 250],
         ].map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y} r="1.6" fill="var(--gul-gold)" opacity="0.75" />
+          <circle key={i} cx={x} cy={y} r="1.6" fill="var(--glt-gold)" opacity="0.75" />
         ))}
         {/* skirt hem trim */}
-        <path d="M152 296 Q188 288 222 296" stroke="var(--gul-gold-lite)" strokeWidth="2" />
+        <path d="M152 296 Q188 288 222 296" stroke="var(--glt-gold-lite)" strokeWidth="2" />
       </g>
     </svg>
   );
@@ -403,7 +403,7 @@ export function Lantern({ className }: { className?: string }) {
         {/* cap */}
         <path d="M26 30 L40 18 L54 30 Z" fill={GOLD_LITE} opacity="0.9" />
         {/* body — a jaali cage */}
-        <path d="M24 30 L56 30 L52 104 L28 104 Z" fill="var(--gul-lantern-glass)" />
+        <path d="M24 30 L56 30 L52 104 L28 104 Z" fill="var(--glt-lantern-glass)" />
         <line x1="34" y1="30" x2="36" y2="104" />
         <line x1="46" y1="30" x2="44" y2="104" />
         <line x1="26" y1="52" x2="54" y2="52" opacity="0.6" />
@@ -414,13 +414,13 @@ export function Lantern({ className }: { className?: string }) {
         <circle cx="40" cy="136" r="4" fill={GOLD} />
       </g>
       {/* glow + flame */}
-      <circle cx="40" cy="66" r="16" fill={GOLD_LITE} opacity="0.28" className="gul-glow" />
+      <circle cx="40" cy="66" r="16" fill={GOLD_LITE} opacity="0.28" className="glt-glow" />
       <path
         d="M40 78 C34 72 36 62 40 54 C44 62 46 72 40 78 Z"
         fill={GOLD_LITE}
-        className="gul-flame"
+        className="glt-flame"
       />
-      <path d="M40 76 C37 72 38 66 40 60 C42 66 43 72 40 76 Z" fill="#fff6df" className="gul-flame" />
+      <path d="M40 76 C37 72 38 66 40 60 C42 66 43 72 40 76 Z" fill="#fff6df" className="glt-flame" />
     </svg>
   );
 }
@@ -445,7 +445,7 @@ export function PetalFall({ className }: { className?: string }) {
       {petals.map((p, i) => (
         <span
           key={i}
-          className="gul-petal"
+          className="glt-petal"
           style={
             {
               left: `${p.left}%`,

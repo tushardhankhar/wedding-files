@@ -59,12 +59,12 @@ export function LandingNavbar() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <a
+            {/* <a
               href="#pricing"
               className={cn("text-[13px] font-medium transition-colors", linkTone, underline)}
             >
               ₹1,599, all in
-            </a>
+            </a> */}
             <Link
               href="/demo/royal"
               target="_blank"

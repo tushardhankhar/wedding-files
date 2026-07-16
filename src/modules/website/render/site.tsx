@@ -11,6 +11,7 @@ import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
 import { SaveTheDateView } from "./save-the-date/save-the-date-view";
 import { MuhuratView } from "./muhurat/muhurat-view";
 import { GulistanView } from "./gulistan/gulistan-view";
+import { JharokhaView } from "./jharokha/jharokha-view";
 import { GoToTop } from "./go-to-top";
 
 /**
@@ -45,6 +46,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <MuhuratView {...props} />;
     case "gulistan": // The Gulistan — Save the Date
       return <GulistanView {...props} />;
+    case "jharokha": // The Jharokha — full royal wedding
+      return <JharokhaView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }

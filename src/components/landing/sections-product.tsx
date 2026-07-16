@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BookNowButton } from "./book-now";
 import { PhotoArt, PetalField } from "./art";
-import { PRICE, PLAN_INCLUDES, COMING_SOON, REALITY_NOTES, CONTACT_EMAIL } from "./data";
+import { PRICING_PLANS, COMING_SOON, REALITY_NOTES, CONTACT_EMAIL } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { CountUp } from "./count-up";
 
@@ -374,77 +374,121 @@ export function RealitySection() {
   );
 }
 
-/* ── Pricing — one simple price ───────────────────────────────────────────── */
+/* ── Pricing — three simple ways to buy ───────────────────────────────────── */
 export function PricingPreview() {
   return (
     <section id="pricing" className="scroll-mt-24 bg-[color:var(--l-ivory-2)] px-5 py-24 sm:px-8">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-5xl">
         <div className="mx-auto max-w-xl text-center" data-reveal>
           <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            One price.{" "}
+            Simple pricing.{" "}
             <span className="italic text-[color:var(--l-pink)]">Everything included.</span>
           </h2>
           <p className="mt-4 text-[15px] text-[color:var(--l-ink-soft)]">
-            No tiers, no add-ons, no surprises — the whole invitation for one flat price.
+            Announce your date, send the full invitation, or do both together and save — one flat price each, no surprises.
           </p>
         </div>
 
-        {/* the offer card, styled like an invitation */}
-        <article
-          className="relative mt-12 overflow-hidden rounded-[26px] bg-[color:var(--l-wine)] p-8 text-[color:var(--l-ivory)] shadow-[0_40px_90px_-32px_rgba(59,16,34,.8)] sm:p-10"
-          data-reveal
-        >
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-3 rounded-[20px] border border-[color:var(--l-gold-lite)]/35"
-          />
-          <div className="relative text-center">
-            <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
-              ✦ Introductory offer
+        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-3" data-reveal>
+          {PRICING_PLANS.map((plan) => {
+            const featured = Boolean(plan.featured);
+            return (
+              <article
+                key={plan.id}
+                className={
+                  featured
+                    ? "relative flex flex-col overflow-hidden rounded-[26px] bg-[color:var(--l-wine)] p-8 text-[color:var(--l-ivory)] shadow-[0_40px_90px_-32px_rgba(59,16,34,.8)] lg:-translate-y-3"
+                    : "relative flex flex-col overflow-hidden rounded-[26px] border border-[color:var(--l-line)] bg-white p-8 shadow-[0_24px_60px_-40px_rgba(59,16,34,.45)]"
+                }
+              >
+                {featured ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-3 rounded-[20px] border border-[color:var(--l-gold-lite)]/35"
+                  />
+                ) : null}
+
+                <div className="relative">
+                  {plan.badge ? (
+                    <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
+                      ✦ {plan.badge}
+                    </span>
+                  ) : null}
+                  <h3
+                    className={
+                      featured
+                        ? "l-script text-2xl text-[color:var(--l-gold-lite)]"
+                        : "l-script text-2xl text-[color:var(--l-pink)]"
+                    }
+                  >
+                    {plan.name}
+                  </h3>
+                  <p
+                    className={
+                      featured
+                        ? "l-display mt-2 text-5xl font-semibold tabular-nums"
+                        : "l-display mt-2 text-5xl font-semibold tabular-nums text-[color:var(--l-wine)]"
+                    }
+                  >
+                    {plan.price}
+                  </p>
+                  <p className={featured ? "mt-2 text-sm text-white/70" : "mt-2 text-sm text-[color:var(--l-ink-soft)]"}>
+                    {plan.note}
+                  </p>
+                  <p className={featured ? "mt-4 text-sm text-white/80" : "mt-4 text-sm text-[color:var(--l-ink-soft)]"}>
+                    {plan.blurb}
+                  </p>
+                </div>
+
+                <ul className="relative mt-6 grid gap-2.5">
+                  {plan.features.map((pt) => (
+                    <li
+                      key={pt}
+                      className={
+                        featured
+                          ? "flex items-start gap-2.5 text-sm text-white/90"
+                          : "flex items-start gap-2.5 text-sm text-[color:var(--l-wine)]/85"
+                      }
+                    >
+                      <span className={featured ? "mt-0.5 text-[color:var(--l-gold-lite)]" : "mt-0.5 text-[color:var(--l-pink)]"}>✦</span>
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="relative mt-auto flex flex-col gap-3 pt-8">
+                  <BookNowButton
+                    label="Get Started"
+                    className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
+                  />
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* live demo + coming-soon extras */}
+        <div className="mt-12 flex flex-col items-center gap-8" data-reveal>
+          <Link
+            href="/demo/royal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block rounded-full bg-[color:var(--l-wine)] px-9 py-4 text-sm font-semibold text-[color:var(--l-ivory)] shadow-[0_18px_44px_-14px_rgba(59,16,34,.6)] transition-transform hover:-translate-y-0.5"
+          >
+            See a live demo
+          </Link>
+
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold)]/40 bg-[color:var(--l-gold-lite)]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold)]">
+              Coming soon
             </span>
-            <p className="l-script text-2xl text-[color:var(--l-gold-lite)]">Your celebration invitation</p>
-            <p className="l-display mt-2 text-6xl font-semibold tabular-nums">{PRICE}</p>
-            <p className="mt-2 text-sm text-white/70">one-time · per celebration</p>
-          </div>
-
-          <ul className="relative mx-auto mt-8 grid max-w-lg gap-2.5 sm:grid-cols-2">
-            {PLAN_INCLUDES.map((pt) => (
-              <li key={pt} className="flex items-start gap-2.5 text-sm text-white/90">
-                <span className="mt-0.5 text-[color:var(--l-gold-lite)]">✦</span>
-                {pt}
-              </li>
-            ))}
-          </ul>
-
-          <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <BookNowButton
-              label="Get Started"
-              className="px-9 py-4 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
-            />
-            <Link
-              href="/demo/royal"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded-full bg-[color:var(--l-ivory)] px-9 py-4 text-sm font-semibold text-[color:var(--l-wine)] shadow-[0_18px_44px_-14px_rgba(0,0,0,.5)] transition-transform hover:-translate-y-0.5"
-            >
-              See a live demo
-            </Link>
-          </div>
-
-          {/* coming-soon extras — clearly not part of the price yet */}
-          <div className="relative mt-8 border-t border-white/12 pt-6">
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
-                Coming soon
+            {COMING_SOON.map((c) => (
+              <span key={c} className="rounded-full border border-[color:var(--l-line)] px-3.5 py-1.5 text-[11px] font-medium text-[color:var(--l-ink-soft)]">
+                {c}
               </span>
-              {COMING_SOON.map((c) => (
-                <span key={c} className="rounded-full border border-white/15 px-3.5 py-1.5 text-[11px] font-medium text-white/60">
-                  {c}
-                </span>
-              ))}
-            </div>
+            ))}
           </div>
-        </article>
+        </div>
       </div>
     </section>
   );
