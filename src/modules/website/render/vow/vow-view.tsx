@@ -8,6 +8,74 @@ import { splitNames, longDate, clockTime, weekday, compactDate, gcalUrl } from "
 import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
 import { useCountdown, pad2 } from "../use-countdown";
 
+/* ── Decorative helpers ───────────────────────────────────────────────────── */
+
+// A word that rises up from behind a mask on mount — the opening flourish.
+function Rise({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <span className="v-mask">
+      <span className="v-rise" style={{ animationDelay: `${delay}ms` }}>{children}</span>
+    </span>
+  );
+}
+
+// Hanging monogram seal — a slowly rotating filigree ring around the initials.
+// v-in (fade) and v-sway (rotate) live on separate elements so their `animation`
+// shorthands don't clobber each other.
+function VowSeal({ initials }: { initials: string }) {
+  return (
+    <div className="v-in mb-9 flex justify-center" style={{ animationDelay: "120ms" }}>
+      <div className="v-sway flex flex-col items-center">
+        <span className="h-9 w-px bg-[color:var(--v-champ)]" aria-hidden />
+        <div className="relative mt-1.5 flex h-24 w-24 items-center justify-center">
+          <svg className="v-spin absolute inset-0 h-full w-full" viewBox="0 0 100 100" fill="none" stroke="var(--v-champ)" aria-hidden>
+            <circle cx="50" cy="50" r="47" strokeWidth="1" strokeDasharray="2 5" />
+            <circle cx="50" cy="50" r="38" strokeWidth="0.8" />
+          </svg>
+          <span className="v-serif text-2xl tracking-[0.1em] text-[color:var(--v-olive)]">{initials}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Drifting champagne motes over the opening — deterministic so SSR stays stable.
+const V_MOTES = [
+  { l: "6%", s: 6, d: 17, x: "26px", delay: "0s" },
+  { l: "18%", s: 4, d: 22, x: "-18px", delay: "3s" },
+  { l: "31%", s: 7, d: 19, x: "34px", delay: "6s" },
+  { l: "47%", s: 4, d: 25, x: "-24px", delay: "1.5s" },
+  { l: "58%", s: 6, d: 20, x: "20px", delay: "8s" },
+  { l: "71%", s: 5, d: 23, x: "-30px", delay: "4s" },
+  { l: "84%", s: 7, d: 18, x: "22px", delay: "10s" },
+  { l: "93%", s: 4, d: 26, x: "-16px", delay: "2s" },
+] as const;
+
+function VowDust() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {V_MOTES.map((m, i) => (
+        <span
+          key={i}
+          className="v-dust"
+          style={{ left: m.l, width: m.s, height: m.s, animationDuration: `${m.d}s`, animationDelay: m.delay, ["--dx" as string]: m.x }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// A small self-drawing botanical sprig — a quiet ornament under section titles.
+function VowSprig() {
+  return (
+    <svg className="v-draw mx-auto mt-6 h-6 w-40 text-[color:var(--v-champ)]" viewBox="0 0 160 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" aria-hidden>
+      <line x1="0" y1="12" x2="60" y2="12" style={{ ["--len" as string]: 60 }} />
+      <path d="M80 4 C86 8 86 16 80 20 C74 16 74 8 80 4 Z" style={{ ["--len" as string]: 44 }} />
+      <line x1="100" y1="12" x2="160" y2="12" style={{ ["--len" as string]: 60 }} />
+    </svg>
+  );
+}
+
 export function VowView(props: WebsiteViewProps) {
   const { names, dateLabel, countdownDate, events, config, chip, rsvp, selfRsvp, ownerPreview } = props;
   const [lang, setLang] = useState<"en" | "hi">("en");
@@ -24,6 +92,7 @@ export function VowView(props: WebsiteViewProps) {
   const hasRsvp = Boolean(rsvp || selfRsvp || ownerPreview);
   const family = rsvp && chip ? chip : ownerPreview ? { en: "Sharma Family", hi: "शर्मा परिवार" } : null;
   const initials = names.split(" & ").map((n) => n[0]).join(" / ");
+  const sealInitials = pair ? `${pair[0]?.[0] ?? ""} & ${pair[1]?.[0] ?? ""}` : names.slice(0, 2);
   const city = venues[0]?.venueAddress?.split(",").pop()?.trim();
 
   const links: Array<[string, string, string]> = [];
@@ -41,7 +110,7 @@ export function VowView(props: WebsiteViewProps) {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
           <a href="#top" className="v-serif text-lg tracking-[0.3em]">{initials}</a>
           <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
-            {links.map(([href, en, hi]) => <a key={href} href={href} className="text-[11px] font-medium uppercase tracking-[0.25em] text-black/60 transition-colors hover:text-black"><TT en={en} hi={hi} /></a>)}
+            {links.map(([href, en, hi]) => <a key={href} href={href} className="v-link text-[11px] font-medium uppercase tracking-[0.25em] text-black/60 transition-colors hover:text-black"><TT en={en} hi={hi} /></a>)}
           </nav>
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-1 md:flex">
@@ -60,23 +129,39 @@ export function VowView(props: WebsiteViewProps) {
       ) : null}
 
       {/* OPENING / HERO — huge names + vertical photo, B&W → colour */}
-      <section id="top" className="relative px-6 pb-16 pt-32 sm:px-10">
-        <div className="mx-auto max-w-6xl text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-black/50" data-tw-reveal><TT en="The wedding of" hi="विवाह" /></p>
-          <div className="mt-6 flex items-center justify-center gap-3 sm:gap-8">
-            <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight" data-tw-reveal>{pair ? pair[0] : names}</h1>
+      <section id="top" className="relative overflow-hidden px-6 pb-20 pt-28 sm:px-10">
+        <VowDust />
+        {/* soft champagne halo behind the monogram */}
+        <div className="pointer-events-none absolute left-1/2 top-24 h-80 w-80 -translate-x-1/2 rounded-full opacity-50" style={{ background: "radial-gradient(circle, var(--v-champ), transparent 70%)", filter: "blur(48px)" }} aria-hidden />
+        <div className="relative mx-auto max-w-6xl text-center">
+          <VowSeal initials={sealInitials} />
+          <p className="v-in flex items-center justify-center gap-4 text-[11px] font-medium uppercase tracking-[0.4em] text-black/50" style={{ animationDelay: "260ms" }}>
+            <span className="h-px w-8 bg-black/25" aria-hidden /><TT en="The wedding of" hi="विवाह" /><span className="h-px w-8 bg-black/25" aria-hidden />
+          </p>
+          <div className="mt-7 flex items-center justify-center gap-3 sm:gap-8">
+            <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight"><Rise delay={340}>{pair ? pair[0] : names}</Rise></h1>
             {pair ? (
               <>
-                <div className="hidden h-64 w-24 shrink-0 overflow-hidden sm:block lg:h-96 lg:w-40" data-tw-reveal>
-                  <div data-vcolor className="h-full w-full" style={{ background: "linear-gradient(150deg,#7e9278,#354438 70%,#181818)" }} />
+                <div className="relative hidden h-64 w-24 shrink-0 overflow-hidden sm:block lg:h-96 lg:w-40" data-tw-reveal>
+                  <span className="pointer-events-none absolute inset-1 z-10 border border-[color:var(--v-champ)]/70" aria-hidden />
+                  {images[0] ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- couple hero portrait
+                    <img src={images[0].url} alt="" data-vcolor className="h-full w-full object-cover" />
+                  ) : (
+                    <div data-vcolor className="h-full w-full" style={{ background: "linear-gradient(150deg,#7e9278,#354438 70%,#181818)" }} />
+                  )}
                 </div>
-                <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight" data-tw-reveal>{pair[1]}</h1>
+                <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight"><Rise delay={520}>{pair[1]}</Rise></h1>
               </>
             ) : null}
           </div>
-          <p className="mt-8 text-[11px] font-medium uppercase tracking-[0.4em] text-black/60" data-tw-reveal>{longDate(countdownDate, true) || dateLabel}{city ? ` · ${city}` : ""}</p>
-          <p className="v-serif mt-4 text-2xl italic text-black/70" data-tw-reveal><TT en="We saved you a seat." hi="हमने आपके लिए एक जगह रखी है।" /></p>
-          {hasRsvp ? <a href="#rsvp" className="mt-8 inline-block border border-black px-8 py-4 text-[11px] font-medium uppercase tracking-[0.3em] transition-colors hover:bg-black hover:text-white"><TT en="Open invitation" hi="निमंत्रण खोलें" /></a> : null}
+          <p className="v-in mt-8 text-[11px] font-medium uppercase tracking-[0.4em] text-black/60" style={{ animationDelay: "700ms" }}>{longDate(countdownDate, true) || dateLabel}{city ? ` · ${city}` : ""}</p>
+          <p className="v-script v-in mt-4 text-[clamp(2rem,5vw,3rem)] leading-none text-[color:var(--v-sage)]" style={{ animationDelay: "820ms" }}><TT en="We saved you a seat." hi="हमने आपके लिए एक जगह रखी है।" /></p>
+          {hasRsvp ? <a href="#rsvp" className="v-btn v-in mt-9 inline-block border border-black px-9 py-4 text-[11px] font-medium uppercase tracking-[0.3em]" style={{ animationDelay: "940ms" }}><TT en="Open invitation" hi="निमंत्रण खोलें" /></a> : null}
+          <div className="v-in mt-16 flex flex-col items-center gap-3 text-[10px] font-medium uppercase tracking-[0.3em] text-black/40" style={{ animationDelay: "1100ms" }} aria-hidden>
+            <TT en="Scroll" hi="नीचे" />
+            <span className="v-cue-line block h-10 w-px bg-black/30" />
+          </div>
         </div>
       </section>
 
@@ -85,7 +170,7 @@ export function VowView(props: WebsiteViewProps) {
         <div data-vcolor className="relative flex min-h-[70vh] items-center justify-center" style={{ background: "linear-gradient(160deg,#354438 0%,#7e9278 60%,#d8c2a0 120%)" }}>
           <div className="px-6 text-center">
             <h2 className="v-serif text-[clamp(2.8rem,9vw,7rem)] font-medium leading-[0.95] text-white" data-tw-reveal>
-              <TT en="Forever" hi="हमेशा" /><br /><TT en="starts" hi="यहीं से" /><br /><span className="italic"><TT en="here." hi="शुरू।" /></span>
+              <TT en="Forever" hi="हमेशा" /><br /><TT en="starts" hi="यहीं से" /><br /><span className="v-foil italic"><TT en="here." hi="शुरू।" /></span>
             </h2>
             <p className="mt-6 text-sm uppercase tracking-[0.3em] text-white/80" data-tw-reveal>{names}</p>
             {family ? <p className="mx-auto mt-4 max-w-md text-white/85" data-tw-reveal><T value={family} />, <TT en="we would love for you to be there." hi="हम चाहते हैं कि आप वहाँ हों।" /></p> : null}
@@ -119,13 +204,14 @@ export function VowView(props: WebsiteViewProps) {
         <div className="mx-auto max-w-2xl text-center" data-tw-reveal>
           <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-black/50"><TT en="A few words" hi="कुछ शब्द" /></p>
           <h2 className="v-serif mt-1 text-[clamp(2rem,5vw,3.2rem)] font-medium"><TT en="before forever" hi="हमेशा से पहले" /></h2>
-          <p className="v-serif mt-10 text-[clamp(1.4rem,3.4vw,2.2rem)] italic leading-relaxed text-black/80">
+          <VowSprig />
+          <p className="v-serif mt-8 text-[clamp(1.4rem,3.4vw,2.2rem)] italic leading-relaxed text-black/80">
             <TT
               en="“I choose the ordinary mornings, the difficult days, and every version of the life we are yet to build.”"
               hi="“मैं चुनता हूँ वे साधारण सुबहें, वे कठिन दिन, और उस जीवन का हर रूप जिसे हम अभी बनाना बाक़ी है।”"
             />
           </p>
-          <p className="v-script mt-6 text-3xl text-[color:var(--v-sage)]">{names}</p>
+          <p className="v-script mt-6 text-4xl text-[color:var(--v-sage)]">{names}</p>
         </div>
       </section>
 
@@ -266,7 +352,7 @@ export function VowView(props: WebsiteViewProps) {
       {/* FOOTER */}
       <footer className="bg-[color:var(--v-black)] px-6 py-16 text-center text-[color:var(--v-white)]">
         <p className="v-serif text-4xl font-medium">{names}</p>
-        <p className="v-script mt-2 text-3xl text-[color:var(--v-champ)]">{compactDate(countdownDate, ".") || dateLabel}</p>
+        <p className="v-script v-foil mt-2 text-4xl">{compactDate(countdownDate, ".") || dateLabel}</p>
         {contacts.length ? <p className="mt-6 text-sm text-white/55">{contacts.map((c) => `${c.name}${c.relation ? ` (${c.relation})` : ""} · ${c.phone}`).join("   ")}</p> : null}
         <p className="mt-8 text-[10px] uppercase tracking-[0.3em] text-white/40"><TT en="Forever starts here · Jashn" hi="हमेशा यहीं से · जश्न" /></p>
         <JashnCredit className="mt-3 text-white/35" />
@@ -350,15 +436,19 @@ function VowCountdown({ dateIso }: { dateIso: string }) {
   ];
   return (
     <section className="px-6 py-28 text-center sm:px-10" data-tw-reveal>
-      <div className="mx-auto flex max-w-2xl items-stretch justify-center divide-x divide-black/15">
-        {units.map(([v, en, hi]) => (
-          <div key={en} className="flex flex-1 flex-col items-center px-2 sm:px-6">
-            <span className="v-serif text-[clamp(2.6rem,10vw,5.5rem)] font-medium leading-none tabular-nums">{v}</span>
-            <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.35em] text-black/45"><TT en={en} hi={hi} /></span>
+      <p className="mb-10 text-[11px] font-medium uppercase tracking-[0.4em] text-black/45"><TT en="Counting the days" hi="दिन गिनते हुए" /></p>
+      <div className="mx-auto flex max-w-2xl items-center justify-center">
+        {units.map(([v, en, hi], i) => (
+          <div key={en} className="flex items-center">
+            <div className="flex flex-col items-center px-3 sm:px-8">
+              <span className="v-serif text-[clamp(2.6rem,10vw,5.5rem)] font-medium leading-none tabular-nums">{v}</span>
+              <span className="mt-3 text-[10px] font-medium uppercase tracking-[0.35em] text-black/45"><TT en={en} hi={hi} /></span>
+            </div>
+            {i < units.length - 1 ? <span className="v-pulse v-serif -mt-6 text-[clamp(2rem,7vw,4rem)] leading-none text-[color:var(--v-champ)]">·</span> : null}
           </div>
         ))}
       </div>
-      <p className="v-serif mt-8 text-xl italic text-black/60"><TT en="until forever." hi="हमेशा तक।" /></p>
+      <p className="v-serif mt-10 text-xl italic text-black/60"><TT en="until forever." hi="हमेशा तक।" /></p>
     </section>
   );
 }

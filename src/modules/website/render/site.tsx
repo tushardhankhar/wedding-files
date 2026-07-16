@@ -10,6 +10,7 @@ import { LittleMiracleView } from "./little-miracle/little-miracle-view";
 import { ShubhAarambhView } from "./shubh-aarambh/shubh-aarambh-view";
 import { SaveTheDateView } from "./save-the-date/save-the-date-view";
 import { MuhuratView } from "./muhurat/muhurat-view";
+import { GulistanView } from "./gulistan/gulistan-view";
 import { GoToTop } from "./go-to-top";
 
 /**
@@ -42,6 +43,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <SaveTheDateView {...props} />;
     case "muhurat": // The Muhurat — Save the Date
       return <MuhuratView {...props} />;
+    case "gulistan": // The Gulistan — Save the Date
+      return <GulistanView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }
