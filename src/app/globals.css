@@ -1922,6 +1922,283 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE MAYURA (id "mayura") — colourful peacock wedding, teal + marigold + pink.
+   Full multi-section site. Bilingual + [data-tw-reveal] scroll-reveal are shared
+   (see the scaffolding block above). Everything else lives here under .myr.
+   ══════════════════════════════════════════════════════════════════════════ */
+.myr {
+  color: var(--myr-ink, #193c3b);
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  background: var(--myr-ivory, #fdf4e3);
+  overflow-x: clip;
+  line-height: 1.6;
+}
+.myr-serif { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
+.myr-names { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+.myr-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+.myr-sans { font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif; }
+.myr .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.myr ::selection { background: var(--myr-pink); color: #fff; }
+.myr-amp { font-size: 0.72em; color: var(--myr-pink); }
+
+/* shimmering gold foil (names + hashtag) */
+.myr-foil {
+  background: linear-gradient(100deg, #a67c2e 0%, #ecd07a 24%, #fff4d0 36%, #ecd07a 48%, #a67c2e 72%, #ecd07a 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* a faint woven-gold "jaali" lattice reused across the light grounds for texture */
+.myr-jaali {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 24px),
+    radial-gradient(circle at 12px 12px, rgba(201,162,63,0.07) 0 1.4px, transparent 2px);
+  background-size: 24px 24px, 24px 24px, 24px 24px;
+}
+
+/* section grounds */
+.myr-ivory {
+  background-color: var(--myr-ivory);
+  background-image:
+    radial-gradient(70% 45% at 50% 0%, rgba(236,208,122,0.16), transparent 62%),
+    repeating-linear-gradient(45deg, rgba(166,124,46,0.045) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(166,124,46,0.045) 0 1px, transparent 1px 24px);
+}
+.myr-ivory2 {
+  background-color: var(--myr-ivory-2);
+  background-image:
+    radial-gradient(60% 44% at 100% 0%, rgba(14,110,110,0.14), transparent 60%),
+    radial-gradient(52% 38% at 0% 100%, rgba(216,27,96,0.11), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 26px);
+}
+/* a soft jewel-tinted panel (families) — adds colour blocks between cream sections */
+.myr-tint {
+  background-color: #ecf3ee;
+  background-image:
+    radial-gradient(70% 55% at 0% 0%, rgba(14,110,110,0.16), transparent 60%),
+    radial-gradient(70% 55% at 100% 100%, rgba(216,27,96,0.13), transparent 60%),
+    radial-gradient(60% 40% at 50% 50%, rgba(236,208,122,0.14), transparent 65%),
+    repeating-linear-gradient(45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgba(166,124,46,0.05) 0 1px, transparent 1px 26px);
+}
+.myr-hero {
+  background:
+    radial-gradient(120% 58% at 50% -8%, rgba(236,208,122,0.9), transparent 60%),
+    radial-gradient(85% 46% at 50% 108%, rgba(14,110,110,0.24), transparent 62%),
+    radial-gradient(42% 34% at 13% 32%, rgba(216,27,96,0.12), transparent 60%),
+    radial-gradient(42% 34% at 87% 32%, rgba(18,102,143,0.12), transparent 60%),
+    linear-gradient(180deg, #fff6e3 0%, #fdefd6 45%, #f6e6c9 100%);
+}
+.myr-deep {
+  color: var(--myr-champagne);
+  background:
+    radial-gradient(95% 70% at 50% 0%, rgba(201,162,63,0.34), transparent 62%),
+    radial-gradient(60% 50% at 50% 120%, rgba(18,102,143,0.28), transparent 60%),
+    conic-gradient(from 0deg at 50% 18%, rgba(236,208,122,0.06), transparent 25%, rgba(236,208,122,0.06) 50%, transparent 75%, rgba(236,208,122,0.06)),
+    linear-gradient(180deg, var(--myr-teal) 0%, var(--myr-teal-2) 55%, var(--myr-teal-3) 100%);
+}
+.myr-deep .myr-serif { color: var(--myr-champagne); }
+
+/* an ornamental beaded gold border — a slim premium section divider */
+.myr-ribbon {
+  height: 14px;
+  background:
+    linear-gradient(var(--myr-gold), var(--myr-gold)) 0 50%/100% 1px no-repeat,
+    radial-gradient(circle at 11px 50%, var(--myr-teal) 0 3.6px, var(--myr-gold-lite) 3.6px 4.6px, transparent 5.4px) 0 0/22px 100% repeat-x;
+  opacity: 0.85;
+}
+
+/* a double gold filigree frame inset into the hero (premium invitation border) */
+.myr-frameline {
+  border: 1px solid rgba(201, 162, 63, 0.5);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 0 4px rgba(201, 162, 63, 0.1),
+    inset 0 0 0 5px rgba(201, 162, 63, 0.32),
+    inset 0 0 60px rgba(236, 208, 122, 0.15);
+}
+
+/* nav — turns to frosted ivory once scrolled */
+.myr-nav-on {
+  background: rgba(253, 244, 227, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201, 162, 63, 0.3);
+  box-shadow: 0 8px 30px -18px rgba(10, 74, 74, 0.4);
+}
+
+/* golden mandap scene */
+.myr-scene-sky {
+  background:
+    radial-gradient(90% 70% at 50% 12%, #ffeecb 0%, transparent 55%),
+    linear-gradient(180deg, #0e7a76 0%, #0c5f5d 44%, #0a4a4a 74%, #063231 100%);
+  box-shadow: inset 0 0 40px rgba(6,50,49,0.28), 0 24px 50px -24px rgba(10,74,74,0.45);
+  border: 1px solid rgba(201,162,63,0.5);
+  border-bottom: 0;
+}
+
+/* cards */
+.myr-card {
+  background: rgba(255, 246, 236, 0.06);
+  border: 1px solid rgba(236, 208, 122, 0.3);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 18px 40px -28px rgba(6, 50, 49, 0.6);
+}
+.myr-card-light {
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(201, 162, 63, 0.35);
+  box-shadow: 0 18px 40px -28px rgba(10, 74, 74, 0.4);
+}
+
+/* royal event invitation card — with an inner gold hairline frame */
+.myr-event {
+  position: relative;
+  background:
+    radial-gradient(85% 60% at 50% 0%, rgba(236,208,122,0.45), transparent 60%),
+    radial-gradient(60% 40% at 50% 100%, rgba(14,110,110,0.08), transparent 60%),
+    linear-gradient(180deg, #fffaf0 0%, #f7e7cd 100%);
+  border: 1px solid rgba(201, 162, 63, 0.6);
+  box-shadow: 0 22px 50px -30px rgba(10, 74, 74, 0.5), inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.myr-event::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(201, 162, 63, 0.32);
+  border-radius: 1.2rem;
+  pointer-events: none;
+}
+.myr-event:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 64px -30px rgba(10, 74, 74, 0.55);
+}
+.myr-event-icon {
+  background: radial-gradient(circle at 50% 35%, rgba(236,208,122,0.55), rgba(14,110,110,0.14));
+  border: 1px solid rgba(201, 162, 63, 0.7);
+  box-shadow: inset 0 0 18px rgba(201, 162, 63, 0.3), 0 6px 16px -8px rgba(10,74,74,0.4);
+}
+
+/* gallery frame */
+.myr-frame {
+  border: 1px solid rgba(201, 162, 63, 0.4);
+  background: var(--myr-ivory-2);
+  box-shadow: 0 16px 40px -28px rgba(10, 74, 74, 0.4);
+}
+
+/* pills / chips */
+.myr-chip {
+  display: inline-flex; align-items: center;
+  border-radius: 999px; padding: 0.5rem 1rem;
+  font-family: var(--font-raleway), system-ui, sans-serif;
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--myr-teal);
+  border: 1px solid rgba(201, 162, 63, 0.55);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.myr-chip:hover { background: var(--myr-teal); color: #fff; }
+
+/* primary button — peacock gradient, gently glowing */
+.myr-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-raleway), system-ui, sans-serif;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #fff; border-radius: 999px; padding: 0.9rem 2.2rem;
+  background: linear-gradient(120deg, var(--myr-teal), var(--myr-blue));
+  border: 1px solid var(--myr-gold);
+  box-shadow: 0 14px 34px -14px rgba(10, 74, 74, 0.6), inset 0 0 0 1px rgba(236,208,122,0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.myr-btn:hover { transform: translateY(-2px); box-shadow: 0 22px 44px -16px rgba(10, 74, 74, 0.8); }
+
+/* countdown tiles + glow */
+.myr-count {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(236,208,122,0.14), transparent 65%),
+    rgba(255, 246, 236, 0.05);
+  border: 1px solid rgba(236, 208, 122, 0.38);
+  box-shadow: inset 0 0 22px rgba(236,208,122,0.1), 0 16px 34px -26px rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+.myr-count::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(236, 208, 122, 0.22);
+  border-radius: 0.9rem;
+  pointer-events: none;
+}
+.myr-glowtext {
+  color: var(--myr-gold-lite);
+  text-shadow: 0 0 18px rgba(236, 208, 122, 0.55);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .myr-fade { opacity: 0; animation: myr-fade 0.9s ease-out forwards; }
+  @keyframes myr-fade { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+  .myr-foil { animation: myr-shimmer 6s linear infinite; }
+  @keyframes myr-shimmer { to { background-position: -220% 0; } }
+
+  .myr-sway { animation: myr-sway 7s ease-in-out infinite; transform-origin: top center; }
+  .myr-sway-alt { animation: myr-sway 7s ease-in-out infinite reverse; transform-origin: top center; }
+  @keyframes myr-sway { 0%,100% { transform: rotate(-1.4deg); } 50% { transform: rotate(1.4deg); } }
+
+  .myr-plume { transform-origin: 48% 35%; animation: myr-plume 9s ease-in-out infinite; }
+  @keyframes myr-plume { 0%,100% { transform: rotate(-1.6deg); } 50% { transform: rotate(1.6deg); } }
+
+  .myr-bud { transform-origin: center; animation: myr-bud 5s ease-in-out infinite; }
+  @keyframes myr-bud { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+  .myr-lantern { animation: myr-lantern 6s ease-in-out infinite; transform-origin: top center; }
+  .myr-lantern-alt { animation: myr-lantern 6s ease-in-out infinite reverse; transform-origin: top center; }
+  @keyframes myr-lantern { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+
+  .myr-flame { transform-origin: 50% 100%; animation: myr-flame 1.6s ease-in-out infinite; }
+  @keyframes myr-flame {
+    0%,100% { transform: scaleY(1) scaleX(1); opacity: 0.9; }
+    45% { transform: scaleY(1.14) scaleX(0.92); opacity: 1; }
+    70% { transform: scaleY(0.94) scaleX(1.05); opacity: 0.85; }
+  }
+  .myr-glow { animation: myr-glow 2.4s ease-in-out infinite; }
+  @keyframes myr-glow { 0%,100% { opacity: 0.22; } 50% { opacity: 0.42; } }
+
+  .myr-twinkle { animation: myr-twinkle 3.2s ease-in-out infinite; }
+  @keyframes myr-twinkle { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  .myr-birds { animation: myr-birds 22s linear infinite; }
+  @keyframes myr-birds {
+    0% { transform: translate(0,0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translate(340px,-40px); opacity: 0; }
+  }
+
+  .myr-spin { animation: myr-spin 120s linear infinite; transform-origin: center; }
+  @keyframes myr-spin { to { transform: rotate(360deg); } }
+
+  .myr-feather {
+    position: absolute; top: -8%;
+    animation-name: myr-feather; animation-timing-function: linear; animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+  .myr-feather svg { display: block; }
+  @keyframes myr-feather {
+    0% { transform: translate(0, -12vh) rotate(var(--rot, 0deg)); opacity: 0; }
+    12% { opacity: 0.75; }
+    88% { opacity: 0.75; }
+    100% { transform: translate(var(--drift, 20px), 112vh) rotate(calc(var(--rot, 0deg) + 300deg)); opacity: 0; }
+  }
+}
+/* the drifting-feather layer is decorative motion only — remove it entirely
+   (rather than leave un-positioned SVGs in flow) when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .myr-feather { display: none; }
+}
+
 /* ── Back-to-top button (shared across all themed guest sites) ─────────────── */
 .gtt {
   position: fixed; right: 22px; bottom: 22px; z-index: 60;
