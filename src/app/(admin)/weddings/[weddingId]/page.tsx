@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { getWeddingById } from "@/modules/weddings/server/queries";
+import { getAdminInviteStatus } from "@/modules/weddings/server/admin-queries";
 import { updateWeddingAction } from "@/modules/weddings/server/actions";
 import {
   Card,
@@ -31,6 +32,9 @@ export default async function WeddingDetailPage({
 
   const theme = getTheme(wedding.themeId);
   const updateAction = updateWeddingAction.bind(null, wedding.id);
+  const inviteMeta = isAdmin
+    ? (await getAdminInviteStatus(wedding.id)).get(wedding.id)
+    : undefined;
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -168,6 +172,7 @@ export default async function WeddingDetailPage({
                 weddingId={wedding.id}
                 claimed={wedding.clientId !== null}
                 occasion={occasionNoun(wedding.themeId)}
+                meta={inviteMeta}
               />
             </CardContent>
           </Card>

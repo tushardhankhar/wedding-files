@@ -36,3 +36,20 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data;
+
+/**
+ * Returns the absolute site origin (no trailing slash), throwing a clear error
+ * if `NEXT_PUBLIC_SITE_URL` is unset. Every auth redirect target — magic-link,
+ * OTP, password-reset, and invite-claim URLs — is built from this, so a missing
+ * value must fail loudly rather than silently producing broken `undefined/...`
+ * links. Kept optional in the schema so unrelated builds still boot.
+ */
+export function requireSiteUrl(): string {
+  const url = env.NEXT_PUBLIC_SITE_URL;
+  if (!url) {
+    throw new Error(
+      "NEXT_PUBLIC_SITE_URL is required to build auth/invite links but is not set."
+    );
+  }
+  return url.replace(/\/$/, "");
+}

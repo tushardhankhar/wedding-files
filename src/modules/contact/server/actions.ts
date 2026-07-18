@@ -1,6 +1,8 @@
 "use server";
 
 import { z } from "zod";
+import { serverEnv } from "@/lib/env.server";
+import { escapeHtml } from "@/lib/html";
 
 /**
  * Public enquiry form → email to the site owner via Resend's REST API (no SDK
@@ -32,16 +34,6 @@ const enquirySchema = z.object({
 
 export type EnquiryState = { ok?: boolean; error?: string };
 
-/** Minimal HTML escaping so user input can't inject markup into the email. */
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 export async function submitEnquiryAction(
   input: unknown
 ): Promise<EnquiryState> {
@@ -54,9 +46,10 @@ export async function submitEnquiryAction(
   // Honeypot tripped → pretend success, send nothing.
   if (company && company.trim().length > 0) return { ok: true };
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.ENQUIRY_TO_EMAIL || "hello@jointhejashn.com";
-  const from = process.env.ENQUIRY_FROM_EMAIL || "Join the Jashn <onboarding@resend.dev>";
+  const apiKey = serverEnv.RESEND_API_KEY;
+  const to = serverEnv.ENQUIRY_TO_EMAIL || "hello@jointhejashn.com";
+  const from =
+    serverEnv.ENQUIRY_FROM_EMAIL || "Join the Jashn <onboarding@resend.dev>";
   if (!apiKey) {
     return { error: "Enquiries aren't set up yet — please email us directly." };
   }

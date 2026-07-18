@@ -4,107 +4,180 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createClientInvite } from "./mutations";
+import { isCoolingDown } from "@/modules/auth/server/throttle";
+import { createClientInvite, revokeClientInvites } from "./mutations";
+import { sendClientInviteEmail } from "./email";
 
-// ── Admin: generate a client onboarding link ────────────────────────────────
-export type GenerateInviteState = { url?: string; error?: string };
+// ── Admin: generate an email-bound client onboarding link ────────────────────
+export type GenerateInviteState = {
+  url?: string;
+  email?: string;
+  /** true when the invite email was sent; false when it must be shared manually. */
+  emailSent?: boolean;
+  error?: string;
+};
+
+const inviteEmailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .email("Enter a valid client email address.");
 
 export async function generateClientInviteAction(
   weddingId: string,
   _prev: GenerateInviteState,
-  _formData: FormData
+  formData: FormData
 ): Promise<GenerateInviteState> {
+  const parsed = inviteEmailSchema.safeParse(formData.get("email"));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Enter a valid email." };
+  }
+  const occasion = String(formData.get("occasion") ?? "").trim() || "wedding";
+
   try {
-    const { url } = await createClientInvite(weddingId);
+    const { url, email } = await createClientInvite(weddingId, parsed.data);
     revalidatePath(`/weddings/${weddingId}`);
-    return { url };
+
+    // Best-effort: email the claim link to the client. If it can't send, the
+    // admin still has the URL to copy or share over WhatsApp.
+    const { sent } = await sendClientInviteEmail({ to: email, url, occasion });
+    return { url, email, emailSent: sent };
   } catch {
     return { error: "Could not generate a client link. Please try again." };
   }
 }
 
-// ── Client: claim an invite (create account + bind to the wedding) ──────────
-export type ClaimState = { error?: string; message?: string };
+// ── Admin: revoke an outstanding invite ─────────────────────────────────────
+export type RevokeInviteState = { revoked?: boolean; error?: string };
 
-const claimSchema = z.object({
-  email: z.string().email("Enter a valid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
-});
+export async function revokeClientInviteAction(
+  weddingId: string,
+  _prev: RevokeInviteState,
+  _formData: FormData
+): Promise<RevokeInviteState> {
+  try {
+    await revokeClientInvites(weddingId);
+    revalidatePath(`/weddings/${weddingId}`);
+    return { revoked: true };
+  } catch {
+    return { error: "Couldn't revoke the invite. Please try again." };
+  }
+}
 
-export async function claimClientInviteAction(
+// ── Client: claim an invite via email-bound OTP ─────────────────────────────
+//
+// The invite is bound to a specific email. We email a 6-digit code to THAT
+// address (never a user-typed one) and the client proves ownership by entering
+// it — so it's impossible to claim under the wrong email, and there's no
+// password to forget. New and returning clients follow the identical path.
+export type ClaimState = { error?: string; message?: string; sent?: boolean };
+
+/** Bind an already-signed-in, matching client to the wedding. */
+export async function finalizeClaimAction(
+  token: string,
+  _prev: ClaimState,
+  _formData: FormData
+): Promise<ClaimState> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.rpc("claim_client_invite_v2", {
+    p_token: token,
+  });
+  if (error) {
+    // EMAIL_MISMATCH is the server-side backstop; the page normally routes a
+    // mismatched viewer to the "wrong email" UI before this runs.
+    return { error: "This invite link is invalid or has expired." };
+  }
+  redirect("/dashboard");
+}
+
+/** Step 1: email a 6-digit sign-in code to the invited address. */
+export async function requestClaimOtpAction(
   token: string,
   _prev: ClaimState,
   formData: FormData
 ): Promise<ClaimState> {
-  const parsed = claimSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
-  }
-
   const supabase = await createSupabaseServerClient();
-
-  // Start from a clean slate: if the link is opened while already signed in
-  // (e.g. an admin testing, or a returning visitor), don't claim under that
-  // identity — the new client account should own this wedding.
-  await supabase.auth.signOut();
-
-  // Try to create the account. A returning client already has one — created on
-  // a previous attempt, or after confirming their email — so fall back to
-  // signing them in. Either way we need a session before we can claim.
-  let session = null;
-  const { data: signUpData, error: signUpError } =
-    await supabase.auth.signUp(parsed.data);
-
-  if (signUpError) {
-    const message = signUpError.message.toLowerCase();
-    const alreadyExists =
-      message.includes("already registered") ||
-      message.includes("already exists");
-    if (!alreadyExists) {
-      return { error: signUpError.message };
-    }
-
-    // Existing account: sign in with the same credentials and continue.
-    const { data: signInData, error: signInError } =
-      await supabase.auth.signInWithPassword(parsed.data);
-    if (signInError) {
-      // Account exists but the email isn't confirmed yet — guide them to
-      // confirm rather than blaming the password.
-      if (signInError.message.toLowerCase().includes("not confirmed")) {
-        return {
-          message:
-            "Your account isn't confirmed yet. Open the confirmation email we sent, then reopen this link to finish setup.",
-        };
-      }
-      return {
-        error:
-          "That email already has an account, but the password didn't match. Enter the password you chose when you first opened this link.",
-      };
-    }
-    session = signInData.session;
-  } else {
-    session = signUpData.session;
+  const { data: email, error: lookupError } = await supabase.rpc(
+    "get_invite_email",
+    { p_token: token }
+  );
+  if (lookupError || !email) {
+    return { error: "This invite link is invalid or has expired." };
   }
 
-  // With email confirmation on, a brand-new sign-up has no session yet — the
-  // client can't claim until confirmed. Guide them instead of failing silently.
-  if (!session) {
+  // Honeypot: bots fill hidden fields. Advance the UI without sending.
+  const sentState: ClaimState = {
+    sent: true,
+    message: "We emailed you a 6-digit code. Enter it below to finish setup.",
+  };
+  if (String(formData.get("company") ?? "").trim()) return sentState;
+
+  // Within cooldown → don't re-send; the prior code is still valid.
+  if (await isCoolingDown(supabase, email, "claim_otp")) {
     return {
+      sent: true,
       message:
-        "Account created. Confirm your email, then open this link again to finish setup.",
+        "We already emailed you a code — enter it below. You can request another shortly.",
     };
   }
 
-  // Bind this authenticated client to the wedding (SECURITY DEFINER).
-  const { error: claimError } = await supabase.rpc("claim_client_invite", {
+  // shouldCreateUser handles new and returning clients identically: creates the
+  // account if absent, signs into the existing one otherwise.
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: true },
+  });
+  if (error) {
+    return { error: "Couldn't send the code. Please try again in a moment." };
+  }
+  return sentState;
+}
+
+/** Step 2: verify the code, establish the session, and bind the wedding. */
+export async function verifyClaimOtpAction(
+  token: string,
+  _prev: ClaimState,
+  formData: FormData
+): Promise<ClaimState> {
+  const code = String(formData.get("code") ?? "").trim();
+  if (!/^\d{6}$/.test(code)) {
+    return { sent: true, error: "Enter the 6-digit code from your email." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: email, error: lookupError } = await supabase.rpc(
+    "get_invite_email",
+    { p_token: token }
+  );
+  if (lookupError || !email) {
+    return { error: "This invite link is invalid or has expired." };
+  }
+
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email,
+    token: code,
+    type: "email",
+  });
+  if (verifyError) {
+    return {
+      sent: true,
+      error: "That code is invalid or has expired. Request a new one.",
+    };
+  }
+
+  // Session established as the invited email, so the email match always holds.
+  const { error: claimError } = await supabase.rpc("claim_client_invite_v2", {
     p_token: token,
   });
   if (claimError) {
     return { error: "This invite link is invalid or has expired." };
   }
-
   redirect("/dashboard");
+}
+
+/** Sign out a wrong-email visitor and return them to the claim page. */
+export async function claimSignOutAction(token: string): Promise<void> {
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
+  redirect(`/client/claim/${token}`);
 }
