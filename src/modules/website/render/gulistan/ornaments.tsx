@@ -22,36 +22,54 @@ const ROSE = "var(--glt-rose)";
 const ROSE_DEEP = "var(--glt-rose-deep)";
 const LEAF = "var(--glt-leaf)";
 
-/* ── a single rose blossom (layered petals + gold heart) ─────────────────── */
+/* ── a single rose blossom ────────────────────────────────────────────────
+ * A cupped garden rose: two staggered rings of curved petals furling toward a
+ * small gold stamen, with a faint gold edge for definition. Drawn in a unit
+ * space and scaled by `r`, so it stays crisp at any size. */
+const PETAL = "M0 0 C -0.5 -0.46 -0.5 -1.06 0 -1.36 C 0.5 -1.06 0.5 -0.46 0 0 Z";
+const PETAL_ANGLES = [0, 72, 144, 216, 288];
 function Blossom({
   cx,
   cy,
   r,
   fill = ROSE,
-  petals = 6,
 }: {
   cx: number;
   cy: number;
   r: number;
   fill?: string;
-  petals?: number;
 }) {
   return (
-    <g transform={`translate(${cx} ${cy})`}>
-      {Array.from({ length: petals }).map((_, i) => (
-        <ellipse
-          key={i}
-          rx={r * 0.52}
-          ry={r}
-          cx={0}
-          cy={-r * 0.55}
+    <g transform={`translate(${cx} ${cy}) scale(${r})`}>
+      {/* outer ring — open petals */}
+      {PETAL_ANGLES.map((a) => (
+        <path key={`o${a}`} d={PETAL} fill={fill} opacity={0.82} transform={`rotate(${a})`} />
+      ))}
+      {/* inner ring — smaller, offset, furled tighter (deepens the centre) */}
+      {PETAL_ANGLES.map((a) => (
+        <path
+          key={`i${a}`}
+          d={PETAL}
           fill={fill}
-          opacity={0.92}
-          transform={`rotate(${(360 / petals) * i})`}
+          opacity={0.96}
+          transform={`rotate(${a + 36}) scale(0.6)`}
         />
       ))}
-      <circle r={r * 0.42} fill={GOLD_LITE} />
-      <circle r={r * 0.18} fill={GOLD} />
+      {/* gold stamen heart */}
+      <circle r={0.2} fill={GOLD_LITE} />
+      <circle r={0.09} fill={GOLD} />
+      {/* faint gold petal edges */}
+      {PETAL_ANGLES.map((a) => (
+        <path
+          key={`e${a}`}
+          d={PETAL}
+          fill="none"
+          stroke={GOLD}
+          strokeWidth={0.028}
+          opacity={0.45}
+          transform={`rotate(${a})`}
+        />
+      ))}
     </g>
   );
 }
@@ -106,16 +124,18 @@ export function FloralCascade({
         />
       ))}
       {leaves.map((l, i) => (
-        <ellipse
-          key={`l${i}`}
-          cx={l.x}
-          cy={l.y}
-          rx="6"
-          ry="13"
-          fill={LEAF}
-          opacity="0.85"
-          transform={`rotate(${l.rot} ${l.x} ${l.y})`}
-        />
+        <g key={`l${i}`} transform={`rotate(${l.rot} ${l.x} ${l.y})`}>
+          <ellipse cx={l.x} cy={l.y} rx="6" ry="13" fill={LEAF} opacity="0.85" />
+          <line
+            x1={l.x}
+            y1={l.y - 11}
+            x2={l.x}
+            y2={l.y + 11}
+            stroke="var(--glt-cream)"
+            strokeWidth="0.8"
+            opacity="0.5"
+          />
+        </g>
       ))}
       {nodes.map((n, i) => (
         <Blossom key={`b${i}`} cx={n.x} cy={n.y} r={n.r} fill={n.f} />
@@ -148,7 +168,7 @@ export function ArchFrame({ className }: { className?: string }) {
         strokeWidth="2.4"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 0.9 }}
-        transition={{ duration: 2.2, ease: "easeInOut" }}
+        transition={{ duration: 1.7, ease: "easeInOut" }}
       />
       <m.path
         d={arch}
@@ -156,7 +176,7 @@ export function ArchFrame({ className }: { className?: string }) {
         strokeWidth="0.8"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 0.7 }}
-        transition={{ duration: 2.2, ease: "easeInOut", delay: 0.15 }}
+        transition={{ duration: 1.7, ease: "easeInOut", delay: 0.12 }}
         style={{ transform: "translateX(7px)" }}
       />
       {/* pillar bases */}

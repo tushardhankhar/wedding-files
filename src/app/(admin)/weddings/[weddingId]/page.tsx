@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { getWeddingById } from "@/modules/weddings/server/queries";
+import { getAdminInviteStatus } from "@/modules/weddings/server/admin-queries";
 import { updateWeddingAction } from "@/modules/weddings/server/actions";
 import {
   Card,
@@ -31,6 +32,9 @@ export default async function WeddingDetailPage({
 
   const theme = getTheme(wedding.themeId);
   const updateAction = updateWeddingAction.bind(null, wedding.id);
+  const inviteMeta = isAdmin
+    ? (await getAdminInviteStatus(wedding.id)).get(wedding.id)
+    : undefined;
 
   return (
     <div className="mx-auto max-w-xl space-y-6">
@@ -79,16 +83,18 @@ export default async function WeddingDetailPage({
         </Card>
       </Link>
 
-      <Link href={`/weddings/${wedding.id}/rsvps`} className="block">
-        <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
-          <CardHeader>
-            <CardTitle className="text-base">RSVPs →</CardTitle>
-            <CardDescription>
-              See who&apos;s attending each event.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </Link>
+      {theme.supports.rsvp ? (
+        <Link href={`/weddings/${wedding.id}/rsvps`} className="block">
+          <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
+            <CardHeader>
+              <CardTitle className="text-base">RSVPs →</CardTitle>
+              <CardDescription>
+                See who&apos;s attending each event.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      ) : null}
 
       <Card>
         <CardHeader>
@@ -168,6 +174,7 @@ export default async function WeddingDetailPage({
                 weddingId={wedding.id}
                 claimed={wedding.clientId !== null}
                 occasion={occasionNoun(wedding.themeId)}
+                meta={inviteMeta}
               />
             </CardContent>
           </Card>

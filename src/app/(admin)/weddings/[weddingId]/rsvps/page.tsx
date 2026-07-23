@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
 import { listWeddingRsvps, listShareRsvps } from "@/modules/rsvp/server/queries";
+import { getTheme } from "@/modules/website/themes/registry";
 import {
   Card,
   CardContent,
@@ -19,6 +20,8 @@ export default async function RsvpsPage({
   const { weddingId } = await params;
   const wedding = await getWeddingById(weddingId);
   if (!wedding) notFound();
+  // Save-the-dates don't collect RSVPs — no report to show.
+  if (!getTheme(wedding.themeId).supports.rsvp) notFound();
 
   const [events, byEvent, directByEvent] = await Promise.all([
     listEvents(weddingId),

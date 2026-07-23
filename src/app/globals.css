@@ -1649,6 +1649,16 @@
   --flip-bg: #7a1f38; --flip-ink: #e8cd7e;
   --flip-line: rgba(201,162,74,0.35); --flip-shadow: rgba(94,19,41,0.45);
 }
+/* The unit labels sit on the blush page, not the maroon tile, so the tile's
+ * gold ink would be illegible — pin them to the maroon ink used elsewhere.
+ * Scoped selector (0,2,0) beats both .flipcd-label and any utility class. */
+.glt .flipcd-label {
+  color: var(--glt-maroon);
+  opacity: 1;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+}
 .glt-btn {
   font-family: var(--font-raleway), system-ui, sans-serif;
   font-size: 0.8rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;

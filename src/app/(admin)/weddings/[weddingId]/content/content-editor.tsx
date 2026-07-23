@@ -1058,66 +1058,71 @@ export function ContentEditor({
               onChange={(e) => set({ hashtag: e.target.value })}
             />
           </div>
-          {s.contacts.map((c, i) => (
-            <Row
-              key={i}
-              index={i}
-              label="Contact"
-              onRemove={() =>
-                set({ contacts: s.contacts.filter((_, idx) => idx !== i) })
-              }
-            >
-              <div className="grid gap-2 sm:grid-cols-3">
-                <Input
-                  value={c.name}
-                  placeholder="Name"
-                  onChange={(e) =>
-                    set({
-                      contacts: s.contacts.map((x, idx) =>
-                        idx === i ? { ...x, name: e.target.value } : x
-                      ),
-                    })
+          {/* Save-the-dates are a bare announcement — no point-of-contact list. */}
+          {category !== "save-the-date" ? (
+            <>
+              {s.contacts.map((c, i) => (
+                <Row
+                  key={i}
+                  index={i}
+                  label="Contact"
+                  onRemove={() =>
+                    set({ contacts: s.contacts.filter((_, idx) => idx !== i) })
                   }
-                />
-                <Input
-                  value={c.relation}
-                  placeholder="Relation (optional)"
-                  onChange={(e) =>
-                    set({
-                      contacts: s.contacts.map((x, idx) =>
-                        idx === i ? { ...x, relation: e.target.value } : x
-                      ),
-                    })
-                  }
-                />
-                <Input
-                  value={c.phone}
-                  placeholder="+91 …"
-                  onChange={(e) =>
-                    set({
-                      contacts: s.contacts.map((x, idx) =>
-                        idx === i ? { ...x, phone: e.target.value } : x
-                      ),
-                    })
-                  }
-                />
-              </div>
-            </Row>
-          ))}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() =>
-              set({
-                contacts: [
-                  ...s.contacts,
-                  { name: "", phone: "", relation: "" },
-                ],
-              })
-            }
-          >
-            ＋ Add contact
-          </Button>
+                >
+                  <div className="grid gap-2 sm:grid-cols-3">
+                    <Input
+                      value={c.name}
+                      placeholder="Name"
+                      onChange={(e) =>
+                        set({
+                          contacts: s.contacts.map((x, idx) =>
+                            idx === i ? { ...x, name: e.target.value } : x
+                          ),
+                        })
+                      }
+                    />
+                    <Input
+                      value={c.relation}
+                      placeholder="Relation (optional)"
+                      onChange={(e) =>
+                        set({
+                          contacts: s.contacts.map((x, idx) =>
+                            idx === i ? { ...x, relation: e.target.value } : x
+                          ),
+                        })
+                      }
+                    />
+                    <Input
+                      value={c.phone}
+                      placeholder="+91 …"
+                      onChange={(e) =>
+                        set({
+                          contacts: s.contacts.map((x, idx) =>
+                            idx === i ? { ...x, phone: e.target.value } : x
+                          ),
+                        })
+                      }
+                    />
+                  </div>
+                </Row>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  set({
+                    contacts: [
+                      ...s.contacts,
+                      { name: "", phone: "", relation: "" },
+                    ],
+                  })
+                }
+              >
+                ＋ Add contact
+              </Button>
+            </>
+          ) : null}
         </CardContent>
       </Card>
 

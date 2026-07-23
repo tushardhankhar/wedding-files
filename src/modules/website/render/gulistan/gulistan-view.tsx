@@ -102,7 +102,7 @@ export function GulistanView(props: WebsiteViewProps) {
           <m.div
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.8, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ delay: 0.25, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
           >
             <Ganesha className="h-16 w-16 sm:h-20 sm:w-20" />
           </m.div>
@@ -111,7 +111,7 @@ export function GulistanView(props: WebsiteViewProps) {
           <m.h1
             initial={{ opacity: 0, letterSpacing: "0.08em" }}
             animate={{ opacity: 1, letterSpacing: "0.16em" }}
-            transition={{ delay: 1.0, duration: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
             className="glt-title mt-5 text-[clamp(2.9rem,13vw,5.6rem)] font-bold leading-[0.92]"
           >
             <span className="block">Save</span>
@@ -124,7 +124,7 @@ export function GulistanView(props: WebsiteViewProps) {
           {/* for the wedding of */}
           <m.p
             {...RISE}
-            transition={{ delay: 1.45, duration: 0.8 }}
+            transition={{ delay: 0.85, duration: 0.7 }}
             className="glt-sans mt-5 text-[0.72rem] font-semibold uppercase tracking-[0.42em] text-[color:var(--glt-maroon)]/80 sm:text-xs"
           >
             For the wedding of
@@ -133,7 +133,7 @@ export function GulistanView(props: WebsiteViewProps) {
           {/* names — gold-foil script */}
           <m.p
             {...RISE}
-            transition={{ delay: 1.65, duration: 0.9, ease: "easeOut" }}
+            transition={{ delay: 1.0, duration: 0.8, ease: "easeOut" }}
             className="glt-names glt-foil mt-2 text-[clamp(2.8rem,15vw,5.4rem)] leading-[1.05]"
           >
             {nameParts.length === 2 ? (
@@ -150,7 +150,7 @@ export function GulistanView(props: WebsiteViewProps) {
           <m.div
             initial={{ opacity: 0, scaleX: 0.6 }}
             animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ delay: 2.05, duration: 0.7 }}
+            transition={{ delay: 1.3, duration: 0.6 }}
             className="mt-6 flex w-full max-w-sm items-center gap-3"
           >
             <span className="glt-rule flex-1" />
@@ -163,7 +163,7 @@ export function GulistanView(props: WebsiteViewProps) {
           {dateLabel ? (
             <m.p
               {...RISE}
-              transition={{ delay: 2.2, duration: 0.8 }}
+              transition={{ delay: 1.4, duration: 0.7 }}
               className="glt-date mt-4 text-[clamp(1.3rem,5.5vw,2rem)] font-semibold uppercase tracking-[0.16em] text-[color:var(--glt-maroon)]"
             >
               {dateLabel}
@@ -172,7 +172,7 @@ export function GulistanView(props: WebsiteViewProps) {
           {city || weekday ? (
             <m.p
               {...RISE}
-              transition={{ delay: 2.35, duration: 0.7 }}
+              transition={{ delay: 1.5, duration: 0.6 }}
               className="glt-sans mt-1 text-xs uppercase tracking-[0.4em] text-[color:var(--glt-ink-soft)]"
             >
               {[weekday, city].filter(Boolean).join(" · ")}
@@ -183,7 +183,7 @@ export function GulistanView(props: WebsiteViewProps) {
           <m.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.5, duration: 1.1, ease: "easeOut" }}
+            transition={{ delay: 1.65, duration: 0.9, ease: "easeOut" }}
             className="glt-scene relative mt-9 w-full max-w-md"
           >
             <div className="glt-scene-sky relative aspect-[5/4] w-full overflow-hidden rounded-t-[999px]">
@@ -195,7 +195,7 @@ export function GulistanView(props: WebsiteViewProps) {
           {/* romantic quote */}
           <m.p
             {...RISE}
-            transition={{ delay: 2.85, duration: 0.9 }}
+            transition={{ delay: 1.95, duration: 0.8 }}
             className="glt-quote mt-8 max-w-md text-[clamp(1.35rem,5vw,1.9rem)] leading-snug text-[color:var(--glt-maroon)]"
           >
             &ldquo;{quote}&rdquo;
@@ -204,7 +204,7 @@ export function GulistanView(props: WebsiteViewProps) {
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 3.05, duration: 0.7 }}
+            transition={{ delay: 2.1, duration: 0.6 }}
             className="mt-4 text-2xl text-[color:var(--glt-rose-deep)]"
             aria-hidden
           >
@@ -216,7 +216,7 @@ export function GulistanView(props: WebsiteViewProps) {
             <m.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.2, duration: 0.8 }}
+              transition={{ delay: 2.25, duration: 0.7 }}
               className="mt-8"
             >
               <FlipCountdown
@@ -233,7 +233,7 @@ export function GulistanView(props: WebsiteViewProps) {
             <m.a
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.4, duration: 0.7 }}
+              transition={{ delay: 2.4, duration: 0.6 }}
               href={calUrl}
               target="_blank"
               rel="noreferrer"
@@ -247,7 +247,7 @@ export function GulistanView(props: WebsiteViewProps) {
             <m.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.55, duration: 0.7 }}
+              transition={{ delay: 2.55, duration: 0.6 }}
               className="glt-names glt-foil mt-8 text-[clamp(1.5rem,7vw,2.4rem)]"
             >
               #{config.footer.hashtag}

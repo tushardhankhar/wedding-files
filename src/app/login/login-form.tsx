@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import {
-  signInAction,
+  requestMagicLinkAction,
   type AuthFormState,
 } from "@/modules/auth/server/actions";
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,22 @@ import { Label } from "@/components/ui/label";
 const initialState: AuthFormState = {};
 
 export function LoginForm() {
-  const [state, signIn, pending] = useActionState(signInAction, initialState);
-  const error = state.error;
+  const [state, request, pending] = useActionState(
+    requestMagicLinkAction,
+    initialState
+  );
 
   return (
-    <form action={signIn} className="space-y-4">
+    <form action={request} className="space-y-4">
+      {/* Honeypot — real users leave this blank. */}
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+      />
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -27,31 +38,25 @@ export function LoginForm() {
           required
           placeholder="you@example.com"
         />
+        <p className="text-xs text-muted-foreground">
+          We&apos;ll email you a sign-in link — no password needed.
+        </p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          placeholder="At least 8 characters"
-        />
-      </div>
-
-      {error ? (
+      {state.error ? (
         <p className="text-sm text-destructive" role="alert">
-          {error}
+          {state.error}
+        </p>
+      ) : null}
+      {state.message ? (
+        <p className="text-sm text-muted-foreground" role="status">
+          {state.message}
         </p>
       ) : null}
 
-      <div className="pt-2">
-        <Button type="submit" className="w-full" disabled={pending}>
-          {pending ? "Signing in…" : "Sign in"}
-        </Button>
-      </div>
+      <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? "Sending…" : "Email me a sign-in link"}
+      </Button>
     </form>
   );
 }

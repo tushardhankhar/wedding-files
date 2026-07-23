@@ -46,6 +46,8 @@ export function WeddingForm({
   // visibility change per theme subject.
   const nameLabels = subject?.labels ?? ["Partner one", "Partner two"];
   const showSecondName = subject ? subject.names === 2 : true;
+  // Save-the-dates freeze both names — neither may be left blank.
+  const namesRequired = subject?.required ?? false;
 
   // Controlled inputs — a post-save revalidate re-renders this form with the
   // freshly-saved values, which would trip Base UI's "uncontrolled defaultValue
@@ -86,6 +88,7 @@ export function WeddingForm({
           <Input
             id="name1"
             name="name1"
+            required={namesRequired}
             maxLength={120}
             value={name1}
             onChange={(e) => setName1(e.target.value)}
@@ -97,6 +100,7 @@ export function WeddingForm({
             <Input
               id="name2"
               name="name2"
+              required={namesRequired}
               maxLength={120}
               value={name2}
               onChange={(e) => setName2(e.target.value)}

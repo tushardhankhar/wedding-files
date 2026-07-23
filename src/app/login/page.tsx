@@ -4,10 +4,16 @@ import { getCurrentUser } from "@/modules/auth/server/user";
 import { InvitationShell } from "@/components/brand/invitation-shell";
 import { LoginForm } from "./login-form";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
   // Already signed in → skip the login screen.
   const user = await getCurrentUser();
   if (user) redirect("/dashboard");
+
+  const { error } = await searchParams;
 
   return (
     <>
@@ -22,6 +28,11 @@ export default async function LoginPage() {
         subtitle="Sign in to craft and manage your celebrations."
         footer="Invited by your planner? Open your link to set up your account."
       >
+        {error === "auth" ? (
+          <p className="mb-4 text-sm text-destructive" role="alert">
+            That sign-in link was invalid or has expired. Please try again.
+          </p>
+        ) : null}
         <LoginForm />
       </InvitationShell>
     </>

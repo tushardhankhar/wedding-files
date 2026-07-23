@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
-import { THEMES } from "@/modules/website/themes/registry";
+import { THEMES, getTheme } from "@/modules/website/themes/registry";
 import { createWeddingSchema, updateWeddingSchema } from "../schema";
+import { getWeddingById } from "./queries";
 import {
   createWedding,
   deleteWedding,
@@ -13,6 +14,16 @@ import {
 } from "./mutations";
 
 export type WeddingFormState = { error?: string; saved?: boolean };
+
+/** Save-the-dates freeze both names — neither may be blank. Mirrors the
+ * `required` flag on the theme's subjectSpec that the forms enforce client-side. */
+function bothNamesMissing(
+  themeId: string | null | undefined,
+  name1?: string,
+  name2?: string
+): boolean {
+  return getTheme(themeId).subjectSpec.required === true && (!name1 || !name2);
+}
 
 function parseForm(formData: FormData) {
   // A field the form omits (e.g. the title, which is read-only for clients)
@@ -40,6 +51,9 @@ export async function createWeddingAction(
   if (parsed.data.themeId && !THEMES.some((t) => t.id === parsed.data.themeId)) {
     return { error: "Please choose a theme." };
   }
+  if (bothNamesMissing(parsed.data.themeId, parsed.data.name1, parsed.data.name2)) {
+    return { error: "Both names are required." };
+  }
 
   const wedding = await createWedding(parsed.data);
   revalidatePath("/dashboard");
@@ -54,6 +68,11 @@ export async function updateWeddingAction(
   const parsed = updateWeddingSchema.safeParse(parseForm(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+  }
+
+  const existing = await getWeddingById(id);
+  if (existing && bothNamesMissing(existing.themeId, parsed.data.name1, parsed.data.name2)) {
+    return { error: "Both names are required." };
   }
 
   const allowRename = await isCurrentUserAdmin();

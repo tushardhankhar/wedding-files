@@ -65,13 +65,20 @@ export default async function GuestHome({
 
   const theme = getTheme(data.wedding.themeId);
   const props = buildSiteProps(data.wedding, data.events);
+  const chip = { en: data.mode === "share" ? "Guest" : data.label };
+
+  // Save-the-dates are an announcement, not an invitation to respond to — never
+  // surface an RSVP prompt regardless of how the guest arrived.
+  if (!theme.supports.rsvp) {
+    return <SiteView theme={theme} {...props} chip={chip} />;
+  }
 
   if (data.mode === "share") {
     return (
       <SiteView
         theme={theme}
         {...props}
-        chip={{ en: "Guest" }}
+        chip={chip}
         selfRsvp={{
           slug,
           events: data.events.map((e) => ({ id: e.id, name: e.name })),
@@ -84,7 +91,7 @@ export default async function GuestHome({
     <SiteView
       theme={theme}
       {...props}
-      chip={{ en: data.label }}
+      chip={chip}
       rsvp={{ slug, guests: data.guests, statuses: data.rsvps }}
     />
   );

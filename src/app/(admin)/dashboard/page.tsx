@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { listWeddings } from "@/modules/weddings/server/queries";
+import {
+  getAdminInviteStatus,
+  type WeddingAdminMeta,
+} from "@/modules/weddings/server/admin-queries";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
@@ -16,17 +20,53 @@ function formatDate(iso: string | null): string {
   });
 }
 
-function StatusPill({ claimed }: { claimed: boolean }) {
-  const cls = claimed
-    ? "border-emerald-600/40 bg-emerald-600/10 text-emerald-700"
-    : "border-[color:var(--gold-line)] bg-[color:var(--accent)] text-[color:var(--gold-deep)]";
+function inviteExpiryLabel(iso: string | null): string | null {
+  if (!iso) return null;
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 86_400_000);
+  if (days <= 0) return "expires today";
+  if (days === 1) return "expires in 1 day";
+  return `expires in ${days} days`;
+}
+
+const gold =
+  "border-[color:var(--gold-line)] bg-[color:var(--accent)] text-[color:var(--gold-deep)]";
+const emerald = "border-emerald-600/40 bg-emerald-600/10 text-emerald-700";
+const red = "border-destructive/40 bg-destructive/10 text-destructive";
+
+function AdminStatus({ meta }: { meta?: WeddingAdminMeta }) {
+  const status = meta?.inviteStatus ?? "none";
+  const pill: Record<string, { cls: string; label: string }> = {
+    active: { cls: emerald, label: "Client active" },
+    accepted: { cls: emerald, label: "Client active" },
+    pending: { cls: gold, label: "Invite sent" },
+    expired: { cls: red, label: "Invite expired" },
+    none: { cls: gold, label: "Awaiting client" },
+  };
+  const { cls, label } = pill[status] ?? pill.none;
+
+  // A secondary line: owning email once active, invited email + expiry while pending.
+  let detail: string | null = null;
+  if ((status === "active" || status === "accepted") && meta?.clientEmail) {
+    detail = meta.clientEmail;
+  } else if (status === "pending" && meta?.invitedEmail) {
+    const exp = inviteExpiryLabel(meta.inviteExpiresAt);
+    detail = exp ? `${meta.invitedEmail} · ${exp}` : meta.invitedEmail;
+  } else if (status === "expired" && meta?.invitedEmail) {
+    detail = meta.invitedEmail;
+  }
+
   return (
-    <span
-      className={`mt-4 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-heading text-[11px] font-semibold tracking-wide ${cls}`}
-    >
-      <span className="size-1.5 rounded-full bg-current" />
-      {claimed ? "Client active" : "Awaiting client"}
-    </span>
+    <div className="mt-4 space-y-1">
+      <span
+        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-heading text-[11px] font-semibold tracking-wide ${cls}`}
+      >
+        <span className="size-1.5 rounded-full bg-current" />
+        {label}
+      </span>
+      {detail ? (
+        <p className="truncate text-xs text-muted-foreground">{detail}</p>
+      ) : null}
+    </div>
   );
 }
 
@@ -35,6 +75,7 @@ export default async function DashboardPage() {
     listWeddings(),
     isCurrentUserAdmin(),
   ]);
+  const adminMeta = isAdmin ? await getAdminInviteStatus() : null;
 
   return (
     <div className="space-y-6">
@@ -102,7 +143,9 @@ export default async function DashboardPage() {
                         /w/{w.slug}
                       </span>
                     </p>
-                    {isAdmin ? <StatusPill claimed={w.clientId !== null} /> : null}
+                    {isAdmin ? (
+                      <AdminStatus meta={adminMeta?.get(w.id)} />
+                    ) : null}
                   </CardHeader>
                 </Card>
               </Link>
