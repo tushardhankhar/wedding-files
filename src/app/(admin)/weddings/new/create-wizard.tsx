@@ -95,6 +95,8 @@ export function CreateWizard() {
   const subject = theme?.subjectSpec;
   const labels = subject?.labels ?? ["Name", "Second name"];
   const showTwo = subject ? subject.names === 2 : true;
+  // Save-the-dates freeze both names — neither may be left blank.
+  const namesRequired = subject?.required ?? false;
   const effectiveTitle =
     titleTouched || !category ? title : suggestTitle(category, n1, n2);
 
@@ -216,6 +218,7 @@ export function CreateWizard() {
                   <Input
                     id="name1"
                     name="name1"
+                    required={namesRequired}
                     maxLength={120}
                     value={n1}
                     onChange={(e) => setN1(e.target.value)}
@@ -227,6 +230,7 @@ export function CreateWizard() {
                     <Input
                       id="name2"
                       name="name2"
+                      required={namesRequired}
                       maxLength={120}
                       value={n2}
                       onChange={(e) => setN2(e.target.value)}

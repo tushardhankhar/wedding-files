@@ -9,7 +9,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
 import { occasionLabel } from "@/modules/website/themes/registry";
-import { SetPasswordCard } from "./set-password-card";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Date not set";
@@ -154,8 +153,6 @@ export default async function DashboardPage() {
           ))}
         </ul>
       )}
-
-      {!isAdmin && weddings.length > 0 ? <SetPasswordCard /> : null}
     </div>
   );
 }

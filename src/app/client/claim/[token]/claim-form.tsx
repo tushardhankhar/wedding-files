@@ -106,7 +106,7 @@ function OtpFlow({
         <span className="font-medium text-foreground">
           {maskedEmail ?? "your email"}
         </span>
-        . We&apos;ll email a 6-digit code there to confirm it&apos;s you.
+        . We&apos;ll email a sign-in code there to confirm it&apos;s you.
       </p>
 
       {!codeSent ? (
@@ -132,16 +132,16 @@ function OtpFlow({
         <div className="space-y-3">
           <form action={verifyAction} className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="code">6-digit code</Label>
+              <Label htmlFor="code">Sign-in code</Label>
               <Input
                 id="code"
                 name="code"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                pattern="\d{6}"
-                maxLength={6}
+                pattern="\d{6,10}"
+                maxLength={10}
                 required
-                placeholder="123456"
+                placeholder="Enter the code from your email"
               />
               <p className="text-xs text-muted-foreground" role="status">
                 {reqState.message}

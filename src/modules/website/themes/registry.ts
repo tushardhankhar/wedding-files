@@ -35,6 +35,9 @@ export interface SubjectSpec {
   names: 0 | 1 | 2;
   labels: string[];
   extras?: Array<"age">;
+  /** Both names are mandatory — save-the-dates announce a couple, so neither
+   * name may be left blank (the create/edit forms mark them required). */
+  required?: boolean;
 }
 
 /**
@@ -50,6 +53,11 @@ export interface ThemeSupports {
   faq: boolean;
   events: boolean;
   countdown: boolean;
+  /** Whether this occasion collects RSVPs — surfaces the RSVP prompt on the
+   * site and the RSVPs report in the dashboard. Off for save-the-dates: they
+   * are an early announcement ("a formal invitation will follow"), not an
+   * invitation to respond to. */
+  rsvp: boolean;
 }
 
 export interface Theme {
@@ -629,8 +637,11 @@ const WEDDING_SUPPORTS: ThemeSupports = {
   faq: true,
   events: true,
   countdown: true,
+  rsvp: true,
 };
-/** Non-wedding baseline: countdown only; each theme turns on what it needs. */
+/** Non-wedding baseline: countdown only; each theme turns on what it needs.
+ * `rsvp` stays off here so save-the-dates (which use this bare baseline) never
+ * ask for a response; occasions that do collect RSVPs turn it back on. */
 const MINIMAL_SUPPORTS: ThemeSupports = {
   taglineHero: false,
   story: false,
@@ -639,6 +650,7 @@ const MINIMAL_SUPPORTS: ThemeSupports = {
   faq: false,
   events: false,
   countdown: true,
+  rsvp: false,
 };
 
 /** Category + subject + capability metadata, merged onto THEME_BASES below.
@@ -655,17 +667,17 @@ const THEME_META: Record<
   // rajasthani: { category: "wedding", subjectSpec: WEDDING_SUBJECT, supports: WEDDING_SUPPORTS }, // The Rajputana — temporarily disabled
   "save-the-date": {
     category: "save-the-date",
-    subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
+    subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
     supports: MINIMAL_SUPPORTS,
   },
   muhurat: {
     category: "save-the-date",
-    subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
+    subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
     supports: MINIMAL_SUPPORTS,
   },
   gulistan: {
     category: "save-the-date",
-    subjectSpec: { names: 2, labels: ["Name", "Second name (optional)"] },
+    subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
     supports: MINIMAL_SUPPORTS,
   },
   jharokha: {
@@ -681,22 +693,22 @@ const THEME_META: Record<
   afterparty: {
     category: "party",
     subjectSpec: { names: 1, labels: ["Guest of honour"] },
-    supports: { ...MINIMAL_SUPPORTS, events: true },
+    supports: { ...MINIMAL_SUPPORTS, events: true, rsvp: true },
   },
   confetti: {
     category: "kids-birthday",
     subjectSpec: { names: 1, labels: ["Child's name"], extras: ["age"] },
-    supports: { ...MINIMAL_SUPPORTS, gallery: true },
+    supports: { ...MINIMAL_SUPPORTS, gallery: true, rsvp: true },
   },
   "little-miracle": {
     category: "baby-shower",
     subjectSpec: { names: 2, labels: ["Parent one", "Parent two"] },
-    supports: { ...MINIMAL_SUPPORTS, gallery: true, events: true },
+    supports: { ...MINIMAL_SUPPORTS, gallery: true, events: true, rsvp: true },
   },
   "shubh-aarambh": {
     category: "housewarming",
     subjectSpec: { names: 1, labels: ["Family name"] },
-    supports: { ...MINIMAL_SUPPORTS, events: true },
+    supports: { ...MINIMAL_SUPPORTS, events: true, rsvp: true },
   },
 };
 

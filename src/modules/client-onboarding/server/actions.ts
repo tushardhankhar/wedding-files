@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireSiteUrl } from "@/lib/env";
 import { isCoolingDown } from "@/modules/auth/server/throttle";
 import { createClientInvite, revokeClientInvites } from "./mutations";
 import { sendClientInviteEmail } from "./email";
@@ -108,7 +109,8 @@ export async function requestClaimOtpAction(
   // Honeypot: bots fill hidden fields. Advance the UI without sending.
   const sentState: ClaimState = {
     sent: true,
-    message: "We emailed you a 6-digit code. Enter it below to finish setup.",
+    message:
+      "We emailed you a sign-in code — enter it below, or just tap the link in that email.",
   };
   if (String(formData.get("company") ?? "").trim()) return sentState;
 
@@ -122,10 +124,15 @@ export async function requestClaimOtpAction(
   }
 
   // shouldCreateUser handles new and returning clients identically: creates the
-  // account if absent, signs into the existing one otherwise.
+  // account if absent, signs into the existing one otherwise. emailRedirectTo
+  // makes the email's magic link land on /auth/callback and continue the claim,
+  // so BOTH typing the code and clicking the link work.
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true },
+    options: {
+      shouldCreateUser: true,
+      emailRedirectTo: `${requireSiteUrl()}/auth/callback?next=/client/claim/${token}`,
+    },
   });
   if (error) {
     return { error: "Couldn't send the code. Please try again in a moment." };
@@ -139,9 +146,11 @@ export async function verifyClaimOtpAction(
   _prev: ClaimState,
   formData: FormData
 ): Promise<ClaimState> {
-  const code = String(formData.get("code") ?? "").trim();
-  if (!/^\d{6}$/.test(code)) {
-    return { sent: true, error: "Enter the 6-digit code from your email." };
+  // Supabase's OTP length is configurable (6–10 digits); accept any of them and
+  // ignore stray spaces the user may paste in.
+  const code = String(formData.get("code") ?? "").replace(/\D/g, "");
+  if (!/^\d{6,10}$/.test(code)) {
+    return { sent: true, error: "Enter the code from your email." };
   }
 
   const supabase = await createSupabaseServerClient();
