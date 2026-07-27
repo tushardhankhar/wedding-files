@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated marketing screenshots (npm run capture:cards)
+/public/landing/theme-cards/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
