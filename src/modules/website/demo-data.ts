@@ -391,7 +391,7 @@ const SHUBH_AARAMBH: DemoDataset = {
             en: "Welcome to our new home",
             hi: "नए घर में आपका स्वागत है",
           },
-          rangoliColors: ["#D99A2B", "#B55233", "#174C4F", "#C2185B", "#2E7D32", "#7C3AED"],
+          rangoliColors: ["#C79A3D", "#9C3B21", "#123F3E", "#8E2F4C", "#3B5E3A"],
         },
       },
       footer: { hashtag: "SharmaGrihaPravesh" },

@@ -112,8 +112,9 @@ export function VowView(props: WebsiteViewProps) {
     <div className="vow" data-lang={lang}>
       {/* NAV */}
       <header className="fixed inset-x-0 top-0 z-40 border-b border-black/8 bg-[color:var(--v-white)]/92 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-          <a href="#top" className="v-serif text-lg tracking-[0.3em]">{initials}</a>
+        {/* pt clears the notch / dynamic island when saved to a home screen */}
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-8">
+          <a href="#top" className="v-serif shrink-0 text-base tracking-[0.24em] sm:text-lg sm:tracking-[0.3em]">{initials}</a>
           <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
             {links.map(([href, en, hi]) => <a key={href} href={href} className="v-link text-[11px] font-medium uppercase tracking-[0.25em] text-black/60 transition-colors hover:text-black"><TT en={en} hi={hi} /></a>)}
           </nav>
@@ -127,9 +128,18 @@ export function VowView(props: WebsiteViewProps) {
       </header>
 
       {menu ? (
-        <div className="fixed inset-0 z-[70] flex flex-col justify-center gap-6 bg-[color:var(--v-white)] px-8 duration-300 animate-in fade-in" role="dialog" aria-modal="true">
-          <button type="button" onClick={() => setMenu(false)} className="absolute right-6 top-6 text-xs font-medium uppercase tracking-widest">Close</button>
-          {links.map(([href, en, hi]) => <a key={href} href={href} onClick={() => setMenu(false)} className="v-serif text-5xl"><TT en={en} hi={hi} /></a>)}
+        <div className="fixed inset-0 z-[70] flex flex-col justify-center gap-5 overflow-y-auto bg-[color:var(--v-white)] px-8 py-24 duration-300 animate-in fade-in" role="dialog" aria-modal="true">
+          <button type="button" onClick={() => setMenu(false)} className="absolute right-6 top-[max(1.5rem,env(safe-area-inset-top))] text-xs font-medium uppercase tracking-widest">Close</button>
+          {links.map(([href, en, hi]) => <a key={href} href={href} onClick={() => setMenu(false)} className="v-serif text-[clamp(2.25rem,11vw,3rem)] leading-tight"><TT en={en} hi={hi} /></a>)}
+          {/* The desktop bar hides its language switch below md — without this,
+            * phone guests have no way to read the site in Hindi. */}
+          <div className="mt-6 flex items-center gap-5 border-t border-black/10 pt-6">
+            {(["en", "hi"] as const).map((l) => (
+              <button key={l} type="button" onClick={() => setLang(l)} aria-pressed={lang === l} className={`text-xs font-medium uppercase tracking-[0.25em] ${lang === l ? "text-black underline underline-offset-4" : "text-black/40"}`}>
+                {l === "en" ? "English" : "हिंदी"}
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
 
@@ -140,13 +150,20 @@ export function VowView(props: WebsiteViewProps) {
         <div className="pointer-events-none absolute left-1/2 top-24 h-80 w-80 -translate-x-1/2 rounded-full opacity-50" style={{ background: "radial-gradient(circle, var(--v-champ), transparent 70%)", filter: "blur(48px)" }} aria-hidden />
         <div className="relative mx-auto max-w-6xl text-center">
           <VowSeal initials={sealInitials} />
-          <p className="v-in flex items-center justify-center gap-4 text-[11px] font-medium uppercase tracking-[0.4em] text-black/50" style={{ animationDelay: "260ms" }}>
-            <span className="h-px w-8 bg-black/25" aria-hidden /><TT en="The wedding of" hi="विवाह" /><span className="h-px w-8 bg-black/25" aria-hidden />
+          <p className="v-in flex items-center justify-center gap-3 text-[10px] font-medium uppercase tracking-[0.24em] text-black/50 sm:gap-4 sm:text-[11px] sm:tracking-[0.4em]" style={{ animationDelay: "260ms" }}>
+            <span className="h-px w-5 bg-black/25 sm:w-8" aria-hidden /><TT en="The wedding of" hi="विवाह" /><span className="h-px w-5 bg-black/25 sm:w-8" aria-hidden />
           </p>
-          <div className="mt-7 flex items-center justify-center gap-3 sm:gap-8">
-            <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight"><Rise delay={340}>{pair ? pair[0] : names}</Rise></h1>
+          {/* Below sm the names stack with an ampersand between them — set side by
+            * side they overflow any phone. From sm up they flank the portrait. */}
+          <div className="mt-6 flex flex-col items-center gap-1 sm:mt-7 sm:flex-row sm:justify-center sm:gap-8">
+            <h1 className="v-name v-serif w-full text-[clamp(2.5rem,15vw,10rem)] font-medium leading-[1.05] tracking-tight sm:w-auto sm:text-[clamp(3rem,12vw,10rem)] sm:leading-none"><Rise delay={340}>{pair ? pair[0] : names}</Rise></h1>
             {pair ? (
               <>
+                <span className="flex items-center gap-3 py-1 sm:hidden" aria-hidden>
+                  <span className="h-px w-9 bg-[color:var(--v-champ)]" />
+                  <span className="v-serif text-xl italic text-[color:var(--v-sage)]">&amp;</span>
+                  <span className="h-px w-9 bg-[color:var(--v-champ)]" />
+                </span>
                 <div className="relative hidden h-64 w-24 shrink-0 overflow-hidden sm:block lg:h-96 lg:w-40" data-tw-reveal>
                   <span className="pointer-events-none absolute inset-1 z-10 border border-[color:var(--v-champ)]/70" aria-hidden />
                   {images[0] ? (
@@ -156,14 +173,14 @@ export function VowView(props: WebsiteViewProps) {
                     <div data-vcolor className="h-full w-full" style={{ background: "linear-gradient(150deg,#7e9278,#354438 70%,#181818)" }} />
                   )}
                 </div>
-                <h1 className="v-serif text-[clamp(3rem,13vw,10rem)] font-medium leading-none tracking-tight"><Rise delay={520}>{pair[1]}</Rise></h1>
+                <h1 className="v-name v-serif w-full text-[clamp(2.5rem,15vw,10rem)] font-medium leading-[1.05] tracking-tight sm:w-auto sm:text-[clamp(3rem,12vw,10rem)] sm:leading-none"><Rise delay={520}>{pair[1]}</Rise></h1>
               </>
             ) : null}
           </div>
-          <p className="v-in mt-8 text-[11px] font-medium uppercase tracking-[0.4em] text-black/60" style={{ animationDelay: "700ms" }}>{longDate(countdownDate, true) || dateLabel}{city ? ` · ${city}` : ""}</p>
-          <p className="v-script v-in mt-4 text-[clamp(2rem,5vw,3rem)] leading-none text-[color:var(--v-sage)]" style={{ animationDelay: "820ms" }}><TT en="We saved you a seat." hi="हमने आपके लिए एक जगह रखी है।" /></p>
-          {hasRsvp ? <a href="#rsvp" className="v-btn v-in mt-9 inline-block border border-black px-9 py-4 text-[11px] font-medium uppercase tracking-[0.3em]" style={{ animationDelay: "940ms" }}><TT en="Open invitation" hi="निमंत्रण खोलें" /></a> : null}
-          <div className="v-in mt-16 flex flex-col items-center gap-3 text-[10px] font-medium uppercase tracking-[0.3em] text-black/40" style={{ animationDelay: "1100ms" }} aria-hidden>
+          <p className="v-in mt-7 text-[10px] font-medium uppercase tracking-[0.24em] text-black/60 sm:mt-8 sm:text-[11px] sm:tracking-[0.4em]" style={{ animationDelay: "700ms" }}>{longDate(countdownDate, true) || dateLabel}{city ? ` · ${city}` : ""}</p>
+          <p className="v-script v-in mt-4 text-[clamp(1.65rem,7vw,3rem)] leading-[1.15] text-[color:var(--v-sage)]" style={{ animationDelay: "820ms" }}><TT en="We saved you a seat." hi="हमने आपके लिए एक जगह रखी है।" /></p>
+          {hasRsvp ? <a href="#rsvp" className="v-btn v-in mt-8 inline-block border border-black px-7 py-3.5 text-[10px] font-medium uppercase tracking-[0.25em] sm:mt-9 sm:px-9 sm:py-4 sm:text-[11px] sm:tracking-[0.3em]" style={{ animationDelay: "940ms" }}><TT en="Open invitation" hi="निमंत्रण खोलें" /></a> : null}
+          <div className="v-in mt-12 flex flex-col items-center gap-3 text-[10px] font-medium uppercase tracking-[0.3em] text-black/40 sm:mt-16" style={{ animationDelay: "1100ms" }} aria-hidden>
             <TT en="Scroll" hi="नीचे" />
             <span className="v-cue-line block h-10 w-px bg-black/30" />
           </div>

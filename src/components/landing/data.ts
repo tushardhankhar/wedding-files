@@ -109,7 +109,7 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "afterparty", name: "The Afterparty", vibe: "Bachelor / Bachelorette", tagline: "You're on the list.", art: "afterparty", palette: ["#09090B", "#7C3AED", "#EC4899"], demo: "afterparty", category: "other" },
   { id: "confetti", name: "The Confetti", vibe: "Kids' birthday", tagline: "Let the magic begin.", art: "confetti", palette: ["#60A5FA", "#FACC15", "#FB7185"], demo: "confetti", category: "other" },
   { id: "little-miracle", name: "The Little Miracle", vibe: "Baby shower & naming", tagline: "A wish upon a star.", art: "little-miracle", palette: ["#DCEAF7", "#F6D6D6", "#C5A46D"], demo: "little-miracle", category: "other" },
-  { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#B55233", "#D99A2B", "#174C4F"], demo: "shubh-aarambh", category: "other" },
+  { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#5C2113", "#9C3B21", "#C79A3D"], demo: "shubh-aarambh", category: "other" },
 ];
 
 // ── Pricing ────────────────────────────────────────────────────────────────

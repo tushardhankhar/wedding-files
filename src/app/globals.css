@@ -510,9 +510,19 @@
   animation: vow-draw 2.6s cubic-bezier(.6,.02,.2,1) 0.2s forwards;
 }
 
+/* Hero names. Stacked on phones, a single long name can't wrap — let it break
+ * rather than run off the screen. Scoped below the sm breakpoint on purpose:
+ * `anywhere` also shrinks the flex min-content size, which would collapse the
+ * side-by-side desktop pairing. */
+@media (max-width: 639px) {
+  .vow .v-name { max-width: 100%; overflow-wrap: anywhere; }
+}
+
 /* a mount entrance: each word rises from behind a mask */
 @keyframes vow-rise { from { transform: translateY(115%); } to { transform: none; } }
-.vow .v-mask { display: inline-block; overflow: hidden; vertical-align: bottom; }
+/* The bottom padding keeps serif descenders from being clipped by the mask's
+ * overflow at the hero's tight line-height. */
+.vow .v-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.09em; }
 .vow .v-rise { display: inline-block; transform: translateY(115%); animation: vow-rise 1.05s cubic-bezier(.19,1,.22,1) forwards; }
 
 /* soft fade-in on mount for supporting lines */
@@ -1398,88 +1408,245 @@
 }
 
 /* ── AnimatedDoorReveal skin (currently used by Shubh Aarambh) ────────────── */
-.adr { background: #2a1a12; border: 1px solid rgba(217,154,43,0.3); }
+.adr {
+  background: radial-gradient(120% 100% at 50% 50%, #2C1108 0%, #170802 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(235,199,122,0.22),
+    inset 0 0 70px rgba(0,0,0,0.6),
+    0 40px 80px -44px rgba(24,9,3,0.85);
+}
+/* Warm pool of light spilling out of the open doorway. Deliberately kept below
+ * ~55% so the ivory/brass type laid over it never washes out. */
 .adr-light {
-  background: radial-gradient(60% 70% at 50% 55%, rgba(255,214,120,0.95), rgba(217,154,43,0.4) 45%, rgba(181,82,51,0.12) 70%, transparent 80%);
+  background: radial-gradient(66% 72% at 50% 52%, rgba(255,214,140,0.52), rgba(214,150,60,0.34) 38%, rgba(140,50,26,0.20) 66%, transparent 82%);
 }
 .adr-door {
   position: absolute; top: 0; bottom: 0; width: 50%; z-index: 15;
-  background: linear-gradient(100deg, #7a3b22, #b55233 60%, #a34627);
-  backface-visibility: hidden; box-shadow: inset 0 0 44px rgba(0,0,0,0.4);
+  background:
+    linear-gradient(96deg, #4E1B0D 0%, #8A3018 44%, #77290F 66%, #3F1409 100%);
+  backface-visibility: hidden;
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(235,199,122,0.14);
 }
-.adr-door-l { left: 0; border-right: 1px solid rgba(217,154,43,0.5); }
-.adr-door-r { right: 0; border-left: 1px solid rgba(217,154,43,0.5); }
-.sa-door-panel { fill: rgba(0,0,0,0.12); stroke: var(--sa-saffron); stroke-width: 1; }
-.sa-door-line { stroke: var(--sa-saffron); }
-.sa-door-stud { fill: var(--sa-saffron); }
-.sa-door-knob { fill: #f0d08a; }
+.adr-door-l { left: 0; border-right: 1px solid rgba(235,199,122,0.4); }
+.adr-door-r { right: 0; border-left: 1px solid rgba(235,199,122,0.4); }
+/* Brass hardware — drawn as elements, not SVG, so it never stretches with the
+ * non-uniform door viewBox. */
+.adr-knob {
+  position: absolute; top: 50%; z-index: 16;
+  width: 15px; height: 15px; margin-top: -7px; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #FBEBC2, #C79A3D 58%, #7E560F);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.55), 0 0 0 4px rgba(235,199,122,0.14);
+}
+.adr-knob-l { right: 14px; }
+.adr-knob-r { left: 14px; }
+.sa-door-panel { fill: rgba(0,0,0,0.16); stroke: rgba(235,199,122,0.55); stroke-width: 0.9; }
+.sa-door-line { stroke: rgba(235,199,122,0.72); stroke-width: 1; }
+.sa-door-jaali { stroke: rgba(235,199,122,0.30); stroke-width: 0.7; }
 
-/* ── 10 · The Shubh Aarambh ──────────────────────────────────────────────── */
+/* ── 10 · The Shubh Aarambh ──────────────────────────────────────────────────
+ * Palette discipline: rosewood (--sa-terracotta) · brass (--sa-saffron) ·
+ * ivory (--sa-ivory), with a warm ink for body copy. Every text colour below is
+ * chosen to clear 4.5:1 on the ground it actually sits on — the dark hero uses
+ * ivory/brass-lite, the light body uses ink/rosewood/brass-deep. */
 .sa {
-  background: var(--sa-ivory, #fff8ea);
-  color: var(--sa-charcoal, #342c28);
+  background: var(--sa-ivory, #FAF4E9);
+  color: var(--sa-charcoal, #2B221B);
   font-family: var(--font-raleway), system-ui, sans-serif;
   min-height: 100dvh; overflow-x: clip;
 }
 .sa-serif { font-family: var(--font-cormorant), Georgia, serif; }
-.sa ::selection { background: var(--sa-saffron); color: #fff; }
+.sa-deva { font-family: var(--font-noto-deva), var(--font-raleway), system-ui, sans-serif; }
+.sa ::selection { background: var(--sa-terracotta); color: var(--sa-ivory); }
+.sa :focus-visible { outline: 2px solid var(--sa-gold-deep); outline-offset: 3px; border-radius: 6px; }
 
-.sa-dot {
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.7);
-  box-shadow: 0 4px 10px -4px rgba(0,0,0,0.3); transition: transform 0.15s ease;
+/* Hero — a deep rosewood room the doors stand in, fading up into the ivory page. */
+.sa-hero {
+  position: relative; isolation: isolate;
+  background:
+    radial-gradient(90% 62% at 50% 32%, rgba(199,154,61,0.22), transparent 64%),
+    linear-gradient(180deg, #2C1108 0%, #52200F 52%, #6E2916 100%);
 }
-.sa-dot-on { transform: scale(1.18); box-shadow: 0 0 0 3px var(--sa-charcoal); }
-.sa-seg { cursor: pointer; transition: fill 0.35s ease; }
+.sa-hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.09;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(235,199,122,0.9) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(235,199,122,0.9) 0 1px, transparent 1px 24px);
+  mask-image: radial-gradient(120% 90% at 50% 45%, #000 20%, transparent 78%);
+}
+.sa-hero::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 140px; z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--sa-ivory));
+}
+.sa-hero-eyebrow { color: rgba(250,244,233,0.82); text-shadow: 0 1px 10px rgba(50,16,4,0.7); }
+.sa-hero-title { color: var(--sa-ivory); text-shadow: 0 2px 28px rgba(50,16,4,0.75); }
+.sa-hero-sub { color: #F3D69B; text-shadow: 0 1px 12px rgba(50,16,4,0.8); }
+.sa-hero-date { color: rgba(250,244,233,0.86); text-shadow: 0 1px 10px rgba(50,16,4,0.7); }
+.sa-navlink { color: rgba(250,244,233,0.92); }
+.sa-chip {
+  border: 1px solid rgba(235,199,122,0.45); background: rgba(44,17,8,0.42);
+  color: var(--sa-gold-lite); backdrop-filter: blur(6px);
+}
 
+/* Alternating warm band + hairline brass rules give the long page a rhythm. */
+.sa-band { background: linear-gradient(180deg, #F6EDDE, var(--sa-cream, #F3E8D5)); }
+.sa-rule {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, rgba(199,154,61,0.55), transparent);
+}
+.sa-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--sa-gold-deep);
+}
+.sa-eyebrow::before, .sa-eyebrow::after {
+  content: ""; width: clamp(18px, 6vw, 34px); height: 1px; background: var(--sa-saffron); opacity: 0.7;
+}
+.sa-h2 { color: var(--sa-terracotta); }
+.sa-lede { color: var(--w-ink-soft, #6B5A4B); }
+
+.sa-card {
+  background: var(--sa-surface, #FFFBF2);
+  border: 1px solid var(--w-line, #E6D7BD); border-radius: 22px;
+  box-shadow: 0 26px 54px -34px rgba(60,26,10,0.42), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Rangoli — palette dots and segments. */
+.sa-dot {
+  width: 38px; height: 38px; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.5), 0 4px 10px -4px rgba(43,34,27,0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.sa-dot:hover { transform: translateY(-2px); }
+.sa-dot-on {
+  transform: scale(1.16);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.85),
+    0 0 0 2px var(--sa-ivory), 0 0 0 4px var(--sa-gold-deep),
+    0 6px 14px -6px rgba(43,34,27,0.5);
+}
+.sa-seg { cursor: pointer; transition: fill 0.4s ease; }
+.sa-seg:hover { fill: rgba(199,154,61,0.18); }
+.sa-seg[data-filled="1"]:hover { fill: inherit; }
+.sa-rangoli-glow { filter: drop-shadow(0 10px 26px rgba(122,42,20,0.18)); }
+
+/* Countdown — cast-brass medallions. */
 .sa-medallion {
-  position: relative; width: clamp(58px, 15vw, 88px); height: clamp(58px, 15vw, 88px);
+  position: relative; width: clamp(62px, 16vw, 92px); height: clamp(62px, 16vw, 92px);
   border-radius: 50%; display: grid; place-items: center; overflow: hidden; perspective: 420px;
-  background: radial-gradient(circle at 38% 32%, #f0d08a, #c98f2a 55%, #9a6a1e);
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -4px 8px rgba(0,0,0,0.3), 0 10px 24px -12px rgba(154,106,30,0.7);
+  background: radial-gradient(circle at 36% 30%, #F6E2AE, #C79A3D 52%, #8A6114 100%);
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,0.55), inset 0 -5px 10px rgba(74,44,4,0.42),
+    0 0 0 1px rgba(138,97,20,0.35), 0 14px 28px -16px rgba(122,42,20,0.6);
+}
+.sa-medallion::after {
+  content: ""; position: absolute; inset: 6px; border-radius: 50%;
+  border: 1px solid rgba(90,62,10,0.28); pointer-events: none;
 }
 .sa-medallion-num {
   position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden;
-  font-family: var(--font-cormorant), Georgia, serif; font-weight: 600;
-  font-size: clamp(1.5rem, 5.5vw, 2.2rem); color: #3a2410; font-variant-numeric: tabular-nums;
+  font-family: var(--font-cormorant), Georgia, serif; font-weight: 700;
+  font-size: clamp(1.6rem, 5.6vw, 2.3rem); color: #33200A; font-variant-numeric: tabular-nums;
 }
-.sa-medallion-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sa-teal); }
+.sa-medallion-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--sa-gold-deep);
+}
 
+/* Blessing envelope — rosewood paper with a brass seal. */
 .sa-env-body {
-  border-radius: 12px;
-  background: linear-gradient(160deg, #b55233, #9a4327);
-  box-shadow: inset 0 0 0 1px rgba(217,154,43,0.4), 0 16px 34px -18px rgba(181,82,51,0.6);
+  border-radius: 14px;
+  background: linear-gradient(155deg, #A5401F 0%, #7E2A12 58%, #6B2614 100%);
+  box-shadow: inset 0 0 0 1px rgba(235,199,122,0.38), 0 28px 52px -28px rgba(90,30,12,0.75);
 }
 .sa-env-flap {
-  height: 46%;
-  background: linear-gradient(160deg, #c8663f, #a8492b);
+  height: 48%;
+  background: linear-gradient(155deg, #B7492A, #8E3319);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
-  border-radius: 12px 12px 0 0; z-index: 5;
+  border-radius: 14px 14px 0 0; z-index: 5;
+  filter: drop-shadow(0 3px 4px rgba(52,14,4,0.35));
+}
+.sa-env-seal {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 18px; color: #4A3208;
+  background: radial-gradient(circle at 36% 30%, #F6E2AE, #C79A3D 55%, #8A6114);
+  box-shadow: 0 4px 12px -4px rgba(43,20,4,0.7), inset 0 0 0 1px rgba(255,255,255,0.35);
+}
+.sa-env-hint {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(250,244,233,0.9);
 }
 .sa-bless-card {
-  background: #fffdf6; border: 1px solid var(--w-line, #eaddc6); border-radius: 16px;
-  padding: 1.6rem 1.4rem; text-align: center;
-  box-shadow: 0 18px 40px -18px rgba(52,44,40,0.35);
+  background: var(--sa-surface, #FFFBF2);
+  border: 1px solid var(--w-line, #E6D7BD); border-radius: 18px;
+  padding: 1.7rem 1.5rem; text-align: center;
+  box-shadow: 0 26px 54px -26px rgba(60,26,10,0.42);
+}
+.sa-bless-card::before {
+  content: ""; display: block; width: 44px; height: 1px; margin: 0 auto 1rem;
+  background: linear-gradient(90deg, transparent, var(--sa-saffron), transparent);
 }
 
-.sa-tl-line { background: linear-gradient(180deg, var(--sa-saffron), var(--sa-terracotta) 70%, transparent); border-radius: 2px; }
-.sa-tl-diya { font-size: 20px; filter: drop-shadow(0 0 6px rgba(217,154,43,0.6)); }
-
-.sa-map {
-  background: #fffdf6; border: 1px solid var(--w-line, #eaddc6); border-radius: 22px;
-  box-shadow: 0 16px 36px -20px rgba(52,44,40,0.3);
+/* Ceremony timeline. */
+.sa-tl-line {
+  background: linear-gradient(180deg, rgba(199,154,61,0), var(--sa-saffron) 12%, var(--sa-terracotta) 78%, rgba(156,59,33,0));
+  border-radius: 2px;
 }
+.sa-tl-node {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sa-ivory);
+  box-shadow: 0 0 0 1px rgba(199,154,61,0.55), 0 0 14px rgba(199,154,61,0.45);
+}
+.sa-tl-time {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--sa-gold-deep);
+}
+
+/* Venue. */
+.sa-map { position: relative; overflow: hidden; }
 .sa-directions {
-  color: #fff; background: var(--sa-teal); border-radius: 999px;
-  padding: 0.55rem 1.3rem; font-size: 0.85rem; font-weight: 600;
+  color: var(--sa-ivory); background: var(--sa-terracotta); border-radius: 999px;
+  padding: 0.6rem 1.4rem; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.02em;
+  box-shadow: 0 10px 20px -10px rgba(122,42,20,0.7);
 }
+
+/* Primary action. */
 .sa-btn {
-  font-family: var(--font-cormorant), Georgia, serif; font-size: 1.3rem; font-weight: 600; color: #fff;
+  position: relative; overflow: hidden;
+  font-family: var(--font-cormorant), Georgia, serif; font-size: clamp(1.15rem, 3.6vw, 1.35rem);
+  font-weight: 700; letter-spacing: 0.01em; color: var(--sa-ivory);
   border-radius: 999px; padding: 0.95rem 2.4rem;
-  background: linear-gradient(120deg, var(--sa-terracotta), var(--sa-saffron));
-  box-shadow: 0 16px 34px -14px rgba(181,82,51,0.7); transition: transform 0.2s ease;
+  background: linear-gradient(180deg, #A5401F 0%, #7E2A12 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(235,199,122,0.5), inset 0 1px 0 rgba(255,255,255,0.18),
+    0 20px 38px -18px rgba(122,42,20,0.7);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.sa-btn:hover { transform: translateY(-2px); }
+.sa-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(235,199,122,0.8), inset 0 1px 0 rgba(255,255,255,0.22),
+    0 26px 46px -18px rgba(122,42,20,0.75);
+}
+/* Closing section — bookends the hero so the page opens and shuts on rosewood. */
+.sa-close {
+  position: relative; isolation: isolate;
+  background:
+    radial-gradient(90% 70% at 50% 90%, rgba(199,154,61,0.20), transparent 62%),
+    linear-gradient(180deg, #6E2916 0%, #52200F 42%, #2C1108 100%);
+}
+.sa-close::before {
+  content: ""; position: absolute; inset-inline: 0; top: 0; height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(235,199,122,0.55), transparent);
+}
+.sa-close .sa-eyebrow-dark { color: var(--sa-gold-lite); }
+.sa-close .sa-eyebrow-dark::before, .sa-close .sa-eyebrow-dark::after { opacity: 0.55; }
+.sa-close-rule {
+  display: block; width: clamp(28px, 12vw, 54px); height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(235,199,122,0.7), transparent);
+}
+.sa-ornament { color: var(--sa-saffron); }
 
 /* ── The Overture — Save the Date (deep emerald + animated gold foil) ─────── */
 .std {

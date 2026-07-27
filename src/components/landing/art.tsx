@@ -92,7 +92,7 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     motif: "☾",
   },
   "shubh-aarambh": {
-    bg: "radial-gradient(70% 60% at 50% 28%, rgba(217,154,43,.55), transparent 60%), linear-gradient(165deg, #6d2f1c 0%, #b55233 58%, #174c4f 130%)",
+    bg: "radial-gradient(70% 60% at 50% 30%, rgba(199,154,61,.55), transparent 62%), linear-gradient(165deg, #2C1108 0%, #5C2113 52%, #9C3B21 110%)",
     motif: "◇",
   },
 };

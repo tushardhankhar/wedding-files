@@ -2,9 +2,35 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, m } from "motion/react";
+import { Diya } from "./diya";
 
 const INNER = "M0,0 C 11,-16 11,-34 0,-48 C -11,-34 -11,-16 0,0 Z";
 const OUTER = "M0,-52 C 13,-68 13,-86 0,-100 C -13,-86 -13,-68 0,-52 Z";
+
+/** Polar → cartesian, rounded so SSR and client serialize the same string. */
+function ring(count: number, radius: number, offsetDeg = 0) {
+  return Array.from({ length: count }, (_, k) => {
+    const a = (((k * 360) / count + offsetDeg - 90) * Math.PI) / 180;
+    return {
+      x: Number((100 + radius * Math.cos(a)).toFixed(3)),
+      y: Number((100 + radius * Math.sin(a)).toFixed(3)),
+    };
+  });
+}
+
+const KOLAM_DOTS = ring(32, 92);
+/* Sits in the empty band between the inner petal tips and the chowk border. */
+const TRACERY = ring(8, 74);
+/** Diya positions around the finished rangoli, in % of the container box —
+ * just outside the chowk border (which ends at 48%) so they read as lamps set
+ * around the pattern rather than marks on it. */
+const DIYA_SPOTS = Array.from({ length: 8 }, (_, k) => {
+  const a = ((k * 45 - 90) * Math.PI) / 180;
+  return {
+    left: Number((50 + 53 * Math.cos(a)).toFixed(3)),
+    top: Number((50 + 53 * Math.sin(a)).toFixed(3)),
+  };
+});
 
 interface Seg {
   id: number;
@@ -79,17 +105,14 @@ export function InteractiveRangoli({
         ))}
       </div>
 
-      <div className="relative mx-auto" style={{ maxWidth: 340 }}>
-        <svg viewBox="0 0 200 200" className="w-full">
-          <circle
-            cx="100"
-            cy="100"
-            r="97"
-            fill="none"
-            stroke="var(--sa-saffron)"
-            strokeWidth="0.6"
-            opacity="0.4"
-          />
+      <div className="relative mx-auto" style={{ maxWidth: 360 }}>
+        <svg viewBox="0 0 200 200" className="sa-rangoli-glow w-full">
+          {/* Chowk border: twin brass rings with a ring of kolam dots between. */}
+          <circle cx="100" cy="100" r="96" fill="none" stroke="var(--sa-saffron)" strokeWidth="1" opacity="0.75" />
+          <circle cx="100" cy="100" r="88" fill="none" stroke="var(--sa-saffron)" strokeWidth="0.7" opacity="0.45" />
+          {KOLAM_DOTS.map((p, k) => (
+            <circle key={`d${k}`} cx={p.x} cy={p.y} r="1.5" fill="var(--sa-saffron)" opacity="0.8" />
+          ))}
           {segments.map((s) =>
             s.kind === "circle" ? (
               <circle
@@ -99,7 +122,8 @@ export function InteractiveRangoli({
                 r="16"
                 fill={fills[s.id] ?? "transparent"}
                 stroke="var(--sa-terracotta)"
-                strokeWidth="1.2"
+                strokeWidth="1.8"
+                data-filled={fills[s.id] ? "1" : "0"}
                 className="sa-seg"
                 onClick={() => fillSeg(s.id)}
               />
@@ -110,34 +134,45 @@ export function InteractiveRangoli({
                 transform={`translate(100 100) rotate(${s.angle})`}
                 fill={fills[s.id] ?? "transparent"}
                 stroke="var(--sa-terracotta)"
-                strokeWidth="1.2"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+                data-filled={fills[s.id] ? "1" : "0"}
                 className="sa-seg"
                 onClick={() => fillSeg(s.id)}
               />
             )
           )}
+          {/* Fine brass tracery over the petal tips — decorative only. */}
+          {TRACERY.map((p, k) => (
+            <circle
+              key={`t${k}`}
+              cx={p.x}
+              cy={p.y}
+              r="2.2"
+              fill="none"
+              stroke="var(--sa-saffron)"
+              strokeWidth="0.8"
+              opacity="0.7"
+              pointerEvents="none"
+            />
+          ))}
         </svg>
 
         <AnimatePresence>
           {completed
-            ? Array.from({ length: 8 }).map((_, k) => {
-                const a = ((k * 45) * Math.PI) / 180;
-                const left = 50 + 46 * Math.cos(a);
-                const top = 50 + 46 * Math.sin(a);
-                return (
-                  <m.span
-                    key={k}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: k * 0.08, type: "spring", stiffness: 200, damping: 14 }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 text-2xl"
-                    style={{ left: `${left}%`, top: `${top}%` }}
-                    aria-hidden
-                  >
-                    🪔
-                  </m.span>
-                );
-              })
+            ? DIYA_SPOTS.map((p, k) => (
+                <m.span
+                  key={k}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: k * 0.08, type: "spring", stiffness: 200, damping: 14 }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${p.left}%`, top: `${p.top}%` }}
+                  aria-hidden
+                >
+                  <Diya size={28} />
+                </m.span>
+              ))
             : null}
         </AnimatePresence>
       </div>

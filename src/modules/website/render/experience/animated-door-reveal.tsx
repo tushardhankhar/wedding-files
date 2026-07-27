@@ -18,8 +18,14 @@ export interface AnimatedDoorRevealProps {
   className?: string;
 }
 
+/**
+ * Carved-panel door face. The viewBox is stretched non-uniformly to fill the
+ * door, so only shapes that tolerate distortion live here — the brass knob is a
+ * DOM element (`.adr-knob`) placed outside the SVG so it stays perfectly round.
+ */
 function DoorArt({ side }: { side: "l" | "r" }) {
-  const knobX = side === "l" ? 88 : 12;
+  const clipId = `adr-jaali-${side}`;
+  const lattice = [-3, -2, -1, 0, 1, 2, 3, 4, 5];
   return (
     <svg
       viewBox="0 0 100 200"
@@ -27,21 +33,26 @@ function DoorArt({ side }: { side: "l" | "r" }) {
       className="h-full w-full"
       aria-hidden
     >
-      {/* recessed panels */}
-      <rect x="10" y="16" width="80" height="80" rx="6" className="sa-door-panel" />
-      <rect x="10" y="104" width="80" height="80" rx="6" className="sa-door-panel" />
-      {/* jharokha arch on the top panel */}
-      <path
-        d="M20 84 L20 46 Q50 20 80 46 L80 84"
-        fill="none"
-        className="sa-door-line"
-      />
-      {/* brass studs */}
-      {[30, 56, 82].map((y) => (
-        <circle key={y} cx="50" cy={y + 60} r="2.2" className="sa-door-stud" />
-      ))}
-      {/* knob on the inner edge */}
-      <circle cx={knobX} cy="110" r="4.5" className="sa-door-knob" />
+      <defs>
+        <clipPath id={clipId}>
+          <rect x="9" y="108" width="82" height="80" rx="5" />
+        </clipPath>
+      </defs>
+      {/* recessed panels, framed in a brass hairline */}
+      <rect x="9" y="12" width="82" height="86" rx="5" className="sa-door-panel" />
+      <rect x="9" y="108" width="82" height="80" rx="5" className="sa-door-panel" />
+      {/* jharokha arch inside the upper panel */}
+      <path d="M21 92 L21 48 Q50 22 79 48 L79 92" fill="none" className="sa-door-line" />
+      <path d="M28 92 L28 53 Q50 33 72 53 L72 92" fill="none" className="sa-door-jaali" />
+      {/* jaali lattice filling the lower panel */}
+      <g clipPath={`url(#${clipId})`}>
+        {lattice.map((i) => (
+          <line key={`a${i}`} x1={9 + i * 20} y1="188" x2={9 + i * 20 + 80} y2="108" className="sa-door-jaali" />
+        ))}
+        {lattice.map((i) => (
+          <line key={`b${i}`} x1={9 + i * 20} y1="108" x2={9 + i * 20 + 80} y2="188" className="sa-door-jaali" />
+        ))}
+      </g>
     </svg>
   );
 }
@@ -117,6 +128,7 @@ export function AnimatedDoorReveal({
         transition={swing}
       >
         <DoorArt side="l" />
+        <span aria-hidden className="adr-knob adr-knob-l" />
       </m.div>
       <m.div
         className="adr-door adr-door-r"
@@ -126,6 +138,7 @@ export function AnimatedDoorReveal({
         transition={swing}
       >
         <DoorArt side="r" />
+        <span aria-hidden className="adr-knob adr-knob-r" />
       </m.div>
 
       {doorLabel ? (
