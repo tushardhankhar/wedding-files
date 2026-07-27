@@ -82,6 +82,7 @@ export default async function GuestHome({
         selfRsvp={{
           slug,
           events: data.events.map((e) => ({ id: e.id, name: e.name })),
+          existing: data.existingRsvp,
         }}
       />
     );
@@ -92,7 +93,11 @@ export default async function GuestHome({
       theme={theme}
       {...props}
       chip={chip}
-      rsvp={{ slug, guests: data.guests, statuses: data.rsvps }}
+      rsvp={{
+        slug,
+        events: data.events.map((e) => ({ id: e.id, name: e.name })),
+        existing: data.groupRsvp,
+      }}
     />
   );
 }

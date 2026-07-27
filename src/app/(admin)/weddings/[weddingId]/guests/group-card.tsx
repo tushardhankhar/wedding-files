@@ -201,10 +201,11 @@ export function GroupCard({
           )}
         </div>
 
-        {/* Members */}
+        {/* Members — optional contacts (for WhatsApp). RSVP is by family
+            headcount now, so members aren't required. */}
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Members
+            Members <span className="font-normal normal-case">(optional — for WhatsApp invites)</span>
           </p>
           {group.guests.length === 0 ? (
             <p className="text-sm text-muted-foreground">No members yet.</p>

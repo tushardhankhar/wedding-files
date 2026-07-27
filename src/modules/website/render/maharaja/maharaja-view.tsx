@@ -20,7 +20,6 @@ import {
   MaharajaGroupRsvp,
   MaharajaSelfRsvp,
   MaharajaRsvpDemo,
-  CourtConfirmation,
 } from "./maharaja-rsvp";
 import { useCountdown, pad2 } from "../use-countdown";
 
@@ -113,7 +112,6 @@ export function MaharajaView({
   const [doorsGone, setDoorsGone] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [responded, setResponded] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -148,7 +146,7 @@ export function MaharajaView({
   // nothing beneath it (no guests to loop over) — hide it entirely rather
   // than show a confusing blank block.
   const hasRsvp = Boolean(
-    (rsvp && rsvp.guests.length > 0) || selfRsvp || ownerPreview
+    (rsvp && rsvp.events.length > 0) || selfRsvp || ownerPreview
   );
   // Real family name on personal invitations; a dignified stand-in on
   // preview/demo so the welcome section still demonstrates itself.
@@ -405,13 +403,13 @@ export function MaharajaView({
                 hi="अपार हर्ष और परिवारों के आशीर्वाद सहित, हम आपको अपने साथ इस नई शुरुआत में सम्मिलित होने के लिए आमंत्रित करते हैं।"
               />
             </p>
-            {rsvp && rsvp.guests.length > 0 ? (
+            {rsvp && chip ? (
               <div className="mt-10">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--m-ink-soft)]">
                   <TT en="This invitation honours" hi="यह निमंत्रण जिनके नाम" />
                 </p>
                 <p className="m-serif mt-3 text-lg uppercase tracking-[0.3em] text-[color:var(--m-maroon)]">
-                  {rsvp.guests.map((g) => g.name).join("  ·  ")}
+                  <T value={chip} />
                 </p>
               </div>
             ) : null}
@@ -810,25 +808,22 @@ export function MaharajaView({
                 <MaharajaGroupRsvp
                   slug={rsvp.slug}
                   events={events}
-                  guests={rsvp.guests}
-                  initial={rsvp.statuses}
-                  onSaved={() => setResponded(true)}
+                  existing={rsvp.existing}
+                  initials={seal}
+                  onSaved={() => {}}
                 />
               ) : selfRsvp ? (
                 <MaharajaSelfRsvp
                   slug={selfRsvp.slug}
                   events={selfRsvp.events}
                   initials={seal}
-                  onSaved={() => setResponded(true)}
+                  existing={selfRsvp.existing}
+                  onSaved={() => {}}
                 />
               ) : (
                 <MaharajaRsvpDemo events={events} />
               )}
             </div>
-
-            {rsvp && responded ? (
-              <CourtConfirmation familyName={family ? (lang === "hi" && family.hi ? family.hi : family.en) : undefined} initials={seal} />
-            ) : null}
           </div>
         </section>
       ) : null}

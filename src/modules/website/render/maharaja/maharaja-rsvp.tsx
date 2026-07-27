@@ -3,10 +3,10 @@
 import { useState, useTransition } from "react";
 import type { WeddingEvent } from "@/modules/events/types";
 import {
-  submitRsvpAction,
-  type RsvpStatus,
-} from "@/modules/guest-access/server/rsvp";
-import { submitShareRsvpAction } from "@/modules/guest-access/server/share-rsvp";
+  submitShareRsvpAction,
+  type ExistingSelfRsvp,
+} from "@/modules/guest-access/server/share-rsvp";
+import { useGroupRsvp, type ExistingGroupRsvp } from "../use-rsvp";
 import { TT } from "../bilingual";
 import { RoyalInsignia } from "./ornaments";
 
@@ -71,91 +71,105 @@ export function CourtConfirmation({ familyName, initials }: { familyName?: strin
   );
 }
 
-/* ── Group (personal invitation) RSVP ─────────────────────────────────────── */
+/* ── Group (personal invitation) RSVP — per-event headcount for the family ── */
 export function MaharajaGroupRsvp({
   slug,
   events,
-  guests,
-  initial,
+  existing,
+  initials,
   onSaved,
 }: {
   slug: string;
   events: WeddingEvent[];
-  guests: { id: string; name: string }[];
-  initial: Record<string, Record<string, RsvpStatus>>;
+  existing: ExistingGroupRsvp;
+  initials: string;
   onSaved: () => void;
 }) {
-  const [state, setState] = useState(initial);
-  const [error, setError] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
+  const r = useGroupRsvp(slug, events, existing, onSaved);
+  const numField =
+    "w-24 border border-[color:var(--m-gold)]/40 bg-transparent px-3 py-3 text-center text-[color:var(--m-ivory)] focus:border-[color:var(--m-gold)] focus:outline-none";
 
-  function choose(eventId: string, guestId: string, status: RsvpStatus) {
-    const prev = state[eventId]?.[guestId];
-    setState((s) => ({ ...s, [eventId]: { ...s[eventId], [guestId]: status } }));
-    setError(null);
-    startTransition(async () => {
-      const res = await submitRsvpAction(slug, eventId, guestId, status);
-      if (res?.error) {
-        setState((s) => {
-          const ev = { ...s[eventId] };
-          if (prev) ev[guestId] = prev;
-          else delete ev[guestId];
-          return { ...s, [eventId]: ev };
-        });
-        setError(res.error);
-      } else {
-        onSaved();
-      }
-    });
+  if (r.done) {
+    const summary = events
+      .filter((e) => r.entries[e.id]?.attending)
+      .map((e) => `${e.name}: ${r.entries[e.id].partySize}`)
+      .join(" · ");
+    return (
+      <div className="text-center">
+        <CourtConfirmation initials={initials} />
+        <p className="mt-3 text-sm text-[color:var(--m-ivory)]/80">
+          {summary || <TT en="Not attending" hi="नहीं आ रहे" />}
+        </p>
+        <button
+          type="button"
+          onClick={r.edit}
+          className="mt-4 text-[11px] uppercase tracking-[0.28em] text-[color:var(--m-gold2)] underline underline-offset-4 hover:text-[color:var(--m-gold)]"
+        >
+          <TT en="Edit my RSVP" hi="उत्तर बदलें" />
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-14">
-      {error ? (
+      {r.error ? (
         <p className="text-center text-sm text-[#e2a49a]" role="alert">
-          {error}
+          {r.error}
         </p>
       ) : null}
-      {events.map((e) => (
-        <div key={e.id}>
-          <div className="text-center">
-            <h3 className="m-serif text-3xl uppercase tracking-[0.14em] text-[color:var(--m-ivory)]">
-              {e.name}
-            </h3>
-            <p className="mt-1 text-[11px] uppercase tracking-[0.3em] text-[color:var(--m-gold2)]/80">
-              {formatShort(e.eventDate)}
-            </p>
+      {events.map((e) => {
+        const en = r.entries[e.id] ?? { attending: true, partySize: 1 };
+        return (
+          <div key={e.id}>
+            <div className="text-center">
+              <h3 className="m-serif text-3xl uppercase tracking-[0.14em] text-[color:var(--m-ivory)]">
+                {e.name}
+              </h3>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.3em] text-[color:var(--m-gold2)]/80">
+                {formatShort(e.eventDate)}
+              </p>
+            </div>
+            <div className="mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-2">
+              <CeremonialChoice
+                tone="attend"
+                selected={en.attending}
+                onSelect={() => r.setAttending(e.id, true)}
+              >
+                <TT en="Will attend" hi="पधारेंगे" />
+              </CeremonialChoice>
+              <CeremonialChoice
+                tone="decline"
+                selected={!en.attending}
+                onSelect={() => r.setAttending(e.id, false)}
+              >
+                <TT en="Regretfully decline" hi="क्षमा करें" />
+              </CeremonialChoice>
+              {en.attending ? (
+                <label className="flex items-center gap-2 text-sm text-[color:var(--m-ivory)]/80">
+                  <TT en="How many?" hi="कितने?" />
+                  <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={en.partySize}
+                    onChange={(ev) => r.setSize(e.id, Number(ev.target.value))}
+                    className={numField}
+                  />
+                </label>
+              ) : null}
+            </div>
           </div>
-          <div className="mx-auto mt-6 max-w-xl space-y-3">
-            {guests.map((g) => {
-              const st = state[e.id]?.[g.id];
-              return (
-                <div key={g.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                  <span className="m-serif w-28 shrink-0 text-lg text-[color:var(--m-ivory)]/90">
-                    {g.name}
-                  </span>
-                  <div className="flex flex-1 gap-2">
-                    <CeremonialChoice
-                      tone="attend"
-                      selected={st === "attending"}
-                      onSelect={() => choose(e.id, g.id, "attending")}
-                    >
-                      <TT en="Will attend" hi="पधारेंगे" />
-                    </CeremonialChoice>
-                    <CeremonialChoice
-                      tone="decline"
-                      selected={st === "declined"}
-                      onSelect={() => choose(e.id, g.id, "declined")}
-                    >
-                      <TT en="Regretfully decline" hi="क्षमा करें" />
-                    </CeremonialChoice>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+        );
+      })}
+      <button
+        type="button"
+        onClick={r.submit}
+        disabled={r.pending}
+        className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
+      >
+        {r.pending ? "…" : r.saved ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}
+      </button>
     </div>
   );
 }
@@ -165,20 +179,25 @@ export function MaharajaSelfRsvp({
   slug,
   events,
   initials,
+  existing,
   onSaved,
 }: {
   slug: string;
   events: { id: string; name: string }[];
   initials: string;
+  existing?: ExistingSelfRsvp | null;
   onSaved: () => void;
 }) {
-  const [name, setName] = useState("");
-  const [size, setSize] = useState(1);
+  const [name, setName] = useState(existing?.name ?? "");
+  const [size, setSize] = useState(existing?.partySize ?? 1);
   const [selected, setSelected] = useState<Set<string>>(
-    () => new Set(events.map((e) => e.id))
+    () => new Set(existing?.eventIds ?? events.map((e) => e.id))
   );
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [savedRsvp, setSavedRsvp] = useState<ExistingSelfRsvp | null>(
+    existing ?? null
+  );
+  const [editing, setEditing] = useState(existing == null);
   const [pending, startTransition] = useTransition();
 
   function toggle(id: string) {
@@ -192,18 +211,37 @@ export function MaharajaSelfRsvp({
 
   function submit() {
     setError(null);
+    const ids = [...selected];
     startTransition(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, [...selected]);
+      const res = await submitShareRsvpAction(slug, name, size, ids);
       if (res?.error) setError(res.error);
       else {
-        setDone(true);
+        setSavedRsvp({ name: name.trim(), partySize: size, eventIds: ids });
+        setEditing(false);
         onSaved();
       }
     });
   }
 
-  if (done) {
-    return <CourtConfirmation familyName={name.trim() || undefined} initials={initials} />;
+  if (savedRsvp && !editing) {
+    return (
+      <div className="mx-auto max-w-xl space-y-4 text-center">
+        <CourtConfirmation familyName={savedRsvp.name || undefined} initials={initials} />
+        <p className="text-sm text-[color:var(--m-ivory)]/70">
+          {savedRsvp.name} · {savedRsvp.partySize} <TT en="guest(s)" hi="अतिथि" />
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            setEditing(true);
+          }}
+          className="text-[11px] uppercase tracking-[0.28em] text-[color:var(--m-gold2)] underline underline-offset-4 hover:text-[color:var(--m-gold)]"
+        >
+          <TT en="Edit my RSVP" hi="उत्तर बदलें" />
+        </button>
+      </div>
+    );
   }
 
   const field =
@@ -267,7 +305,7 @@ export function MaharajaSelfRsvp({
         disabled={pending}
         className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {pending ? "…" : <TT en="Send our response" hi="उत्तर भेजें" />}
+        {pending ? "…" : savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}
       </button>
     </div>
   );

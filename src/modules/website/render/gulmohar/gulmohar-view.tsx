@@ -5,7 +5,12 @@ import type { WebsiteViewProps } from "../website-view";
 import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime, compactDate, gcalUrl } from "../format";
-import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
+import {
+  useGroupRsvp,
+  useSelfRsvp,
+  type ExistingSelfRsvp,
+  type ExistingGroupRsvp,
+} from "../use-rsvp";
 import { useCountdown, pad2 } from "../use-countdown";
 
 /* A big abstract Gulmohar bloom — fashion-campaign floral, not stock. */
@@ -163,13 +168,6 @@ export function GulmoharView(props: WebsiteViewProps) {
             <p className="g-serif mt-8 max-w-xl text-2xl italic leading-snug" data-tw-reveal>
               <TT en="We saved you a spot on the dance floor." hi="हमने डांस फ़्लोर पर आपके लिए जगह रखी है।" />
             </p>
-            {rsvp && rsvp.guests.length > 0 ? (
-              <div className="mt-6 flex flex-wrap gap-2" data-tw-reveal>
-                {rsvp.guests.map((g, i) => (
-                  <span key={g.id} className="rounded-full px-4 py-2 text-sm font-bold text-white" style={{ background: NAV_ACCENT[i % NAV_ACCENT.length] }}>{g.name}</span>
-                ))}
-              </div>
-            ) : null}
             <p className="mt-8 text-sm font-bold uppercase tracking-[0.25em]" data-tw-reveal>
               <TT en="Here are the celebrations with your name on them ↓" hi="यहाँ हैं आपके नाम वाले आयोजन ↓" />
             </p>
@@ -344,7 +342,7 @@ export function GulmoharView(props: WebsiteViewProps) {
               <br /><span className="italic text-[color:var(--g-pink)]"><TT en="are you coming or what?" hi="आ रहे हैं या नहीं?" /></span>
             </h2>
             <div className="mt-14">
-              {rsvp ? <GulGroupRsvp slug={rsvp.slug} events={events} guests={rsvp.guests} initial={rsvp.statuses} family={family} /> : selfRsvp ? <GulSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} /> : <GulRsvpDemo events={events} />}
+              {rsvp ? <GulGroupRsvp slug={rsvp.slug} events={events} existing={rsvp.existing} family={family} /> : selfRsvp ? <GulSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} existing={selfRsvp.existing} /> : <GulRsvpDemo events={events} />}
             </div>
           </div>
         </section>
@@ -371,35 +369,56 @@ function GulChoice({ on, tone, onClick, disabled, children }: { on: boolean; ton
   return <button type="button" aria-pressed={on} disabled={disabled} onClick={onClick} className={`${base} ${on ? active : idle} ${disabled ? "cursor-default opacity-60" : ""}`}>{children}</button>;
 }
 
-function GulGroupRsvp({ slug, events, guests, initial, family }: { slug: string; events: WebsiteViewProps["events"]; guests: { id: string; name: string }[]; initial: Record<string, Record<string, "attending" | "declined">>; family: { en: string; hi?: string } | null }) {
-  const { state, error, saved, choose } = useGroupRsvp(slug, initial);
+function GulGroupRsvp({ slug, events, existing, family }: { slug: string; events: WebsiteViewProps["events"]; existing: ExistingGroupRsvp; family: { en: string; hi?: string } | null }) {
+  const r = useGroupRsvp(slug, events, existing);
+  const numField = "w-20 rounded-full border-2 border-[color:var(--g-cream)]/30 bg-transparent px-3 py-2 text-center text-[color:var(--g-cream)] focus:border-[color:var(--g-marigold)] focus:outline-none";
+
+  if (r.done) {
+    const summary = events.filter((e) => r.entries[e.id]?.attending).map((e) => `${e.name}: ${r.entries[e.id].partySize}`).join(" · ");
+    return (
+      <div className="space-y-4">
+        <p className="g-serif text-2xl italic text-[color:var(--g-marigold)]"><TT en="Yesss. We've got you" hi="बढ़िया! हमने नोट कर लिया" />{family ? `, ${family.en}` : ""}. <TT en="See you on the dance floor." hi="डांस फ़्लोर पर मिलते हैं।" /></p>
+        <p className="text-sm text-[color:var(--g-cream)]/80">{summary || <TT en="Not attending" hi="नहीं आ रहे" />}</p>
+        <button type="button" onClick={r.edit} className="text-xs font-bold uppercase tracking-widest text-[color:var(--g-cream)]/70 underline underline-offset-4 hover:text-[color:var(--g-marigold)]"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-12">
-      {error ? <p className="text-sm text-[color:var(--g-marigold)]" role="alert">{error}</p> : null}
-      {events.map((e) => (
-        <div key={e.id}>
-          <h3 className="g-serif text-3xl font-semibold text-[color:var(--g-cream)]"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
-          <div className="mt-4 space-y-3">
-            {guests.map((g) => (
-              <div key={g.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                <span className="g-serif w-28 shrink-0 text-lg italic">{g.name}</span>
-                <div className="flex flex-1 gap-2">
-                  <GulChoice on={state[e.id]?.[g.id] === "attending"} tone="yes" onClick={() => choose(e.id, g.id, "attending")}><TT en="Absolutely" hi="बिल्कुल" /></GulChoice>
-                  <GulChoice on={state[e.id]?.[g.id] === "declined"} tone="no" onClick={() => choose(e.id, g.id, "declined")}><TT en="Dancing from home" hi="घर से नाचूँगा" /></GulChoice>
-                </div>
-              </div>
-            ))}
+    <div className="space-y-10">
+      {r.error ? <p className="text-sm text-[color:var(--g-marigold)]" role="alert">{r.error}</p> : null}
+      {events.map((e) => {
+        const en = r.entries[e.id] ?? { attending: true, partySize: 1 };
+        return (
+          <div key={e.id}>
+            <h3 className="g-serif text-3xl font-semibold text-[color:var(--g-cream)]"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <GulChoice on={en.attending} tone="yes" onClick={() => r.setAttending(e.id, true)}><TT en="We'll be there" hi="हम आएँगे" /></GulChoice>
+              <GulChoice on={!en.attending} tone="no" onClick={() => r.setAttending(e.id, false)}><TT en="Can't make it" hi="नहीं आ पाएँगे" /></GulChoice>
+              {en.attending ? (
+                <label className="flex items-center gap-2 text-sm text-[color:var(--g-cream)]/80">
+                  <TT en="How many?" hi="कितने?" />
+                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                </label>
+              ) : null}
+            </div>
           </div>
-        </div>
-      ))}
-      {saved ? <p className="g-serif text-2xl italic text-[color:var(--g-marigold)]"><TT en="Yesss. We've got you" hi="बढ़िया! हमने नोट कर लिया" />{family ? `, ${family.en}` : ""}. <TT en="See you on the dance floor." hi="डांस फ़्लोर पर मिलते हैं।" /></p> : null}
+        );
+      })}
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full rounded-full bg-[color:var(--g-marigold)] px-6 py-4 text-sm font-bold uppercase tracking-widest text-[color:var(--g-ink)] disabled:opacity-60">{r.pending ? "…" : r.saved ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Count us in!" hi="हमें गिनो!" />}</button>
     </div>
   );
 }
 
-function GulSelfRsvp({ slug, events }: { slug: string; events: { id: string; name: string }[] }) {
-  const r = useSelfRsvp(slug, events.map((e) => e.id));
-  if (r.done) return <p className="g-serif text-3xl italic text-[color:var(--g-marigold)]"><TT en="Yesss! See you on the dance floor 💃" hi="बढ़िया! डांस फ़्लोर पर मिलते हैं 💃" /></p>;
+function GulSelfRsvp({ slug, events, existing }: { slug: string; events: { id: string; name: string }[]; existing?: ExistingSelfRsvp | null }) {
+  const r = useSelfRsvp(slug, events.map((e) => e.id), existing);
+  if (r.done) return (
+    <div className="space-y-4 text-center">
+      <p className="g-serif text-3xl italic text-[color:var(--g-marigold)]"><TT en="Yesss! See you on the dance floor 💃" hi="बढ़िया! डांस फ़्लोर पर मिलते हैं 💃" /></p>
+      <p className="text-sm text-[color:var(--g-cream)]/70">{r.savedRsvp?.name} · {r.savedRsvp?.partySize} <TT en="guest(s)" hi="अतिथि" /></p>
+      <button type="button" onClick={r.edit} className="text-xs font-bold uppercase tracking-widest text-[color:var(--g-cream)]/70 underline underline-offset-4 hover:text-[color:var(--g-marigold)]"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+    </div>
+  );
   const field = "w-full rounded-full border-2 border-[color:var(--g-cream)]/30 bg-transparent px-5 py-3 text-[color:var(--g-cream)] placeholder:text-[color:var(--g-cream)]/40 focus:border-[color:var(--g-marigold)] focus:outline-none";
   return (
     <div className="max-w-xl space-y-5">
@@ -409,7 +428,7 @@ function GulSelfRsvp({ slug, events }: { slug: string; events: { id: string; nam
       <div className="grid gap-2 sm:grid-cols-2">
         {events.map((e) => <GulChoice key={e.id} on={r.selected.has(e.id)} tone="yes" onClick={() => r.toggle(e.id)}>{e.name}</GulChoice>)}
       </div>
-      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full rounded-full bg-[color:var(--g-marigold)] px-6 py-4 text-sm font-bold uppercase tracking-widest text-[color:var(--g-ink)] disabled:opacity-60">{r.pending ? "…" : <TT en="Count me in!" hi="मुझे गिनो!" />}</button>
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full rounded-full bg-[color:var(--g-marigold)] px-6 py-4 text-sm font-bold uppercase tracking-widest text-[color:var(--g-ink)] disabled:opacity-60">{r.pending ? "…" : r.savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Count me in!" hi="मुझे गिनो!" />}</button>
     </div>
   );
 }
@@ -420,13 +439,14 @@ function GulRsvpDemo({ events }: { events: WebsiteViewProps["events"] }) {
       {events.slice(0, 2).map((e) => (
         <div key={e.id}>
           <h3 className="g-serif text-3xl font-semibold text-[color:var(--g-cream)]">{e.name}</h3>
-          <div className="mt-4 flex gap-2">
-            <GulChoice on={false} tone="yes" disabled><TT en="Absolutely" hi="बिल्कुल" /></GulChoice>
-            <GulChoice on={false} tone="no" disabled><TT en="Dancing from home" hi="घर से" /></GulChoice>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <GulChoice on tone="yes" disabled><TT en="We'll be there" hi="हम आएँगे" /></GulChoice>
+            <GulChoice on={false} tone="no" disabled><TT en="Can't make it" hi="नहीं" /></GulChoice>
+            <span className="rounded-full border-2 border-[color:var(--g-cream)]/30 px-4 py-2 text-sm text-[color:var(--g-cream)]/60"><TT en="2 guests" hi="2 अतिथि" /></span>
           </div>
         </div>
       ))}
-      <p className="text-sm italic text-[color:var(--g-cream)]/60"><TT en="Your guests will RSVP right here." hi="आपके मेहमान यहीं उत्तर देंगे।" /></p>
+      <p className="text-sm italic text-[color:var(--g-cream)]/60"><TT en="Your families will RSVP with a headcount right here." hi="आपके परिवार यहीं संख्या के साथ उत्तर देंगे।" /></p>
     </div>
   );
 }

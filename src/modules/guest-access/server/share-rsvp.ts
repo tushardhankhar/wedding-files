@@ -1,14 +1,29 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import { readGuestSession } from "./session";
 
 export type ShareRsvpResult = { ok?: boolean; error?: string };
 
+/** A broadcast respondent's saved self-RSVP, loaded back to prefill an edit. */
+export interface ExistingSelfRsvp {
+  name: string;
+  partySize: number;
+  eventIds: string[];
+}
+
+const MAX_PARTY = 50;
+
 /**
  * Self-RSVP from a broadcast link: the guest supplies a name + party size and
  * the events they'll attend. Re-resolves the share session, confirms each event
- * is within the link's scope, then records one row per attended event.
+ * is within the link's scope, then writes ONE record per respondent per event.
+ *
+ * Idempotent by design: keyed on the session's stable `respondentId`, it upserts
+ * the selected events and removes any the respondent de-selected. Submitting
+ * again — or a double-click / refresh / retry — edits the same record instead of
+ * creating duplicates (a UNIQUE (respondent_id, event_id) index backs this up).
  */
 export async function submitShareRsvpAction(
   slug: string,
@@ -21,8 +36,8 @@ export async function submitShareRsvpAction(
   if (cleanName.length > 120) return { error: "Name is too long." };
 
   const size = Math.floor(partySize);
-  if (!Number.isFinite(size) || size < 1 || size > 50) {
-    return { error: "Enter how many are coming (1–50)." };
+  if (!Number.isFinite(size) || size < 1 || size > MAX_PARTY) {
+    return { error: `Enter how many are coming (1–${MAX_PARTY}).` };
   }
   if (eventIds.length === 0) {
     return { error: "Select at least one event you'll attend." };
@@ -58,18 +73,35 @@ export async function submitShareRsvpAction(
     allowed = new Set((data ?? []).map((e) => e.event_id));
   }
 
-  const rows = eventIds
-    .filter((id) => allowed.has(id))
-    .map((event_id) => ({
-      wedding_id: link.wedding_id,
-      event_id,
-      name: cleanName,
-      party_size: size,
-    }));
-  if (rows.length === 0) return { error: "Not authorized for those events." };
+  const selected = [...new Set(eventIds)].filter((id) => allowed.has(id));
+  if (selected.length === 0) return { error: "Not authorized for those events." };
 
-  const { error } = await svc.from("share_rsvps").insert(rows);
-  if (error) return { error: `Could not save your RSVP: ${error.message}` };
+  // Upsert the selected events for this respondent — idempotent on re-submit.
+  const rows = selected.map((event_id) => ({
+    wedding_id: link.wedding_id,
+    share_link_id: link.id,
+    event_id,
+    respondent_id: session.respondentId,
+    name: cleanName,
+    party_size: size,
+  }));
+  const { error: upsertError } = await svc
+    .from("share_rsvps")
+    .upsert(rows, { onConflict: "respondent_id,event_id" });
+  if (upsertError) {
+    return { error: `Could not save your RSVP: ${upsertError.message}` };
+  }
 
+  // Editing down: drop any events this respondent previously chose but no longer.
+  const { error: deleteError } = await svc
+    .from("share_rsvps")
+    .delete()
+    .eq("respondent_id", session.respondentId)
+    .not("event_id", "in", `(${selected.join(",")})`);
+  if (deleteError) {
+    return { error: `Could not update your RSVP: ${deleteError.message}` };
+  }
+
+  revalidatePath(`/w/${slug}`);
   return { ok: true };
 }

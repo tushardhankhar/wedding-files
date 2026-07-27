@@ -2,7 +2,6 @@ import type { WeddingEvent } from "@/modules/events/types";
 import type { WebsiteConfig } from "../schema";
 import type { HeroMotif } from "../themes/registry";
 import { T, TT } from "./bilingual";
-import { RsvpControls, type RsvpData } from "./rsvp-controls";
 import { HeroOrnament } from "./hero-ornament";
 import { JashnCredit } from "./jashn-credit";
 
@@ -88,11 +87,9 @@ export function Story({ config }: { config: WebsiteConfig }) {
 // ── Events (invite-gated upstream; this only renders what it's given) ──────
 export function Events({
   events,
-  rsvp,
   previewHint,
 }: {
   events: WeddingEvent[];
-  rsvp?: RsvpData;
   previewHint?: boolean;
 }) {
   if (events.length === 0) return null;
@@ -135,16 +132,8 @@ export function Events({
                   <TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}
                 </p>
               ) : null}
-              {rsvp ? (
-                <RsvpControls
-                  slug={rsvp.slug}
-                  eventId={e.id}
-                  guests={rsvp.guests}
-                  initial={rsvp.statuses[e.id] ?? {}}
-                />
-              ) : null}
               <div className="row">
-                {previewHint && !rsvp ? (
+                {previewHint ? (
                   <span className="text-note">
                     <TT
                       en="Your guests will RSVP here"

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { resolveShareToken } from "@/modules/guest-access/server/share";
 import {
   createGuestSessionValue,
+  readGuestSession,
   guestCookieOptions,
   GUEST_COOKIE,
   GUEST_TTL_SECONDS,
@@ -23,10 +24,21 @@ export async function GET(
 
   const res = NextResponse.redirect(dest);
   if (result) {
+    // Keep the same respondent identity if this browser already has a valid
+    // share session for this link — re-opening the link must edit the existing
+    // RSVP, never spawn a second one. Otherwise mint a fresh id.
+    const existing = await readGuestSession();
+    const respondentId =
+      existing?.kind === "share" &&
+      existing.shareLinkId === result.shareLinkId
+        ? existing.respondentId
+        : crypto.randomUUID();
+
     const value = await createGuestSessionValue(
       {
         kind: "share",
         shareLinkId: result.shareLinkId,
+        respondentId,
         weddingId: result.weddingId,
         slug,
       },

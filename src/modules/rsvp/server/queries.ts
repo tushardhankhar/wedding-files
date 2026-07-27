@@ -1,35 +1,45 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export interface EventRsvps {
-  attending: { id: string; name: string }[];
-  declined: { id: string; name: string }[];
+  /** Families coming to this event, with how many heads each is bringing. */
+  attending: { name: string; partySize: number }[];
+  /** Families who declined this event. */
+  declined: { name: string }[];
 }
 
-interface RsvpJoin {
+interface GroupRsvpJoin {
   event_id: string;
-  status: "attending" | "declined";
-  guests: { id: string; name: string };
+  attending: boolean;
+  party_size: number;
+  guest_groups: { name: string };
 }
 
 /**
- * Responses for a wedding, grouped by event id. RLS (`can_manage_event`) scopes
- * to weddings the current admin/client manages.
+ * Group (personal-invite) responses for a wedding, grouped by event id. Each
+ * family submits one headcount per event, so this lists families + heads rather
+ * than individual guests. RLS scopes to weddings the current manager owns.
  */
 export async function listWeddingRsvps(
   weddingId: string
 ): Promise<Record<string, EventRsvps>> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("rsvps")
-    .select("event_id, status, guests!inner(id, name), events!inner(wedding_id)")
+    .from("group_rsvps")
+    .select(
+      "event_id, attending, party_size, guest_groups!inner(name), events!inner(wedding_id)"
+    )
     .eq("events.wedding_id", weddingId);
 
   if (error) throw error;
 
   const byEvent: Record<string, EventRsvps> = {};
-  for (const r of (data as unknown as RsvpJoin[]) ?? []) {
+  for (const r of (data as unknown as GroupRsvpJoin[]) ?? []) {
     const bucket = (byEvent[r.event_id] ??= { attending: [], declined: [] });
-    bucket[r.status].push({ id: r.guests.id, name: r.guests.name });
+    if (r.attending) {
+      bucket.attending.push({ name: r.guest_groups.name, partySize: r.party_size });
+    } else {
+      bucket.declined.push({ name: r.guest_groups.name });
+    }
   }
   return byEvent;
 }

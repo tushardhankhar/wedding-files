@@ -32,7 +32,6 @@ import {
   MayuraGroupRsvp,
   MayuraSelfRsvp,
   MayuraRsvpDemo,
-  BlessingConfirmation,
 } from "./mayura-rsvp";
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
@@ -108,7 +107,6 @@ export function MayuraView({
   const [lang, setLang] = useState<"en" | "hi">("en");
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
-  const [responded, setResponded] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -128,7 +126,7 @@ export function MayuraView({
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
   const quote = config.hero?.tagline;
-  const hasRsvp = Boolean((rsvp && rsvp.guests.length > 0) || selfRsvp || ownerPreview);
+  const hasRsvp = Boolean((rsvp && rsvp.events.length > 0) || selfRsvp || ownerPreview);
   const family =
     rsvp && chip
       ? chip
@@ -298,9 +296,9 @@ export function MayuraView({
                   hi="अपार हर्ष और परिवारों के आशीर्वाद सहित, हम आपको अपने साथ इस नई शुरुआत में सम्मिलित होने के लिए आमंत्रित करते हैं।"
                 />
               </p>
-              {rsvp && rsvp.guests.length > 0 ? (
+              {rsvp && chip ? (
                 <p className="myr-serif mt-6 text-lg uppercase tracking-[0.24em] text-[color:var(--myr-pink)]">
-                  {rsvp.guests.map((g) => g.name).join("  ·  ")}
+                  <T value={chip} />
                 </p>
               ) : null}
             </div>
@@ -498,16 +496,13 @@ export function MayuraView({
               </div>
               <div className="mt-12">
                 {rsvp ? (
-                  <MayuraGroupRsvp slug={rsvp.slug} events={events} guests={rsvp.guests} initial={rsvp.statuses} onSaved={() => setResponded(true)} />
+                  <MayuraGroupRsvp slug={rsvp.slug} events={events} existing={rsvp.existing} onSaved={() => {}} />
                 ) : selfRsvp ? (
-                  <MayuraSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} onSaved={() => setResponded(true)} />
+                  <MayuraSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} existing={selfRsvp.existing} onSaved={() => {}} />
                 ) : (
                   <MayuraRsvpDemo events={events} />
                 )}
               </div>
-              {rsvp && responded ? (
-                <BlessingConfirmation familyName={family ? (lang === "hi" && family.hi ? family.hi : family.en) : undefined} />
-              ) : null}
             </div>
           </section>
         ) : null}

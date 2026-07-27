@@ -5,7 +5,12 @@ import type { WebsiteViewProps } from "../website-view";
 import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime } from "../format";
-import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
+import {
+  useGroupRsvp,
+  useSelfRsvp,
+  type ExistingSelfRsvp,
+  type ExistingGroupRsvp,
+} from "../use-rsvp";
 import { useCountdown, pad2 } from "../use-countdown";
 
 /* Original kolam-inspired symmetric geometry (not a copied sacred design). */
@@ -303,7 +308,7 @@ export function KalyanamView(props: WebsiteViewProps) {
             {family ? <p className="k-serif mt-2 text-xl italic text-[color:var(--k-turmeric)]" data-tw-reveal><T value={family} /></p> : null}
             <p className="mt-3 text-sm text-[color:var(--k-jasmine)]/75" data-tw-reveal><TT en="Please let us know which ceremonies you will join." hi="कृपया बताएँ कि आप किन समारोहों में आएँगे।" /></p>
             <div className="mt-12 text-left">
-              {rsvp ? <KlyGroupRsvp slug={rsvp.slug} events={events} guests={rsvp.guests} initial={rsvp.statuses} /> : selfRsvp ? <KlySelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} /> : <KlyRsvpDemo events={events} />}
+              {rsvp ? <KlyGroupRsvp slug={rsvp.slug} events={events} existing={rsvp.existing} /> : selfRsvp ? <KlySelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} existing={selfRsvp.existing} /> : <KlyRsvpDemo events={events} />}
             </div>
           </div>
         </section>
@@ -329,35 +334,56 @@ function KlyChoice({ on, tone, onClick, disabled, children }: { on: boolean; ton
   return <button type="button" aria-pressed={on} disabled={disabled} onClick={onClick} className={`flex-1 border px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] transition-all ${on ? active : idle} ${disabled ? "cursor-default opacity-60" : ""}`}>{children}</button>;
 }
 
-function KlyGroupRsvp({ slug, events, guests, initial }: { slug: string; events: WebsiteViewProps["events"]; guests: { id: string; name: string }[]; initial: Record<string, Record<string, "attending" | "declined">> }) {
-  const { state, error, saved, choose } = useGroupRsvp(slug, initial);
+function KlyGroupRsvp({ slug, events, existing }: { slug: string; events: WebsiteViewProps["events"]; existing: ExistingGroupRsvp }) {
+  const r = useGroupRsvp(slug, events, existing);
+  const numField = "w-20 border border-[color:var(--k-jasmine)]/30 bg-transparent px-3 py-2 text-center text-[color:var(--k-jasmine)] focus:border-[color:var(--k-turmeric)] focus:outline-none";
+
+  if (r.done) {
+    const summary = events.filter((e) => r.entries[e.id]?.attending).map((e) => `${e.name}: ${r.entries[e.id].partySize}`).join(" · ");
+    return (
+      <div className="space-y-3 text-center">
+        <p className="k-serif text-2xl italic text-[color:var(--k-turmeric)]"><TT en="With joy, we look forward to welcoming you." hi="सहर्ष, हम आपके स्वागत की प्रतीक्षा करते हैं।" /></p>
+        <p className="text-sm text-[color:var(--k-jasmine)]/70">{summary || <TT en="Not attending" hi="नहीं आ रहे" />}</p>
+        <button type="button" onClick={r.edit} className="text-[11px] uppercase tracking-[0.25em] text-[color:var(--k-jasmine)]/70 underline underline-offset-4 hover:text-[color:var(--k-turmeric)]"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10">
-      {error ? <p className="text-center text-sm text-[color:var(--k-turmeric)]" role="alert">{error}</p> : null}
-      {events.map((e) => (
-        <div key={e.id}>
-          <p className="text-center"><span className="k-serif text-2xl text-[color:var(--k-jasmine)]"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></span>{e.startTime ? <span className="ml-3 text-sm text-[color:var(--k-turmeric)]">{clockTime(e.startTime)}</span> : null}</p>
-          <div className="mx-auto mt-4 max-w-md space-y-3">
-            {guests.map((g) => (
-              <div key={g.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                <span className="k-serif w-24 shrink-0 text-lg">{g.name}</span>
-                <div className="flex flex-1 gap-2">
-                  <KlyChoice on={state[e.id]?.[g.id] === "attending"} tone="yes" onClick={() => choose(e.id, g.id, "attending")}><TT en="Attending" hi="आ रहे हैं" /></KlyChoice>
-                  <KlyChoice on={state[e.id]?.[g.id] === "declined"} tone="no" onClick={() => choose(e.id, g.id, "declined")}><TT en="Unable to attend" hi="नहीं आ पाएँगे" /></KlyChoice>
-                </div>
-              </div>
-            ))}
+      {r.error ? <p className="text-center text-sm text-[color:var(--k-turmeric)]" role="alert">{r.error}</p> : null}
+      {events.map((e) => {
+        const en = r.entries[e.id] ?? { attending: true, partySize: 1 };
+        return (
+          <div key={e.id}>
+            <p className="text-center"><span className="k-serif text-2xl text-[color:var(--k-jasmine)]"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></span>{e.startTime ? <span className="ml-3 text-sm text-[color:var(--k-turmeric)]">{clockTime(e.startTime)}</span> : null}</p>
+            <div className="mx-auto mt-4 flex max-w-md flex-wrap items-center justify-center gap-2">
+              <KlyChoice on={en.attending} tone="yes" onClick={() => r.setAttending(e.id, true)}><TT en="Attending" hi="आ रहे हैं" /></KlyChoice>
+              <KlyChoice on={!en.attending} tone="no" onClick={() => r.setAttending(e.id, false)}><TT en="Unable to attend" hi="नहीं आ पाएँगे" /></KlyChoice>
+              {en.attending ? (
+                <label className="flex items-center gap-2 text-sm text-[color:var(--k-jasmine)]/80">
+                  <TT en="How many?" hi="कितने?" />
+                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                </label>
+              ) : null}
+            </div>
           </div>
-        </div>
-      ))}
-      {saved ? <p className="k-serif text-center text-2xl italic text-[color:var(--k-turmeric)]"><TT en="With joy, we look forward to welcoming you." hi="सहर्ष, हम आपके स्वागत की प्रतीक्षा करते हैं।" /></p> : null}
+        );
+      })}
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-[color:var(--k-turmeric)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-[color:var(--k-wood)] disabled:opacity-60">{r.pending ? "…" : r.saved ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}</button>
     </div>
   );
 }
 
-function KlySelfRsvp({ slug, events }: { slug: string; events: { id: string; name: string }[] }) {
-  const r = useSelfRsvp(slug, events.map((e) => e.id));
-  if (r.done) return <p className="k-serif text-center text-2xl italic text-[color:var(--k-turmeric)]"><TT en="With joy, we look forward to welcoming you." hi="सहर्ष, हम आपके स्वागत की प्रतीक्षा करते हैं।" /></p>;
+function KlySelfRsvp({ slug, events, existing }: { slug: string; events: { id: string; name: string }[]; existing?: ExistingSelfRsvp | null }) {
+  const r = useSelfRsvp(slug, events.map((e) => e.id), existing);
+  if (r.done) return (
+    <div className="space-y-3 text-center">
+      <p className="k-serif text-center text-2xl italic text-[color:var(--k-turmeric)]"><TT en="With joy, we look forward to welcoming you." hi="सहर्ष, हम आपके स्वागत की प्रतीक्षा करते हैं।" /></p>
+      <p className="text-sm text-[color:var(--k-jasmine)]/70">{r.savedRsvp?.name} · {r.savedRsvp?.partySize} <TT en="guest(s)" hi="अतिथि" /></p>
+      <button type="button" onClick={r.edit} className="text-[11px] uppercase tracking-[0.25em] text-[color:var(--k-jasmine)]/70 underline underline-offset-4 hover:text-[color:var(--k-turmeric)]"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+    </div>
+  );
   const field = "w-full border border-[color:var(--k-jasmine)]/30 bg-transparent px-4 py-3 text-[color:var(--k-jasmine)] placeholder:text-[color:var(--k-jasmine)]/40 focus:border-[color:var(--k-turmeric)] focus:outline-none";
   return (
     <div className="mx-auto max-w-md space-y-4">
@@ -365,7 +391,7 @@ function KlySelfRsvp({ slug, events }: { slug: string; events: { id: string; nam
       <input type="text" value={r.name} maxLength={120} onChange={(e) => r.setName(e.target.value)} placeholder="Your name" className={field} />
       <input type="number" min={1} max={50} value={r.size} onChange={(e) => r.setSize(Number(e.target.value))} className={field} />
       <div className="grid gap-2 sm:grid-cols-2">{events.map((e) => <KlyChoice key={e.id} on={r.selected.has(e.id)} tone="yes" onClick={() => r.toggle(e.id)}>{e.name}</KlyChoice>)}</div>
-      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-[color:var(--k-turmeric)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-[color:var(--k-wood)] disabled:opacity-60">{r.pending ? "…" : <TT en="Send our response" hi="उत्तर भेजें" />}</button>
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-[color:var(--k-turmeric)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-[color:var(--k-wood)] disabled:opacity-60">{r.pending ? "…" : r.savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}</button>
     </div>
   );
 }
@@ -376,13 +402,14 @@ function KlyRsvpDemo({ events }: { events: WebsiteViewProps["events"] }) {
       {events.slice(0, 2).map((e) => (
         <div key={e.id}>
           <p className="k-serif text-center text-2xl text-[color:var(--k-jasmine)]">{e.name}</p>
-          <div className="mx-auto mt-4 flex max-w-md gap-2">
-            <KlyChoice on={false} tone="yes" disabled><TT en="Attending" hi="आ रहे हैं" /></KlyChoice>
+          <div className="mx-auto mt-4 flex max-w-md flex-wrap items-center justify-center gap-2">
+            <KlyChoice on tone="yes" disabled><TT en="Attending" hi="आ रहे हैं" /></KlyChoice>
             <KlyChoice on={false} tone="no" disabled><TT en="Unable to attend" hi="नहीं" /></KlyChoice>
+            <span className="border border-[color:var(--k-jasmine)]/30 px-4 py-2 text-sm text-[color:var(--k-jasmine)]/60"><TT en="2 guests" hi="2 अतिथि" /></span>
           </div>
         </div>
       ))}
-      <p className="text-center text-sm italic text-[color:var(--k-jasmine)]/60"><TT en="Your guests will respond here." hi="आपके अतिथि यहाँ उत्तर देंगे।" /></p>
+      <p className="text-center text-sm italic text-[color:var(--k-jasmine)]/60"><TT en="Your families will RSVP with a headcount here." hi="आपके परिवार यहाँ संख्या के साथ उत्तर देंगे।" /></p>
     </div>
   );
 }

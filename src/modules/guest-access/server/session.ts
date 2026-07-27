@@ -18,12 +18,22 @@ const TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 export type GuestSession =
   | { kind: "group"; groupId: string; weddingId: string; slug: string }
-  | { kind: "share"; shareLinkId: string; weddingId: string; slug: string };
+  | {
+      kind: "share";
+      shareLinkId: string;
+      /** Stable per-browser id for this broadcast respondent — the key their
+       * self-RSVP is stored under, so re-opening the link edits the same record
+       * instead of creating a duplicate. Minted at link-open, kept 30 days. */
+      respondentId: string;
+      weddingId: string;
+      slug: string;
+    };
 
 interface Payload {
   kind?: "group" | "share";
   groupId?: string;
   shareLinkId?: string;
+  respondentId?: string;
   weddingId?: string;
   slug?: string;
   exp: number; // epoch seconds
@@ -74,11 +84,13 @@ export async function readGuestSession(): Promise<GuestSession | null> {
     ) {
       return null;
     }
-    // Share session.
-    if (p.kind === "share" && p.shareLinkId) {
+    // Share session. A respondentId is required (legacy cookies without one are
+    // treated as invalid so a fresh, editable identity is minted on next open).
+    if (p.kind === "share" && p.shareLinkId && p.respondentId) {
       return {
         kind: "share",
         shareLinkId: p.shareLinkId,
+        respondentId: p.respondentId,
         weddingId: p.weddingId,
         slug: p.slug,
       };

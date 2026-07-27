@@ -30,7 +30,7 @@ export default async function RsvpsPage({
   ]);
 
   const totalAttending = Object.values(byEvent).reduce(
-    (n, e) => n + e.attending.length,
+    (n, e) => n + e.attending.reduce((s, g) => s + g.partySize, 0),
     0
   );
 
@@ -73,7 +73,10 @@ export default async function RsvpsPage({
                     <CardTitle className="flex items-center justify-between text-base">
                       <span>{e.name}</span>
                       <span className="font-heading text-sm font-medium text-muted-foreground">
-                        {r.attending.length} going · {r.declined.length} declined
+                        {r.attending.reduce((s, g) => s + g.partySize, 0)} guests
+                        · {r.attending.length} famil
+                        {r.attending.length === 1 ? "y" : "ies"} · {r.declined.length}{" "}
+                        declined
                       </span>
                     </CardTitle>
                   </CardHeader>
@@ -85,7 +88,11 @@ export default async function RsvpsPage({
                       {r.attending.length === 0 ? (
                         <p className="text-muted-foreground">No responses yet.</p>
                       ) : (
-                        <p>{r.attending.map((g) => g.name).join(", ")}</p>
+                        <p>
+                          {r.attending
+                            .map((g) => `${g.name} (${g.partySize})`)
+                            .join(", ")}
+                        </p>
                       )}
                     </div>
                     {r.declined.length > 0 ? (

@@ -1,42 +1,28 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { submitShareRsvpAction } from "@/modules/guest-access/server/share-rsvp";
 import { TT } from "./bilingual";
 import { Divider } from "./sections";
+import { useSelfRsvp, type ExistingSelfRsvp } from "./use-rsvp";
 
 export interface SelfRsvpData {
   slug: string;
   events: { id: string; name: string }[];
+  /** This respondent's saved RSVP (server-loaded), or null if not yet answered. */
+  existing?: ExistingSelfRsvp | null;
 }
 
-export function SelfRsvp({ slug, events }: SelfRsvpData) {
-  const [name, setName] = useState("");
-  const [size, setSize] = useState(1);
-  const [selected, setSelected] = useState<Set<string>>(
-    () => new Set(events.map((e) => e.id))
+export function SelfRsvp({ slug, events, existing }: SelfRsvpData) {
+  const rsvp = useSelfRsvp(
+    slug,
+    events.map((e) => e.id),
+    existing
   );
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
-  const [pending, startTransition] = useTransition();
 
-  function toggle(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  function submit() {
-    setError(null);
-    startTransition(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, [...selected]);
-      if (res?.error) setError(res.error);
-      else setDone(true);
-    });
-  }
+  const savedEventNames = rsvp.savedRsvp
+    ? events
+        .filter((e) => rsvp.savedRsvp!.eventIds.includes(e.id))
+        .map((e) => e.name)
+    : [];
 
   return (
     <section id="rsvp" className="band-alt">
@@ -49,13 +35,29 @@ export function SelfRsvp({ slug, events }: SelfRsvpData) {
         </h2>
         <Divider />
 
-        {done ? (
-          <p className="thanks">
-            <TT
-              en="Thank you — your RSVP has been received. We can't wait to celebrate with you!"
-              hi="धन्यवाद — आपका उत्तर मिल गया है। हम आपके साथ जश्न मनाने के लिए उत्सुक हैं!"
-            />
-          </p>
+        {rsvp.done ? (
+          <div className="space-y-4 text-center">
+            <p className="thanks">
+              <TT
+                en="Thank you — your RSVP has been received. We can't wait to celebrate with you!"
+                hi="धन्यवाद — आपका उत्तर मिल गया है। हम आपके साथ जश्न मनाने के लिए उत्सुक हैं!"
+              />
+            </p>
+            <p className="text-note">
+              <TT en="On record for" hi="दर्ज है" />:{" "}
+              <strong>{rsvp.savedRsvp?.name}</strong> ·{" "}
+              {rsvp.savedRsvp?.partySize}{" "}
+              <TT en="guest(s)" hi="अतिथि" />
+              {savedEventNames.length ? ` · ${savedEventNames.join(", ")}` : ""}
+            </p>
+            <button
+              type="button"
+              className="w-btn w-btn-gold"
+              onClick={rsvp.edit}
+            >
+              <TT en="Edit my RSVP" hi="उत्तर बदलें" />
+            </button>
+          </div>
         ) : (
           <div className="space-y-4">
             <div>
@@ -65,9 +67,9 @@ export function SelfRsvp({ slug, events }: SelfRsvpData) {
               <input
                 id="rsvp-name"
                 type="text"
-                value={name}
+                value={rsvp.name}
                 maxLength={120}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => rsvp.setName(e.target.value)}
                 placeholder="Priya Sharma"
               />
             </div>
@@ -80,8 +82,8 @@ export function SelfRsvp({ slug, events }: SelfRsvpData) {
                 type="number"
                 min={1}
                 max={50}
-                value={size}
-                onChange={(e) => setSize(Number(e.target.value))}
+                value={rsvp.size}
+                onChange={(e) => rsvp.setSize(Number(e.target.value))}
               />
             </div>
             <div>
@@ -93,8 +95,8 @@ export function SelfRsvp({ slug, events }: SelfRsvpData) {
                   <label key={ev.id}>
                     <input
                       type="checkbox"
-                      checked={selected.has(ev.id)}
-                      onChange={() => toggle(ev.id)}
+                      checked={rsvp.selected.has(ev.id)}
+                      onChange={() => rsvp.toggle(ev.id)}
                     />
                     {ev.name}
                   </label>
@@ -102,19 +104,25 @@ export function SelfRsvp({ slug, events }: SelfRsvpData) {
               </div>
             </div>
 
-            {error ? (
+            {rsvp.error ? (
               <p className="text-note" role="alert" style={{ color: "#a3453f" }}>
-                {error}
+                {rsvp.error}
               </p>
             ) : null}
 
             <button
               type="button"
               className="w-btn w-btn-gold"
-              onClick={submit}
-              disabled={pending}
+              onClick={rsvp.submit}
+              disabled={rsvp.pending}
             >
-              {pending ? "…" : <TT en="Send RSVP" hi="उत्तर भेजें" />}
+              {rsvp.pending ? (
+                "…"
+              ) : rsvp.savedRsvp ? (
+                <TT en="Save changes" hi="बदलाव सहेजें" />
+              ) : (
+                <TT en="Send RSVP" hi="उत्तर भेजें" />
+              )}
             </button>
           </div>
         )}

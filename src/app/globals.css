@@ -1655,9 +1655,9 @@
 .glt .flipcd-label {
   color: var(--glt-maroon);
   opacity: 1;
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: 0.28em;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.24em;
 }
 .glt-btn {
   font-family: var(--font-raleway), system-ui, sans-serif;

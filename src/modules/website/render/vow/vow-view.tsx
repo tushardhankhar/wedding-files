@@ -5,7 +5,12 @@ import type { WebsiteViewProps } from "../website-view";
 import { JashnCredit } from "../jashn-credit";
 import { T, TT } from "../bilingual";
 import { splitNames, longDate, clockTime, weekday, compactDate, gcalUrl } from "../format";
-import { useGroupRsvp, useSelfRsvp } from "../use-rsvp";
+import {
+  useGroupRsvp,
+  useSelfRsvp,
+  type ExistingSelfRsvp,
+  type ExistingGroupRsvp,
+} from "../use-rsvp";
 import { useCountdown, pad2 } from "../use-countdown";
 
 /* ── Decorative helpers ───────────────────────────────────────────────────── */
@@ -343,7 +348,7 @@ export function VowView(props: WebsiteViewProps) {
             <h2 className="v-serif text-[clamp(2.4rem,7vw,4.5rem)] font-medium leading-none" data-tw-reveal><TT en="Will we" hi="क्या हम" /> <span className="italic"><TT en="see you there?" hi="आपसे मिलेंगे?" /></span></h2>
             {family ? <p className="mt-4 text-sm uppercase tracking-[0.3em] text-black/55" data-tw-reveal><T value={family} /></p> : null}
             <div className="mt-14 text-left">
-              {rsvp ? <VowGroupRsvp slug={rsvp.slug} events={events} guests={rsvp.guests} initial={rsvp.statuses} date={countdownDate} /> : selfRsvp ? <VowSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} date={countdownDate} /> : <VowRsvpDemo events={events} />}
+              {rsvp ? <VowGroupRsvp slug={rsvp.slug} events={events} existing={rsvp.existing} date={countdownDate} /> : selfRsvp ? <VowSelfRsvp slug={selfRsvp.slug} events={selfRsvp.events} existing={selfRsvp.existing} date={countdownDate} /> : <VowRsvpDemo events={events} />}
             </div>
           </div>
         </section>
@@ -368,35 +373,56 @@ function VowChoice({ on, tone, onClick, disabled, children }: { on: boolean; ton
   return <button type="button" aria-pressed={on} disabled={disabled} onClick={onClick} className={`flex-1 border px-4 py-3 text-[11px] font-medium uppercase tracking-[0.2em] transition-all ${on ? active : idle} ${disabled ? "cursor-default opacity-60" : ""}`}>{children}</button>;
 }
 
-function VowGroupRsvp({ slug, events, guests, initial, date }: { slug: string; events: WebsiteViewProps["events"]; guests: { id: string; name: string }[]; initial: Record<string, Record<string, "attending" | "declined">>; date: string | null }) {
-  const { state, error, saved, choose } = useGroupRsvp(slug, initial);
+function VowGroupRsvp({ slug, events, existing, date }: { slug: string; events: WebsiteViewProps["events"]; existing: ExistingGroupRsvp; date: string | null }) {
+  const r = useGroupRsvp(slug, events, existing);
+  const numField = "w-20 border border-black/25 bg-transparent px-3 py-2 text-center focus:border-black focus:outline-none";
+
+  if (r.done) {
+    const summary = events.filter((e) => r.entries[e.id]?.attending).map((e) => `${e.name}: ${r.entries[e.id].partySize}`).join(" · ");
+    return (
+      <div className="space-y-3 text-center">
+        <p className="v-serif text-3xl italic"><TT en="We can't wait to see you." hi="हमें आपका इंतज़ार है।" /><span className="mt-2 block text-base not-italic tracking-[0.3em] text-black/50">{compactDate(date, ".")}</span></p>
+        <p className="text-sm text-black/50">{summary || <TT en="Not attending" hi="नहीं आ रहे" />}</p>
+        <button type="button" onClick={r.edit} className="text-[11px] uppercase tracking-[0.3em] text-black/50 underline underline-offset-4 hover:text-black"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-12">
-      {error ? <p className="text-center text-sm text-[color:var(--v-grey)]" role="alert">{error}</p> : null}
-      {events.map((e) => (
-        <div key={e.id}>
-          <h3 className="v-serif text-2xl font-medium"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
-          <div className="mt-4 space-y-3">
-            {guests.map((g) => (
-              <div key={g.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-                <span className="w-28 shrink-0 text-sm uppercase tracking-[0.15em] text-black/70">{g.name}</span>
-                <div className="flex flex-1 gap-2">
-                  <VowChoice on={state[e.id]?.[g.id] === "attending"} tone="yes" onClick={() => choose(e.id, g.id, "attending")}><TT en="Yes, with love" hi="जी, प्रेम सहित" /></VowChoice>
-                  <VowChoice on={state[e.id]?.[g.id] === "declined"} tone="no" onClick={() => choose(e.id, g.id, "declined")}><TT en="Unable to attend" hi="नहीं आ पाएँगे" /></VowChoice>
-                </div>
-              </div>
-            ))}
+    <div className="space-y-10">
+      {r.error ? <p className="text-center text-sm text-[color:var(--v-grey)]" role="alert">{r.error}</p> : null}
+      {events.map((e) => {
+        const en = r.entries[e.id] ?? { attending: true, partySize: 1 };
+        return (
+          <div key={e.id}>
+            <h3 className="v-serif text-2xl font-medium"><T value={{ en: e.name, hi: e.nameHi ?? undefined }} /></h3>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <VowChoice on={en.attending} tone="yes" onClick={() => r.setAttending(e.id, true)}><TT en="Yes, with love" hi="जी, प्रेम सहित" /></VowChoice>
+              <VowChoice on={!en.attending} tone="no" onClick={() => r.setAttending(e.id, false)}><TT en="Unable to attend" hi="नहीं आ पाएँगे" /></VowChoice>
+              {en.attending ? (
+                <label className="flex items-center gap-2 text-sm text-black/60">
+                  <TT en="How many?" hi="कितने?" />
+                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                </label>
+              ) : null}
+            </div>
           </div>
-        </div>
-      ))}
-      {saved ? <p className="v-serif text-center text-3xl italic"><TT en="We can't wait to see you." hi="हमें आपका इंतज़ार है।" /><span className="mt-2 block text-base not-italic tracking-[0.3em] text-black/50">{compactDate(date, ".")}</span></p> : null}
+        );
+      })}
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-black px-6 py-4 text-[11px] font-medium uppercase tracking-[0.3em] text-white disabled:opacity-60">{r.pending ? "…" : r.saved ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send RSVP" hi="उत्तर भेजें" />}</button>
     </div>
   );
 }
 
-function VowSelfRsvp({ slug, events, date }: { slug: string; events: { id: string; name: string }[]; date: string | null }) {
-  const r = useSelfRsvp(slug, events.map((e) => e.id));
-  if (r.done) return <p className="v-serif text-center text-3xl italic"><TT en="We can't wait to see you." hi="हमें आपका इंतज़ार है।" /><span className="mt-2 block text-base not-italic tracking-[0.3em] text-black/50">{compactDate(date, ".")}</span></p>;
+function VowSelfRsvp({ slug, events, existing, date }: { slug: string; events: { id: string; name: string }[]; existing?: ExistingSelfRsvp | null; date: string | null }) {
+  const r = useSelfRsvp(slug, events.map((e) => e.id), existing);
+  if (r.done) return (
+    <div className="space-y-3 text-center">
+      <p className="v-serif text-center text-3xl italic"><TT en="We can't wait to see you." hi="हमें आपका इंतज़ार है।" /><span className="mt-2 block text-base not-italic tracking-[0.3em] text-black/50">{compactDate(date, ".")}</span></p>
+      <p className="text-sm text-black/50">{r.savedRsvp?.name} · {r.savedRsvp?.partySize} <TT en="guest(s)" hi="अतिथि" /></p>
+      <button type="button" onClick={r.edit} className="text-[11px] uppercase tracking-[0.3em] text-black/50 underline underline-offset-4 hover:text-black"><TT en="Edit my RSVP" hi="उत्तर बदलें" /></button>
+    </div>
+  );
   const field = "w-full border-b border-black/30 bg-transparent px-1 py-3 focus:border-black focus:outline-none";
   return (
     <div className="mx-auto max-w-md space-y-5">
@@ -404,7 +430,7 @@ function VowSelfRsvp({ slug, events, date }: { slug: string; events: { id: strin
       <input type="text" value={r.name} maxLength={120} onChange={(e) => r.setName(e.target.value)} placeholder="Your name" className={field} />
       <input type="number" min={1} max={50} value={r.size} onChange={(e) => r.setSize(Number(e.target.value))} className={field} />
       <div className="grid gap-2 sm:grid-cols-2">{events.map((e) => <VowChoice key={e.id} on={r.selected.has(e.id)} tone="yes" onClick={() => r.toggle(e.id)}>{e.name}</VowChoice>)}</div>
-      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-black px-6 py-4 text-[11px] font-medium uppercase tracking-[0.3em] text-white disabled:opacity-60">{r.pending ? "…" : <TT en="Send RSVP" hi="उत्तर भेजें" />}</button>
+      <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-black px-6 py-4 text-[11px] font-medium uppercase tracking-[0.3em] text-white disabled:opacity-60">{r.pending ? "…" : r.savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send RSVP" hi="उत्तर भेजें" />}</button>
     </div>
   );
 }
@@ -415,13 +441,14 @@ function VowRsvpDemo({ events }: { events: WebsiteViewProps["events"] }) {
       {events.slice(0, 2).map((e) => (
         <div key={e.id}>
           <h3 className="v-serif text-2xl font-medium">{e.name}</h3>
-          <div className="mt-4 flex gap-2">
-            <VowChoice on={false} tone="yes" disabled><TT en="Yes, with love" hi="जी, प्रेम सहित" /></VowChoice>
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <VowChoice on tone="yes" disabled><TT en="Yes, with love" hi="जी, प्रेम सहित" /></VowChoice>
             <VowChoice on={false} tone="no" disabled><TT en="Unable to attend" hi="नहीं" /></VowChoice>
+            <span className="border border-black/25 px-4 py-2 text-sm text-black/50"><TT en="2 guests" hi="2 अतिथि" /></span>
           </div>
         </div>
       ))}
-      <p className="text-center text-sm italic text-black/50"><TT en="Your guests will RSVP here." hi="आपके मेहमान यहाँ उत्तर देंगे।" /></p>
+      <p className="text-center text-sm italic text-black/50"><TT en="Your families will RSVP with a headcount here." hi="आपके परिवार यहाँ संख्या के साथ उत्तर देंगे।" /></p>
     </div>
   );
 }

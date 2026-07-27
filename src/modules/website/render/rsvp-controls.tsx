@@ -1,84 +1,111 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import {
-  submitRsvpAction,
-  type RsvpStatus,
-} from "@/modules/guest-access/server/rsvp";
 import { TT } from "./bilingual";
+import { Divider } from "./sections";
+import { useGroupRsvp, type GroupRsvpData } from "./use-rsvp";
 
-export interface RsvpData {
-  slug: string;
-  guests: { id: string; name: string }[];
-  // eventId -> guestId -> status
-  statuses: Record<string, Record<string, RsvpStatus>>;
-}
+export type { GroupRsvpData };
 
-/** Per-guest attending/declined toggles for one event. Optimistic. */
-export function RsvpControls({
-  slug,
-  eventId,
-  guests,
-  initial,
-}: {
-  slug: string;
-  eventId: string;
-  guests: { id: string; name: string }[];
-  initial: Record<string, RsvpStatus>;
-}) {
-  const [state, setState] = useState<Record<string, RsvpStatus>>(initial);
-  const [error, setError] = useState<string | null>(null);
-  const [, startTransition] = useTransition();
-
-  function choose(guestId: string, status: RsvpStatus) {
-    const previous = state[guestId];
-    setState((prev) => ({ ...prev, [guestId]: status }));
-    setError(null);
-    startTransition(async () => {
-      const res = await submitRsvpAction(slug, eventId, guestId, status);
-      if (res?.error) {
-        // Revert the optimistic change and show why it failed.
-        setState((prev) => {
-          const next = { ...prev };
-          if (previous) next[guestId] = previous;
-          else delete next[guestId];
-          return next;
-        });
-        setError(res.error);
-      }
-    });
-  }
-
-  if (guests.length === 0) return null;
+/**
+ * Group (personal-invite) RSVP for the shared token theme: one headcount per
+ * invited event for the whole family, submitted once and editable thereafter.
+ * Everyone who opens the family's invite link edits the same shared record.
+ */
+export function GroupRsvp({ slug, events, existing }: GroupRsvpData) {
+  const r = useGroupRsvp(slug, events, existing);
 
   return (
-    <div className="rsvp-list">
-      {error ? (
-        <p className="text-note" role="alert" style={{ color: "#a3453f" }}>
-          {error}
+    <section id="rsvp" className="band-alt">
+      <div className="wrap self-rsvp">
+        <p className="eyebrow center">
+          <TT en="RSVP" hi="उत्तर दें" />
         </p>
-      ) : null}
-      {guests.map((g) => (
-        <div className="rsvp-member" key={g.id}>
-          <span>{g.name}</span>
-          <div className="rsvp">
-            <button
-              type="button"
-              className={`yes ${state[g.id] === "attending" ? "on" : ""}`}
-              onClick={() => choose(g.id, "attending")}
-            >
-              <TT en="Going" hi="आ रहे" />
-            </button>
-            <button
-              type="button"
-              className={`no ${state[g.id] === "declined" ? "on" : ""}`}
-              onClick={() => choose(g.id, "declined")}
-            >
-              <TT en="No" hi="नहीं" />
+        <h2 className="h-sec center">
+          <TT en="Will your family join us?" hi="क्या आपका परिवार आएगा?" />
+        </h2>
+        <Divider />
+
+        {r.done ? (
+          <div className="space-y-4 text-center">
+            <p className="thanks">
+              <TT
+                en="Thank you — your RSVP has been received!"
+                hi="धन्यवाद — आपका उत्तर मिल गया है!"
+              />
+            </p>
+            <p className="text-note">
+              {events
+                .filter((e) => r.entries[e.id]?.attending)
+                .map((e) => `${e.name}: ${r.entries[e.id].partySize}`)
+                .join(" · ") || <TT en="Not attending" hi="नहीं आ रहे" />}
+            </p>
+            <button type="button" className="w-btn w-btn-gold" onClick={r.edit}>
+              <TT en="Edit my RSVP" hi="उत्तर बदलें" />
             </button>
           </div>
-        </div>
-      ))}
-    </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="rsvp-list">
+              {events.map((e) => {
+                const en = r.entries[e.id] ?? { attending: true, partySize: 1 };
+                return (
+                  <div className="rsvp-member" key={e.id}>
+                    <span>{e.name}</span>
+                    <div className="rsvp">
+                      <button
+                        type="button"
+                        className={`yes ${en.attending ? "on" : ""}`}
+                        onClick={() => r.setAttending(e.id, true)}
+                      >
+                        <TT en="Going" hi="आ रहे" />
+                      </button>
+                      <button
+                        type="button"
+                        className={`no ${!en.attending ? "on" : ""}`}
+                        onClick={() => r.setAttending(e.id, false)}
+                      >
+                        <TT en="No" hi="नहीं" />
+                      </button>
+                      {en.attending ? (
+                        <input
+                          type="number"
+                          min={1}
+                          max={50}
+                          value={en.partySize}
+                          onChange={(ev) => r.setSize(e.id, Number(ev.target.value))}
+                          aria-label={`Guests for ${e.name}`}
+                          style={{ width: "4.5rem" }}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {r.error ? (
+              <p className="text-note" role="alert" style={{ color: "#a3453f" }}>
+                {r.error}
+              </p>
+            ) : null}
+
+            <button
+              type="button"
+              className="w-btn w-btn-gold"
+              onClick={r.submit}
+              disabled={r.pending}
+            >
+              {r.pending ? (
+                "…"
+              ) : r.saved ? (
+                <TT en="Save changes" hi="बदलाव सहेजें" />
+              ) : (
+                <TT en="Send RSVP" hi="उत्तर भेजें" />
+              )}
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

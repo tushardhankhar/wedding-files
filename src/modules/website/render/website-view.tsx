@@ -6,7 +6,7 @@ import type { Theme } from "../themes/registry";
 import type { WebsiteConfig, Localized } from "../schema";
 import { TT } from "./bilingual";
 import { Countdown } from "./countdown";
-import type { RsvpData } from "./rsvp-controls";
+import { GroupRsvp, type GroupRsvpData } from "./rsvp-controls";
 import { SelfRsvp, type SelfRsvpData } from "./self-rsvp";
 import {
   Hero,
@@ -29,8 +29,8 @@ export interface WebsiteViewProps {
   config: WebsiteConfig;
   /** Nav chip — the signed-in guest group, or a preview label. */
   chip?: Localized | null;
-  /** Present on the personal guest site → per-guest RSVP; absent otherwise. */
-  rsvp?: RsvpData;
+  /** Present on the personal guest site → the family's headcount RSVP. */
+  rsvp?: GroupRsvpData;
   /** Present on a broadcast/share site → self-RSVP form. */
   selfRsvp?: SelfRsvpData;
   /** Owner preview → show the "guests will RSVP here" hint on events. */
@@ -118,7 +118,8 @@ export function WebsiteView({
       <Hero names={names} dateLabel={dateLabel} ornament={theme.heroMotif} />
       {countdownDate ? <Countdown dateIso={countdownDate} /> : null}
       <Story config={config} />
-      <Events events={events} rsvp={rsvp} previewHint={ownerPreview} />
+      <Events events={events} previewHint={ownerPreview} />
+      {rsvp ? <GroupRsvp {...rsvp} /> : null}
       {selfRsvp ? <SelfRsvp {...selfRsvp} /> : null}
       <Venue events={events} />
       <Gallery config={config} />

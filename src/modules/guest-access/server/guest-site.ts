@@ -2,6 +2,8 @@ import "server-only";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import { mapEventRow, type EventRow, type WeddingEvent } from "@/modules/events/types";
 import { readGuestSession, type GuestSession } from "./session";
+import type { ExistingSelfRsvp } from "./share-rsvp";
+import type { ExistingGroupRsvp } from "./group-rsvp";
 
 const EVENT_COLS =
   "id, wedding_id, name, name_hi, event_date, start_time, venue_name, venue_address, maps_url, description, description_hi, hosted_by, hosted_by_enabled, sort_order, created_at, updated_at";
@@ -35,8 +37,10 @@ export type GuestSiteData =
       label: string;
       wedding: GuestWedding;
       events: WeddingEvent[];
-      guests: { id: string; name: string }[];
-      rsvps: Record<string, Record<string, "attending" | "declined">>;
+      /** The family's saved headcount RSVP: eventId → { attending, partySize }.
+       * Empty if no one in the family has answered yet. Shared by everyone who
+       * opens the group's invite link. */
+      groupRsvp: ExistingGroupRsvp;
     }
   | {
       mode: "share";
@@ -44,6 +48,9 @@ export type GuestSiteData =
       shareLinkId: string;
       wedding: GuestWedding;
       events: WeddingEvent[];
+      /** This respondent's saved self-RSVP, or null if they haven't answered —
+       * lets the site prefill and offer an edit instead of a duplicate submit. */
+      existingRsvp: ExistingSelfRsvp | null;
     };
 
 function toGuestWedding(w: WeddingJoin): GuestWedding {
@@ -163,31 +170,18 @@ async function loadGroupSite(
     ((invites ?? []) as unknown as { events: EventRow }[]).map((r) => r.events)
   );
 
-  const { data: memberRows } = await svc
-    .from("guests")
-    .select("id, name, is_primary")
+  // The family's shared headcount RSVP (keyed by this group), if answered.
+  const { data: rsvpRows } = await svc
+    .from("group_rsvps")
+    .select("event_id, attending, party_size")
     .eq("group_id", session.groupId);
-  const guests = (memberRows ?? [])
-    .map((g) => ({ id: g.id, name: g.name, isPrimary: g.is_primary }))
-    .sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
-    .map(({ id, name }) => ({ id, name }));
-
-  const rsvps: Record<string, Record<string, "attending" | "declined">> = {};
-  if (guests.length > 0) {
-    const { data: rsvpRows } = await svc
-      .from("rsvps")
-      .select("guest_id, event_id, status")
-      .in(
-        "guest_id",
-        guests.map((g) => g.id)
-      );
-    for (const r of (rsvpRows ?? []) as {
-      guest_id: string;
-      event_id: string;
-      status: "attending" | "declined";
-    }[]) {
-      (rsvps[r.event_id] ??= {})[r.guest_id] = r.status;
-    }
+  const groupRsvp: ExistingGroupRsvp = {};
+  for (const r of (rsvpRows ?? []) as {
+    event_id: string;
+    attending: boolean;
+    party_size: number;
+  }[]) {
+    groupRsvp[r.event_id] = { attending: r.attending, partySize: r.party_size };
   }
 
   return {
@@ -195,8 +189,7 @@ async function loadGroupSite(
     label: group.name,
     wedding: toGuestWedding(group.weddings),
     events,
-    guests,
-    rsvps,
+    groupRsvp,
   };
 }
 
@@ -237,11 +230,31 @@ async function loadShareSite(
     );
   }
 
+  // This respondent's saved RSVP (if any), to prefill + offer an edit.
+  const { data: mine } = await svc
+    .from("share_rsvps")
+    .select("event_id, name, party_size")
+    .eq("respondent_id", session.respondentId);
+  const myRows = (mine ?? []) as {
+    event_id: string;
+    name: string;
+    party_size: number;
+  }[];
+  const existingRsvp: ExistingSelfRsvp | null =
+    myRows.length === 0
+      ? null
+      : {
+          name: myRows[0].name,
+          partySize: myRows[0].party_size,
+          eventIds: myRows.map((r) => r.event_id),
+        };
+
   return {
     mode: "share",
     label: link.label,
     shareLinkId: link.id,
     wedding: toGuestWedding(link.weddings),
     events,
+    existingRsvp,
   };
 }
