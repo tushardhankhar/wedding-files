@@ -411,6 +411,8 @@ const PALETTES: Record<string, Palette> = {
   rajasthani: { deep: "#141d40", deep2: "#34479a", gold: "#c19a3e", goldLite: "#e6c56a", accent: "#b5372e", light: "#f7f1e3", ink: "#20264a" },
   "save-the-date": { deep: "#082018", deep2: "#124a37", gold: "#c9a23f", goldLite: "#e8cd7e", accent: "#c9a23f", light: "#f7f0e0", ink: "#0e3b2c" },
   mayura: { deep: "#063231", deep2: "#0e6e6e", gold: "#c9a23f", goldLite: "#ecd07a", accent: "#d81b60", light: "#fdf4e3", ink: "#193c3b" },
+  jodi: { deep: "#570b2b", deep2: "#a81e58", gold: "#c9a24a", goldLite: "#e8cd7e", accent: "#a81e58", light: "#fbf6ea", ink: "#5a2436" },
+  dak: { deep: "#0d131e", deep2: "#25324a", gold: "#b4894a", goldLite: "#e3c88a", accent: "#a8332b", light: "#f5eddc", ink: "#23293a" },
 };
 
 const CONFETTI_C = { sky: "#60A5FA", sun: "#FACC15", coral: "#FB7185", lavender: "#A78BFA", cream: "#FFFDF5" };

@@ -14,6 +14,7 @@ export type HeroMotif =
   | "garland"
   | "temple"
   | "jharokha"
+  | "caricature"
   // "Experience" themes render fully bespoke heroes and ignore HeroOrnament;
   // these literals exist only so the registry entry type-checks.
   | "neon"
@@ -484,6 +485,118 @@ const THEME_BASES: ThemeBase[] = [
     } as CSSProperties,
   },
 
+  {
+    id: "jodi",
+    name: "The Jodi",
+    description:
+      "An illustrated wedding plate — rose-pink watercolour, a hanging mandala medallion, the couple at the foot and a Rajasthani haveli beyond. Asymmetric, romantic & luxurious.",
+    swatch: ["#F2AFC2", "#C9A24A", "#A81B52"],
+    heroMotif: "caricature",
+    vars: {
+      /* A rose-pink watercolour ground for the plate, with lighter blush and
+       * cream for the reading sections, deep pink ornament and gold trim. */
+      "--jdi-rose-bg": "#F2AFC2",
+      "--jdi-rose-bg-2": "#E893AB",
+      "--jdi-blush": "#F9D3DD",
+      "--jdi-blush-2": "#EFB4C4",
+      "--jdi-blush-3": "#FCE7EC",
+      "--jdi-cream": "#FDF4F6",
+      "--jdi-ivory": "#FBE7EC",
+      "--jdi-ivory-2": "#F5CBD7",
+      "--jdi-mandala": "#C93B74",
+      "--jdi-mandala-2": "#9E2757",
+      "--jdi-magenta": "#A81B52",
+      "--jdi-magenta-2": "#7E1240",
+      "--jdi-magenta-3": "#571028",
+      "--jdi-gold": "#C9A24A",
+      "--jdi-gold-lite": "#E8CD7E",
+      "--jdi-gold-deep": "#9C7A28",
+      "--jdi-sage": "#7E9A68",
+      "--jdi-sage-deep": "#4F6B41",
+      "--jdi-haveli": "#DCB48D",
+      "--jdi-haveli-2": "#C1946A",
+      "--jdi-haveli-3": "#A87A52",
+      "--jdi-elephant": "#8A9484",
+      "--jdi-elephant-2": "#5E6A5A",
+      "--jdi-bloom": "#B97FA6",
+      "--jdi-bloom-2": "#8A5580",
+      "--jdi-ink": "#6B2038",
+      "--jdi-ink-soft": "#A0687C",
+      /* Tokens the fallback illustration draws with, so the placeholder art
+       * recolours with the theme until licensed artwork is dropped in. */
+      "--jdi-lehenga": "#C2185B",
+      "--jdi-lehenga-2": "#8E1140",
+      "--jdi-sherwani": "#FAEDE4",
+      "--jdi-sherwani-2": "#EFD3C6",
+      "--jdi-dupatta": "#E8CD7E",
+      "--jdi-hair": "#3A2028",
+      "--jdi-skin": "#E8BFA4",
+      "--w-navy": "#7E1240",
+      "--w-bg": "#FBE7EC",
+      "--w-surface": "#FDF4F6",
+      "--w-ink": "#6B2038",
+      "--w-ink-soft": "#A0687C",
+      "--w-accent": "#A81B52",
+      "--w-gold": "#C9A24A",
+      "--w-gold-lite": "#E8CD7E",
+      "--w-line": "rgba(201,162,74,0.34)",
+      "--w-hero-ink": "#6B2038",
+      "--w-hero-bg":
+        "radial-gradient(80% 50% at 50% 0%, rgba(252,231,236,0.8), transparent 62%), linear-gradient(180deg, #F5C3D0 0%, #F2AFC2 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": PLAYFAIR,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"❁"',
+      "--w-pattern": PATTERN.dots,
+    } as CSSProperties,
+  },
+
+  {
+    id: "dak",
+    name: "The Dak",
+    description:
+      "An airmail postcard from the couple — aged card stock, perforated postage stamps, wax postmarks and a stamp for every celebration. Vintage philatelic, elegant & luxurious.",
+    swatch: ["#182233", "#B4894A", "#A8332B"],
+    heroMotif: "seal",
+    vars: {
+      /* Three inks only — postal navy · brass · vermilion — over aged stock.
+       * (Vermilion is rationed: postmarks, the airmail chevron and the wax
+       * seal. Everything else is navy, brass or paper.) */
+      "--dak-ink": "#182233",
+      "--dak-ink-2": "#25324A",
+      "--dak-ink-3": "#0D131E",
+      "--dak-paper": "#F5EDDC",
+      "--dak-paper-2": "#ECE1C9",
+      "--dak-surface": "#FBF6EA",
+      "--dak-gold": "#B4894A",
+      "--dak-gold-lite": "#E3C88A",
+      "--dak-gold-deep": "#8A6526",
+      "--dak-red": "#A8332B",
+      "--dak-red-deep": "#7C231D",
+      "--dak-text": "#23293A",
+      "--dak-text-soft": "#6C7385",
+      "--w-navy": "#182233",
+      "--w-bg": "#F5EDDC",
+      "--w-surface": "#FBF6EA",
+      "--w-ink": "#23293A",
+      "--w-ink-soft": "#6C7385",
+      "--w-accent": "#A8332B",
+      "--w-gold": "#B4894A",
+      "--w-gold-lite": "#E3C88A",
+      "--w-line": "rgba(180,137,74,0.3)",
+      "--w-hero-ink": "#F5EDDC",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 0%, rgba(180,137,74,0.22), transparent 60%), linear-gradient(180deg, #25324A 0%, #0D131E 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": PLAYFAIR,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern": PATTERN.dots,
+    } as CSSProperties,
+  },
+
   /* ── "Experience" themes — non-wedding, fully bespoke interactive renderers ── */
   {
     id: "afterparty",
@@ -693,6 +806,16 @@ const THEME_META: Record<
     supports: WEDDING_SUPPORTS,
   },
   mayura: {
+    category: "wedding",
+    subjectSpec: WEDDING_SUBJECT,
+    supports: WEDDING_SUPPORTS,
+  },
+  jodi: {
+    category: "wedding",
+    subjectSpec: WEDDING_SUBJECT,
+    supports: WEDDING_SUPPORTS,
+  },
+  dak: {
     category: "wedding",
     subjectSpec: WEDDING_SUBJECT,
     supports: WEDDING_SUPPORTS,

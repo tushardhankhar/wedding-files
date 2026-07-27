@@ -46,6 +46,14 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     bg: "radial-gradient(85% 55% at 50% 12%, rgba(236,208,122,.6), transparent 58%), radial-gradient(70% 55% at 50% 118%, rgba(216,27,96,.42), transparent 60%), linear-gradient(168deg, #0e7a76 0%, #0a4a4a 55%, #063231 120%)",
     motif: "❋",
   },
+  jodi: {
+    bg: "radial-gradient(58% 34% at 22% 14%, rgba(246,220,226,.9), transparent 62%), radial-gradient(56% 32% at 84% 24%, rgba(239,199,211,.7), transparent 62%), radial-gradient(60% 36% at 50% 108%, rgba(168,30,88,.24), transparent 64%), linear-gradient(168deg, #FDFAF3 0%, #F5EDDC 60%, #EFC7D3 120%)",
+    motif: "❁",
+  },
+  dak: {
+    bg: "radial-gradient(70% 45% at 50% 8%, rgba(180,137,74,.4), transparent 60%), radial-gradient(60% 40% at 50% 116%, rgba(168,51,43,.34), transparent 60%), linear-gradient(168deg, #25324A 0%, #182233 55%, #0D131E 120%)",
+    motif: "✉",
+  },
   rajputana: {
     bg: "radial-gradient(80% 60% at 50% 20%, rgba(255,248,236,.65), transparent 62%), linear-gradient(160deg, #f3e6d2 0%, #dfa878 55%, #c96f3b 115%)",
     motif: "❖",
