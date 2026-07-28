@@ -26,59 +26,126 @@ const ROSE = "var(--glt-rose)";
 const ROSE_DEEP = "var(--glt-rose-deep)";
 const LEAF = "var(--glt-leaf)";
 
-/* ── a single rose blossom ────────────────────────────────────────────────
- * A cupped garden rose: two staggered rings of curved petals furling toward a
- * small gold stamen, with a faint gold edge for definition. Drawn in a unit
- * space and scaled by `r`, so it stays crisp at any size. */
-const PETAL = "M0 0 C -0.5 -0.46 -0.5 -1.06 0 -1.36 C 0.5 -1.06 0.5 -0.46 0 0 Z";
-const PETAL_ANGLES = [0, 72, 144, 216, 288];
+/* ── the botanical kit: rose, bud, leaf ───────────────────────────────────
+ * Drawn in a unit space and scaled by `r`, so everything stays crisp at any
+ * size. Three rules keep these reading as fine botanical illustration rather
+ * than flat clip-art:
+ *
+ *   1. TONAL DEPTH — each ring of petals goes one step deeper and one step more
+ *      opaque toward the centre, so a bloom has an inside. (The old version
+ *      filled every petal the same, which is what made it read as a daisy.)
+ *   2. ODD RINGS — 6 / 5 / 4 petals at staggered angles, never a single ring of
+ *      five, which the eye reads as a cartoon flower.
+ *   3. GOLD IS A HIGHLIGHT, NOT AN OUTLINE — one hairline on the outer
+ *      silhouette and a pinpoint at the heart. Gold on every petal edge is what
+ *      cheapens engraved-look art.
+ */
+const PETAL = "M0 0 C -0.6 -0.36 -0.52 -1.0 0 -1.22 C 0.52 -1.0 0.6 -0.36 0 0 Z";
+const ring = (count: number, offset: number) =>
+  Array.from({ length: count }, (_, i) => offset + (i * 360) / count);
+
+/** Petal rings, outermost first: [angles, scale, opacity, which tone]. */
+const BLOOM: [number[], number, number, "pale" | "base" | "deep"][] = [
+  [ring(6, 0), 1, 0.5, "pale"],
+  [ring(5, 32), 0.74, 0.78, "base"],
+  [ring(4, 56), 0.46, 0.95, "deep"],
+];
+
 function Blossom({
   cx,
   cy,
   r,
-  fill = ROSE,
+  pale = "var(--glt-blush-2)",
+  base = ROSE,
+  deep = ROSE_DEEP,
 }: {
   cx: number;
   cy: number;
   r: number;
-  fill?: string;
+  pale?: string;
+  base?: string;
+  deep?: string;
 }) {
+  const tone = { pale, base, deep };
   return (
     <g transform={`translate(${cx} ${cy}) scale(${r})`}>
-      {/* outer ring — open petals */}
-      {PETAL_ANGLES.map((a) => (
-        <path key={`o${a}`} d={PETAL} fill={fill} opacity={0.82} transform={`rotate(${a})`} />
-      ))}
-      {/* inner ring — smaller, offset, furled tighter (deepens the centre) */}
-      {PETAL_ANGLES.map((a) => (
-        <path
-          key={`i${a}`}
-          d={PETAL}
-          fill={fill}
-          opacity={0.96}
-          transform={`rotate(${a + 36}) scale(0.6)`}
-        />
-      ))}
-      {/* gold stamen heart */}
-      <circle r={0.2} fill={GOLD_LITE} />
-      <circle r={0.09} fill={GOLD} />
-      {/* faint gold petal edges */}
-      {PETAL_ANGLES.map((a) => (
+      {BLOOM.map(([angles, scale, opacity, key]) =>
+        angles.map((a) => (
+          <path
+            key={`${key}${a}`}
+            d={PETAL}
+            fill={tone[key]}
+            opacity={opacity}
+            transform={`rotate(${a}) scale(${scale})`}
+          />
+        ))
+      )}
+      {/* a single hairline on the outer silhouette, and the gold heart */}
+      {ring(6, 0).map((a) => (
         <path
           key={`e${a}`}
           d={PETAL}
           fill="none"
           stroke={GOLD}
-          strokeWidth={0.028}
-          opacity={0.45}
+          strokeWidth={0.022}
+          opacity={0.28}
           transform={`rotate(${a})`}
         />
       ))}
+      <circle r={0.11} fill={GOLD_LITE} opacity={0.9} />
     </g>
   );
 }
 
-/* ── a hanging garland cascade of roses + leaves for a top corner ─────────── */
+/** A closed bud — the quiet note between blooms; keeps a spray from reading
+ * as a repeating pattern. */
+function Bud({ cx, cy, r, rot = 0 }: { cx: number; cy: number; r: number; rot?: number }) {
+  return (
+    <g transform={`translate(${cx} ${cy}) scale(${r}) rotate(${rot})`}>
+      <path
+        d="M0 0 C -0.4 -0.28 -0.38 -0.96 0 -1.14 C 0.38 -0.96 0.4 -0.28 0 0 Z"
+        fill={ROSE}
+        opacity={0.72}
+      />
+      <path
+        d="M0 -0.06 C -0.16 -0.34 -0.14 -0.86 0 -1.02 C 0.14 -0.86 0.16 -0.34 0 -0.06 Z"
+        fill={ROSE_DEEP}
+        opacity={0.6}
+      />
+      {/* sepals */}
+      <path d="M-0.34 -0.12 C -0.5 -0.34 -0.46 -0.6 -0.4 -0.72" stroke={LEAF} strokeWidth={0.06} opacity={0.75} />
+      <path d="M0.34 -0.12 C 0.5 -0.34 0.46 -0.6 0.4 -0.72" stroke={LEAF} strokeWidth={0.06} opacity={0.75} />
+    </g>
+  );
+}
+
+/** A lanceolate leaf with a midrib — pointed, not the fat ellipse it was. */
+function Leaf({ cx, cy, r, rot = 0 }: { cx: number; cy: number; r: number; rot?: number }) {
+  return (
+    <g transform={`translate(${cx} ${cy}) scale(${r}) rotate(${rot})`}>
+      <path
+        d="M0 0 C 0.34 -0.34 0.32 -0.86 0 -1.16 C -0.32 -0.86 -0.34 -0.34 0 0 Z"
+        fill={LEAF}
+        opacity={0.62}
+      />
+      <path d="M0 -0.06 L0 -1.04" stroke="var(--glt-cream)" strokeWidth={0.05} opacity={0.45} />
+    </g>
+  );
+}
+
+/* ── a rose spray spilling from a top corner ───────────────────────────────
+ * Composition notes, since this is the element that decides whether the page
+ * reads couture or craft-fair:
+ *
+ *   • IT HUGS THE CORNER. The mass sits in the top ~140 of a 200×420 stage and
+ *     tapers to a single trailing stem, so it never wanders into the headline's
+ *     column the way the old full-width curtain did.
+ *   • THREE BLOOMS, NOT ELEVEN. One hero bloom, one supporting, one small —
+ *     a clear size hierarchy — with buds and leaves carrying the rest. Restraint
+ *     is the whole look.
+ *   • IT DISSOLVES. A gradient mask fades the strand out as it descends, so the
+ *     spray ends in air instead of being chopped off mid-stem.
+ */
 export function FloralCascade({
   side,
   className,
@@ -86,64 +153,65 @@ export function FloralCascade({
   side: "left" | "right";
   className?: string;
 }) {
-  // Blossoms placed along a drooping diagonal vine (viewBox 220×360).
-  const nodes = [
-    { x: 40, y: 26, r: 26, f: ROSE },
-    { x: 96, y: 20, r: 20, f: ROSE_DEEP },
-    { x: 150, y: 40, r: 24, f: ROSE },
-    { x: 26, y: 88, r: 22, f: ROSE_DEEP },
-    { x: 84, y: 96, r: 27, f: ROSE },
-    { x: 138, y: 118, r: 18, f: ROSE_DEEP },
-    { x: 44, y: 168, r: 20, f: ROSE },
-    { x: 96, y: 186, r: 22, f: ROSE_DEEP },
-    { x: 30, y: 246, r: 16, f: ROSE },
-    { x: 74, y: 276, r: 18, f: ROSE },
-    { x: 40, y: 330, r: 12, f: ROSE_DEEP },
+  const maskId = `glt-fade-${side}`;
+  // Two stems: a short arching one carrying the blooms, and a long thin trail.
+  const stems = [
+    "M4 -6 C 40 26 62 62 68 104 C 74 148 62 178 46 206",
+    "M22 -4 C 44 44 34 96 20 140 C 8 178 14 226 26 268",
+    "M2 8 C 26 70 52 132 48 196 C 45 250 30 296 22 344",
+  ];
+  const blooms = [
+    { x: 30, y: 18, r: 21 }, // hero bloom, tucked into the corner
+    { x: 74, y: 62, r: 13 }, // supporting
+    { x: 20, y: 104, r: 9 }, // small
+  ];
+  const buds = [
+    { x: 58, y: 26, r: 13, rot: 24 },
+    { x: 48, y: 132, r: 10, rot: -18 },
+    { x: 34, y: 196, r: 7, rot: 12 },
   ];
   const leaves = [
-    { x: 68, y: 54, rot: 30 },
-    { x: 120, y: 78, rot: -20 },
-    { x: 48, y: 128, rot: 45 },
-    { x: 116, y: 150, rot: -30 },
-    { x: 62, y: 214, rot: 40 },
-    { x: 96, y: 236, rot: -25 },
-    { x: 54, y: 300, rot: 35 },
+    { x: 54, y: 8, r: 15, rot: 62 },
+    { x: 12, y: 52, r: 13, rot: -34 },
+    { x: 76, y: 96, r: 12, rot: 48 },
+    { x: 30, y: 148, r: 11, rot: -28 },
+    { x: 52, y: 168, r: 9, rot: 54 },
+    { x: 20, y: 240, r: 8, rot: -22 },
   ];
   return (
     <svg
-      viewBox="0 0 220 360"
+      viewBox="0 0 200 420"
       fill="none"
       aria-hidden
       className={className}
       style={{ transform: side === "right" ? "scaleX(-1)" : undefined }}
     >
-      {/* trailing hanging strands (wisteria-like) */}
-      {[16, 62, 118, 172].map((x, i) => (
-        <path
-          key={`s${i}`}
-          d={`M${x} 6 q ${i % 2 ? 10 : -10} ${120 + i * 26} ${i % 2 ? 4 : -4} ${190 + i * 28}`}
-          stroke={LEAF}
-          strokeWidth="1.4"
-          opacity="0.5"
-        />
-      ))}
-      {leaves.map((l, i) => (
-        <g key={`l${i}`} transform={`rotate(${l.rot} ${l.x} ${l.y})`}>
-          <ellipse cx={l.x} cy={l.y} rx="6" ry="13" fill={LEAF} opacity="0.85" />
-          <line
-            x1={l.x}
-            y1={l.y - 11}
-            x2={l.x}
-            y2={l.y + 11}
-            stroke="var(--glt-cream)"
-            strokeWidth="0.8"
-            opacity="0.5"
-          />
-        </g>
-      ))}
-      {nodes.map((n, i) => (
-        <Blossom key={`b${i}`} cx={n.x} cy={n.y} r={n.r} fill={n.f} />
-      ))}
+      <defs>
+        <linearGradient id={maskId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#fff" stopOpacity="1" />
+          <stop offset="0.42" stopColor="#fff" stopOpacity="0.9" />
+          <stop offset="0.78" stopColor="#fff" stopOpacity="0.28" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+        <mask id={`${maskId}-m`}>
+          <rect x="0" y="0" width="200" height="420" fill={`url(#${maskId})`} />
+        </mask>
+      </defs>
+
+      <g mask={`url(#${maskId}-m)`}>
+        {stems.map((d, i) => (
+          <path key={`s${i}`} d={d} stroke={LEAF} strokeWidth={i === 2 ? 0.9 : 1.3} opacity={0.42} />
+        ))}
+        {leaves.map((l, i) => (
+          <Leaf key={`l${i}`} cx={l.x} cy={l.y} r={l.r} rot={l.rot} />
+        ))}
+        {buds.map((b, i) => (
+          <Bud key={`d${i}`} cx={b.x} cy={b.y} r={b.r} rot={b.rot} />
+        ))}
+        {blooms.map((b, i) => (
+          <Blossom key={`b${i}`} cx={b.x} cy={b.y} r={b.r} />
+        ))}
+      </g>
     </svg>
   );
 }
@@ -166,26 +234,29 @@ export function ArchFrame({ className }: { className?: string }) {
       aria-hidden
       className={className}
     >
+      {/* A frame should be felt, not read: a fine engraved line at 0.55, with a
+          paler inner rule for the double-line look of a letterpress border.
+          At 2.4px/0.9 it competed with the headline for attention. */}
       <m.path
         d={arch}
         stroke={GOLD}
-        strokeWidth="2.4"
+        strokeWidth="1.4"
         initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 0.9 }}
-        transition={{ duration: 1.7, ease: "easeInOut" }}
+        animate={{ pathLength: 1, opacity: 0.55 }}
+        transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
       />
       <m.path
         d={arch}
         stroke={GOLD_LITE}
-        strokeWidth="0.8"
+        strokeWidth="0.6"
         initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 0.7 }}
-        transition={{ duration: 1.7, ease: "easeInOut", delay: 0.12 }}
+        animate={{ pathLength: 1, opacity: 0.4 }}
+        transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1], delay: 0.14 }}
         style={{ transform: "translateX(7px)" }}
       />
       {/* pillar bases */}
       {[20, 380].map((x) => (
-        <g key={x} stroke={GOLD} strokeWidth="2" opacity="0.85">
+        <g key={x} stroke={GOLD} strokeWidth="1.4" opacity="0.5">
           <line x1={x - 12} y1="600" x2={x + 12} y2="600" />
           <line x1={x - 8} y1="586" x2={x + 8} y2="586" />
         </g>
@@ -230,38 +301,27 @@ export function Ganesha({ className }: { className?: string }) {
   );
 }
 
-/* ── a single hanging temple bell ─────────────────────────────────────────── */
-function Bell({ x, len }: { x: number; len: number }) {
+/* ── a slender gold pendant for the arch crown ─────────────────────────────
+ * Replaces the row of swinging temple bells that used to hang across the
+ * headline. One static, symmetrical jewel on the centre line: it decorates the
+ * crown without competing with the type, and nothing about it moves. */
+export function CrownPendant({ className }: { className?: string }) {
+  // Compact on purpose: at ~36px tall a long chain renders as a stray hair, so
+  // the jewel fills the box and the suspension is a short link, not a thread.
   return (
-    <g transform={`translate(${x} 0)`} className="glt-bell">
-      <line x1="0" y1="0" x2="0" y2={len} stroke={GOLD} strokeWidth="1.2" opacity="0.7" />
-      <g transform={`translate(0 ${len})`}>
-        <path
-          d="M-9 14 C-9 2 -5 -4 0 -4 C5 -4 9 2 9 14 Z"
-          fill={GOLD}
-          opacity="0.95"
-        />
-        <path d="M-11 14 L11 14 L9 18 L-9 18 Z" fill={GOLD_LITE} />
-        <circle cx="0" cy="21" r="2.4" fill={GOLD} />
-        <circle cx="0" cy="-5" r="2" fill={GOLD_LITE} />
-      </g>
-    </g>
-  );
-}
-
-/* ── a row of bells swinging under the arch ───────────────────────────────── */
-export function HangingBells({ className }: { className?: string }) {
-  const bells = [
-    { x: 30, len: 40 },
-    { x: 80, len: 62 },
-    { x: 210, len: 62 },
-    { x: 260, len: 40 },
-  ];
-  return (
-    <svg viewBox="0 0 290 90" fill="none" aria-hidden className={className}>
-      {bells.map((b, i) => (
-        <Bell key={i} x={b.x} len={b.len} />
-      ))}
+    <svg viewBox="0 0 44 60" fill="none" aria-hidden className={className}>
+      <circle cx="22" cy="6" r="2.4" fill={GOLD} opacity="0.75" />
+      <line x1="22" y1="9" x2="22" y2="15" stroke={GOLD} strokeWidth="1.2" opacity="0.6" />
+      {/* a lotus-bud drop — the classic jhumar silhouette */}
+      <path
+        d="M22 15 C11 28 11 45 22 56 C33 45 33 28 22 15 Z"
+        fill={GOLD_LITE}
+        opacity="0.5"
+        stroke={GOLD}
+        strokeWidth="1.1"
+      />
+      <path d="M22 24 C17 32 17 42 22 48 C27 42 27 32 22 24 Z" fill={GOLD} opacity="0.28" />
+      <circle cx="22" cy="36" r="2.2" fill={GOLD} opacity="0.85" />
     </svg>
   );
 }
@@ -451,20 +511,19 @@ export function Lantern({ className }: { className?: string }) {
   );
 }
 
-/* ── rose petals drifting down over the whole page (deterministic) ────────── */
+/* ── rose petals drifting down over the whole page (deterministic) ──────────
+ * Six petals, not ten; 30–46s falls, not 15–22s; and the near/far split (size +
+ * blur + opacity) gives depth. Ambience you notice only if you look for it —
+ * anything faster or denser turns the page into a screensaver. */
 export function PetalFall({ className }: { className?: string }) {
   // Fixed set → no random → SSR-stable. Each petal loops a fall+sway in CSS.
   const petals = [
-    { left: 6, delay: 0, dur: 15, size: 15, hue: ROSE, drift: 24 },
-    { left: 17, delay: 5, dur: 19, size: 11, hue: ROSE_DEEP, drift: -20 },
-    { left: 28, delay: 9, dur: 17, size: 13, hue: ROSE, drift: 30 },
-    { left: 39, delay: 2, dur: 21, size: 10, hue: ROSE_DEEP, drift: -26 },
-    { left: 50, delay: 7, dur: 16, size: 16, hue: ROSE, drift: 22 },
-    { left: 61, delay: 12, dur: 20, size: 12, hue: ROSE_DEEP, drift: -30 },
-    { left: 72, delay: 3, dur: 18, size: 14, hue: ROSE, drift: 26 },
-    { left: 83, delay: 8, dur: 22, size: 10, hue: ROSE_DEEP, drift: -22 },
-    { left: 92, delay: 11, dur: 15, size: 13, hue: ROSE, drift: 28 },
-    { left: 46, delay: 14, dur: 19, size: 11, hue: ROSE, drift: -24 },
+    { left: 8, delay: 0, dur: 38, size: 13, hue: ROSE, drift: 26, far: false },
+    { left: 24, delay: 13, dur: 46, size: 8, hue: ROSE_DEEP, drift: -18, far: true },
+    { left: 43, delay: 6, dur: 34, size: 11, hue: ROSE, drift: 22, far: false },
+    { left: 62, delay: 22, dur: 44, size: 8, hue: ROSE, drift: -24, far: true },
+    { left: 79, delay: 9, dur: 30, size: 12, hue: ROSE_DEEP, drift: 20, far: false },
+    { left: 93, delay: 27, dur: 42, size: 9, hue: ROSE, drift: -16, far: true },
   ];
   return (
     <div className={className} aria-hidden>
@@ -478,6 +537,9 @@ export function PetalFall({ className }: { className?: string }) {
               animationDelay: `-${p.delay}s`,
               animationDuration: `${p.dur}s`,
               ["--drift" as string]: `${p.drift}px`,
+              // Distant petals sit softer and hazier — depth of field.
+              ["--petal-opacity" as string]: p.far ? 0.3 : 0.5,
+              filter: p.far ? "blur(0.6px)" : undefined,
             } as React.CSSProperties
           }
         >
@@ -485,9 +547,9 @@ export function PetalFall({ className }: { className?: string }) {
             <path
               d="M10 1 C15 5 18 11 10 19 C2 11 5 5 10 1 Z"
               fill={p.hue}
-              opacity="0.85"
+              opacity="0.75"
             />
-            <path d="M10 4 C11 9 11 14 10 18" stroke={GOLD_LITE} strokeWidth="0.6" opacity="0.6" />
+            <path d="M10 4 C11 9 11 14 10 18" stroke={GOLD_LITE} strokeWidth="0.5" opacity="0.45" />
           </svg>
         </span>
       ))}
