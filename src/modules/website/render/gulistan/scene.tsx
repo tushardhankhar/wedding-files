@@ -2,11 +2,12 @@
 
 import type { Artwork } from "../../schema";
 import { artworkStyles } from "../artwork-placement";
-import { PalaceScene, Couple, Balustrade } from "./ornaments";
+import { PalaceScene, Couple } from "./ornaments";
 
 /**
- * The palace-at-dusk scene: sky, lake, skyline and — on the balcony — either the
- * theme's drawn couple or the client's own illustration (caricature, sketch…).
+ * The palace-at-dusk scene: sky, lake, skyline and, in front of it, either the
+ * theme's drawn couple (on their balcony) or the client's own illustration
+ * (caricature, sketch…) standing on the open lakefront.
  *
  * Shared with the content editor's placement picker so what the client positions
  * is pixel-for-pixel what the site renders.
@@ -26,27 +27,21 @@ export function GulistanScene({ artwork }: { artwork?: Artwork }) {
       <PalaceScene className="absolute inset-0 h-full w-full" />
 
       {art && artwork ? (
-        <>
-          {/* The wrapper spans the scene, so its translate (in %) nudges the
-              artwork by a share of the SCENE — independent of the drawing's
-              own dimensions. */}
-          <div className="absolute inset-0" style={art.shift}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- client-uploaded artwork on R2 */}
-            <img
-              src={artwork.url}
-              alt=""
-              draggable={false}
-              style={art.image}
-              className="absolute inset-x-0 bottom-0 mx-auto w-auto max-w-none object-contain"
-            />
-          </div>
-          {/* Railing over the artwork, so the figures read as standing on the
-              balcony however the drawing is cropped. */}
-          <Balustrade
-            style={stage}
-            className="absolute inset-x-0 bottom-0 mx-auto w-auto"
+        /* No balcony railing over an upload — it cut across the drawing instead
+           of framing it. (The drawn couple's railing lives inside <Couple>.)
+           The wrapper spans the scene, so its translate (in %) nudges the
+           artwork by a share of the SCENE — independent of the drawing's own
+           dimensions. */
+        <div className="absolute inset-0" style={art.shift}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- client-uploaded artwork on R2 */}
+          <img
+            src={artwork.url}
+            alt=""
+            draggable={false}
+            style={art.image}
+            className="absolute inset-x-0 bottom-0 mx-auto w-auto max-w-none object-contain"
           />
-        </>
+        </div>
       ) : (
         <Couple style={stage} className="absolute inset-x-0 bottom-0 mx-auto w-auto" />
       )}
