@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
@@ -9,6 +8,7 @@ import { Lotus } from "@/components/brand/motifs";
 import { AddGroup } from "./add-group";
 import { GroupCard } from "./group-card";
 import { ShareLinks } from "./share-links";
+import { NavLink } from "@/components/brand/nav-link";
 
 export default async function GuestsPage({
   params,
@@ -32,12 +32,12 @@ export default async function GuestsPage({
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <Link
+        <NavLink
           href={`/weddings/${weddingId}`}
           className="text-sm text-muted-foreground hover:underline"
         >
           ← {wedding.title}
-        </Link>
+        </NavLink>
         {collectsRsvp ? (
           <span className="text-sm text-muted-foreground">
             {groups.length} {groups.length === 1 ? "group" : "groups"} ·{" "}

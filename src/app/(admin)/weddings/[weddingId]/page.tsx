@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { getWeddingById } from "@/modules/weddings/server/queries";
@@ -12,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
+import { NavLink, NavCardLink } from "@/components/brand/nav-link";
 import { THEMES, getTheme, occasionNoun } from "@/modules/website/themes/registry";
 import { WeddingForm } from "../wedding-form";
 import { DeleteWeddingButton } from "./delete-wedding-button";
@@ -39,17 +39,17 @@ export default async function WeddingDetailPage({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="flex items-center justify-between">
-        <Link
+        <NavLink
           href="/dashboard"
           className="text-sm text-muted-foreground hover:underline"
         >
           ← Back to dashboard
-        </Link>
+        </NavLink>
         <span className="text-sm text-muted-foreground">/w/{wedding.slug}</span>
       </div>
 
       {theme.supports.events ? (
-        <Link href={`/weddings/${wedding.id}/events`} className="block">
+        <NavCardLink href={`/weddings/${wedding.id}/events`}>
           <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
             <CardHeader>
               <CardTitle className="text-base">Events →</CardTitle>
@@ -58,10 +58,10 @@ export default async function WeddingDetailPage({
               </CardDescription>
             </CardHeader>
           </Card>
-        </Link>
+        </NavCardLink>
       ) : null}
 
-      <Link href={`/weddings/${wedding.id}/content`} className="block">
+      <NavCardLink href={`/weddings/${wedding.id}/content`}>
         <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
           <CardHeader>
             <CardTitle className="text-base">Website content →</CardTitle>
@@ -70,9 +70,9 @@ export default async function WeddingDetailPage({
             </CardDescription>
           </CardHeader>
         </Card>
-      </Link>
+      </NavCardLink>
 
-      <Link href={`/weddings/${wedding.id}/guests`} className="block">
+      <NavCardLink href={`/weddings/${wedding.id}/guests`}>
         <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
           <CardHeader>
             <CardTitle className="text-base">Guests →</CardTitle>
@@ -81,10 +81,10 @@ export default async function WeddingDetailPage({
             </CardDescription>
           </CardHeader>
         </Card>
-      </Link>
+      </NavCardLink>
 
       {theme.supports.rsvp ? (
-        <Link href={`/weddings/${wedding.id}/rsvps`} className="block">
+        <NavCardLink href={`/weddings/${wedding.id}/rsvps`}>
           <Card className="relative overflow-hidden transition-transform hover:-translate-y-0.5 hover:border-[color:var(--gold-line)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
             <CardHeader>
               <CardTitle className="text-base">RSVPs →</CardTitle>
@@ -93,7 +93,7 @@ export default async function WeddingDetailPage({
               </CardDescription>
             </CardHeader>
           </Card>
-        </Link>
+        </NavCardLink>
       ) : null}
 
       <Card>

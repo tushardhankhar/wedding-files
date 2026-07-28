@@ -7,6 +7,7 @@ import {
 } from "@/modules/guests/server/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 const initial: FormState = {};
 
@@ -26,6 +27,7 @@ export function AddGroup({ weddingId }: { weddingId: string }) {
         className="flex-1"
       />
       <Button type="submit" disabled={pending}>
+        {pending ? <Spinner /> : null}
         {pending ? "Adding…" : "Add group"}
       </Button>
       {state.error ? (

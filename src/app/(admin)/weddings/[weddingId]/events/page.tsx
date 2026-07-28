@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
@@ -14,6 +13,7 @@ import {
 import { Lotus } from "@/components/brand/motifs";
 import { EventForm } from "./event-form";
 import { EventRow } from "./event-row";
+import { NavLink } from "@/components/brand/nav-link";
 
 export default async function EventsPage({
   params,
@@ -32,12 +32,12 @@ export default async function EventsPage({
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <Link
+        <NavLink
           href={`/weddings/${weddingId}`}
           className="text-sm text-muted-foreground hover:underline"
         >
           ← {wedding.title}
-        </Link>
+        </NavLink>
         <span className="text-sm text-muted-foreground">
           {events.length} {events.length === 1 ? "event" : "events"}
         </span>

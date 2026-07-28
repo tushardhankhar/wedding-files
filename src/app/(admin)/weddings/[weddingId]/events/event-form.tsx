@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
 
 type EventAction = (
   prev: EventFormState,
@@ -203,7 +204,8 @@ export function EventForm({
 
       <div className="flex items-center gap-2">
         <Button type="submit" disabled={pending}>
-          {pending ? "Saving…" : submitLabel}
+          {pending ? <Spinner /> : null}
+        {pending ? "Saving…" : submitLabel}
         </Button>
         {onCancel ? (
           <Button

@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 
 const initialState: AuthFormState = {};
 
@@ -55,6 +56,7 @@ export function LoginForm() {
       ) : null}
 
       <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? <Spinner /> : null}
         {pending ? "Sending…" : "Email me a sign-in link"}
       </Button>
     </form>

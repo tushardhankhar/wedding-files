@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 const TITLE_PLACEHOLDER: Record<ThemeCategory, string> = {
   wedding: "e.g. Aisha & Rohan",
@@ -268,6 +269,7 @@ export function CreateWizard() {
                   ← Back
                 </Button>
                 <Button type="submit" disabled={pending}>
+                  {pending ? <Spinner /> : null}
                   {pending ? "Creating…" : "Create invitation"}
                 </Button>
               </div>

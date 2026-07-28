@@ -21,6 +21,25 @@ export function PageLoader({ label = "Loading" }: { label?: string }) {
   );
 }
 
+/**
+ * Blocking veil over the whole viewport, for round-trips that end in a redirect
+ * and leave nothing useful to interact with meanwhile (signing out).
+ */
+export function LoaderOverlay({ label = "Loading" }: { label?: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed inset-0 z-[70] flex flex-col items-center justify-center gap-5 bg-background/85 backdrop-blur-sm duration-200 animate-in fade-in"
+    >
+      <Ring />
+      <p className="animate-pulse font-heading text-xs uppercase tracking-[0.3em] text-muted-foreground">
+        {label}
+      </p>
+    </div>
+  );
+}
+
 /** Full-screen loader for standalone pages (login, preview, guest site). */
 export function FullPageLoader({ label = "Loading" }: { label?: string }) {
   return (

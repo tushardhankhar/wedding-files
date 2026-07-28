@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 export interface EventLite {
   id: string;
@@ -34,6 +35,11 @@ export function GroupCard({
   events: EventLite[];
 }) {
   const [pending, startTransition] = useTransition();
+  // The shared transition covers rename, delete and the invite toggles, so
+  // remember which button was pressed and only spin that one. Only meaningful
+  // while `pending`, so it never needs clearing.
+  const [busy, setBusy] = useState<"rename" | "delete" | null>(null);
+  const spinning = (kind: typeof busy) => pending && busy === kind;
 
   // Invite link
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
@@ -130,6 +136,7 @@ export function GroupCard({
       setEditing(false);
       return;
     }
+    setBusy("rename");
     startTransition(async () => {
       await renameGroupAction(group.id, weddingId, name.trim());
       setEditing(false);
@@ -138,6 +145,7 @@ export function GroupCard({
 
   function removeGroup() {
     if (!window.confirm(`Delete "${group.name}" and all its guests?`)) return;
+    setBusy("delete");
     startTransition(() => {
       void deleteGroupAction(group.id, weddingId);
     });
@@ -169,7 +177,8 @@ export function GroupCard({
                 autoFocus
               />
               <Button type="button" size="sm" onClick={saveName} disabled={pending}>
-                Save
+                {spinning("rename") ? <Spinner /> : null}
+                {spinning("rename") ? "Saving…" : "Save"}
               </Button>
             </div>
           ) : (
@@ -194,7 +203,8 @@ export function GroupCard({
                   onClick={removeGroup}
                   disabled={pending}
                 >
-                  Delete
+                  {spinning("delete") ? <Spinner /> : null}
+                  {spinning("delete") ? "Deleting…" : "Delete"}
                 </Button>
               </div>
             </>
@@ -284,6 +294,7 @@ export function GroupCard({
               Primary
             </label>
             <Button type="submit" variant="outline" size="sm" disabled={addingGuest}>
+              {addingGuest ? <Spinner /> : null}
               {addingGuest ? "Adding…" : "Add"}
             </Button>
           </form>
@@ -346,6 +357,7 @@ export function GroupCard({
               onClick={generateInvite}
               disabled={generating}
             >
+              {generating ? <Spinner /> : null}
               {generating
                 ? "Generating…"
                 : group.hasInvite || inviteUrl

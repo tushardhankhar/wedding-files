@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { deleteWeddingAction } from "@/modules/weddings/server/actions";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 export function DeleteWeddingButton({
   weddingId,
@@ -36,6 +37,7 @@ export function DeleteWeddingButton({
       onClick={onDelete}
       disabled={pending}
     >
+      {pending ? <Spinner /> : null}
       {pending ? "Deleting…" : `Delete ${occasion}`}
     </Button>
   );

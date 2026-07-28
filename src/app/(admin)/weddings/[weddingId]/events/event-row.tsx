@@ -8,6 +8,7 @@ import {
 } from "@/modules/events/server/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import { EventForm } from "./event-form";
 
 function formatWhen(dateIso: string | null, time: string | null): string {
@@ -111,7 +112,8 @@ export function EventRow({
             onClick={onDelete}
             disabled={pending}
           >
-            {pending ? "…" : "Delete"}
+            {pending ? <Spinner /> : null}
+            {pending ? "Deleting…" : "Delete"}
           </Button>
         </div>
       </CardContent>

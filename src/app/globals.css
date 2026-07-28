@@ -174,6 +174,131 @@
   );
 }
 
+/* ── App shell feedback (.jn-*) ────────────────────────────────────────────
+   Every admin/client route is dynamic (auth cookie), so navigation always
+   costs a server round-trip. These are the "something is happening" cues:
+   a sweeping top bar, per-link hints, and skeleton blocks. All of them start
+   invisible and fade in after 120ms so a fast navigation never flashes. */
+
+/* Indeterminate bar pinned to the top of the viewport, above the header. */
+.jn-navbar {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 60;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+.jn-navbar[data-pending] {
+  animation: jn-fade 160ms ease 120ms forwards;
+}
+.jn-navbar > span {
+  display: block;
+  height: 100%;
+  width: 38%;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 35%,
+    var(--gold-deep) 70%,
+    transparent
+  );
+}
+.jn-navbar[data-pending] > span {
+  animation: jn-sweep 1.05s ease-in-out 120ms infinite;
+}
+@keyframes jn-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(365%); }
+}
+
+/* Inline dot after a text link. Fixed size + reserved space = no layout shift. */
+.jn-hint {
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-inline-start: 0.45em;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0;
+  visibility: hidden;
+}
+.jn-hint[data-pending] {
+  visibility: visible;
+  animation:
+    jn-fade 180ms ease 120ms forwards,
+    jn-throb 900ms ease-in-out 120ms infinite;
+}
+@keyframes jn-throb {
+  50% { opacity: 0.25; }
+}
+
+/* Veil + ring over a card-sized link while its route loads. */
+.jn-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background: color-mix(in oklch, var(--card), transparent 22%);
+}
+.jn-veil[data-pending] {
+  visibility: visible;
+  animation: jn-fade 180ms ease 120ms forwards;
+}
+.jn-veil::before {
+  content: "";
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  border: 2px solid var(--gold-line);
+  border-top-color: var(--gold-deep);
+  animation: jn-spin 700ms linear infinite;
+}
+@keyframes jn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Skeleton block used by every route-level loading.tsx. */
+.jn-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    color-mix(in oklch, var(--muted), var(--foreground) 7%) 50%,
+    var(--muted) 100%
+  );
+  background-size: 220% 100%;
+  animation: jn-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes jn-shimmer {
+  from { background-position: 130% 0; }
+  to   { background-position: -130% 0; }
+}
+
+@keyframes jn-fade {
+  to { opacity: 1; }
+}
+
+/* Respect a reduced-motion preference: keep the cues, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .jn-navbar[data-pending] > span {
+    animation: none;
+    width: 100%;
+    transform: none;
+    opacity: 0.7;
+  }
+  .jn-hint[data-pending] { animation: jn-fade 180ms ease 120ms forwards; }
+  .jn-veil::before { animation-duration: 1.6s; }
+  .jn-skeleton { animation: none; }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    THE MAHARAJA — standalone royal theme (registry id: "royal").
    Unlike the token themes, this theme has its own renderer (MaharajaView) and

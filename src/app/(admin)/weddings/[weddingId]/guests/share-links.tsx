@@ -14,6 +14,7 @@ import { shareUrl } from "@/modules/guests/share-url";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 interface EventLite {
   id: string;
@@ -66,6 +67,11 @@ function ShareLinkCard({
   events: EventLite[];
 }) {
   const [pending, startTransition] = useTransition();
+  // One transition covers every button on the card, so remember which one was
+  // pressed — otherwise a spinner would appear on all of them at once. Only
+  // meaningful while `pending`, so it never needs clearing.
+  const [busy, setBusy] = useState<"link" | "delete" | null>(null);
+  const spinning = (kind: typeof busy) => pending && busy === kind;
   const [allEvents, setAllEvents] = useState(link.allEvents);
   const [chosen, setChosen] = useState<Set<string>>(
     () => new Set(link.eventIds)
@@ -101,6 +107,7 @@ function ShareLinkCard({
     ) {
       return;
     }
+    setBusy("link");
     startTransition(async () => {
       const res = await regenerateShareLinkAction(link.id, weddingId, slug);
       if (res.url) setUrl(res.url);
@@ -108,6 +115,7 @@ function ShareLinkCard({
   }
   function remove() {
     if (!window.confirm(`Delete the "${link.label}" link?`)) return;
+    setBusy("delete");
     startTransition(() => {
       void deleteShareLinkAction(link.id, weddingId);
     });
@@ -126,7 +134,8 @@ function ShareLinkCard({
             onClick={remove}
             disabled={pending}
           >
-            Delete
+            {spinning("delete") ? <Spinner /> : null}
+            {spinning("delete") ? "Deleting…" : "Delete"}
           </Button>
         </div>
 
@@ -179,7 +188,8 @@ function ShareLinkCard({
               onClick={getLink}
               disabled={pending}
             >
-              Regenerate link
+              {spinning("link") ? <Spinner /> : null}
+              {spinning("link") ? "Regenerating…" : "Regenerate link"}
             </Button>
           </div>
         ) : (
@@ -190,7 +200,8 @@ function ShareLinkCard({
             onClick={getLink}
             disabled={pending}
           >
-            Get shareable link
+            {spinning("link") ? <Spinner /> : null}
+            {spinning("link") ? "Creating…" : "Get shareable link"}
           </Button>
         )}
       </CardContent>
@@ -233,6 +244,7 @@ export function ShareLinks({
               className="flex-1"
             />
             <Button type="submit" disabled={creating}>
+              {creating ? <Spinner /> : null}
               {creating ? "Creating…" : "Create link"}
             </Button>
           </form>

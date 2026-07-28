@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { listWeddings } from "@/modules/weddings/server/queries";
 import {
@@ -8,6 +7,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
+import { NavLink, NavCardLink } from "@/components/brand/nav-link";
 import { occasionLabel } from "@/modules/website/themes/registry";
 
 function formatDate(iso: string | null): string {
@@ -94,9 +94,9 @@ export default async function DashboardPage() {
           </p>
         </div>
         {isAdmin ? (
-          <Link href="/weddings/new" className={buttonVariants()}>
+          <NavLink href="/weddings/new" className={buttonVariants()}>
             ＋ New invitation
-          </Link>
+          </NavLink>
         ) : null}
       </div>
 
@@ -113,12 +113,12 @@ export default async function DashboardPage() {
                 : "Your planner hasn't shared an invitation with you yet."}
             </p>
             {isAdmin ? (
-              <Link
+              <NavLink
                 href="/weddings/new"
                 className={`${buttonVariants()} mt-3`}
               >
                 ＋ New invitation
-              </Link>
+              </NavLink>
             ) : null}
           </CardHeader>
         </Card>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               className="duration-500 animate-in fade-in slide-in-from-bottom-3"
               style={{ animationDelay: `${i * 70}ms` }}
             >
-              <Link href={`/weddings/${w.id}`} className="block">
+              <NavCardLink href={`/weddings/${w.id}`}>
                 <Card className="relative overflow-hidden transition-transform hover:-translate-y-1 hover:border-[color:var(--gold-line)] hover:shadow-[0_14px_34px_-14px_rgba(43,39,64,0.25)] before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-gradient-to-r before:from-[color:var(--gold)] before:to-[color:var(--gold-deep)] before:opacity-0 before:transition-opacity hover:before:opacity-100">
                   <CardHeader>
                     <span className="inline-flex w-fit items-center rounded-full border border-[color:var(--gold-line)] bg-[color:var(--accent)] px-2.5 py-0.5 font-heading text-[10px] font-semibold uppercase tracking-wide text-[color:var(--gold-deep)]">
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
                     ) : null}
                   </CardHeader>
                 </Card>
-              </Link>
+              </NavCardLink>
             </li>
           ))}
         </ul>

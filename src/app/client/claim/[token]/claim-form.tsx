@@ -12,6 +12,8 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { PendingSubmit } from "@/components/brand/pending-submit";
 import { cn } from "@/lib/utils";
 
 export type ClaimStatus = "ok" | "invalid" | "expired" | "accepted" | "legacy";
@@ -125,6 +127,7 @@ function OtpFlow({
             </p>
           ) : null}
           <Button type="submit" className="w-full" disabled={requesting}>
+            {requesting ? <Spinner /> : null}
             {requesting ? "Sending…" : "Email me a sign-in code"}
           </Button>
         </form>
@@ -155,6 +158,7 @@ function OtpFlow({
             ) : null}
 
             <Button type="submit" className="w-full" disabled={verifying}>
+              {verifying ? <Spinner /> : null}
               {verifying ? "Verifying…" : "Finish setup"}
             </Button>
           </form>
@@ -198,6 +202,7 @@ function FinishSetup({
         </p>
       ) : null}
       <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? <Spinner /> : null}
         {pending ? "Finishing…" : "Finish setup"}
       </Button>
     </form>
@@ -226,9 +231,13 @@ function WrongEmail({
         . Sign out to continue as the invited person.
       </p>
       <form action={signOut}>
-        <Button type="submit" variant="outline" className="w-full">
-          Sign out &amp; continue
-        </Button>
+        <PendingSubmit
+          label={<>Sign out &amp; continue</>}
+          pendingLabel="Signing out…"
+          overlay="Signing out"
+          variant="outline"
+          className="w-full"
+        />
       </form>
     </div>
   );

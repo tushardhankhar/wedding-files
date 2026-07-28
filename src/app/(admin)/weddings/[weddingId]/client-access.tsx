@@ -10,6 +10,7 @@ import {
 import type { WeddingAdminMeta } from "@/modules/weddings/server/admin-queries";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 const initialState: GenerateInviteState = {};
 const initialRevoke: RevokeInviteState = {};
@@ -79,6 +80,7 @@ export function ClientAccess({
           aria-label="Client email address"
         />
         <Button type="submit" variant="outline" disabled={pending}>
+          {pending ? <Spinner /> : null}
           {pending ? "Generating…" : "Generate & email link"}
         </Button>
       </form>
@@ -192,6 +194,7 @@ function RevokeButton({ weddingId }: { weddingId: string }) {
   return (
     <form action={formAction}>
       <Button type="submit" variant="ghost" size="sm" disabled={pending}>
+        {pending ? <Spinner /> : null}
         {pending ? "Revoking…" : "Revoke invite"}
       </Button>
       {state.error ? (

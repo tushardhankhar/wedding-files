@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateWeddingThemeAction } from "@/modules/weddings/server/actions";
+import { Spinner } from "@/components/ui/spinner";
 
 export interface ThemeOption {
   id: string;
@@ -49,10 +50,10 @@ export function ThemePicker({
               onClick={() => choose(t.id)}
               disabled={pending}
               aria-pressed={active}
-              className={`rounded-xl border p-3 text-left transition-colors ${
+              className={`rounded-xl border p-3 text-left transition-colors disabled:cursor-not-allowed ${
                 active
                   ? "border-primary ring-2 ring-primary/30"
-                  : "border-border hover:border-[color:var(--gold-line)]"
+                  : "border-border hover:border-[color:var(--gold-line)] disabled:opacity-55"
               }`}
             >
               <div className="mb-2 flex gap-1.5">
@@ -64,11 +65,18 @@ export function ThemePicker({
                   />
                 ))}
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <span className="font-heading text-sm font-semibold">
                   {t.name}
                 </span>
-                {active ? (
+                {/* Switching a theme re-renders the whole site config, so the
+                    card the client picked says so while that happens. */}
+                {active && pending ? (
+                  <span className="flex items-center gap-1.5 font-heading text-[11px] font-semibold uppercase tracking-wide text-primary">
+                    <Spinner className="size-3" />
+                    Applying
+                  </span>
+                ) : active ? (
                   <span className="font-heading text-[11px] font-semibold uppercase tracking-wide text-primary">
                     Selected
                   </span>

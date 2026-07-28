@@ -6,6 +6,7 @@ import type { SubjectSpec } from "@/modules/website/themes/registry";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 
 type WeddingAction = (
   prev: WeddingFormState,
@@ -150,6 +151,7 @@ export function WeddingForm({
       ) : null}
 
       <Button type="submit" disabled={pending}>
+        {pending ? <Spinner /> : null}
         {pending ? "Saving…" : submitLabel}
       </Button>
     </form>

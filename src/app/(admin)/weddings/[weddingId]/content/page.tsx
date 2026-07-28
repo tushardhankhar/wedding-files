@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { parseWebsiteConfig } from "@/modules/website/schema";
 import { initialsOf } from "@/modules/website/render/build";
 import { getTheme } from "@/modules/website/themes/registry";
 import { ContentEditor } from "./content-editor";
+import { NavLink } from "@/components/brand/nav-link";
 
 export default async function ContentPage({
   params,
@@ -21,12 +21,12 @@ export default async function ContentPage({
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <Link
+        <NavLink
           href={`/weddings/${weddingId}`}
           className="text-sm text-muted-foreground hover:underline"
         >
           ← {wedding.title}
-        </Link>
+        </NavLink>
         <a
           href={`/preview/${weddingId}`}
           target="_blank"

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { listEvents } from "@/modules/events/server/queries";
@@ -11,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
+import { NavLink } from "@/components/brand/nav-link";
 
 export default async function RsvpsPage({
   params,
@@ -36,12 +36,12 @@ export default async function RsvpsPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link
+      <NavLink
         href={`/weddings/${weddingId}`}
         className="text-sm text-muted-foreground hover:underline"
       >
         ← {wedding.title}
-      </Link>
+      </NavLink>
 
       <div>
         <p className="mb-1 font-heading text-[11px] font-semibold uppercase tracking-[0.2em] text-[color:var(--gold-deep)]">
