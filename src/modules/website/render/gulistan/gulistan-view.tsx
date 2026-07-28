@@ -7,13 +7,12 @@ import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { FlipCountdown } from "../experience/flip-countdown";
+import { GulistanScene } from "./scene";
 import {
   ArchFrame,
   Ganesha,
   FloralCascade,
   HangingBells,
-  PalaceScene,
-  Couple,
   Lantern,
   PetalFall,
 } from "./ornaments";
@@ -179,17 +178,15 @@ export function GulistanView(props: WebsiteViewProps) {
             </m.p>
           ) : null}
 
-          {/* the scene — palace + lake with the couple on the balcony */}
+          {/* the scene — palace + lake with the couple (or the client's own
+              illustration) on the balcony */}
           <m.div
             initial={{ opacity: 0, y: 26 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.65, duration: 0.9, ease: "easeOut" }}
             className="glt-scene relative mt-9 w-full max-w-md"
           >
-            <div className="glt-scene-sky relative aspect-[5/4] w-full overflow-hidden rounded-t-[999px]">
-              <PalaceScene className="absolute inset-0 h-full w-full" />
-              <Couple className="absolute inset-x-0 bottom-0 mx-auto h-[62%] w-auto" />
-            </div>
+            <GulistanScene artwork={config.artwork} />
           </m.div>
 
           {/* romantic quote */}

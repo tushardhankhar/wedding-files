@@ -54,6 +54,10 @@ export interface ThemeSupports {
   faq: boolean;
   events: boolean;
   countdown: boolean;
+  /** Whether the theme draws figures a client may swap for their own
+   * illustration (caricature, portrait sketch…) — turns on the artwork upload
+   * and placement controls in the content editor. */
+  artwork: boolean;
   /** Whether this occasion collects RSVPs — surfaces the RSVP prompt on the
    * site and the RSVPs report in the dashboard. Off for save-the-dates: they
    * are an early announcement ("a formal invitation will follow"), not an
@@ -757,6 +761,7 @@ const WEDDING_SUPPORTS: ThemeSupports = {
   faq: true,
   events: true,
   countdown: true,
+  artwork: false,
   rsvp: true,
 };
 /** Non-wedding baseline: countdown only; each theme turns on what it needs.
@@ -770,6 +775,7 @@ const MINIMAL_SUPPORTS: ThemeSupports = {
   faq: false,
   events: false,
   countdown: true,
+  artwork: false,
   rsvp: false,
 };
 
@@ -798,7 +804,8 @@ const THEME_META: Record<
   gulistan: {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
-    supports: MINIMAL_SUPPORTS,
+    // The only theme so far with swappable figures: the couple on the balcony.
+    supports: { ...MINIMAL_SUPPORTS, artwork: true },
   },
   jharokha: {
     category: "wedding",

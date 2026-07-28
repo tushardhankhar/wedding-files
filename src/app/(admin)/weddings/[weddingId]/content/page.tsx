@@ -50,6 +50,7 @@ export default async function ContentPage({
       <ContentEditor
         weddingId={weddingId}
         initial={config}
+        themeId={theme.id}
         supports={theme.supports}
         category={theme.category}
       />

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { WebsiteConfig, Focus, Experience } from "@/modules/website/schema";
+import type {
+  WebsiteConfig,
+  Focus,
+  Artwork,
+  Experience,
+} from "@/modules/website/schema";
 import type {
   ThemeSupports,
   ThemeCategory,
@@ -20,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { ImageUpload } from "@/modules/media/client/image-upload";
 import { FocusPicker } from "@/modules/media/client/focus-picker";
+import { ArtworkPicker } from "@/modules/media/client/artwork-picker";
 
 type Loc = { en: string; hi: string };
 const L = (v?: { en: string; hi?: string }): Loc => ({
@@ -31,10 +37,17 @@ const filled = (l: Loc) => l.en.trim() !== "" || l.hi.trim() !== "";
 
 type FamilySide = "groom" | "bride";
 
+/** Placement defaults for a freshly uploaded illustration: exactly where (and
+ * how big as) the theme's own drawn figures are. */
+const ARTWORK_HOME = { x: 0, y: 0, scale: 1, flip: false };
+
 interface State {
   tagline: Loc;
   milestones: { when: string; title: Loc; text: Loc }[];
   images: { url: string; caption: Loc; focus?: Focus }[];
+  /** The client's own illustration replacing the theme's figures (themes with
+   * `supports.artwork`). */
+  artwork?: Artwork;
   familyMembers: { name: Loc; relation: Loc; side: FamilySide }[];
   faqs: { q: Loc; a: Loc }[];
   hashtag: string;
@@ -54,6 +67,7 @@ function normalize(c: WebsiteConfig): State {
       caption: L(i.caption),
       focus: i.focus,
     })),
+    artwork: c.artwork,
     familyMembers: (c.family?.members ?? []).map((m) => ({
       name: L(m.name),
       relation: L(m.relation),
@@ -86,6 +100,7 @@ function toConfig(s: State): WebsiteConfig {
           focus: i.focus,
         })),
     },
+    artwork: s.artwork?.url.trim() ? s.artwork : undefined,
     family: {
       members: s.familyMembers
         .filter((m) => m.name.en.trim())
@@ -655,11 +670,14 @@ function ExperienceEditor({
 export function ContentEditor({
   weddingId,
   initial,
+  themeId,
   supports,
   category,
 }: {
   weddingId: string;
   initial: WebsiteConfig;
+  /** Theme id — the artwork picker previews that theme's own scene. */
+  themeId: string;
   /** Which content sections this theme exposes (from the theme registry). */
   supports: ThemeSupports;
   /** Theme category — decides which theme-specific section (if any) to show. */
@@ -670,6 +688,7 @@ export function ContentEditor({
     normalizeExp(initial.experience)
   );
   const [urlDraft, setUrlDraft] = useState("");
+  const [artUrlDraft, setArtUrlDraft] = useState("");
   const [editFocus, setEditFocus] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<{ error?: string; saved?: boolean }>({});
@@ -681,6 +700,14 @@ export function ContentEditor({
     setS((prev) => ({
       ...prev,
       images: [...prev.images, { url, caption: L() }],
+    }));
+
+  // A re-upload swaps the file but keeps the placement the client already dialed
+  // in, so replacing a rough sketch with the final art doesn't undo their work.
+  const setArtworkUrl = (url: string) =>
+    setS((prev) => ({
+      ...prev,
+      artwork: { ...ARTWORK_HOME, ...prev.artwork, url },
     }));
 
   const setFocus = (i: number, focus: Focus) =>
@@ -705,6 +732,74 @@ export function ContentEditor({
     <div className="space-y-5">
       {/* Theme-specific section (parties, birthdays, baby showers, pujas) */}
       <ExperienceEditor category={category} exp={exp} setExp={setExp} />
+
+      {/* Your own illustration, in place of the theme's drawn figures */}
+      {supports.artwork ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Your illustration</CardTitle>
+            <CardDescription>
+              Upload a caricature, portrait sketch or any illustration of the
+              couple — it stands in for the theme&apos;s drawn figures. A PNG
+              with a transparent background sits in the scene best; leave this
+              empty to keep the illustrated couple.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ImageUpload weddingId={weddingId} onUploaded={setArtworkUrl} />
+
+            {s.artwork?.url ? (
+              <>
+                <div className="rounded-md border bg-muted/30 p-3">
+                  <ArtworkPicker
+                    themeId={themeId}
+                    value={s.artwork}
+                    onChange={(artwork) => set({ artwork })}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => set({ artwork: undefined })}
+                >
+                  Remove illustration
+                </Button>
+              </>
+            ) : (
+              <div className="space-y-1.5">
+                <Label htmlFor="artwork-url">Or add by URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="artwork-url"
+                    value={artUrlDraft}
+                    placeholder="https://…"
+                    onChange={(e) => setArtUrlDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && artUrlDraft.trim()) {
+                        e.preventDefault();
+                        setArtworkUrl(artUrlDraft.trim());
+                        setArtUrlDraft("");
+                      }
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!artUrlDraft.trim()}
+                    onClick={() => {
+                      setArtworkUrl(artUrlDraft.trim());
+                      setArtUrlDraft("");
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : null}
 
       {/* Hero */}
       {supports.taglineHero ? (

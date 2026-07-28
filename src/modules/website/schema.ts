@@ -25,6 +25,27 @@ export const focusSchema = z.object({
 export type Focus = z.infer<typeof focusSchema>;
 
 /**
+ * A client-supplied illustration (caricature, portrait sketch, cartoon…) that
+ * stands in for a theme's built-in artwork — e.g. the couple on the Gulistan
+ * balcony. Unlike {@link Focus} (which crops a photo to *fill* a frame), this
+ * places a whole transparent-background drawing *inside* a scene, so the client
+ * needs to nudge and size it rather than pick a focal point:
+ *
+ *   - `x` / `y` — offset from the artwork's home position, as a fraction of the
+ *     scene's width/height (0 = untouched, +y = lower, −y = higher).
+ *   - `scale`   — size relative to the built-in artwork it replaces.
+ *   - `flip`    — mirror horizontally, for a drawing that faces the wrong way.
+ */
+export const artworkSchema = z.object({
+  url: z.string(),
+  x: z.number().min(-1).max(1).default(0),
+  y: z.number().min(-1).max(1).default(0),
+  scale: z.number().min(0.3).max(2.5).default(1),
+  flip: z.boolean().default(false),
+});
+export type Artwork = z.infer<typeof artworkSchema>;
+
+/**
  * The website content config, stored in weddings.config (jsonb). Everything is
  * optional — sections without content are simply not rendered. Content
  * authoring UI arrives in Phase 4; the renderer already reads all of it.
@@ -110,6 +131,9 @@ export const websiteConfigSchema = z.object({
   eventTime: z.string().optional(),
   hero: z.object({ tagline: localizedSchema.optional() }).optional(),
   experience: experienceSchema,
+  /** Replaces the theme's illustrated figures with the client's own drawing.
+   * Only themes whose `supports.artwork` is true offer (and render) it. */
+  artwork: artworkSchema.optional(),
   story: z
     .object({
       milestones: z

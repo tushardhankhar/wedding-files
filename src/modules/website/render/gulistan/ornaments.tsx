@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { m } from "motion/react";
 
 /**
@@ -15,6 +16,9 @@ import { m } from "motion/react";
  * lives in CSS (.glt-* classes) and collapses under prefers-reduced-motion;
  * one-shot entrances use Framer's `m`.
  */
+
+/** Ornaments sized from the outside; `style` carries a caller-computed size. */
+type SvgProps = { className?: string; style?: CSSProperties };
 
 const GOLD = "var(--glt-gold)";
 const GOLD_LITE = "var(--glt-gold-lite)";
@@ -322,18 +326,32 @@ export function PalaceScene({ className }: { className?: string }) {
   );
 }
 
-/* ── the couple on the balcony (backs turned, facing the palace) ──────────── */
-export function Couple({ className }: { className?: string }) {
+/* ── the balcony railing the figures stand behind ─────────────────────────── */
+/** The railing alone (same 300×320 stage as {@link Couple}), so a client's
+ * uploaded illustration can replace the couple and still stand on the balcony. */
+const balustrade = (
+  <g stroke={GOLD} opacity="0.8">
+    <line x1="10" y1="300" x2="290" y2="300" strokeWidth="3" />
+    <line x1="10" y1="266" x2="290" y2="266" strokeWidth="2" />
+    {Array.from({ length: 13 }).map((_, i) => (
+      <line key={i} x1={22 + i * 21} y1="268" x2={22 + i * 21} y2="299" strokeWidth="2" />
+    ))}
+  </g>
+);
+
+export function Balustrade({ className, style }: SvgProps) {
   return (
-    <svg viewBox="0 0 300 320" fill="none" aria-hidden className={className}>
-      {/* balustrade */}
-      <g stroke={GOLD} opacity="0.8">
-        <line x1="10" y1="300" x2="290" y2="300" strokeWidth="3" />
-        <line x1="10" y1="266" x2="290" y2="266" strokeWidth="2" />
-        {Array.from({ length: 13 }).map((_, i) => (
-          <line key={i} x1={22 + i * 21} y1="268" x2={22 + i * 21} y2="299" strokeWidth="2" />
-        ))}
-      </g>
+    <svg viewBox="0 0 300 320" fill="none" aria-hidden className={className} style={style}>
+      {balustrade}
+    </svg>
+  );
+}
+
+/* ── the couple on the balcony (backs turned, facing the palace) ──────────── */
+export function Couple({ className, style }: SvgProps) {
+  return (
+    <svg viewBox="0 0 300 320" fill="none" aria-hidden className={className} style={style}>
+      {balustrade}
 
       {/* ── groom (left) — cream sherwani ── */}
       <g>
