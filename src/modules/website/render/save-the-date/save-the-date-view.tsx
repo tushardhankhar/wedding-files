@@ -7,6 +7,8 @@ import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { FlipCountdown } from "../experience/flip-countdown";
+import { resolveArtwork } from "../artwork-placement";
+import { OvertureCameo } from "./cameo";
 
 function cityOf(events: WeddingEvent[]): string | null {
   for (const e of events) {
@@ -102,6 +104,9 @@ export function SaveTheDateView(props: WebsiteViewProps) {
   const calUrl = gcalUrl(countdownDate, `Save the Date — ${names}`);
   // Two names → stack them: first name, then "& second name" on its own line.
   const nameParts = names.split(" & ");
+  // Off unless the client turns it on: the Overture is typographic by design, so
+  // the illustration is an addition rather than something to switch off.
+  const illustration = resolveArtwork(config.artwork, theme.supports.artwork);
 
   return (
     <MotionProvider>
@@ -123,18 +128,29 @@ export function SaveTheDateView(props: WebsiteViewProps) {
           <CornerFlourish className="bottom-2 right-2 sm:bottom-4 sm:right-4" rotate={180} delay={0.5} />
           <CornerFlourish className="bottom-2 left-2 sm:bottom-4 sm:left-4" rotate={270} delay={0.65} />
 
-          {/* seal / monogram */}
-          <m.div
-            initial={{ opacity: 0, scale: 1.35, rotate: -8 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ delay: 1, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-            className="relative"
-          >
-            <span className="std-ring absolute inset-0 -m-3" aria-hidden />
-            <span className="std-seal">
-              <span className="std-seal-mono">{initials}</span>
-            </span>
-          </m.div>
+          {/* the couple in their niche, or — with the illustration off — the
+              monogram seal the theme opens with by default */}
+          {illustration.show ? (
+            <m.div
+              initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ delay: 0.9, duration: 1, ease: "easeOut" }}
+            >
+              <OvertureCameo artwork={illustration.art ?? undefined} initials={initials} />
+            </m.div>
+          ) : (
+            <m.div
+              initial={{ opacity: 0, scale: 1.35, rotate: -8 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ delay: 1, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+              className="relative"
+            >
+              <span className="std-ring absolute inset-0 -m-3" aria-hidden />
+              <span className="std-seal">
+                <span className="std-seal-mono">{initials}</span>
+              </span>
+            </m.div>
+          )}
 
           {/* SAVE THE DATE */}
           <m.p

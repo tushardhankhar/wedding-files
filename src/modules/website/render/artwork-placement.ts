@@ -1,5 +1,25 @@
 import type { CSSProperties } from "react";
 import type { Artwork } from "../schema";
+import type { ArtworkSupport } from "../themes/registry";
+
+/**
+ * What a theme should draw in its illustration slot:
+ *
+ *   - `show: false`          — nothing (the client switched the illustration off).
+ *   - `show: true, art: null` — the theme's own drawn figures.
+ *   - `show: true, art: {…}`  — the client's uploaded drawing, placed.
+ *
+ * A theme whose figures are part of its scene ("built-in") keeps drawing them
+ * until the client explicitly switches the slot off; one where the illustration
+ * is an addition ("optional") stays typographic until they turn it on.
+ */
+export function resolveArtwork(
+  artwork: Artwork | undefined,
+  support: ArtworkSupport
+): { show: boolean; art: Artwork | null } {
+  const show = artwork ? artwork.enabled : support === "built-in";
+  return { show, art: show && artwork?.url ? artwork : null };
+}
 
 /**
  * Turns a stored {@link Artwork} into the two CSS pieces a theme needs to drop a

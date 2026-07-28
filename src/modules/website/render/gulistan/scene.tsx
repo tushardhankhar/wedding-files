@@ -7,7 +7,8 @@ import { PalaceScene, Couple } from "./ornaments";
 /**
  * The palace-at-dusk scene: sky, lake, skyline and, in front of it, either the
  * theme's drawn couple (on their balcony) or the client's own illustration
- * (caricature, sketch…) standing on the open lakefront.
+ * (caricature, sketch…) standing on the open lakefront — or, with the
+ * illustration switched off, the empty lakefront at dusk.
  *
  * Shared with the content editor's placement picker so what the client positions
  * is pixel-for-pixel what the site renders.
@@ -19,14 +20,22 @@ export const ARTWORK_HEIGHT_PCT = 62;
 
 const stage = { height: `${ARTWORK_HEIGHT_PCT}%` };
 
-export function GulistanScene({ artwork }: { artwork?: Artwork }) {
+export function GulistanScene({
+  artwork,
+  /** The illustration slot itself — false when the client has switched the
+   * figures off, leaving the palace and the lake on their own. */
+  show = true,
+}: {
+  artwork?: Artwork;
+  show?: boolean;
+}) {
   const art = artwork?.url ? artworkStyles(artwork, ARTWORK_HEIGHT_PCT) : null;
 
   return (
     <div className="glt-scene-sky relative aspect-[5/4] w-full overflow-hidden rounded-t-[999px]">
       <PalaceScene className="absolute inset-0 h-full w-full" />
 
-      {art && artwork ? (
+      {!show ? null : art && artwork?.url ? (
         /* No balcony railing over an upload — it cut across the drawing instead
            of framing it. (The drawn couple's railing lives inside <Couple>.)
            The wrapper spans the scene, so its translate (in %) nudges the

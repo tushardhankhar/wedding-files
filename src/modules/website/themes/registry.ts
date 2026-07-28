@@ -31,6 +31,21 @@ export type ThemeCategory =
   | "baby-shower"
   | "housewarming";
 
+/**
+ * Whether a theme has an illustration slot — a place where the couple is drawn
+ * and where the client may drop their own caricature / portrait sketch instead:
+ *
+ *   - `false`      — no slot (the theme has no figures).
+ *   - `"built-in"` — the figures are part of the theme's scene, so the slot is on
+ *                    until the client switches it off (the Gulistan balcony).
+ *   - `"optional"` — the theme reads complete without figures, so the slot is off
+ *                    until the client turns it on (the Overture, the Muhurat).
+ *
+ * Truthy either way, so `supports.artwork ? …` still gates the editor and the
+ * placement controls.
+ */
+export type ArtworkSupport = false | "built-in" | "optional";
+
 /** Which subject (name) inputs a theme's create/edit form should show. */
 export interface SubjectSpec {
   names: 0 | 1 | 2;
@@ -54,10 +69,9 @@ export interface ThemeSupports {
   faq: boolean;
   events: boolean;
   countdown: boolean;
-  /** Whether the theme draws figures a client may swap for their own
-   * illustration (caricature, portrait sketch…) — turns on the artwork upload
-   * and placement controls in the content editor. */
-  artwork: boolean;
+  /** The theme's illustration slot — turns on the artwork switch, upload and
+   * placement controls in the content editor. See {@link ArtworkSupport}. */
+  artwork: ArtworkSupport;
   /** Whether this occasion collects RSVPs — surfaces the RSVP prompt on the
    * site and the RSVPs report in the dashboard. Off for save-the-dates: they
    * are an early announcement ("a formal invitation will follow"), not an
@@ -498,60 +512,70 @@ const THEME_BASES: ThemeBase[] = [
     id: "jodi",
     name: "The Jodi",
     description:
-      "An illustrated wedding plate — rose-pink watercolour, a hanging mandala medallion, the couple at the foot and a Rajasthani haveli beyond. Asymmetric, romantic & luxurious.",
-    swatch: ["#F2AFC2", "#C9A24A", "#A81B52"],
+      "A painted invitation leaf — ivory paper inside a gold keyline, the couple standing in a mehrab arch at its foot. Antique gold and oxblood, symmetric and quiet. Their own portrait can take the arch.",
+    swatch: ["#FEFAEF", "#C29B4E", "#7A1B22"],
     heroMotif: "caricature",
     vars: {
-      /* A rose-pink watercolour ground for the plate, with lighter blush and
-       * cream for the reading sections, deep pink ornament and gold trim. */
-      "--jdi-rose-bg": "#F2AFC2",
-      "--jdi-rose-bg-2": "#E893AB",
-      "--jdi-blush": "#F9D3DD",
-      "--jdi-blush-2": "#EFB4C4",
-      "--jdi-blush-3": "#FCE7EC",
-      "--jdi-cream": "#FDF4F6",
-      "--jdi-ivory": "#FBE7EC",
-      "--jdi-ivory-2": "#F5CBD7",
-      "--jdi-mandala": "#C93B74",
-      "--jdi-mandala-2": "#9E2757",
-      "--jdi-magenta": "#A81B52",
-      "--jdi-magenta-2": "#7E1240",
-      "--jdi-magenta-3": "#571028",
-      "--jdi-gold": "#C9A24A",
-      "--jdi-gold-lite": "#E8CD7E",
-      "--jdi-gold-deep": "#9C7A28",
-      "--jdi-sage": "#7E9A68",
-      "--jdi-sage-deep": "#4F6B41",
-      "--jdi-haveli": "#DCB48D",
-      "--jdi-haveli-2": "#C1946A",
-      "--jdi-haveli-3": "#A87A52",
-      "--jdi-elephant": "#8A9484",
-      "--jdi-elephant-2": "#5E6A5A",
-      "--jdi-bloom": "#B97FA6",
-      "--jdi-bloom-2": "#8A5580",
-      "--jdi-ink": "#6B2038",
-      "--jdi-ink-soft": "#A0687C",
+      /* Read off the theme's own illustration (see render/jodi/ART.md), so the
+       * type and the painting share one palette: the artwork's paper, its
+       * antique-gold embroidery and the oxblood of her lehenga. Three colours,
+       * ivory · gold · oxblood; the sage and emerald are the bouquet's, used in
+       * hairline doses only.
+       *
+       * `--jdi-paper` is the artwork's paper EXACTLY. The plate ships as an
+       * opaque rectangle rather than a matted cut-out, so wherever it sits the
+       * ground has to be this value or its edges show. */
+      "--jdi-paper": "#FEFAEF",
+      "--jdi-champ": "#FBF2DF",
+      "--jdi-champ-2": "#F2E3C6",
+      "--jdi-champ-3": "#FDF7EA",
+      "--jdi-cream": "#FDF8EE",
+      "--jdi-ivory": "#F9F1E1",
+      "--jdi-ivory-2": "#F3E8D2",
+      "--jdi-mandala": "#C29B4E",
+      "--jdi-mandala-2": "#9A7526",
+      "--jdi-maroon": "#7A1B22",
+      "--jdi-maroon-2": "#5A1218",
+      "--jdi-maroon-3": "#3D0C11",
+      "--jdi-gold": "#C29B4E",
+      "--jdi-gold-lite": "#E3C88A",
+      "--jdi-gold-deep": "#9A7526",
+      "--jdi-sage": "#97A177",
+      "--jdi-sage-deep": "#6B7550",
+      "--jdi-haveli": "#E3CDA6",
+      "--jdi-haveli-2": "#CDB183",
+      "--jdi-haveli-3": "#AE9160",
+      "--jdi-elephant": "#B7A98C",
+      "--jdi-elephant-2": "#877B62",
+      /* The footer garden's two flowers. Both stay inside the theme's three
+       * colours — marigold gold and an oxblood bloom. The emerald these started
+       * as read as teal at size and was the one thing on the page that broke the
+       * palette. */
+      "--jdi-bloom": "#C9A24A",
+      "--jdi-bloom-2": "#7A1B22",
+      "--jdi-ink": "#4A2A22",
+      "--jdi-ink-soft": "#8A6A5C",
       /* Tokens the fallback illustration draws with, so the placeholder art
        * recolours with the theme until licensed artwork is dropped in. */
-      "--jdi-lehenga": "#C2185B",
-      "--jdi-lehenga-2": "#8E1140",
-      "--jdi-sherwani": "#FAEDE4",
-      "--jdi-sherwani-2": "#EFD3C6",
-      "--jdi-dupatta": "#E8CD7E",
-      "--jdi-hair": "#3A2028",
-      "--jdi-skin": "#E8BFA4",
-      "--w-navy": "#7E1240",
-      "--w-bg": "#FBE7EC",
-      "--w-surface": "#FDF4F6",
-      "--w-ink": "#6B2038",
-      "--w-ink-soft": "#A0687C",
-      "--w-accent": "#A81B52",
-      "--w-gold": "#C9A24A",
-      "--w-gold-lite": "#E8CD7E",
-      "--w-line": "rgba(201,162,74,0.34)",
-      "--w-hero-ink": "#6B2038",
+      "--jdi-lehenga": "#7A1B22",
+      "--jdi-lehenga-2": "#5A1218",
+      "--jdi-sherwani": "#FBF3E4",
+      "--jdi-sherwani-2": "#EFDFC2",
+      "--jdi-dupatta": "#E3C88A",
+      "--jdi-hair": "#2E1C16",
+      "--jdi-skin": "#E9C3A2",
+      "--w-navy": "#5A1218",
+      "--w-bg": "#F9F1E1",
+      "--w-surface": "#FDF8EE",
+      "--w-ink": "#4A2A22",
+      "--w-ink-soft": "#8A6A5C",
+      "--w-accent": "#7A1B22",
+      "--w-gold": "#C29B4E",
+      "--w-gold-lite": "#E3C88A",
+      "--w-line": "rgba(194,155,78,0.34)",
+      "--w-hero-ink": "#4A2A22",
       "--w-hero-bg":
-        "radial-gradient(80% 50% at 50% 0%, rgba(252,231,236,0.8), transparent 62%), linear-gradient(180deg, #F5C3D0 0%, #F2AFC2 100%)",
+        "radial-gradient(80% 50% at 50% 0%, rgba(255,255,255,0.9), transparent 62%), linear-gradient(180deg, #FEFAEF 0%, #F3E8D2 100%)",
       "--w-serif": CORMORANT,
       "--w-display": PLAYFAIR,
       "--w-sans": SANS,
@@ -799,18 +823,20 @@ const THEME_META: Record<
   "save-the-date": {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
-    supports: MINIMAL_SUPPORTS,
+    // Typographic on its own; the couple can be added inside the arched niche.
+    supports: { ...MINIMAL_SUPPORTS, artwork: "optional" },
   },
   muhurat: {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
-    supports: MINIMAL_SUPPORTS,
+    // Typographic on its own; the couple can be added inside the mandala.
+    supports: { ...MINIMAL_SUPPORTS, artwork: "optional" },
   },
   gulistan: {
     category: "save-the-date",
     subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
-    // The only theme so far with swappable figures: the couple on the balcony.
-    supports: { ...MINIMAL_SUPPORTS, artwork: true },
+    // The couple on the balcony is part of the scene, so the slot starts on.
+    supports: { ...MINIMAL_SUPPORTS, artwork: "built-in" },
   },
   jharokha: {
     category: "wedding",
@@ -825,7 +851,9 @@ const THEME_META: Record<
   jodi: {
     category: "wedding",
     subjectSpec: WEDDING_SUBJECT,
-    supports: WEDDING_SUPPORTS,
+    // The painted couple IS the theme, so the slot is on by default: a client's
+    // own caricature or portrait sketch stands in the mehrab arch in their place.
+    supports: { ...WEDDING_SUPPORTS, artwork: "built-in" },
   },
   dak: {
     category: "wedding",

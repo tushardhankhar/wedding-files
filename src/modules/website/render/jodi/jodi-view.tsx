@@ -8,11 +8,11 @@ import { T, TT } from "../bilingual";
 import { focusStyles } from "../image-focus";
 import { MotionProvider } from "../experience/motion";
 import { useCountdown, pad2 } from "../use-countdown";
-import { Art } from "./art";
+import { resolveArtwork } from "../artwork-placement";
+import { JodiPortrait } from "./portrait";
 import {
   Mandala,
-  Haveli,
-  SideBand,
+  LeafBorder,
   BaseScene,
   CoupleFromBehind,
   GoldRule,
@@ -79,12 +79,12 @@ function gcalUrl(e: WeddingEvent, siteTitle: string): string | null {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   THE JODI — an illustrated wedding plate.
-   The page is composed like a printed invitation: an ornate mandala band across
-   the head, a generous open field of soft wash for the words, and the couple
-   standing at the foot of the plate against a base scene of domes, foliage and
-   peacocks. Painted artwork fills those three roles (see ART.md); SVG fallbacks
-   stand in until it is provisioned.
+   THE JODI — a painted invitation leaf.
+   The page is composed like a printed invitation card: one sheet of ivory paper
+   inside a gold keyline, a generous open field for the words at its head, and
+   the couple standing in a gold mehrab arch at its foot. That last piece is
+   painted artwork (see ART.md) — and it is the theme's one swappable slot, so a
+   client's own caricature can stand in the arch instead (see portrait.tsx).
    ══════════════════════════════════════════════════════════════════════════ */
 export function JodiView({
   theme,
@@ -120,6 +120,9 @@ export function JodiView({
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
   const quote = config.hero?.tagline;
+  /** The couple in the mehrab: the painted pair, the client's own drawing, or —
+   * if they switched the slot off — nothing, leaving a typographic leaf. */
+  const portrait = resolveArtwork(config.artwork, theme.supports.artwork);
   const hasRsvp = Boolean((rsvp && rsvp.events.length > 0) || selfRsvp || ownerPreview);
   const family =
     rsvp && chip
@@ -159,7 +162,7 @@ export function JodiView({
             </a>
             <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
               {links.map(([href, en, hi]) => (
-                <a key={href} href={href} className="jdi-label text-[color:var(--jdi-ink)] transition-colors hover:text-[color:var(--jdi-magenta)]">
+                <a key={href} href={href} className="jdi-label text-[color:var(--jdi-ink)] transition-colors hover:text-[color:var(--jdi-maroon)]">
                   <TT en={en} hi={hi} />
                 </a>
               ))}
@@ -171,7 +174,7 @@ export function JodiView({
                     key={l}
                     type="button"
                     onClick={() => setLang(l)}
-                    className={`jdi-label transition-colors ${lang === l ? "text-[color:var(--jdi-magenta)]" : "text-[color:var(--jdi-ink-soft)] hover:text-[color:var(--jdi-ink)]"}`}
+                    className={`jdi-label transition-colors ${lang === l ? "text-[color:var(--jdi-maroon)]" : "text-[color:var(--jdi-ink-soft)] hover:text-[color:var(--jdi-ink)]"}`}
                   >
                     {l === "en" ? "EN" : "हिं"}
                   </button>
@@ -222,7 +225,7 @@ export function JodiView({
                     key={l}
                     type="button"
                     onClick={() => setLang(l)}
-                    className={`jdi-label ${lang === l ? "text-[color:var(--jdi-magenta)]" : "text-[color:var(--jdi-ink-soft)]"}`}
+                    className={`jdi-label ${lang === l ? "text-[color:var(--jdi-maroon)]" : "text-[color:var(--jdi-ink-soft)]"}`}
                   >
                     {l === "en" ? "English" : "हिंदी"}
                   </button>
@@ -235,40 +238,52 @@ export function JodiView({
           </div>
         ) : null}
 
-        {/* ── HERO — the plate ───────────────────────────────────────────── */}
-        <section id="top" className="jdi-hero relative flex min-h-svh flex-col overflow-hidden">
-          {/* an optional painted paper/floral ground */}
-          <Art slot="wash" className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-60" />
+        {/* ── HERO — the invitation leaf ──────────────────────────────────
+         * One sheet of ivory paper: a gold keyline running round the whole page,
+         * the words in the open field at its head, and the painted plate — the
+         * couple in their mehrab arch — standing at its foot.
+         *
+         * The words come FIRST and the artwork sits under them, rather than the
+         * two sharing a row: at 390px a side-by-side would shrink the couple to
+         * a thumbnail, and centring the copy over the artwork would put type on
+         * top of her lehenga. Stacked, both read at every width.
+         *
+         * From `lg` up it becomes two columns instead. The hero's constraint is
+         * HEIGHT — a 900px-tall laptop leaves a stacked plate about 430px, which
+         * is smaller than the artwork deserves — while a wide screen has width
+         * going spare on both sides of a centred card. Side by side, the same
+         * page gives the couple ~750px and the copy a tighter measure.
+         *
+         * `.jdi-hero`'s wash resolves to flat `--jdi-paper` across its lower
+         * half, which is what lets the plate — an opaque rectangle of the
+         * illustration's own paper — sit on it with no visible edge. */}
+        <section
+          id="top"
+          className="jdi-hero relative flex min-h-svh flex-col justify-between overflow-hidden pb-6 lg:flex-row lg:items-center lg:justify-center lg:gap-14 lg:px-16 lg:pb-0"
+        >
+          <LeafBorder />
 
-          {/* the ornamental strip down the left edge */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-[12] w-7 sm:w-11">
-            <Art
-              slot="sideBand"
-              className="h-full w-full object-cover"
-              fallback={<SideBand className="h-full w-full" />}
-            />
-          </div>
-
-          {/* the medallion, hanging from the top edge and cropped by it. Sized
-           * and offset so its visible arc clears the invitation copy below. */}
-          <div className="pointer-events-none absolute left-1/2 top-0 z-[14] w-[58%] max-w-[330px] -translate-x-1/2 -translate-y-[54%]">
-            <Art slot="mandala" className="h-auto w-full" fallback={<Mandala className="h-auto w-full" />} />
-          </div>
-
-          {/* the words — a generous open field, as on the reference plates */}
-          <div className="relative z-30 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center px-8 pb-[40vh] pt-44 text-center sm:pt-52">
-            <p className="jdi-label jdi-fade text-[color:var(--jdi-magenta)]" style={{ animationDelay: "0.35s" }}>
+          {/* the words — a generous open field, as on the reference plates. Kept
+           * deliberately tight: stacked, every line here is height the plate
+           * below does not get. */}
+          <div className="relative z-30 mx-auto flex w-full max-w-2xl flex-col items-center px-6 pt-20 text-center sm:px-8 sm:pt-28 lg:mx-0 lg:max-w-md lg:items-start lg:px-0 lg:pt-0 lg:text-left">
+            {/* the painted paper's blooms — scoped to this column on purpose, see
+             * `.jdi-wash`: on the hero itself they showed the plate's edges. */}
+            <div className="jdi-wash" aria-hidden />
+            <p className="jdi-label jdi-fade text-[color:var(--jdi-maroon)]" style={{ animationDelay: "0.35s" }}>
               <TT en="Together with their families" hi="अपने परिवारों सहित" />
             </p>
+            {/* the measure is capped so this breaks in two balanced lines on a
+             * phone instead of leaving "of" alone on the second */}
             <p
-              className="jdi-serif jdi-fade mt-4 text-base italic text-[color:var(--jdi-ink-soft)]"
+              className="jdi-serif jdi-fade mt-3 max-w-[19rem] text-base italic text-[color:var(--jdi-ink-soft)] sm:max-w-none"
               style={{ animationDelay: "0.5s" }}
             >
               <TT en="request the honour of your presence at the marriage of" hi="आपकी उपस्थिति सादर प्रार्थनीय है" />
             </p>
 
             <div className="jdi-fade mt-5" style={{ animationDelay: "0.7s" }}>
-              <h1 className="jdi-names text-[clamp(2.6rem,12vw,5rem)] leading-[1.08] text-[color:var(--jdi-magenta-2)]">
+              <h1 className="jdi-names text-[clamp(2rem,11vw,4.6rem)] leading-[1.08] text-[color:var(--jdi-maroon-2)]">
                 {pair ? (
                   <>
                     {pair[0]} <span className="jdi-amp">&amp;</span> {pair[1]}
@@ -279,12 +294,12 @@ export function JodiView({
               </h1>
             </div>
 
-            <div className="jdi-fade mt-6 flex w-full justify-center" style={{ animationDelay: "0.85s" }}>
+            <div className="jdi-fade mt-5 flex w-full justify-center lg:justify-start" style={{ animationDelay: "0.85s" }}>
               <GoldRule className="w-56" />
             </div>
 
             {dateLabel ? (
-              <p className="jdi-label jdi-fade mt-6 text-[0.7rem] text-[color:var(--jdi-ink)]" style={{ animationDelay: "0.95s" }}>
+              <p className="jdi-label jdi-fade mt-5 text-[0.7rem] text-[color:var(--jdi-ink)]" style={{ animationDelay: "0.95s" }}>
                 {dateLabel}
               </p>
             ) : null}
@@ -294,25 +309,21 @@ export function JodiView({
               </p>
             ) : null}
 
-            <a href={heroCta} className="jdi-btn jdi-fade mt-9" style={{ animationDelay: "1.2s" }}>
+            <a href={heroCta} className="jdi-btn jdi-fade mt-8" style={{ animationDelay: "1.2s" }}>
               <TT en="Join us" hi="सम्मिलित हों" />
             </a>
           </div>
 
-          {/* the haveli, set at the bottom-right and behind her train */}
-          <div className="pointer-events-none absolute bottom-0 right-0 z-10 w-[56%] max-w-[430px] sm:w-[44%]">
-            <Art slot="haveli" className="h-auto w-full" fallback={<Haveli className="h-auto w-full" />} />
-          </div>
-
-          {/* the couple, anchored to the bottom-left and reading larger than the
-           * architecture behind them, as on the reference plate */}
-          <div className="pointer-events-none absolute bottom-0 left-0 z-20 pl-5 sm:pl-14">
-            <Art
-              slot="couple"
-              className="h-[52vh] max-h-[540px] w-auto"
-              fallback={<CoupleFromBehind className="h-[52vh] max-h-[540px] w-auto" />}
-            />
-          </div>
+          {/* The plate, standing on the foot of the leaf. `.jdi-plate-slot` gives
+           * it a definite height in `svh` and derives its width from the
+           * artwork's aspect — see that rule for why a `flex: 1` height could
+           * not do the job. `justify-between` on the section then keeps it on
+           * the foot of the page whatever height the words came out. */}
+          {portrait.show ? (
+            <div className="jdi-plate-slot jdi-fade relative z-20 mx-auto mt-6 lg:mx-0 lg:mt-0" style={{ animationDelay: "1.35s" }}>
+              <JodiPortrait artwork={portrait.art} className="h-full w-full" />
+            </div>
+          ) : null}
         </section>
 
         {/* ── GUEST WELCOME ──────────────────────────────────────────────── */}
@@ -320,10 +331,10 @@ export function JodiView({
           <section className="jdi-cream relative px-6 pb-24 pt-20 sm:pb-28">
             <div className="mx-auto max-w-2xl text-center" data-tw-reveal>
               <Mandala className="mx-auto h-20 w-20 opacity-80" />
-              <p className="jdi-serif mt-7 text-xl italic text-[color:var(--jdi-magenta)]">
+              <p className="jdi-serif mt-7 text-xl italic text-[color:var(--jdi-maroon)]">
                 <TT en="Namaste" hi="नमस्ते" />
               </p>
-              <h2 className="jdi-display mt-2 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-magenta-2)]">
+              <h2 className="jdi-display mt-2 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-maroon-2)]">
                 <T value={family} />
               </h2>
               <div className="mx-auto mt-6 flex justify-center">
@@ -336,7 +347,7 @@ export function JodiView({
                 />
               </p>
               {rsvp && chip ? (
-                <p className="jdi-label mt-7 text-[color:var(--jdi-magenta)]">
+                <p className="jdi-label mt-7 text-[color:var(--jdi-maroon)]">
                   <T value={chip} />
                 </p>
               ) : null}
@@ -361,8 +372,8 @@ export function JodiView({
                     className={`relative lg:w-[46%] ${i % 2 ? "lg:ml-auto lg:text-left" : "lg:text-right"}`}
                     data-tw-reveal
                   >
-                    <p className="jdi-label text-[color:var(--jdi-magenta)]">{m.when}</p>
-                    <h3 className="jdi-display mt-3 text-2xl text-[color:var(--jdi-magenta-2)]">
+                    <p className="jdi-label text-[color:var(--jdi-maroon)]">{m.when}</p>
+                    <h3 className="jdi-display mt-3 text-2xl text-[color:var(--jdi-maroon-2)]">
                       <T value={m.title} />
                     </h3>
                     <p className="jdi-serif mt-3 text-lg leading-relaxed text-[color:var(--jdi-ink)]/80">
@@ -377,7 +388,7 @@ export function JodiView({
 
         {/* ── FAMILIES ───────────────────────────────────────────────────── */}
         {familyMembers.length > 0 ? (
-          <section id="family" className="jdi-blush relative scroll-mt-16 px-6 py-24 sm:py-32">
+          <section id="family" className="jdi-champ relative scroll-mt-16 px-6 py-24 sm:py-32">
             <div className="mx-auto max-w-4xl">
               <SectionHead over={{ en: "With the blessings of", hi: "आशीर्वाद सहित" }} title={{ en: "Our Families", hi: "हमारे परिवार" }} />
               <div className={`mt-14 grid gap-14 ${groomFamily.length && brideFamily.length ? "md:grid-cols-2" : ""}`}>
@@ -392,7 +403,7 @@ export function JodiView({
                       className={`text-center ${g.border ? "md:border-r md:border-[color:var(--jdi-gold)]/30 md:pr-14" : ""}`}
                       data-tw-reveal
                     >
-                      <p className="jdi-label text-[color:var(--jdi-magenta)]">
+                      <p className="jdi-label text-[color:var(--jdi-maroon)]">
                         <TT en={g.en} hi={g.hi} />
                       </p>
                       <div className="mt-7 space-y-5">
@@ -445,14 +456,14 @@ export function JodiView({
                       <div className="flex justify-center">
                         <CeremonyIcon name={e.name} className="h-10 w-10" />
                       </div>
-                      <h3 className="jdi-display mt-5 text-center text-2xl text-[color:var(--jdi-magenta-2)]">
+                      <h3 className="jdi-display mt-5 text-center text-2xl text-[color:var(--jdi-maroon-2)]">
                         <T value={{ en: e.name, hi: e.nameHi ?? undefined }} />
                       </h3>
                       <div className="mt-4 flex justify-center">
                         <GoldRule className="w-32" />
                       </div>
                       <div className="mt-4 space-y-2 text-center">
-                        {e.eventDate ? <p className="jdi-label text-[color:var(--jdi-magenta)]">{longDate(e.eventDate)}</p> : null}
+                        {e.eventDate ? <p className="jdi-label text-[color:var(--jdi-maroon)]">{longDate(e.eventDate)}</p> : null}
                         {timeLabel(e.startTime) ? (
                           <p className="jdi-label text-[color:var(--jdi-ink-soft)]">{timeLabel(e.startTime)}</p>
                         ) : null}
@@ -510,7 +521,7 @@ export function JodiView({
                         />
                       </div>
                       {img.caption ? (
-                        <figcaption className="jdi-label absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color:var(--jdi-magenta-3)]/80 to-transparent px-4 pb-3 pt-10 text-[color:var(--jdi-cream)] opacity-0 transition-opacity duration-700 group-hover:opacity-100">
+                        <figcaption className="jdi-label absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color:var(--jdi-maroon-3)]/80 to-transparent px-4 pb-3 pt-10 text-[color:var(--jdi-cream)] opacity-0 transition-opacity duration-700 group-hover:opacity-100">
                           <T value={img.caption} />
                         </figcaption>
                       ) : null}
@@ -530,7 +541,7 @@ export function JodiView({
               <div className="mt-12 divide-y divide-[color:var(--jdi-gold)]/25">
                 {faqs.map((f, i) => (
                   <div key={i} className="py-7" data-tw-reveal>
-                    <h3 className="jdi-display text-xl text-[color:var(--jdi-magenta-2)]">
+                    <h3 className="jdi-display text-xl text-[color:var(--jdi-maroon-2)]">
                       <T value={f.q} />
                     </h3>
                     <p className="jdi-serif mt-2.5 text-lg leading-relaxed text-[color:var(--jdi-ink)]/80">
@@ -541,7 +552,7 @@ export function JodiView({
               </div>
               {contacts.length > 0 ? (
                 <div className="mt-14 text-center" data-tw-reveal>
-                  <p className="jdi-label text-[color:var(--jdi-magenta)]">
+                  <p className="jdi-label text-[color:var(--jdi-maroon)]">
                     <TT en="For any assistance" hi="सहायता हेतु संपर्क" />
                   </p>
                   <div className="mt-5 flex flex-wrap justify-center gap-x-10 gap-y-3">
@@ -561,14 +572,14 @@ export function JodiView({
 
         {/* ── RSVP ───────────────────────────────────────────────────────── */}
         {hasRsvp ? (
-          <section id="rsvp" className="jdi-blush relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-32">
+          <section id="rsvp" className="jdi-champ relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-32">
             <div className="relative mx-auto max-w-3xl">
               <div className="text-center" data-tw-reveal>
                 <Sprig className="mx-auto h-8 w-32" />
-                <p className="jdi-label mt-5 text-[color:var(--jdi-magenta)]">
+                <p className="jdi-label mt-5 text-[color:var(--jdi-maroon)]">
                   <TT en="Kindly respond" hi="कृपया उत्तर दें" />
                 </p>
-                <h2 className="jdi-display mt-3 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-magenta-2)]">
+                <h2 className="jdi-display mt-3 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-maroon-2)]">
                   <TT en="Will you be with us?" hi="क्या आप पधारेंगे?" />
                 </h2>
                 <div className="mt-6 flex justify-center">
@@ -598,11 +609,11 @@ export function JodiView({
         <footer className="jdi-footer relative overflow-hidden px-6 pt-20 text-center">
           <div className="relative z-20 pb-[34vh]">
             <Mandala half className="mx-auto h-auto w-48 opacity-70" />
-            <p className="jdi-names mt-8 text-[clamp(2.1rem,9vw,3.4rem)] text-[color:var(--jdi-magenta-2)]">
+            <p className="jdi-names mt-8 text-[clamp(2.1rem,9vw,3.4rem)] text-[color:var(--jdi-maroon-2)]">
               {pair ? `${pair[0]} & ${pair[1]}` : names}
             </p>
             {hashtag ? (
-              <p className="jdi-label mt-4 text-[color:var(--jdi-magenta)]">#{hashtag.replace(/^#/, "")}</p>
+              <p className="jdi-label mt-4 text-[color:var(--jdi-maroon)]">#{hashtag.replace(/^#/, "")}</p>
             ) : null}
             {dateLabel ? <p className="jdi-label mt-3 text-[color:var(--jdi-ink-soft)]">{dateLabel}</p> : null}
             {quote ? (
@@ -619,12 +630,11 @@ export function JodiView({
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0">
             <BaseScene className="h-[22vh] max-h-52 w-full" />
           </div>
+          {/* the leaf closes on the couple again — but seen from behind, walking
+           * away into the scene, so it reads as a farewell rather than a second
+           * portrait competing with the hero's. */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center">
-            <Art
-              slot="couple"
-              className="h-[30vh] max-h-[320px] w-auto opacity-95"
-              fallback={<CoupleFromBehind className="h-[30vh] max-h-[320px] w-auto opacity-95" />}
-            />
+            <CoupleFromBehind className="h-[30vh] max-h-[320px] w-auto opacity-95" />
           </div>
         </footer>
       </div>
@@ -642,10 +652,10 @@ function SectionHead({
 }) {
   return (
     <div className="text-center" data-tw-reveal>
-      <p className="jdi-label text-[color:var(--jdi-magenta)]">
+      <p className="jdi-label text-[color:var(--jdi-maroon)]">
         <TT en={over.en} hi={over.hi} />
       </p>
-      <h2 className="jdi-display mt-3 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-magenta-2)]">
+      <h2 className="jdi-display mt-3 text-[clamp(1.8rem,5vw,2.9rem)] text-[color:var(--jdi-maroon-2)]">
         <TT en={title.en} hi={title.hi} />
       </h2>
       <div className="mx-auto mt-4 flex justify-center">
@@ -667,7 +677,7 @@ function JodiCountdown({ dateIso, time }: { dateIso: string; time?: string }) {
   return (
     <section className="jdi-cream relative overflow-hidden px-6 py-24 text-center sm:py-28">
       <div className="relative" data-tw-reveal>
-        <p className="jdi-label text-[color:var(--jdi-magenta)]">
+        <p className="jdi-label text-[color:var(--jdi-maroon)]">
           <TT en="The muhurat approaches" hi="मुहूर्त निकट है" />
         </p>
         <div className="mx-auto mt-10 grid max-w-2xl grid-cols-4">

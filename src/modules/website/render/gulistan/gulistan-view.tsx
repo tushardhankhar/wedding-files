@@ -7,6 +7,7 @@ import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { FlipCountdown } from "../experience/flip-countdown";
+import { resolveArtwork } from "../artwork-placement";
 import { GulistanScene } from "./scene";
 import {
   ArchFrame,
@@ -65,6 +66,9 @@ export function GulistanView(props: WebsiteViewProps) {
   const quote =
     config.hero?.tagline?.en?.trim() ||
     "Two hearts, two families, one beautiful beginning.";
+  // The couple on the balcony is part of this scene, so they stay unless the
+  // client switches the illustration off; an upload stands in for them.
+  const illustration = resolveArtwork(config.artwork, theme.supports.artwork);
 
   return (
     <MotionProvider>
@@ -199,7 +203,7 @@ export function GulistanView(props: WebsiteViewProps) {
             transition={{ delay: 1.65, duration: 0.9, ease: "easeOut" }}
             className="glt-scene relative mt-9 w-full max-w-md"
           >
-            <GulistanScene artwork={config.artwork} />
+            <GulistanScene artwork={illustration.art ?? undefined} show={illustration.show} />
           </m.div>
 
           {/* romantic quote — set smaller and looser than the display type, so

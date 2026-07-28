@@ -7,6 +7,8 @@ import { JashnCredit } from "../jashn-credit";
 import { MotionProvider } from "../experience/motion";
 import { FloatingParticles } from "../experience/floating-particles";
 import { FlipCountdown } from "../experience/flip-countdown";
+import { resolveArtwork } from "../artwork-placement";
+import { MuhuratCameo } from "./cameo";
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
 function cityOf(events: WeddingEvent[]): string | null {
@@ -131,6 +133,9 @@ export function MuhuratView(props: WebsiteViewProps) {
   const calUrl = gcalUrl(countdownDate, `Save the Date — ${names}`);
   // Two names → stack them: first name, then "& second name" on its own line.
   const nameParts = names.split(" & ");
+  // Off unless the client turns it on: the Muhurat is typographic by design, so
+  // the illustration is an addition rather than something to switch off.
+  const illustration = resolveArtwork(config.artwork, theme.supports.artwork);
 
   return (
     <MotionProvider>
@@ -149,19 +154,39 @@ export function MuhuratView(props: WebsiteViewProps) {
         <Toran className="pointer-events-none absolute inset-x-0 top-0 h-16 w-full sm:h-20" />
 
         <main className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-20 text-center sm:px-10">
-          {/* seal + mandala */}
+          {/* the couple's medallion (or the monogram seal, with the illustration
+              off) haloed by the turning mandala */}
           <div className="relative flex items-center justify-center">
-            <Mandala className="mht-mandala pointer-events-none absolute h-[clamp(240px,78vw,400px)] w-[clamp(240px,78vw,400px)]" />
-            <m.div
-              initial={{ opacity: 0, scale: 1.35, rotate: -8 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ delay: 0.9, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
-              className="relative"
-            >
-              <span className="mht-seal">
-                <span className="mht-seal-mono">{initials}</span>
-              </span>
-            </m.div>
+            {/* the halo has to clear whatever it frames — the medallion is far
+                wider than the seal, so the mandala grows with it */}
+            <Mandala
+              className={
+                illustration.show
+                  ? "mht-mandala pointer-events-none absolute h-[clamp(300px,94vw,460px)] w-[clamp(300px,94vw,460px)]"
+                  : "mht-mandala pointer-events-none absolute h-[clamp(240px,78vw,400px)] w-[clamp(240px,78vw,400px)]"
+              }
+            />
+            {illustration.show ? (
+              <m.div
+                initial={{ opacity: 0, scale: 0.94, filter: "blur(8px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
+                className="relative"
+              >
+                <MuhuratCameo artwork={illustration.art ?? undefined} initials={initials} />
+              </m.div>
+            ) : (
+              <m.div
+                initial={{ opacity: 0, scale: 1.35, rotate: -8 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ delay: 0.9, duration: 0.7, ease: [0.2, 0.8, 0.2, 1] }}
+                className="relative"
+              >
+                <span className="mht-seal">
+                  <span className="mht-seal-mono">{initials}</span>
+                </span>
+              </m.div>
+            )}
           </div>
 
           {/* auspicious line (Devanagari) */}

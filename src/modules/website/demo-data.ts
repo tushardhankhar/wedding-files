@@ -448,6 +448,11 @@ export function getDemoData(themeId: string): DemoDataset {
 
   const config: WebsiteConfig = { ...DEMO_SITE_CONFIG };
   if (supportsGallery) config.gallery = { images: galleryFor(themeId) };
+  // Demos always show the illustration slot, even on the themes where it is
+  // opt-in: it is the feature visitors are deciding about, and the theme's own
+  // drawn couple stands in for the caricature they would upload.
+  if (getTheme(themeId).supports.artwork)
+    config.artwork = { enabled: true, x: 0, y: 0, scale: 1, flip: false };
   return {
     wedding: {
       ...DEMO_SITE_WEDDING,

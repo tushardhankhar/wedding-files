@@ -3,28 +3,31 @@
 import { useCallback, useState } from "react";
 
 /**
- * THE JODI — licensed artwork slots.
+ * THE JODI — the painted plate.
  *
- * This theme is designed around painted illustration (see ART.md for exactly
- * what to buy or commission, at what size and format). Each piece of artwork is
- * an independent LAYER rather than one composed background, because a single
- * baked composition cannot adapt across viewports: at 390px it either crops the
- * couple or shrinks the mandala band to nothing. Independent layers let the
- * border stay full-bleed, the couple stay anchored to the foot of the plate, and
- * the base scene stay proportional, at every width.
+ * The whole theme is built around one piece of illustration: the couple standing
+ * in a gold mehrab arch on ivory paper (see ART.md for what it is and how to
+ * replace it). It ships as a SINGLE image rather than separate layers, because
+ * the arch, the pair and the rug they stand on are drawn as one composition —
+ * splitting them apart is what a matting pass would have to guess at, and the
+ * drawn keyline has a gap in the right spandrel that defeats an automatic cut.
  *
- * Artwork is THEME-level and static (the same plate for every couple), so it
- * lives under /public/themes/jodi/ and ships with the build — it is not part of
- * a couple's own uploads.
+ * It is also deliberately OPAQUE, not a transparent cut-out: `--jdi-paper` is
+ * the artwork's own paper colour, so the plate's rectangle has nothing to show
+ * against wherever the theme puts it. The renderer feathers the top edge with a
+ * CSS mask as insurance against any tonal drift.
  *
- * Until a file is present the slot renders its SVG fallback, so the theme, the
- * public demo and the theme-card screenshots all stay presentable. Dropping the
- * real file in at the documented path is the only step needed to upgrade — no
- * code change. (A missing slot logs one 404 per load; that is deliberate, it
- * makes an un-provisioned slot obvious in development.)
+ * Artwork here is THEME-level and static (the same plate for every couple), so
+ * it lives under /public/themes/jodi/ and ships with the build. A couple's OWN
+ * illustration is a different thing entirely — that arrives through
+ * `config.artwork` and stands in the theme's drawn arch instead (see
+ * portrait.tsx).
+ *
+ * Until the file is present the slot renders its SVG fallback, so the theme, the
+ * public demo and the theme-card screenshots all stay presentable.
  */
 
-export type ArtSlot = "mandala" | "couple" | "haveli" | "sideBand" | "wash";
+export type ArtSlot = "plate";
 
 interface SlotSpec {
   /** Where to put the file. */
@@ -34,19 +37,8 @@ interface SlotSpec {
 }
 
 export const ART_SLOTS: Record<ArtSlot, SlotSpec> = {
-  /** The medallion hanging from the top edge, centred. Cropped by the edge. */
-  mandala: { src: "/themes/jodi/mandala.png", eager: true },
-  /** The couple, full length, anchored to the bottom-LEFT of the plate. */
-  couple: { src: "/themes/jodi/couple.png", eager: true },
-  /** The haveli / palace, anchored to the bottom-RIGHT, sitting behind her train. */
-  haveli: { src: "/themes/jodi/haveli.png", eager: true },
-  /** The vertical ornamental strip down the left edge. Optional, but eager:
-   * anything in the first viewport must be, or the mount-time fallback check
-   * cannot fire (a lazy image that has not started loading is not `complete`). */
-  sideBand: { src: "/themes/jodi/side-band.png", eager: true },
-  /** An optional painted paper/floral wash behind everything. Safe to defer:
-   * it is sized by its container, so a pending load leaves no gap. */
-  wash: { src: "/themes/jodi/wash.jpg", eager: false },
+  /** The couple in their arch, on paper. Fills the foot of the invitation. */
+  plate: { src: "/themes/jodi/plate.webp", eager: true },
 };
 
 /**
@@ -64,10 +56,12 @@ export const ART_SLOTS: Record<ArtSlot, SlotSpec> = {
 export function Art({
   slot,
   className,
+  style,
   fallback = null,
 }: {
   slot: ArtSlot;
   className?: string;
+  style?: React.CSSProperties;
   fallback?: React.ReactNode;
 }) {
   const [missing, setMissing] = useState(false);
@@ -89,6 +83,7 @@ export function Art({
       draggable={false}
       loading={spec.eager ? "eager" : "lazy"}
       onError={() => setMissing(true)}
+      style={style}
       className={className}
     />
   );

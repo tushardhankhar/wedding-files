@@ -28,15 +28,15 @@ import { m } from "motion/react";
 const GOLD = "var(--jdi-gold)";
 const GOLD_LITE = "var(--jdi-gold-lite)";
 const GOLD_DEEP = "var(--jdi-gold-deep)";
-const MAGENTA = "var(--jdi-magenta)";
-const MAGENTA_2 = "var(--jdi-magenta-2)";
+const MAROON = "var(--jdi-maroon)";
+const MAROON_2 = "var(--jdi-maroon-2)";
 const SAGE = "var(--jdi-sage)";
 const SAGE_DEEP = "var(--jdi-sage-deep)";
 const HAVELI = "var(--jdi-haveli)";
 const HAVELI_2 = "var(--jdi-haveli-2)";
 const HAVELI_3 = "var(--jdi-haveli-3)";
-const MANDALA_PINK = "var(--jdi-mandala)";
-const BLUSH_2 = "var(--jdi-blush-2)";
+const MANDALA_GOLD = "var(--jdi-mandala)";
+const CHAMP_2 = "var(--jdi-champ-2)";
 const LEHENGA = "var(--jdi-lehenga)";
 const LEHENGA_2 = "var(--jdi-lehenga-2)";
 const SHERWANI = "var(--jdi-sherwani)";
@@ -74,8 +74,8 @@ function MandalaContent() {
   // the reference plate's medallion is pink-on-pink, not gold-on-white.
   return (
     <g>
-      <circle r="100" fill={MANDALA_PINK} opacity="0.14" />
-      <g stroke={MANDALA_PINK} fill="none">
+      <circle r="100" fill={MANDALA_GOLD} opacity="0.14" />
+      <g stroke={MANDALA_GOLD} fill="none">
         {RINGS.map((r, i) => (
           <circle key={r} r={r} strokeWidth={i % 2 ? 0.9 : 1.4} opacity="0.85" />
         ))}
@@ -86,7 +86,7 @@ function MandalaContent() {
               d={ring.d}
               strokeWidth={ring.sw}
               opacity={ring.op}
-              fill={ri === 1 ? MANDALA_PINK : "none"}
+              fill={ri === 1 ? MANDALA_GOLD : "none"}
               fillOpacity={ri === 1 ? 0.22 : 0}
               transform={`rotate(${(360 / ring.n) * i})`}
             />
@@ -103,7 +103,7 @@ function MandalaContent() {
           />
         ))}
       </g>
-      <circle r="14" fill={MANDALA_PINK} opacity="0.3" />
+      <circle r="14" fill={MANDALA_GOLD} opacity="0.3" />
       <circle r="5" fill={GOLD_LITE} />
     </g>
   );
@@ -156,9 +156,9 @@ export function MandalaBorder({ className }: { className?: string }) {
           <rect x="0" y="0" width="800" height="116" />
         </clipPath>
         <linearGradient id={`g${clip}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--jdi-blush-2)" stopOpacity="0.5" />
-          <stop offset="60%" stopColor="var(--jdi-blush-2)" stopOpacity="0.16" />
-          <stop offset="100%" stopColor="var(--jdi-blush-2)" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--jdi-champ-2)" stopOpacity="0.5" />
+          <stop offset="60%" stopColor="var(--jdi-champ-2)" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="var(--jdi-champ-2)" stopOpacity="0" />
         </linearGradient>
       </defs>
       {/* a soft blush band behind the ornament, as on the reference plates */}
@@ -523,19 +523,25 @@ export function BaseScene({ className }: { className?: string }) {
    we are matching (and the most elegant of the three) shows exactly this.
    ══════════════════════════════════════════════════════════════════════════ */
 
-export function CoupleFromBehind({ className }: { className?: string }) {
+export function CoupleFromBehind({
+  className,
+  style,
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   return (
-    <svg viewBox="0 0 260 400" fill="none" aria-hidden className={className}>
+    <svg viewBox="0 0 260 400" fill="none" aria-hidden className={className} style={style}>
       {/* soft shadow on the ground */}
-      <ellipse cx="140" cy="384" rx="94" ry="8" fill={MAGENTA_2} opacity="0.13" />
+      <ellipse cx="140" cy="384" rx="94" ry="8" fill={MAROON_2} opacity="0.13" />
 
       {/* ── GROOM (left) — cream sherwani, rose safa, seen from behind ── */}
       <g>
         {/* churidar + mojari below the coat */}
         <path d="M84 320 L84 366 L98 366 L100 320 Z" fill={SHERWANI_2} stroke={GOLD_DEEP} strokeWidth="0.8" />
         <path d="M108 320 L110 366 L124 366 L124 320 Z" fill={SHERWANI_2} stroke={GOLD_DEEP} strokeWidth="0.8" />
-        <path d="M80 366 C78 374 82 378 90 378 L100 378 L100 366 Z" fill={MAGENTA_2} />
-        <path d="M108 366 L108 378 L118 378 C126 378 130 374 128 366 Z" fill={MAGENTA_2} />
+        <path d="M80 366 C78 374 82 378 90 378 L100 378 L100 366 Z" fill={MAROON_2} />
+        <path d="M108 366 L108 378 L118 378 C126 378 130 374 128 366 Z" fill={MAROON_2} />
 
         {/* the sherwani: real shoulder width, gently A-line to the knee */}
         <path
@@ -686,14 +692,14 @@ export function Sprig({ className }: { className?: string }) {
       ].map(([cx, cy], i) => (
         <g key={`${cx}-${cy}`} transform={`translate(${cx} ${cy}) scale(${i > 1 ? 0.7 : 1})`}>
           {Array.from({ length: 5 }).map((_, k) => (
-            <ellipse key={k} cy="-3" rx="1.7" ry="3" fill={BLUSH_2} stroke={MAGENTA} strokeWidth="0.4" transform={`rotate(${k * 72})`} />
+            <ellipse key={k} cy="-3" rx="1.7" ry="3" fill={CHAMP_2} stroke={MAROON} strokeWidth="0.4" transform={`rotate(${k * 72})`} />
           ))}
           <circle r="1.2" fill={GOLD_LITE} />
         </g>
       ))}
       <g transform="translate(60 24)">
         {Array.from({ length: 8 }).map((_, i) => (
-          <ellipse key={i} cy="-5" rx="2" ry="4.4" fill={MAGENTA} opacity="0.45" transform={`rotate(${i * 45})`} />
+          <ellipse key={i} cy="-5" rx="2" ry="4.4" fill={MAROON} opacity="0.45" transform={`rotate(${i * 45})`} />
         ))}
         <circle r="2.2" fill={GOLD_LITE} />
       </g>
@@ -704,6 +710,328 @@ export function Sprig({ className }: { className?: string }) {
 /** A slow-turning mandala watermark for section backgrounds. */
 export function MandalaWatermark({ className }: { className?: string }) {
   return <Mandala className={className} />;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE MEHRAB PLATE — the drawn twin of the painted artwork.
+
+   The painted plate (art.tsx) is one flat composition: gold keyline border,
+   cusped mehrab arch, paisley spandrels, the couple, a fringed rug. When a
+   client supplies their OWN illustration there is no way to lift the pair out
+   of that painting and keep the arch, so the arch is drawn here instead and
+   their artwork stands inside it.
+
+   Only one of the two is ever on screen, so they never have to match pixel for
+   pixel — but every number below is measured off the painting and converted into
+   this viewBox, so the two read as the same design at the same scale. The
+   viewBox itself is the painted plate's aspect, so switching between them never
+   reflows the hero.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/** The plate's aspect — the painted artwork's, exactly (1470 × 1520 source px). */
+export const PLATE_VIEWBOX = { w: 1000, h: 1034 };
+
+/* Border, arch and rug in viewBox units, converted from the source at 0.680:
+   the keyline box is source x 918–1898 / y 21–1400, the rug runs y 1313–1499. */
+const BORDER = { x0: 167, x1: 834, y0: 14, y1: 952 };
+/* `foils` must be EVEN (a cusp, not a lobe, has to land on the centre line) and
+   wants to be generous. With 8 lobes across a 637-wide span each chord was ~130
+   units long and rendered as a straight line, so the arch read as a tent with a
+   point on it; 14 keeps every chord short enough to follow the curve. */
+const ARCH = { x0: 182, x1: 819, spring: 370, apex: 60, foils: 14 };
+const RUG = { top: 893, bottom: 1020, topInset: 120, bottomInset: 30 };
+
+/**
+ * A cusped (foiled) mehrab, as one path from the left springing point up over the
+ * crown and down to the right.
+ *
+ * The arch is built rather than hand-written so the foils stay even and symmetric
+ * at any span, but two details in how it is built are load-bearing:
+ *
+ *   • Cusps are spaced by equal ARC LENGTH along the underlying curve, not by
+ *     equal parameter. The base curve has a vertical tangent at the springing, so
+ *     equal-parameter spacing crowds the crown and stretches the haunches.
+ *   • Each lobe's depth is a CONSTANT, not a fraction of its chord. Scaling depth
+ *     by chord length made the haunch lobes — whose chords are several times the
+ *     crown's — balloon into hooks that broke out through the border.
+ *
+ * The bulge direction is the chord's perpendicular, flipped toward the arch's
+ * centre, rather than an `A` command's sweep flag: a sweep flag is the detail
+ * that silently inverts and turns every scallop inside out.
+ *
+ * `foils` is even so a CUSP, not a lobe, lands on the centre line; that cusp is
+ * then lifted into the crown's point.
+ */
+function mehrabPath(inset = 0, depth = 24): string {
+  const x0 = ARCH.x0 + inset;
+  const x1 = ARCH.x1 - inset;
+  const cx = (x0 + x1) / 2;
+  const rx = (x1 - x0) / 2;
+  const spring = ARCH.spring;
+  const ry = spring - (ARCH.apex + inset);
+
+  /* The base curve, densely sampled: a semi-ellipse, barely flattened. The
+   * painting's opening is 0.92 as tall as it is half-wide — shallower than a
+   * semicircle, which no true two-centred pointed arch can describe — so the
+   * ellipse plus the crown's point below is what gets the Mughal profile.
+   *
+   * The exponent has to stay CLOSE TO 1. At 0.62 the curve rises 98 units in its
+   * first 4 units of horizontal travel, so the flanks came out near-vertical and
+   * the whole arch read as a tent with a flat cap rather than an arch. */
+  const STEPS = 480;
+  const curve: Array<[number, number]> = [];
+  for (let i = 0; i <= STEPS; i++) {
+    const a = (Math.PI * i) / STEPS;
+    curve.push([cx - rx * Math.cos(a), spring - ry * Math.sin(a) ** 0.85]);
+  }
+  const cum = [0];
+  for (let i = 1; i <= STEPS; i++) {
+    cum.push(cum[i - 1] + Math.hypot(curve[i][0] - curve[i - 1][0], curve[i][1] - curve[i - 1][1]));
+  }
+
+  const cusps: Array<[number, number]> = [];
+  let k = 0;
+  for (let j = 0; j <= ARCH.foils; j++) {
+    const target = (cum[STEPS] * j) / ARCH.foils;
+    while (k < STEPS && cum[k + 1] < target) k++;
+    cusps.push(curve[k]);
+  }
+  // the crown's point
+  const crown = ARCH.foils / 2;
+  cusps[crown] = [cx, cusps[crown][1] - ry * 0.07];
+
+  let d = `M ${cusps[0][0].toFixed(1)} ${cusps[0][1].toFixed(1)}`;
+  for (let i = 1; i < cusps.length; i++) {
+    const [px, py] = cusps[i - 1];
+    const [qx, qy] = cusps[i];
+    const mx = (px + qx) / 2;
+    const my = (py + qy) / 2;
+    let nx = -(qy - py);
+    let ny = qx - px;
+    const l = Math.hypot(nx, ny) || 1;
+    nx /= l;
+    ny /= l;
+    if ((cx - mx) * nx + (spring - my) * ny < 0) {
+      nx = -nx;
+      ny = -ny;
+    }
+    d += ` Q ${(mx + nx * depth).toFixed(1)} ${(my + ny * depth).toFixed(1)} ${qx.toFixed(1)} ${qy.toFixed(1)}`;
+  }
+  return d;
+}
+
+/** The vertical jambs the arch springs from, down to the border's foot. */
+function jambsPath(inset = 0): string {
+  const x0 = ARCH.x0 + inset;
+  const x1 = ARCH.x1 - inset;
+  const foot = BORDER.y1 - inset;
+  return `M ${x0} ${ARCH.spring} V ${foot} M ${x1} ${ARCH.spring} V ${foot}`;
+}
+
+/**
+ * A paisley — a boteh, base at its own origin, ~100 tall, its tip curling to the
+ * left. The spandrel filler; the right-hand spandrel is this mirrored.
+ *
+ * Drawn as an OUTLINE, in two strokes that meet at the base and again at the tip,
+ * which is how the painting's own spandrels are drawn — gold linework, not fills.
+ * The first attempt tried to describe the whole silhouette in a single sweeping
+ * curve and came out as a scroll rather than a paisley; splitting the flanks is
+ * what makes the shape legible at the ~60px this renders at.
+ */
+function Paisley({ tone = GOLD }: { tone?: string }) {
+  return (
+    <g stroke={tone} fill="none" strokeWidth="2" strokeLinecap="round">
+      {/* the outer flank: up the right, over the crown, curling in at the tip.
+          It stops at the end of the curl — carrying it round into a second hook
+          turned the paisley into a spiral. */}
+      <path d="M0 0 C26 -20 34 -50 26 -72 C18 -92 -6 -102 -24 -91 C-37 -83 -37 -62 -25 -55" />
+      {/* the inner flank, base to crown — closes the silhouette */}
+      <path d="M0 0 C-18 -20 -25 -43 -21 -62 C-18 -76 -10 -85 -1 -89" />
+      {/* an echo of the same shape inside it */}
+      <g transform="translate(-2 -14) scale(0.56)" opacity="0.6">
+        <path d="M0 0 C26 -20 34 -50 26 -72 C18 -92 -6 -102 -24 -91 C-37 -83 -37 -62 -25 -55" />
+      </g>
+      {/* The vine it grows from, with two leaves — trailing to the LEFT, down
+          toward the jamb. It has to: the spandrel is a triangle that runs out of
+          height as it approaches the crown, so a vine heading the other way
+          crosses the arch and ends up inside the opening, over the artwork. */}
+      <path d="M0 2 C-16 12 -34 17 -52 14" opacity="0.55" />
+      {[
+        [-18, 10, -24],
+        [-40, 14, 14],
+      ].map(([x, y, a]) => (
+        <path
+          key={`${x}-${y}`}
+          d="M0 0 C-9 -7 -19 -6 -23 2 C-17 10 -5 9 0 0 Z"
+          transform={`translate(${x} ${y}) rotate(${a})`}
+          opacity="0.7"
+        />
+      ))}
+      {[[-14, -74], [-16, -34], [-52, 14]].map(([cx, cy]) => (
+        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="2.8" fill={tone} stroke="none" opacity="0.75" />
+      ))}
+    </g>
+  );
+}
+
+/**
+ * The whole empty plate: keyline border, mehrab, spandrel paisleys and the rug
+ * at its foot. Sized entirely by its container; pair it with an artwork layer
+ * positioned over the same box (see portrait.tsx).
+ */
+export function MehrabPlate({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox={`0 0 ${PLATE_VIEWBOX.w} ${PLATE_VIEWBOX.h}`}
+      fill="none"
+      aria-hidden
+      className={className}
+    >
+      {/* ── the keyline border: hairline · dotted band · hairline ───────────── */}
+      <rect
+        x={BORDER.x0}
+        y={BORDER.y0}
+        width={BORDER.x1 - BORDER.x0}
+        height={BORDER.y1 - BORDER.y0}
+        stroke={GOLD}
+        strokeWidth="1.6"
+        opacity="0.85"
+      />
+      <rect
+        x={BORDER.x0 + 9}
+        y={BORDER.y0 + 9}
+        width={BORDER.x1 - BORDER.x0 - 18}
+        height={BORDER.y1 - BORDER.y0 - 18}
+        stroke={GOLD}
+        strokeWidth="2.4"
+        strokeDasharray="1 8"
+        strokeLinecap="round"
+        opacity="0.6"
+      />
+      <rect
+        x={BORDER.x0 + 20}
+        y={BORDER.y0 + 20}
+        width={BORDER.x1 - BORDER.x0 - 40}
+        height={BORDER.y1 - BORDER.y0 - 40}
+        stroke={GOLD_DEEP}
+        strokeWidth="0.9"
+        opacity="0.5"
+      />
+
+      {/* ── The spandrel paisleys, in the triangles between the border's top
+             corners and the arch's haunches. One component, mirrored about the
+             arch's centre line. The base sits at y=190, which clears the arch
+             curve (y≈209 at this x) — the paisley grows UPWARD from its origin,
+             so placing that origin any lower puts the motif inside the opening.
+             ──────────────────────────────────────────────────────────────── */}
+      <g opacity="0.55">
+        <g transform="translate(255 190) scale(1.28)">
+          <Paisley />
+        </g>
+        <g transform="translate(746 190) scale(-1.28 1.28)">
+          <Paisley />
+        </g>
+      </g>
+
+      {/* ── the mehrab: two concentric cusped arches and their jambs ────────── */}
+      <path d={mehrabPath()} stroke={GOLD} strokeWidth="1.8" opacity="0.9" />
+      <path d={jambsPath()} stroke={GOLD} strokeWidth="1.8" opacity="0.9" />
+      <path d={mehrabPath(15, 18)} stroke={GOLD_DEEP} strokeWidth="0.9" opacity="0.5" />
+      <path d={jambsPath(15)} stroke={GOLD_DEEP} strokeWidth="0.9" opacity="0.5" />
+      {/* the crown's finial */}
+      <g transform={`translate(${(ARCH.x0 + ARCH.x1) / 2} ${ARCH.apex - 6})`}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <ellipse key={i} cy="-7" rx="2.4" ry="6" fill={GOLD} opacity="0.55" transform={`rotate(${i * 60})`} />
+        ))}
+        <circle r="3" fill={GOLD_LITE} />
+      </g>
+
+      {/* ── the rug: a fringed runner in slight perspective ─────────────────── */}
+      <g>
+        <path
+          d={`M ${RUG.topInset} ${RUG.top} L ${PLATE_VIEWBOX.w - RUG.topInset} ${RUG.top} L ${PLATE_VIEWBOX.w - RUG.bottomInset} ${RUG.bottom} L ${RUG.bottomInset} ${RUG.bottom} Z`}
+          fill={CHAMP_2}
+          fillOpacity="0.35"
+          stroke={GOLD}
+          strokeWidth="1.6"
+          opacity="0.9"
+        />
+        <path
+          d={`M ${RUG.topInset + 22} ${RUG.top + 14} L ${PLATE_VIEWBOX.w - RUG.topInset - 22} ${RUG.top + 14} L ${PLATE_VIEWBOX.w - RUG.bottomInset - 26} ${RUG.bottom - 15} L ${RUG.bottomInset + 26} ${RUG.bottom - 15} Z`}
+          stroke={GOLD_DEEP}
+          strokeWidth="0.9"
+          opacity="0.5"
+        />
+        {/* fringe, on the two short ends */}
+        <g stroke={GOLD} strokeWidth="1.2" opacity="0.6">
+          {Array.from({ length: 7 }).map((_, i) => {
+            const t = i / 6;
+            const y = RUG.top + 6 + t * (RUG.bottom - RUG.top - 12);
+            const x = RUG.topInset - t * (RUG.topInset - RUG.bottomInset);
+            return (
+              <g key={i}>
+                <line x1={x} y1={y} x2={x - 16} y2={y} />
+                <line x1={PLATE_VIEWBOX.w - x} y1={y} x2={PLATE_VIEWBOX.w - x + 16} y2={y} />
+              </g>
+            );
+          })}
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * A floral corner mark for the page's keyline: a curl of vine with three petals
+ * and a bud. Drawn for the TOP-LEFT corner and rotated for the other three, so
+ * all four are identical rather than four hand-drawn near-misses.
+ */
+function CornerMark({ rotate }: { rotate: number }) {
+  return (
+    <svg viewBox="0 0 64 64" fill="none" aria-hidden className="h-8 w-8 sm:h-11 sm:w-11" style={{ transform: `rotate(${rotate}deg)` }}>
+      <g stroke={GOLD} strokeWidth="1.2" strokeLinecap="round" opacity="0.75">
+        <path d="M2 34 C16 34 28 26 34 12" />
+        <path d="M8 40 C22 40 34 32 42 18" opacity="0.6" />
+        {[
+          [14, 30, -35],
+          [26, 22, -55],
+          [33, 11, -78],
+        ].map(([x, y, a]) => (
+          <path key={`${x}-${y}`} d="M0 0 C7 -5 15 -3 18 4 C13 11 3 10 0 0 Z" transform={`translate(${x} ${y}) rotate(${a})`} />
+        ))}
+        <circle cx="37" cy="6" r="2.4" fill={GOLD} stroke="none" opacity="0.8" />
+        <circle cx="4" cy="42" r="1.8" fill={GOLD} stroke="none" opacity="0.6" />
+      </g>
+    </svg>
+  );
+}
+
+/**
+ * The keyline that runs round the whole page — a double gold hairline with a
+ * floral mark in each corner, the frame a printed invitation would have.
+ *
+ * The rules are CSS borders rather than an SVG rect: a stretched rect needs
+ * `preserveAspectRatio="none"`, which would smear the corner marks along with
+ * it. Borders stay one hairline at any page size and the marks stay round.
+ */
+export function LeafBorder() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-[15] overflow-hidden">
+      <div className="jdi-keyline absolute inset-[9px] sm:inset-[15px]" />
+      <div className="absolute inset-[9px] sm:inset-[15px]">
+        {([
+          ["left-0 top-0", 0],
+          ["right-0 top-0", 90],
+          ["right-0 bottom-0", 180],
+          ["left-0 bottom-0", 270],
+        ] as const).map(([pos, rotate]) => (
+          <div key={pos} className={`absolute ${pos} p-[3px]`}>
+            <CornerMark rotate={rotate} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /** A cusped medallion frame that draws itself in — used around the plate. */

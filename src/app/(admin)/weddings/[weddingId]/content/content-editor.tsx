@@ -26,6 +26,8 @@ import {
 import { ImageUpload } from "@/modules/media/client/image-upload";
 import { FocusPicker } from "@/modules/media/client/focus-picker";
 import { ArtworkPicker } from "@/modules/media/client/artwork-picker";
+import { ThemeArtworkPreview } from "@/modules/website/render/artwork-preview";
+import { resolveArtwork } from "@/modules/website/render/artwork-placement";
 
 type Loc = { en: string; hi: string };
 const L = (v?: { en: string; hi?: string }): Loc => ({
@@ -39,7 +41,7 @@ type FamilySide = "groom" | "bride";
 
 /** Placement defaults for a freshly uploaded illustration: exactly where (and
  * how big as) the theme's own drawn figures are. */
-const ARTWORK_HOME = { x: 0, y: 0, scale: 1, flip: false };
+const ARTWORK_HOME = { enabled: true, x: 0, y: 0, scale: 1, flip: false };
 
 interface State {
   tagline: Loc;
@@ -100,7 +102,11 @@ function toConfig(s: State): WebsiteConfig {
           focus: i.focus,
         })),
     },
-    artwork: s.artwork?.url.trim() ? s.artwork : undefined,
+    // Kept even with no upload: `enabled` is the client's own choice about the
+    // theme's figures, and dropping it would silently reset that choice.
+    artwork: s.artwork
+      ? { ...s.artwork, url: s.artwork.url?.trim() || undefined }
+      : undefined,
     family: {
       members: s.familyMembers
         .filter((m) => m.name.en.trim())
@@ -671,6 +677,7 @@ export function ContentEditor({
   weddingId,
   initial,
   themeId,
+  initials,
   supports,
   category,
 }: {
@@ -678,6 +685,9 @@ export function ContentEditor({
   initial: WebsiteConfig;
   /** Theme id — the artwork picker previews that theme's own scene. */
   themeId: string;
+  /** The couple's monogram — themes that frame the artwork carry it on the frame,
+   * so the preview needs it to match the site. */
+  initials: string;
   /** Which content sections this theme exposes (from the theme registry). */
   supports: ThemeSupports;
   /** Theme category — decides which theme-specific section (if any) to show. */
@@ -694,6 +704,10 @@ export function ContentEditor({
   const [status, setStatus] = useState<{ error?: string; saved?: boolean }>({});
 
   const set = (patch: Partial<State>) => setS((prev) => ({ ...prev, ...patch }));
+
+  // Whether the theme is currently drawing an illustration — the switch below
+  // starts wherever the theme's own default sits.
+  const artworkOn = resolveArtwork(s.artwork, supports.artwork).show;
 
   // Functional append so parallel uploads can't clobber each other's writes.
   const addImage = (url: string) =>
@@ -733,70 +747,106 @@ export function ContentEditor({
       {/* Theme-specific section (parties, birthdays, baby showers, pujas) */}
       <ExperienceEditor category={category} exp={exp} setExp={setExp} />
 
-      {/* Your own illustration, in place of the theme's drawn figures */}
+      {/* The illustration of the couple — the theme's own drawn figures, or the
+          client's caricature in their place. */}
       {supports.artwork ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Your illustration</CardTitle>
+            <CardTitle className="text-base">
+              Illustration of the couple
+            </CardTitle>
             <CardDescription>
-              Upload a caricature, portrait sketch or any illustration of the
-              couple — it stands in for the theme&apos;s drawn figures. A PNG
-              with a transparent background sits in the scene best; leave this
-              empty to keep the illustrated couple.
+              {supports.artwork === "built-in"
+                ? "Your theme draws the two of you into its scene. Keep the illustrated couple, upload a caricature of your own to stand in for them, or switch the illustration off altogether."
+                : "Add the two of you to the design — the theme draws an illustrated couple, and you can upload a caricature of your own to stand in for them."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImageUpload weddingId={weddingId} onUploaded={setArtworkUrl} />
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={artworkOn}
+                onChange={(e) =>
+                  set({ artwork: { ...ARTWORK_HOME, ...s.artwork, enabled: e.target.checked } })
+                }
+              />
+              Show an illustration of the couple
+            </label>
 
-            {s.artwork?.url ? (
+            {artworkOn ? (
               <>
                 <div className="rounded-md border bg-muted/30 p-3">
-                  <ArtworkPicker
-                    themeId={themeId}
-                    value={s.artwork}
-                    onChange={(artwork) => set({ artwork })}
-                  />
+                  {s.artwork?.url ? (
+                    <ArtworkPicker
+                      themeId={themeId}
+                      value={s.artwork}
+                      initials={initials}
+                      onChange={(artwork) => set({ artwork })}
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-xs text-muted-foreground">
+                        The theme&apos;s own illustration, as guests will see it.
+                        Upload your caricature below to put it here instead.
+                      </p>
+                      <div className="mx-auto max-w-sm overflow-hidden rounded-lg border">
+                        <ThemeArtworkPreview themeId={themeId} initials={initials} />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => set({ artwork: undefined })}
-                >
-                  Remove illustration
-                </Button>
-              </>
-            ) : (
-              <div className="space-y-1.5">
-                <Label htmlFor="artwork-url">Or add by URL</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="artwork-url"
-                    value={artUrlDraft}
-                    placeholder="https://…"
-                    onChange={(e) => setArtUrlDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && artUrlDraft.trim()) {
-                        e.preventDefault();
-                        setArtworkUrl(artUrlDraft.trim());
-                        setArtUrlDraft("");
-                      }
-                    }}
-                  />
+
+                <p className="text-xs text-muted-foreground">
+                  A PNG with a transparent background sits in the design best —
+                  trim the empty space around the drawing so it lands where the
+                  theme&apos;s figures stand.
+                </p>
+                <ImageUpload weddingId={weddingId} onUploaded={setArtworkUrl} />
+
+                {s.artwork?.url ? (
                   <Button
                     type="button"
                     variant="outline"
-                    disabled={!artUrlDraft.trim()}
-                    onClick={() => {
-                      setArtworkUrl(artUrlDraft.trim());
-                      setArtUrlDraft("");
-                    }}
+                    size="sm"
+                    onClick={() =>
+                      set({ artwork: { ...ARTWORK_HOME, ...s.artwork, url: undefined } })
+                    }
                   >
-                    Add
+                    Remove my illustration
                   </Button>
-                </div>
-              </div>
-            )}
+                ) : (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="artwork-url">Or add by URL</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="artwork-url"
+                        value={artUrlDraft}
+                        placeholder="https://…"
+                        onChange={(e) => setArtUrlDraft(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && artUrlDraft.trim()) {
+                            e.preventDefault();
+                            setArtworkUrl(artUrlDraft.trim());
+                            setArtUrlDraft("");
+                          }
+                        }}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={!artUrlDraft.trim()}
+                        onClick={() => {
+                          setArtworkUrl(artUrlDraft.trim());
+                          setArtUrlDraft("");
+                        }}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : null}
           </CardContent>
         </Card>
       ) : null}

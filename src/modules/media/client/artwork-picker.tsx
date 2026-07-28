@@ -24,10 +24,13 @@ const clamp = (n: number, max = LIMIT) => Math.min(max, Math.max(-max, n));
 export function ArtworkPicker({
   themeId,
   value,
+  initials,
   onChange,
 }: {
   themeId: string;
   value: Artwork;
+  /** The couple's monogram, for themes that carry it on the artwork's frame. */
+  initials?: string;
   onChange: (artwork: Artwork) => void;
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -102,7 +105,7 @@ export function ArtworkPicker({
           });
         }}
       >
-        <ThemeArtworkPreview themeId={themeId} artwork={value} />
+        <ThemeArtworkPreview themeId={themeId} artwork={value} initials={initials} />
       </div>
 
       {/* Size */}

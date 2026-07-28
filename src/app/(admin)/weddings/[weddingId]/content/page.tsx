@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWeddingById } from "@/modules/weddings/server/queries";
 import { parseWebsiteConfig } from "@/modules/website/schema";
+import { initialsOf } from "@/modules/website/render/build";
 import { getTheme } from "@/modules/website/themes/registry";
 import { ContentEditor } from "./content-editor";
 
@@ -51,6 +52,7 @@ export default async function ContentPage({
         weddingId={weddingId}
         initial={config}
         themeId={theme.id}
+        initials={initialsOf(wedding.name1, wedding.name2, wedding.title)}
         supports={theme.supports}
         category={theme.category}
       />

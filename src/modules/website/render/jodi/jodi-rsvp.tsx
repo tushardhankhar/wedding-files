@@ -31,10 +31,10 @@ function Choice({
   const base =
     "flex-1 border px-5 py-3 text-center text-[0.58rem] font-medium uppercase tracking-[0.24em] transition-all duration-500";
   const idle =
-    "border-[color:var(--jdi-gold)]/45 text-[color:var(--jdi-ink)]/75 hover:border-[color:var(--jdi-gold)] hover:text-[color:var(--jdi-magenta)]";
+    "border-[color:var(--jdi-gold)]/45 text-[color:var(--jdi-ink)]/75 hover:border-[color:var(--jdi-gold)] hover:text-[color:var(--jdi-maroon)]";
   const on =
     tone === "attend"
-      ? "border-[color:var(--jdi-magenta)] bg-[color:var(--jdi-magenta)] text-[color:var(--jdi-cream)]"
+      ? "border-[color:var(--jdi-maroon)] bg-[color:var(--jdi-maroon)] text-[color:var(--jdi-cream)]"
       : "border-[color:var(--jdi-ink-soft)] bg-[color:var(--jdi-ink-soft)] text-[color:var(--jdi-cream)]";
   return (
     <button
@@ -62,10 +62,10 @@ export function Acknowledgement({ familyName }: { familyName?: string }) {
   return (
     <div className="mt-10 text-center duration-1000 animate-in fade-in">
       <Mandala className="mx-auto h-20 w-20 opacity-85" />
-      <p className="jdi-label mt-7 text-[color:var(--jdi-magenta)]">
+      <p className="jdi-label mt-7 text-[color:var(--jdi-maroon)]">
         <TT en="With gratitude" hi="सधन्यवाद" />
       </p>
-      <p className="jdi-display mt-3 text-2xl text-[color:var(--jdi-magenta-2)]">
+      <p className="jdi-display mt-3 text-2xl text-[color:var(--jdi-maroon-2)]">
         <TT en="We look forward to welcoming you" hi="हमें आपके स्वागत की प्रतीक्षा है" />
         {familyName ? `, ${familyName}.` : "."}
       </p>
@@ -93,7 +93,7 @@ export function JodiGroupRsvp({
 }) {
   const r = useGroupRsvp(slug, events, existing, onSaved);
   const numField =
-    "w-20 border border-[color:var(--jdi-gold)]/45 bg-transparent px-3 py-3 text-center text-[color:var(--jdi-ink)] focus:border-[color:var(--jdi-magenta)] focus:outline-none";
+    "w-20 border border-[color:var(--jdi-gold)]/45 bg-transparent px-3 py-3 text-center text-[color:var(--jdi-ink)] focus:border-[color:var(--jdi-maroon)] focus:outline-none";
 
   if (r.done) {
     const summary = events
@@ -109,7 +109,7 @@ export function JodiGroupRsvp({
         <button
           type="button"
           onClick={r.edit}
-          className="jdi-label mt-5 text-[color:var(--jdi-ink-soft)] underline underline-offset-[6px] hover:text-[color:var(--jdi-magenta)]"
+          className="jdi-label mt-5 text-[color:var(--jdi-ink-soft)] underline underline-offset-[6px] hover:text-[color:var(--jdi-maroon)]"
         >
           <TT en="Amend response" hi="उत्तर बदलें" />
         </button>
@@ -120,7 +120,7 @@ export function JodiGroupRsvp({
   return (
     <div className="space-y-5">
       {r.error ? (
-        <p className="jdi-serif text-center text-base italic text-[color:var(--jdi-magenta)]" role="alert">
+        <p className="jdi-serif text-center text-base italic text-[color:var(--jdi-maroon)]" role="alert">
           {r.error}
         </p>
       ) : null}
@@ -129,8 +129,8 @@ export function JodiGroupRsvp({
         return (
           <div key={e.id} className="jdi-card px-7 py-7">
             <div className="text-center">
-              <h3 className="jdi-display text-xl text-[color:var(--jdi-magenta-2)]">{e.name}</h3>
-              <p className="jdi-label mt-2 text-[color:var(--jdi-magenta)]">{formatShort(e.eventDate)}</p>
+              <h3 className="jdi-display text-xl text-[color:var(--jdi-maroon-2)]">{e.name}</h3>
+              <p className="jdi-label mt-2 text-[color:var(--jdi-maroon)]">{formatShort(e.eventDate)}</p>
             </div>
             <div className="mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-2.5">
               <Choice tone="attend" selected={en.attending} onSelect={() => r.setAttending(e.id, true)}>
@@ -221,7 +221,7 @@ export function JodiSelfRsvp({
             setError(null);
             setEditing(true);
           }}
-          className="jdi-label text-[color:var(--jdi-ink-soft)] underline underline-offset-[6px] hover:text-[color:var(--jdi-magenta)]"
+          className="jdi-label text-[color:var(--jdi-ink-soft)] underline underline-offset-[6px] hover:text-[color:var(--jdi-maroon)]"
         >
           <TT en="Amend response" hi="उत्तर बदलें" />
         </button>
@@ -230,17 +230,17 @@ export function JodiSelfRsvp({
   }
 
   const field =
-    "w-full border border-[color:var(--jdi-gold)]/45 bg-transparent px-4 py-3 text-[color:var(--jdi-ink)] placeholder:text-[color:var(--jdi-ink-soft)]/60 focus:border-[color:var(--jdi-magenta)] focus:outline-none";
+    "w-full border border-[color:var(--jdi-gold)]/45 bg-transparent px-4 py-3 text-[color:var(--jdi-ink)] placeholder:text-[color:var(--jdi-ink-soft)]/60 focus:border-[color:var(--jdi-maroon)] focus:outline-none";
 
   return (
     <div className="jdi-card mx-auto max-w-xl space-y-7 px-7 py-9">
       {error ? (
-        <p className="jdi-serif text-center text-base italic text-[color:var(--jdi-magenta)]" role="alert">
+        <p className="jdi-serif text-center text-base italic text-[color:var(--jdi-maroon)]" role="alert">
           {error}
         </p>
       ) : null}
       <div>
-        <label htmlFor="jdi-name" className="jdi-label mb-3 block text-[color:var(--jdi-magenta)]">
+        <label htmlFor="jdi-name" className="jdi-label mb-3 block text-[color:var(--jdi-maroon)]">
           <TT en="Your name" hi="आपका नाम" />
         </label>
         <input
@@ -254,7 +254,7 @@ export function JodiSelfRsvp({
         />
       </div>
       <div>
-        <label htmlFor="jdi-size" className="jdi-label mb-3 block text-[color:var(--jdi-magenta)]">
+        <label htmlFor="jdi-size" className="jdi-label mb-3 block text-[color:var(--jdi-maroon)]">
           <TT en="Guests in your party" hi="आपके साथ कितने लोग" />
         </label>
         <input
@@ -268,7 +268,7 @@ export function JodiSelfRsvp({
         />
       </div>
       <div>
-        <p className="jdi-label mb-3 text-[color:var(--jdi-magenta)]">
+        <p className="jdi-label mb-3 text-[color:var(--jdi-maroon)]">
           <TT en="Celebrations you will attend" hi="आप किन आयोजनों में पधारेंगे" />
         </p>
         <div className="grid gap-2.5 sm:grid-cols-2">
@@ -293,8 +293,8 @@ export function JodiRsvpDemo({ events }: { events: WeddingEvent[] }) {
       {events.slice(0, 2).map((e) => (
         <div key={e.id} className="jdi-card px-7 py-7">
           <div className="text-center">
-            <h3 className="jdi-display text-xl text-[color:var(--jdi-magenta-2)]">{e.name}</h3>
-            <p className="jdi-label mt-2 text-[color:var(--jdi-magenta)]">{formatShort(e.eventDate)}</p>
+            <h3 className="jdi-display text-xl text-[color:var(--jdi-maroon-2)]">{e.name}</h3>
+            <p className="jdi-label mt-2 text-[color:var(--jdi-maroon)]">{formatShort(e.eventDate)}</p>
           </div>
           <div className="mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-2.5">
             <Choice tone="attend" selected disabled>

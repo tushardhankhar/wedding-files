@@ -1684,6 +1684,62 @@
   border: 1px dashed rgba(201,162,63,0.4);
 }
 .std-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--std-gold), transparent); }
+
+/* The illustration cameo — an arched niche, lit from above, with the couple (or
+ * the client's own caricature) standing on its sill and the monogram carried on
+ * the keystone at the crown. Takes the seal's place when the client turns the
+ * illustration on. */
+.std-cameo-wrap { position: relative; padding-top: 22px; }
+.std-cameo {
+  position: relative;
+  width: clamp(198px, 58vw, 268px);
+  aspect-ratio: 5 / 6;
+  border-radius: 999px 999px 8px 8px;
+  border: 1px solid rgba(201,162,63,0.55);
+  background:
+    radial-gradient(78% 54% at 50% 16%, rgba(201,162,63,0.20), transparent 66%),
+    linear-gradient(180deg, rgba(247,240,224,0.07), rgba(0,0,0,0.26));
+  box-shadow:
+    0 0 0 6px rgba(201,162,63,0.07),
+    inset 0 0 40px rgba(201,162,63,0.10),
+    0 28px 60px -32px rgba(0,0,0,0.85);
+  overflow: hidden;
+}
+/* the pool of light the figures stand in */
+ /* In the editor's placement picker the niche fills the stage, so a drag maps
+  * 1:1 onto the offsets the site stores. */
+.std-cameo--fill { width: 100%; }
+.std-cameo-glow {
+  position: absolute; inset: auto 8% 4% 8%; height: 42%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(232,205,126,0.22), transparent 70%);
+  pointer-events: none;
+}
+.std-cameo-inner {
+  position: absolute; inset: 7px;
+  border-radius: 999px 999px 5px 5px;
+  border: 1px solid rgba(201,162,63,0.30);
+  pointer-events: none;
+}
+.std-cameo-sill {
+  position: absolute; inset: auto 7px 7px 7px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--std-gold-lite), transparent);
+  pointer-events: none;
+}
+.std-cameo-key {
+  position: absolute; top: 0; left: 50%;
+  transform: translate(-50%, -6%);
+  display: grid; place-items: center;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 1px solid var(--std-gold);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(201,162,63,0.22), transparent 70%),
+    var(--std-emerald, #0e3b2c);
+  box-shadow: 0 0 0 4px var(--std-emerald, #0e3b2c), 0 0 0 5px rgba(201,162,63,0.22);
+}
+.std-cameo-mono {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 0.86rem; letter-spacing: 0.04em; color: var(--std-gold-lite);
+}
 .std-flip {
   --flip-bg: #0b2e22; --flip-ink: #e8cd7e;
   --flip-line: rgba(201,162,63,0.28); --flip-shadow: rgba(0,0,0,0.6);
@@ -1739,6 +1795,59 @@
   color: var(--mht-gold-lite);
 }
 .mht-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--mht-gold), transparent); }
+
+/* The illustration cameo — a gold medallion with the couple (or the client's own
+ * caricature) on a plinth inside it, taking the seal's place at the centre of the
+ * turning mandala, with the monogram on a plate at its foot. */
+.mht-cameo-wrap { position: relative; padding-bottom: 16px; }
+.mht-cameo {
+  position: relative;
+  width: clamp(176px, 54vw, 252px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1.5px solid var(--mht-gold);
+  background:
+    radial-gradient(circle at 50% 26%, rgba(201,162,63,0.22), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(74,13,31,0.82), rgba(38,6,16,0.95));
+  box-shadow:
+    0 0 0 5px rgba(201,162,63,0.10),
+    inset 0 0 34px rgba(0,0,0,0.45),
+    0 26px 56px -30px rgba(0,0,0,0.85);
+  overflow: hidden;
+}
+ /* Ditto: the medallion fills the picker's stage. */
+.mht-cameo--fill { width: 100%; }
+.mht-cameo-glow {
+  position: absolute; inset: auto 6% 14% 6%; height: 46%;
+  background: radial-gradient(58% 100% at 50% 100%, rgba(232,205,126,0.22), transparent 72%);
+  pointer-events: none;
+}
+/* the couple's stage: the medallion above the plinth */
+.mht-cameo-stage { position: absolute; inset: 0 0 17% 0; }
+.mht-cameo-plinth {
+  position: absolute; inset: auto 0 0 0; height: 17%;
+  background: linear-gradient(180deg, rgba(201,162,63,0.22), rgba(44,7,18,0.85) 70%);
+  border-top: 1px solid rgba(201,162,63,0.6);
+  pointer-events: none;
+}
+.mht-cameo-inner {
+  position: absolute; inset: 6px; border-radius: 50%;
+  border: 1px solid rgba(201,162,63,0.32);
+  pointer-events: none;
+}
+.mht-cameo-plate {
+  position: absolute; bottom: 0; left: 50%;
+  transform: translate(-50%, 0);
+  display: grid; place-items: center;
+  min-width: 66px; padding: 0.16rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--mht-gold);
+  background: linear-gradient(180deg, var(--mht-maroon-2, #6a132b), #3a0917);
+  box-shadow: 0 0 0 3px var(--mht-maroon, #4a0d1f), 0 8px 18px -10px rgba(0,0,0,0.9);
+}
+.mht-cameo-mono {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 0.86rem; letter-spacing: 0.06em; color: var(--mht-gold-lite);
+}
 .mht-datecard {
   border: 1px solid rgba(201,162,63,0.35); border-radius: 4px;
   background: rgba(201,162,63,0.06);
@@ -2404,17 +2513,25 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   THE JODI (id "jodi") — an illustrated wedding plate: soft ivory & blush
-   watercolour, a gold mandala band across the head of the page, and the couple
-   standing at the foot against domes, foliage and peacocks. Painted artwork
-   fills those roles (see render/jodi/ART.md); the CSS supplies the wash and the
-   quiet furniture. Bilingual + [data-tw-reveal] scroll-reveal are shared (see
-   the scaffolding block above); the rest lives here.
+   THE JODI (id "jodi") — a painted invitation leaf: ivory paper inside a gold
+   keyline, the words in the open field at its head, and the couple standing in a
+   gold mehrab arch at its foot. That last piece is painted artwork (see
+   render/jodi/ART.md); the CSS supplies the paper, the keyline and the quiet
+   furniture. Three colours only — ivory · antique gold · oxblood.
+
+   THE PAPER IS LOAD-BEARING. The painted plate ships as an opaque rectangle of
+   the illustration's own paper rather than a matted cut-out, so anywhere it sits
+   the ground has to be `--jdi-paper` exactly or its edges show. That is why
+   `.jdi-hero`'s wash resolves to flat paper across its lower half instead of
+   running a gradient the whole way down.
+
+   Bilingual + [data-tw-reveal] scroll-reveal are shared (see the scaffolding
+   block above); the rest lives here.
    ══════════════════════════════════════════════════════════════════════════ */
 .jdi {
-  color: var(--jdi-ink, #5a2436);
+  color: var(--jdi-ink, #4a2a22);
   font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
-  background: var(--jdi-ivory, #fbf6ea);
+  background: var(--jdi-paper, #fefaef);
   overflow-x: clip;
   line-height: 1.75;
 }
@@ -2427,7 +2544,7 @@
 }
 .jdi-sans { font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif; }
 .jdi .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
-.jdi ::selection { background: var(--jdi-magenta); color: var(--jdi-cream); }
+.jdi ::selection { background: var(--jdi-maroon); color: var(--jdi-cream); }
 .jdi-amp { font-style: italic; color: var(--jdi-gold-deep); }
 
 /* the label style used for every eyebrow / overline on the page */
@@ -2443,70 +2560,135 @@
 .jdi-cream {
   background-color: var(--jdi-cream);
   background-image:
-    radial-gradient(70% 45% at 50% 0%, rgba(246, 220, 226, 0.55), transparent 65%),
-    radial-gradient(50% 40% at 0% 100%, rgba(201, 162, 74, 0.09), transparent 65%);
+    radial-gradient(70% 45% at 50% 0%, rgba(242, 227, 198, 0.55), transparent 65%),
+    radial-gradient(50% 40% at 0% 100%, rgba(194, 155, 78, 0.09), transparent 65%);
 }
 .jdi-ivory {
   background-color: var(--jdi-ivory);
   background-image:
-    radial-gradient(60% 45% at 100% 0%, rgba(246, 220, 226, 0.5), transparent 62%),
-    radial-gradient(55% 40% at 0% 90%, rgba(143, 168, 122, 0.1), transparent 62%);
+    radial-gradient(60% 45% at 100% 0%, rgba(242, 227, 198, 0.5), transparent 62%),
+    radial-gradient(55% 40% at 0% 90%, rgba(139, 154, 112, 0.1), transparent 62%);
 }
-.jdi-blush {
-  background-color: var(--jdi-blush);
+.jdi-champ {
+  background-color: var(--jdi-champ);
   background-image:
-    radial-gradient(75% 55% at 50% 0%, rgba(253, 250, 243, 0.85), transparent 62%),
-    radial-gradient(60% 45% at 100% 100%, rgba(239, 199, 211, 0.7), transparent 60%);
+    radial-gradient(75% 55% at 50% 0%, rgba(254, 250, 239, 0.85), transparent 62%),
+    radial-gradient(60% 45% at 100% 100%, rgba(232, 212, 172, 0.7), transparent 60%);
 }
 /**
- * The hero wash. Several very soft, overlapping radial blooms read closer to a
- * watercolour ground than a single linear gradient, which always looks digital.
+ * The paper the leaf is printed on — FLAT, and nothing but flat. The painted
+ * plate is an opaque rectangle of this exact colour, so any tone that varies
+ * behind it draws its edges: the first pass put watercolour blooms on the hero
+ * itself and the plate showed up as a lighter rectangle against them.
  */
 .jdi-hero {
-  background-color: var(--jdi-cream);
+  background-color: var(--jdi-paper);
+}
+
+/**
+ * The watercolour blooms live here instead — a layer INSIDE the copy's column,
+ * so they cannot stray under the plate however the hero reflows. Several very
+ * soft, overlapping blooms read closer to painted paper than a single linear
+ * gradient, which always looks digital.
+ *
+ * It bleeds past the column on the sides the plate is never on: upward and left
+ * always, downward only from `lg`, where the plate moves out to the right. Each
+ * bloom fades out well inside the box, so the box's own edges never show.
+ */
+.jdi-wash {
+  position: absolute;
+  inset: -5rem -1.5rem 0 -5rem;
+  z-index: -1;
+  pointer-events: none;
   background-image:
-    radial-gradient(58% 34% at 22% 12%, rgba(246, 220, 226, 0.85), transparent 62%),
-    radial-gradient(52% 30% at 82% 22%, rgba(239, 199, 211, 0.6), transparent 62%),
-    radial-gradient(70% 40% at 50% 78%, rgba(246, 220, 226, 0.7), transparent 66%),
-    radial-gradient(46% 26% at 8% 62%, rgba(143, 168, 122, 0.12), transparent 64%),
-    radial-gradient(50% 28% at 94% 70%, rgba(201, 162, 74, 0.12), transparent 64%),
-    linear-gradient(180deg, var(--jdi-cream) 0%, var(--jdi-ivory-2) 100%);
+    radial-gradient(42% 30% at 24% 16%, rgba(242, 227, 198, 0.85), transparent 62%),
+    radial-gradient(38% 26% at 80% 32%, rgba(232, 212, 172, 0.5), transparent 62%),
+    radial-gradient(30% 22% at 12% 74%, rgba(194, 155, 78, 0.1), transparent 64%);
+}
+@media (min-width: 1024px) {
+  .jdi-wash { inset: -6rem 0 -6rem -6rem; }
+}
+
+/* the page's double gold hairline — see LeafBorder in render/jodi/ornaments */
+.jdi-keyline {
+  border: 1px solid rgba(194, 155, 78, 0.55);
+}
+.jdi-keyline::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(194, 155, 78, 0.28);
+}
+
+/**
+ * The painted plate needs no mask and must not have one. Its paper is flattened
+ * to exactly `--jdi-paper` when the asset is built (see render/jodi/ART.md), so
+ * every edge already meets this ground invisibly — and its arch's keyline sits
+ * only 14/1034 of the way down, so any top-edge feather generous enough to be
+ * worth having would fade the arch's own head away.
+ *
+ * What it does need is a DEFINITE height. The plate's box takes its width from
+ * its aspect ratio, and a ratio can only derive one axis from the other if that
+ * other one is definite — a `flex: 1` height is resolved by the flex algorithm,
+ * not definite, and the box collapsed to 0×0. Hence `svh` here rather than
+ * letting the plate take up whatever the words left over.
+ *
+ * The share climbs with the viewport because the constraint is height, not
+ * width: a phone gets a modest band under the copy, a laptop — where the hero
+ * turns into two columns — gives the artwork most of the page.
+ */
+.jdi-plate-slot {
+  aspect-ratio: 1000 / 1034;
+  height: 42svh;
+  max-width: 100%;
+}
+@media (min-width: 640px) {
+  .jdi-plate-slot { height: 46svh; }
+}
+@media (min-width: 1024px) {
+  /* Width is a real constraint beside the copy — at 1024px a plate sized purely
+   * from an 84svh viewport would not fit. So the height is capped by BOTH: 84svh,
+   * or whatever height keeps the plate inside 46vw (46 ÷ the 0.967 aspect). Doing
+   * it here rather than with `max-width` matters — a max-width would leave the
+   * slot at its full height with the artwork letterboxed at the bottom of it, and
+   * the plate would then sit low against the copy instead of centred on it. */
+  .jdi-plate-slot { height: min(84svh, 47.5vw); max-height: 820px; }
 }
 .jdi-footer {
   background-color: var(--jdi-ivory-2);
   background-image:
-    radial-gradient(70% 40% at 50% 0%, rgba(253, 250, 243, 0.9), transparent 64%),
-    radial-gradient(60% 40% at 50% 100%, rgba(246, 220, 226, 0.6), transparent 62%);
+    radial-gradient(70% 40% at 50% 0%, rgba(254, 250, 239, 0.9), transparent 64%),
+    radial-gradient(60% 40% at 50% 100%, rgba(242, 227, 198, 0.6), transparent 62%);
 }
 
 /* nav — always a thin cream bar, so the hanging medallion never sits under the
    link text; scrolling only adds the lift shadow */
 .jdi-nav-on {
-  background: rgba(253, 244, 246, 0.94);
+  background: rgba(253, 248, 238, 0.94);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(201, 162, 74, 0.28);
+  border-bottom: 1px solid rgba(194, 155, 78, 0.28);
 }
-.jdi-nav-lift { box-shadow: 0 10px 30px -22px rgba(126, 18, 64, 0.4); }
+.jdi-nav-lift { box-shadow: 0 10px 30px -22px rgba(90, 18, 24, 0.4); }
 
 /* cards */
 .jdi-event {
   position: relative;
-  background: rgba(253, 250, 243, 0.72);
-  border: 1px solid rgba(201, 162, 74, 0.32);
+  background: rgba(254, 250, 239, 0.72);
+  border: 1px solid rgba(194, 155, 78, 0.32);
   transition: border-color 0.5s ease, transform 0.5s ease;
 }
 .jdi-event::after {
   content: "";
   position: absolute;
   inset: 7px;
-  border: 1px solid rgba(201, 162, 74, 0.2);
+  border: 1px solid rgba(194, 155, 78, 0.2);
   pointer-events: none;
 }
-.jdi-event:hover { border-color: rgba(201, 162, 74, 0.6); transform: translateY(-3px); }
+.jdi-event:hover { border-color: rgba(194, 155, 78, 0.6); transform: translateY(-3px); }
 
 /* gallery frame */
 .jdi-frame {
-  border: 1px solid rgba(201, 162, 74, 0.32);
+  border: 1px solid rgba(194, 155, 78, 0.32);
   background: var(--jdi-ivory-2);
 }
 
@@ -2521,10 +2703,10 @@
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--jdi-ink);
-  border: 1px solid rgba(201, 162, 74, 0.55);
+  border: 1px solid rgba(194, 155, 78, 0.55);
   transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
 }
-.jdi-chip:hover { background: var(--jdi-magenta); color: var(--jdi-cream); border-color: var(--jdi-magenta); }
+.jdi-chip:hover { background: var(--jdi-maroon); color: var(--jdi-cream); border-color: var(--jdi-maroon); }
 
 /* primary button — a gold hairline box */
 .jdi-btn {
@@ -2540,25 +2722,25 @@
   color: var(--jdi-ink);
   padding: 0.85rem 1.9rem;
   border: 1px solid var(--jdi-gold);
-  background: rgba(253, 250, 243, 0.5);
+  background: rgba(254, 250, 239, 0.5);
   transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 }
-.jdi-btn:hover { background: var(--jdi-magenta); color: var(--jdi-cream); border-color: var(--jdi-magenta); }
+.jdi-btn:hover { background: var(--jdi-maroon); color: var(--jdi-cream); border-color: var(--jdi-maroon); }
 
 /* countdown — hairline columns */
-.jdi-count { border-left: 1px solid rgba(201, 162, 74, 0.3); }
+.jdi-count { border-left: 1px solid rgba(194, 155, 78, 0.3); }
 .jdi-count:first-child { border-left: 0; }
 .jdi-countnum {
   font-family: var(--font-cormorant), Georgia, serif;
   font-weight: 300;
-  color: var(--jdi-magenta-2);
+  color: var(--jdi-maroon-2);
   font-variant-numeric: tabular-nums;
 }
 
 /* RSVP furniture sits on the blush ground, so it stays ink-on-light */
 .jdi-card {
-  background: rgba(253, 250, 243, 0.7);
-  border: 1px solid rgba(201, 162, 74, 0.3);
+  background: rgba(254, 250, 239, 0.7);
+  border: 1px solid rgba(194, 155, 78, 0.3);
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -25,19 +25,27 @@ export const focusSchema = z.object({
 export type Focus = z.infer<typeof focusSchema>;
 
 /**
- * A client-supplied illustration (caricature, portrait sketch, cartoon…) that
- * stands in for a theme's built-in artwork — e.g. the couple on the Gulistan
- * balcony. Unlike {@link Focus} (which crops a photo to *fill* a frame), this
- * places a whole transparent-background drawing *inside* a scene, so the client
- * needs to nudge and size it rather than pick a focal point:
+ * The theme's illustration slot — the couple drawn into the design (the Gulistan
+ * balcony, the Overture's arched niche, the Muhurat medallion). The client can
+ * switch the slot off entirely, keep the theme's own figures, or upload their own
+ * caricature / portrait sketch to stand in for them.
  *
+ * Unlike {@link Focus} (which crops a photo to *fill* a frame), an upload is a
+ * whole transparent-background drawing placed *inside* a scene, so the client
+ * nudges and sizes it rather than picking a focal point:
+ *
+ *   - `enabled` — whether the slot is drawn at all. A theme whose figures are
+ *     part of its scene starts on; a theme where the illustration is an addition
+ *     starts off (see `ThemeSupports.artwork`).
+ *   - `url`     — the client's own drawing. Absent → the theme's own figures.
  *   - `x` / `y` — offset from the artwork's home position, as a fraction of the
  *     scene's width/height (0 = untouched, +y = lower, −y = higher).
  *   - `scale`   — size relative to the built-in artwork it replaces.
  *   - `flip`    — mirror horizontally, for a drawing that faces the wrong way.
  */
 export const artworkSchema = z.object({
-  url: z.string(),
+  enabled: z.boolean().default(true),
+  url: z.string().optional(),
   x: z.number().min(-1).max(1).default(0),
   y: z.number().min(-1).max(1).default(0),
   scale: z.number().min(0.3).max(2.5).default(1),
@@ -131,8 +139,9 @@ export const websiteConfigSchema = z.object({
   eventTime: z.string().optional(),
   hero: z.object({ tagline: localizedSchema.optional() }).optional(),
   experience: experienceSchema,
-  /** Replaces the theme's illustrated figures with the client's own drawing.
-   * Only themes whose `supports.artwork` is true offer (and render) it. */
+  /** The theme's illustration slot — switch it off, keep the theme's figures, or
+   * replace them with the client's own drawing. Only themes whose
+   * `supports.artwork` is truthy offer (and render) it. */
   artwork: artworkSchema.optional(),
   story: z
     .object({

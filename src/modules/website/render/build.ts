@@ -12,6 +12,33 @@ export interface SiteWedding {
 }
 
 /**
+ * The monogram a theme stamps on its seal, keystone or nav: one initial per name,
+ * or the title's first two words when a subject has no names of its own. Exported
+ * so the content editor's artwork preview can show the same monogram the site
+ * will.
+ */
+export function initialsOf(
+  name1: string | null | undefined,
+  name2: string | null | undefined,
+  title: string
+): string {
+  const nameParts = [name1?.trim(), name2?.trim()].filter(
+    (n): n is string => !!n
+  );
+  return (
+    nameParts.length === 2
+      ? `${nameParts[0][0]} & ${nameParts[1][0]}`
+      : nameParts.length === 1
+        ? nameParts[0].charAt(0)
+        : title
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((w) => w[0] ?? "")
+            .join(" & ")
+  ).toUpperCase();
+}
+
+/**
  * Derives the renderer's props from a wedding + its events. Shared by the owner
  * Preview and the live guest site, so both render identically.
  */
@@ -23,17 +50,7 @@ export function buildSiteProps(wedding: SiteWedding, events: WeddingEvent[]) {
   // themes (birthday child, family) no longer fall back to the title.
   const nameParts = [one, two].filter((n): n is string => !!n);
   const names = nameParts.length > 0 ? nameParts.join(" & ") : wedding.title;
-  const initials = (
-    nameParts.length === 2
-      ? `${nameParts[0][0]} & ${nameParts[1][0]}`
-      : nameParts.length === 1
-        ? nameParts[0].charAt(0)
-        : wedding.title
-            .split(/\s+/)
-            .slice(0, 2)
-            .map((w) => w[0] ?? "")
-            .join(" & ")
-  ).toUpperCase();
+  const initials = initialsOf(wedding.name1, wedding.name2, wedding.title);
 
   const dateLabel = wedding.eventDate
     ? new Date(`${wedding.eventDate}T00:00:00`).toLocaleDateString("en-GB", {
