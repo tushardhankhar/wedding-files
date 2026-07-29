@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/modules/auth/server/user";
@@ -6,6 +7,11 @@ import { listEvents } from "@/modules/events/server/queries";
 import { getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
 import { SiteView } from "@/modules/website/render/site";
+
+export const metadata: Metadata = {
+  title: "Preview · Join the Jashn",
+  robots: { index: false, follow: false },
+};
 
 // Owner-only preview of the live guest site — full-bleed, outside the admin
 // chrome. RLS on getWeddingById ensures only the wedding's admin/client can see

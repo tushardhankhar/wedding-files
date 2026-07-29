@@ -38,6 +38,20 @@ if (!parsed.success) {
 export const env = parsed.data;
 
 /**
+ * Absolute site origin (no trailing slash) with the production fallback. For
+ * metadata, robots and sitemap, which should still emit a sensible absolute URL
+ * when the env var is missing rather than failing the build. Auth and invite
+ * links must NOT use this — they use `requireSiteUrl()` so a misconfigured
+ * deployment fails loudly instead of emailing links to the wrong origin.
+ */
+export function siteUrl(): string {
+  return (env.NEXT_PUBLIC_SITE_URL ?? "https://jointhejashn.com").replace(
+    /\/$/,
+    ""
+  );
+}
+
+/**
  * Returns the absolute site origin (no trailing slash), throwing a clear error
  * if `NEXT_PUBLIC_SITE_URL` is unset. Every auth redirect target — magic-link,
  * OTP, password-reset, and invite-claim URLs — is built from this, so a missing
