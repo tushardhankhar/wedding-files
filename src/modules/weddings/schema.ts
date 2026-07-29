@@ -37,6 +37,15 @@ export const createWeddingSchema = z.object({
       (v) => v === undefined || /^\d{2}:\d{2}$/.test(v),
       "Use a valid time."
     ),
+  // The planner's contact number for this client. Admin-only, free-form (the
+  // same loose 30-char shape as guest phones) so country codes, spaces and
+  // dashes all paste in cleanly; digits are extracted when building wa.me links.
+  clientPhone: z
+    .string()
+    .trim()
+    .max(30, "That phone number is too long.")
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined)),
 });
 
 // Title is admin-only; clients don't submit it, so it's optional on update.

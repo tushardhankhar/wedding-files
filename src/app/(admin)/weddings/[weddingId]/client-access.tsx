@@ -27,12 +27,15 @@ export function ClientAccess({
   weddingId,
   claimed,
   occasion,
+  clientPhone,
   meta,
 }: {
   weddingId: string;
   claimed: boolean;
   /** Lowercase occasion noun for copy, e.g. "wedding", "baby shower". */
   occasion: string;
+  /** Planner's contact number for the client — addresses the WhatsApp link. */
+  clientPhone?: string | null;
   meta?: WeddingAdminMeta;
 }) {
   const action = generateClientInviteAction.bind(null, weddingId);
@@ -46,8 +49,11 @@ export function ClientAccess({
     setTimeout(() => setCopied(false), 1500);
   }
 
+  // Pre-addressed to the client's number when we have one, so the planner skips
+  // WhatsApp's contact picker; falls back to "choose a contact" without it.
+  const phoneDigits = (clientPhone ?? "").replace(/[^0-9]/g, "");
   const waHref = state.url
-    ? `https://wa.me/?text=${encodeURIComponent(
+    ? `https://wa.me/${phoneDigits}?text=${encodeURIComponent(
         `You're invited to set up your ${occasion} website: ${state.url}`
       )}`
     : undefined;
@@ -57,6 +63,26 @@ export function ClientAccess({
   return (
     <div className="space-y-3">
       <InviteStatusSummary weddingId={weddingId} status={status} meta={meta} />
+
+      {clientPhone ? (
+        <p className="text-sm text-muted-foreground">
+          Contact number:{" "}
+          <span className="font-medium text-foreground">{clientPhone}</span>
+          {phoneDigits ? (
+            <>
+              {" · "}
+              <a
+                href={`https://wa.me/${phoneDigits}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                WhatsApp
+              </a>
+            </>
+          ) : null}
+        </p>
+      ) : null}
 
       {status === "active" || status === "accepted" ? (
         <p className="text-sm text-muted-foreground">
@@ -127,7 +153,7 @@ export function ClientAccess({
               rel="noopener noreferrer"
               className="text-sm text-primary hover:underline"
             >
-              Share via WhatsApp →
+              {phoneDigits ? `Share via WhatsApp to ${clientPhone} →` : "Share via WhatsApp →"}
             </a>
           ) : null}
         </div>
