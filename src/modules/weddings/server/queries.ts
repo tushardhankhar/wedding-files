@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { mapWeddingRow, type Wedding, type WeddingRow } from "../types";
 
 const COLUMNS =
-  "id, created_by, client_id, slug, title, name1, name2, event_date, config, theme_id, created_at, updated_at";
+  "id, created_by, client_id, slug, title, name1, name2, event_date, client_phone, config, theme_id, created_at, updated_at";
 
 /**
  * Lists the current user's weddings. RLS guarantees only owned rows are

@@ -12,7 +12,7 @@ import {
 import type { CreateWeddingInput, UpdateWeddingInput } from "../schema";
 
 const COLUMNS =
-  "id, created_by, client_id, slug, title, name1, name2, event_date, config, theme_id, created_at, updated_at";
+  "id, created_by, client_id, slug, title, name1, name2, event_date, client_phone, config, theme_id, created_at, updated_at";
 
 const UNIQUE_VIOLATION = "23505";
 
@@ -52,6 +52,7 @@ export async function createWedding(
         name1: input.name1 ?? null,
         name2: input.name2 ?? null,
         event_date: input.eventDate ?? null,
+        client_phone: input.clientPhone ?? null,
         // Countdown time (HH:MM) lives in config; event_date is date-only.
         config: input.eventTime ? { eventTime: input.eventTime } : {},
       })
@@ -68,13 +69,15 @@ export async function createWedding(
 
 /**
  * Updates a wedding's details. RLS scopes who may update (admin: any; client:
- * their own). The wedding name is admin-only, so `title` is written only when
- * `allowRename` is true — and the DB trigger rejects it otherwise regardless.
+ * their own). The name and the client's phone are admin-only, so `title` and
+ * `client_phone` are written only when `isAdmin` — and the DB trigger rejects
+ * them otherwise regardless. Omitting them (rather than sending the unchanged
+ * value) keeps a client's save from tripping that trigger.
  */
 export async function updateWedding(
   id: string,
   input: UpdateWeddingInput,
-  { allowRename }: { allowRename: boolean }
+  { isAdmin }: { isAdmin: boolean }
 ): Promise<Wedding> {
   const supabase = await createSupabaseServerClient();
 
@@ -95,7 +98,10 @@ export async function updateWedding(
     event_date: input.eventDate ?? null,
     config,
   };
-  if (allowRename) patch.title = input.title;
+  if (isAdmin) {
+    patch.title = input.title;
+    patch.client_phone = input.clientPhone ?? null;
+  }
 
   const { data, error } = await supabase
     .from("weddings")

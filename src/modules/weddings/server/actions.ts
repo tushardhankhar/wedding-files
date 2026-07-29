@@ -36,6 +36,7 @@ function parseForm(formData: FormData) {
     name2: value("name2"),
     eventDate: value("eventDate"),
     eventTime: value("eventTime"),
+    clientPhone: value("clientPhone"),
   };
 }
 
@@ -75,8 +76,8 @@ export async function updateWeddingAction(
     return { error: "Both names are required." };
   }
 
-  const allowRename = await isCurrentUserAdmin();
-  await updateWedding(id, parsed.data, { allowRename });
+  const isAdmin = await isCurrentUserAdmin();
+  await updateWedding(id, parsed.data, { isAdmin });
   revalidatePath("/dashboard");
   revalidatePath(`/weddings/${id}`);
   return { saved: true };
