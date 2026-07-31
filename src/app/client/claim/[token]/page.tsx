@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { InvitationShell } from "@/components/brand/invitation-shell";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/server/user";
@@ -9,6 +10,12 @@ type ClaimStateRow = {
   accepted: boolean;
   bound: boolean;
   matches_viewer: boolean;
+};
+
+// A one-time, email-bound bearer link — must never be indexed or followed.
+export const metadata: Metadata = {
+  title: "Set up your invitation · Join the Jashn",
+  robots: { index: false, follow: false },
 };
 
 export default async function ClaimPage({

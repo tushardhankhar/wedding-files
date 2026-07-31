@@ -19,13 +19,21 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const identity = await loadSiteIdentity(slug);
-  if (!identity) return { title: "A private invitation · Join the Jashn" };
+  // Never indexable: this page intentionally exposes the couple's names and
+  // date without a session so link previews work, and that shouldn't end up in
+  // search results. Link-preview crawlers (WhatsApp, iMessage) ignore `robots`,
+  // so the OG data below still renders.
+  const noindex = { robots: { index: false, follow: false } } satisfies Metadata;
+  if (!identity) {
+    return { ...noindex, title: "A private invitation · Join the Jashn" };
+  }
 
   const title = identity.dateLabel
     ? `${identity.names} · ${identity.dateLabel}`
     : identity.names;
   const description = occasionInvite(identity.themeId, identity.names);
   return {
+    ...noindex,
     title,
     description,
     openGraph: { title, description },

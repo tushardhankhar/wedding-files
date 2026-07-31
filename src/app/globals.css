@@ -2666,6 +2666,21 @@
   font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
   font-weight: 300;
   letter-spacing: 0.02em;
+  /* last resort for one unbroken name wider than the phone: breaking a word
+   * reads badly, but it beats putting the whole page into sideways scroll */
+  overflow-wrap: break-word;
+}
+/* A long pair gets a line per name (see `CoupleNames` in jodi-view). Block
+ * children rather than a flex column so they inherit the hero's `text-center` /
+ * `lg:text-left` without a breakpoint of their own; the ampersand drops in size
+ * so the middle line reads as a join and not a third name. */
+.jdi-pair,
+.jdi-pair > span {
+  display: block;
+}
+.jdi-pair > .jdi-amp {
+  font-size: 0.56em;
+  line-height: 1.5;
 }
 .jdi-sans { font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif; }
 .jdi .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }

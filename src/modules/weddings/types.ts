@@ -11,6 +11,8 @@ export interface Wedding {
   name1: string | null;
   name2: string | null;
   eventDate: string | null; // ISO date (YYYY-MM-DD)
+  /** Planner's contact number for the client. Admin-only (DB trigger enforced). */
+  clientPhone: string | null;
   config: Record<string, unknown>;
   themeId: string;
   createdAt: string;
@@ -27,6 +29,7 @@ export interface WeddingRow {
   name1: string | null;
   name2: string | null;
   event_date: string | null;
+  client_phone: string | null;
   config: Record<string, unknown>;
   theme_id: string;
   created_at: string;
@@ -43,6 +46,7 @@ export function mapWeddingRow(row: WeddingRow): Wedding {
     name1: row.name1,
     name2: row.name2,
     eventDate: row.event_date,
+    clientPhone: row.client_phone,
     config: row.config ?? {},
     themeId: row.theme_id,
     createdAt: row.created_at,

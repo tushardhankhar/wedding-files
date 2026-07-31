@@ -20,6 +20,8 @@ export interface WeddingFormValues {
   eventDate?: string | null;
   /** HH:MM — optional time of day, powers an exact countdown. */
   eventTime?: string | null;
+  /** Planner's contact number for the client. Admin-only. */
+  clientPhone?: string | null;
 }
 
 const initialState: WeddingFormState = {};
@@ -28,15 +30,17 @@ export function WeddingForm({
   action,
   values,
   submitLabel = "Save",
-  canRename = true,
+  isAdmin = true,
   subject,
 }: {
   action: WeddingAction;
   values?: WeddingFormValues;
   submitLabel?: string;
-  // Clients cannot change the invitation name; the field renders read-only and
-  // is not submitted. The server action and a DB trigger also enforce this.
-  canRename?: boolean;
+  // Gates the admin-only fields. Clients cannot change the invitation name (it
+  // renders read-only and isn't submitted) and never see the client phone —
+  // that's the planner's own contact record. The server action and a DB trigger
+  // enforce both regardless of what the form sends.
+  isAdmin?: boolean;
   /** From the chosen theme (edit only). Drives name labels + how many to show.
    * Absent → generic two-name fallback. */
   subject?: SubjectSpec;
@@ -58,12 +62,13 @@ export function WeddingForm({
   const [name2, setName2] = useState(values?.name2 ?? "");
   const [eventDate, setEventDate] = useState(values?.eventDate ?? "");
   const [eventTime, setEventTime] = useState(values?.eventTime ?? "");
+  const [clientPhone, setClientPhone] = useState(values?.clientPhone ?? "");
 
   return (
     <form action={formAction} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="title">Invitation title</Label>
-        {canRename ? (
+        {isAdmin ? (
           <Input
             id="title"
             name="title"
@@ -138,6 +143,29 @@ export function WeddingForm({
           </p>
         </div>
       </div>
+
+      {isAdmin ? (
+        <div className="space-y-2 border-t pt-4">
+          <Label htmlFor="clientPhone">
+            Client phone{" "}
+            <span className="font-normal text-muted-foreground">(optional)</span>
+          </Label>
+          <Input
+            id="clientPhone"
+            name="clientPhone"
+            type="tel"
+            maxLength={30}
+            autoComplete="off"
+            placeholder="+91 98765 43210"
+            value={clientPhone}
+            onChange={(e) => setClientPhone(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Your record of who to contact. Include the country code to WhatsApp
+            them from Client access below. Never shown to guests.
+          </p>
+        </div>
+      ) : null}
 
       {state.error ? (
         <p className="text-sm text-destructive" role="alert">

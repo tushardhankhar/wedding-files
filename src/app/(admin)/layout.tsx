@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { requireUser, isCurrentUserAdmin } from "@/modules/auth/server/user";
 import { signOutAction } from "@/modules/auth/server/actions";
 import { Lotus, Mandala } from "@/components/brand/motifs";
@@ -5,6 +6,11 @@ import { PageDecor } from "@/components/brand/decor";
 import { NavProgress } from "@/components/brand/nav-progress";
 import { NavLink } from "@/components/brand/nav-link";
 import { PendingSubmit } from "@/components/brand/pending-submit";
+
+// Inherited by every dashboard/wedding route below this layout.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminLayout({
   children,

@@ -254,6 +254,26 @@ export function CreateWizard() {
                 </div>
               </div>
 
+              <div className="space-y-2 border-t pt-4">
+                <Label htmlFor="clientPhone">
+                  Client phone{" "}
+                  <span className="font-normal text-muted-foreground">(optional)</span>
+                </Label>
+                <Input
+                  id="clientPhone"
+                  name="clientPhone"
+                  type="tel"
+                  maxLength={30}
+                  autoComplete="off"
+                  placeholder="+91 98765 43210"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Your record of who to contact. Include the country code and you
+                  can WhatsApp them the setup link in one tap. Only you see this —
+                  never the client&apos;s guests.
+                </p>
+              </div>
+
               {state.error ? (
                 <p className="text-sm text-destructive" role="alert">
                   {state.error}

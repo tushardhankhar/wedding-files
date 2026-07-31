@@ -144,13 +144,14 @@ export default async function WeddingDetailPage({
         <CardContent>
           <WeddingForm
             action={updateAction}
-            canRename={isAdmin}
+            isAdmin={isAdmin}
             subject={getTheme(wedding.themeId).subjectSpec}
             values={{
               title: wedding.title,
               name1: wedding.name1,
               name2: wedding.name2,
               eventDate: wedding.eventDate,
+              clientPhone: wedding.clientPhone,
               eventTime:
                 typeof wedding.config?.eventTime === "string"
                   ? wedding.config.eventTime
@@ -174,6 +175,7 @@ export default async function WeddingDetailPage({
                 weddingId={wedding.id}
                 claimed={wedding.clientId !== null}
                 occasion={occasionNoun(wedding.themeId)}
+                clientPhone={wedding.clientPhone}
                 meta={inviteMeta}
               />
             </CardContent>

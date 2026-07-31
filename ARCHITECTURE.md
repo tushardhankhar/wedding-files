@@ -163,7 +163,9 @@ src/
 7. Multi-tenant isolation: every wedding-owned row carries `wedding_id`; RLS ties
    `wedding_id → weddings` (admin sees all via `is_admin()`, client via `client_id`);
    guest reads always bind `group → wedding` first.
-8. Name/URL/theme are admin-only, enforced by a DB trigger (not just the UI).
+8. Name/URL/theme and the client's phone are admin-only, enforced by a DB
+   trigger (not just the UI). The phone is planner CRM data and is never
+   selected by the guest data layer.
 9. Env validated at boot — a missing secret fails loudly.
 
 ## Roadmap

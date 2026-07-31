@@ -39,6 +39,7 @@ yarn-error.log*
 # generated marketing screenshots (npm run capture:cards)
 /public/landing/theme-cards/
 /public/landing/announcements/
+/public/landing/ads/
 
 # typescript
 *.tsbuildinfo
