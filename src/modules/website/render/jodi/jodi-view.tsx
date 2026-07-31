@@ -27,6 +27,37 @@ function splitNames(names: string): [string, string] | null {
   return parts.length === 2 ? [parts[0], parts[1]] : null;
 }
 
+/* A long pair can't share a line at these sizes. Left as one flowing string the
+ * browser breaks at whichever space happens to fit, which strands the "&"
+ * against one name ("Aaravinder &" / "Meeranshika") and splits the pair
+ * unevenly. Past this many letters each name takes a line of its own with the
+ * "&" centred between them — the treatment on the reference plates anyway.
+ *
+ * Measured on the combined length, because that is what has to fit one line,
+ * and set by the WORST case rather than the phone: both sizes below floor at a
+ * `clamp()` minimum (2rem hero, 2.1rem footer), so the 248px theme-card preview
+ * gets relatively the largest type and runs out of line first. ~14 characters
+ * fit its 200px measure, less the three the " & " itself costs. */
+const PAIR_ONE_LINE_MAX = 11;
+
+function CoupleNames({ pair, names }: { pair: [string, string] | null; names: string }) {
+  if (!pair) return <>{names}</>;
+  if (pair[0].length + pair[1].length <= PAIR_ONE_LINE_MAX) {
+    return (
+      <>
+        {pair[0]} <span className="jdi-amp">&amp;</span> {pair[1]}
+      </>
+    );
+  }
+  return (
+    <span className="jdi-pair">
+      <span>{pair[0]}</span>
+      <span className="jdi-amp">&amp;</span>
+      <span>{pair[1]}</span>
+    </span>
+  );
+}
+
 function cityOf(events: WeddingEvent[]): string | null {
   for (const e of events) {
     if (e.venueAddress) {
@@ -284,13 +315,7 @@ export function JodiView({
 
             <div className="jdi-fade mt-5" style={{ animationDelay: "0.7s" }}>
               <h1 className="jdi-names text-[clamp(2rem,11vw,4.6rem)] leading-[1.08] text-[color:var(--jdi-maroon-2)]">
-                {pair ? (
-                  <>
-                    {pair[0]} <span className="jdi-amp">&amp;</span> {pair[1]}
-                  </>
-                ) : (
-                  names
-                )}
+                <CoupleNames pair={pair} names={names} />
               </h1>
             </div>
 
@@ -609,8 +634,8 @@ export function JodiView({
         <footer className="jdi-footer relative overflow-hidden px-6 pt-20 text-center">
           <div className="relative z-20 pb-[34vh]">
             <Mandala half className="mx-auto h-auto w-48 opacity-70" />
-            <p className="jdi-names mt-8 text-[clamp(2.1rem,9vw,3.4rem)] text-[color:var(--jdi-maroon-2)]">
-              {pair ? `${pair[0]} & ${pair[1]}` : names}
+            <p className="jdi-names mt-8 text-[clamp(2.1rem,9vw,3.4rem)] leading-[1.12] text-[color:var(--jdi-maroon-2)]">
+              <CoupleNames pair={pair} names={names} />
             </p>
             {hashtag ? (
               <p className="jdi-label mt-4 text-[color:var(--jdi-maroon)]">#{hashtag.replace(/^#/, "")}</p>

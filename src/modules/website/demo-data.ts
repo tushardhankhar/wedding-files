@@ -10,9 +10,9 @@ import { weddingGallery, confettiGallery, littleMiracleGallery, type DemoImage }
  */
 
 export const DEMO_SITE_WEDDING = {
-  title: "Aarav & Meera",
-  name1: "Aarav",
-  name2: "Meera",
+  title: "Karan & Anjali",
+  name1: "Karan",
+  name2: "Anjali",
   eventDate: "2026-12-12",
 };
 
