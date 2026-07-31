@@ -17,7 +17,7 @@ export function EnquirySection() {
     email: "",
     phone: "",
     query: "",
-    company: "", // honeypot
+    trap: "", // honeypot — see the hidden input at the foot of the form
   });
   const [pending, startTransition] = useTransition();
   const [state, setState] = useState<{ ok?: boolean; error?: string }>({});
@@ -38,7 +38,7 @@ export function EnquirySection() {
         // Deliberately no name/email/phone in the payload — sending personal
         // data to GA4 breaches Google's terms and isn't needed to count a lead.
         sendGTMEvent({ event: "enquiry_submitted" });
-        setForm({ name: "", email: "", phone: "", query: "", company: "" });
+        setForm({ name: "", email: "", phone: "", query: "", trap: "" });
       }
     });
   }
@@ -98,18 +98,6 @@ export function EnquirySection() {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-3">
-              {/* Honeypot — visually hidden, not shown to real users. */}
-              <input
-                type="text"
-                name="company"
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-                value={form.company}
-                onChange={set("company")}
-                className="absolute left-[-9999px] h-0 w-0 opacity-0"
-              />
-
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   required
@@ -151,6 +139,28 @@ export function EnquirySection() {
                 onChange={set("query")}
                 className={`${field} resize-y`}
                 aria-label="Your query"
+              />
+
+              {/*
+                Honeypot — visually hidden, and last in the form on purpose.
+                It used to be `name="company"` and the *first* input, which is
+                exactly what a password manager fills with a saved username and
+                what Chrome fills from the "organization" slot of an address
+                profile. Autofilled real enquiries then tripped the trap and were
+                dropped. `autocomplete="off"` does not save you here: browsers
+                ignore it for recognised profile fields.
+                So: a name matching no autofill token, and placed after every
+                real field so nothing treats it as the login box.
+              */}
+              <input
+                type="text"
+                name="jashn-ref"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={form.trap}
+                onChange={set("trap")}
+                className="absolute left-[-9999px] h-0 w-0 opacity-0"
               />
 
               <button
