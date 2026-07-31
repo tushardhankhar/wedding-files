@@ -9,6 +9,7 @@ import {
   submitShareRsvpAction,
   type ExistingSelfRsvp,
 } from "@/modules/guest-access/server/share-rsvp";
+import { clampParty } from "./guest-count-field";
 
 export type { ExistingGroupRsvp, ExistingSelfRsvp };
 
@@ -72,21 +73,31 @@ export function useGroupRsvp(
     }));
   }
 
+  /**
+   * Sets the headcount only. It deliberately does NOT touch `attending` — the
+   * attend/decline buttons own that. (Deriving it here meant a guest clearing
+   * the field to retype it read as a decline, which unmounted the field and
+   * closed their keyboard.)
+   */
   function setSize(eventId: string, n: number) {
-    const size = Number.isFinite(n) ? Math.floor(n) : 0;
-    setEntries((m) => ({
-      ...m,
-      [eventId]: { attending: size > 0, partySize: Math.max(0, size) },
-    }));
+    setEntries((m) => {
+      const cur = m[eventId] ?? { attending: true, partySize: 1 };
+      return { ...m, [eventId]: { ...cur, partySize: clampParty(n) } };
+    });
   }
 
   function submit() {
     setError(null);
-    const payload = events.map((e) => ({
-      eventId: e.id,
-      attending: entries[e.id]?.attending ?? false,
-      partySize: entries[e.id]?.partySize ?? 0,
-    }));
+    // Normalise before sending, and keep the local copy in step so the
+    // confirmation summary shows exactly what was saved.
+    const normalised: Record<string, GroupEntryState> = {};
+    const payload = events.map((e) => {
+      const attending = entries[e.id]?.attending ?? false;
+      const partySize = attending ? clampParty(entries[e.id]?.partySize ?? 1) : 0;
+      normalised[e.id] = { attending, partySize };
+      return { eventId: e.id, attending, partySize };
+    });
+    setEntries(normalised);
     start(async () => {
       const res = await submitGroupRsvpAction(slug, payload);
       if (res?.error) setError(res.error);
@@ -163,12 +174,13 @@ export function useSelfRsvp(
   function submit() {
     setError(null);
     const ids = [...selected];
+    const partySize = clampParty(size);
     start(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, ids);
+      const res = await submitShareRsvpAction(slug, name, partySize, ids);
       if (res?.error) {
         setError(res.error);
       } else {
-        setSavedRsvp({ name: name.trim(), partySize: size, eventIds: ids });
+        setSavedRsvp({ name: name.trim(), partySize, eventIds: ids });
         setEditing(false);
       }
     });

@@ -11,6 +11,7 @@ import {
   type ExistingSelfRsvp,
   type ExistingGroupRsvp,
 } from "../use-rsvp";
+import { GuestCountField } from "../guest-count-field";
 import { useCountdown, pad2 } from "../use-countdown";
 
 /* A big abstract Gulmohar bloom — fashion-campaign floral, not stock. */
@@ -398,7 +399,7 @@ function GulGroupRsvp({ slug, events, existing, family }: { slug: string; events
               {en.attending ? (
                 <label className="flex items-center gap-2 text-sm text-[color:var(--g-cream)]/80">
                   <TT en="How many?" hi="कितने?" />
-                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                  <GuestCountField value={en.partySize} onChange={(n) => r.setSize(e.id, n)} className={numField} />
                 </label>
               ) : null}
             </div>
@@ -424,7 +425,7 @@ function GulSelfRsvp({ slug, events, existing }: { slug: string; events: { id: s
     <div className="max-w-xl space-y-5">
       {r.error ? <p className="text-sm text-[color:var(--g-marigold)]" role="alert">{r.error}</p> : null}
       <input type="text" value={r.name} maxLength={120} onChange={(e) => r.setName(e.target.value)} placeholder="Your name" className={field} />
-      <input type="number" min={1} max={50} value={r.size} onChange={(e) => r.setSize(Number(e.target.value))} className={field} />
+      <GuestCountField value={r.size} onChange={r.setSize} className={field} />
       <div className="grid gap-2 sm:grid-cols-2">
         {events.map((e) => <GulChoice key={e.id} on={r.selected.has(e.id)} tone="yes" onClick={() => r.toggle(e.id)}>{e.name}</GulChoice>)}
       </div>

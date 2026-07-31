@@ -7,6 +7,7 @@ import {
   type ExistingSelfRsvp,
 } from "@/modules/guest-access/server/share-rsvp";
 import { useGroupRsvp, type ExistingGroupRsvp } from "../use-rsvp";
+import { GuestCountField, clampParty } from "../guest-count-field";
 import { TT } from "../bilingual";
 import { Mandala, GoldRule } from "./ornaments";
 
@@ -142,12 +143,9 @@ export function JodiGroupRsvp({
               {en.attending ? (
                 <label className="jdi-label flex items-center gap-3 text-[color:var(--jdi-ink-soft)]">
                   <TT en="Guests" hi="कितने" />
-                  <input
-                    type="number"
-                    min={1}
-                    max={50}
+                  <GuestCountField
                     value={en.partySize}
-                    onChange={(ev) => r.setSize(e.id, Number(ev.target.value))}
+                    onChange={(n) => r.setSize(e.id, n)}
                     className={numField}
                   />
                 </label>
@@ -197,11 +195,12 @@ export function JodiSelfRsvp({
   function submit() {
     setError(null);
     const ids = [...selected];
+    const partySize = clampParty(size);
     startTransition(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, ids);
+      const res = await submitShareRsvpAction(slug, name, partySize, ids);
       if (res?.error) setError(res.error);
       else {
-        setSavedRsvp({ name: name.trim(), partySize: size, eventIds: ids });
+        setSavedRsvp({ name: name.trim(), partySize, eventIds: ids });
         setEditing(false);
         onSaved();
       }
@@ -257,13 +256,10 @@ export function JodiSelfRsvp({
         <label htmlFor="jdi-size" className="jdi-label mb-3 block text-[color:var(--jdi-maroon)]">
           <TT en="Guests in your party" hi="आपके साथ कितने लोग" />
         </label>
-        <input
+        <GuestCountField
           id="jdi-size"
-          type="number"
-          min={1}
-          max={50}
           value={size}
-          onChange={(e) => setSize(Number(e.target.value))}
+          onChange={setSize}
           className={field}
         />
       </div>

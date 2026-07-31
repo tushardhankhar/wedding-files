@@ -11,6 +11,7 @@ import {
   type ExistingSelfRsvp,
   type ExistingGroupRsvp,
 } from "../use-rsvp";
+import { GuestCountField } from "../guest-count-field";
 import { useCountdown, pad2 } from "../use-countdown";
 
 /* Two saffron paths that slowly join — the theme's quiet signature. */
@@ -490,7 +491,7 @@ function AkaGroupRsvp({ slug, events, existing }: { slug: string; events: Websit
               {en.attending ? (
                 <label className="flex items-center gap-2 text-sm text-[color:var(--a-ink-soft)]">
                   <TT en="How many?" hi="कितने?" />
-                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                  <GuestCountField value={en.partySize} onChange={(n) => r.setSize(e.id, n)} className={numField} />
                 </label>
               ) : null}
             </div>
@@ -516,7 +517,7 @@ function AkaSelfRsvp({ slug, events, existing }: { slug: string; events: { id: s
     <div className="mx-auto max-w-md space-y-4">
       {r.error ? <p className="text-center text-sm text-[color:var(--a-burgundy)]" role="alert">{r.error}</p> : null}
       <input type="text" value={r.name} maxLength={120} onChange={(e) => r.setName(e.target.value)} placeholder="Your name" className={field} />
-      <input type="number" min={1} max={50} value={r.size} onChange={(e) => r.setSize(Number(e.target.value))} className={field} />
+      <GuestCountField value={r.size} onChange={r.setSize} className={field} />
       <div className="grid gap-2 sm:grid-cols-2">{events.map((e) => <AkaChoice key={e.id} on={r.selected.has(e.id)} tone="yes" onClick={() => r.toggle(e.id)}>{e.name}</AkaChoice>)}</div>
       <button type="button" onClick={r.submit} disabled={r.pending} className="w-full bg-[color:var(--a-saffron)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.25em] text-white disabled:opacity-60">{r.pending ? "…" : r.savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}</button>
     </div>

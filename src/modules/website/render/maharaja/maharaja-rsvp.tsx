@@ -7,6 +7,7 @@ import {
   type ExistingSelfRsvp,
 } from "@/modules/guest-access/server/share-rsvp";
 import { useGroupRsvp, type ExistingGroupRsvp } from "../use-rsvp";
+import { GuestCountField, clampParty } from "../guest-count-field";
 import { TT } from "../bilingual";
 import { RoyalInsignia } from "./ornaments";
 
@@ -148,12 +149,9 @@ export function MaharajaGroupRsvp({
               {en.attending ? (
                 <label className="flex items-center gap-2 text-sm text-[color:var(--m-ivory)]/80">
                   <TT en="How many?" hi="कितने?" />
-                  <input
-                    type="number"
-                    min={1}
-                    max={50}
+                  <GuestCountField
                     value={en.partySize}
-                    onChange={(ev) => r.setSize(e.id, Number(ev.target.value))}
+                    onChange={(n) => r.setSize(e.id, n)}
                     className={numField}
                   />
                 </label>
@@ -212,11 +210,12 @@ export function MaharajaSelfRsvp({
   function submit() {
     setError(null);
     const ids = [...selected];
+    const partySize = clampParty(size);
     startTransition(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, ids);
+      const res = await submitShareRsvpAction(slug, name, partySize, ids);
       if (res?.error) setError(res.error);
       else {
-        setSavedRsvp({ name: name.trim(), partySize: size, eventIds: ids });
+        setSavedRsvp({ name: name.trim(), partySize, eventIds: ids });
         setEditing(false);
         onSaved();
       }
@@ -272,13 +271,10 @@ export function MaharajaSelfRsvp({
         <label htmlFor="mhj-size" className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--m-gold2)]">
           <TT en="Guests in your party" hi="आपके साथ कितने लोग" />
         </label>
-        <input
+        <GuestCountField
           id="mhj-size"
-          type="number"
-          min={1}
-          max={50}
           value={size}
-          onChange={(e) => setSize(Number(e.target.value))}
+          onChange={setSize}
           className={field}
         />
       </div>
