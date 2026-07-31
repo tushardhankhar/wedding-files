@@ -91,15 +91,23 @@ export function ThemePhone({
           aria-hidden="true"
           className="absolute left-1/2 top-2 z-30 h-5 w-20 -translate-x-1/2 rounded-full bg-black"
         />
-        {/* live status pill */}
-        <span className="absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white backdrop-blur-sm">
+        {/* live status pill — opaque for a capture, where a theme with its own
+            top-right control (the Jodi's MENU) otherwise bleeds through the
+            translucent pill and reads as a rendering fault in a still image */}
+        <span
+          className={`absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white ${
+            capture ? "bg-black/85" : "bg-black/45 backdrop-blur-sm"
+          }`}
+        >
           <span className="size-1.5 rounded-full bg-[#37d67a]" />
           Live
         </span>
 
         {/* the actual guest site, rendered live and non-interactive */}
         <iframe
-          src={`/demo/${t.demo}?embed=1`}
+          // A capture suppresses the demo's own "Live demo" chip — the LIVE pill
+          // above sits in the same corner, and both at once looks like a bug.
+          src={`/demo/${t.demo}?embed=1${capture ? "&chip=0" : ""}`}
           title={`${t.name} theme — live preview`}
           loading={capture ? "eager" : "lazy"}
           scrolling="no"

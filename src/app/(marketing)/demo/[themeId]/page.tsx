@@ -34,10 +34,10 @@ export default async function DemoPage({
   searchParams,
 }: {
   params: Promise<{ themeId: string }>;
-  searchParams: Promise<{ embed?: string }>;
+  searchParams: Promise<{ embed?: string; chip?: string }>;
 }) {
   const { themeId } = await params;
-  const { embed } = await searchParams;
+  const { embed, chip } = await searchParams;
   if (!THEMES.some((t) => t.id === themeId)) notFound();
   const theme = getTheme(themeId);
 
@@ -46,8 +46,19 @@ export default async function DemoPage({
 
   // Embedded mode powers the landing page's phone previews: render just the
   // live site, no navigation chrome, so it reads as a real screen.
+  //
+  // `?chip=0` drops the "Live demo" badge. The screenshot stages ask for it: the
+  // phone mock draws its own LIVE pill in the same corner, and two badges
+  // stacked on each other read as a bug in an exported image.
   if (embed) {
-    return <SiteView theme={theme} {...props} ownerPreview chip={{ en: "Live demo", hi: "डेमो" }} />;
+    return (
+      <SiteView
+        theme={theme}
+        {...props}
+        ownerPreview
+        chip={chip === "0" ? null : { en: "Live demo", hi: "डेमो" }}
+      />
+    );
   }
 
   return (
