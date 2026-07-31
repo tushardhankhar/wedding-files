@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { sendGTMEvent } from "@next/third-parties/google";
 import { submitEnquiryAction } from "@/modules/contact/server/actions";
 import { PetalField } from "./art";
 import { CONTACT_EMAIL } from "./data";
@@ -31,7 +32,14 @@ export function EnquirySection() {
     startTransition(async () => {
       const res = await submitEnquiryAction(form);
       setState(res);
-      if (res.ok) setForm({ name: "", email: "", phone: "", query: "", company: "" });
+      if (res.ok) {
+        // The one conversion GTM can't infer on its own: it can see the submit
+        // event fire, but not whether the server actually accepted the enquiry.
+        // Deliberately no name/email/phone in the payload — sending personal
+        // data to GA4 breaches Google's terms and isn't needed to count a lead.
+        sendGTMEvent({ event: "enquiry_submitted" });
+        setForm({ name: "", email: "", phone: "", query: "", company: "" });
+      }
     });
   }
 
