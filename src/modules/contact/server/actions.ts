@@ -11,7 +11,9 @@ import { escapeHtml } from "@/lib/html";
  *
  * Env:
  *   RESEND_API_KEY      required to actually send
- *   ENQUIRY_TO_EMAIL    recipient (defaults to the owner's address)
+ *   ENQUIRY_TO_EMAIL    recipient, or several comma-separated (defaults to the
+ *                       owner's address). The person who filled the form is NOT
+ *                       a recipient — their address goes in reply_to.
  *   ENQUIRY_FROM_EMAIL  verified sender; defaults to Resend's shared sender,
  *                       which can only deliver to the account's own email.
  */
@@ -67,7 +69,9 @@ export async function submitEnquiryAction(
   const suspected = [trap, company].some((v) => v && v.trim().length > 0);
 
   const apiKey = serverEnv.RESEND_API_KEY;
-  const to = serverEnv.ENQUIRY_TO_EMAIL || "hello@jointhejashn.com";
+  const to = serverEnv.ENQUIRY_TO_EMAIL.length
+    ? serverEnv.ENQUIRY_TO_EMAIL
+    : ["hello@jointhejashn.com"];
   const from =
     serverEnv.ENQUIRY_FROM_EMAIL || "Join the Jashn <onboarding@resend.dev>";
   if (!apiKey) {
@@ -100,7 +104,7 @@ export async function submitEnquiryAction(
       },
       body: JSON.stringify({
         from,
-        to: [to],
+        to,
         reply_to: email,
         subject: suspected ? `[check] New enquiry from ${name}` : `New enquiry from ${name}`,
         html,

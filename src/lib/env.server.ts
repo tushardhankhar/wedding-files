@@ -20,7 +20,19 @@ const serverSchema = z.object({
   // yet" message instead of crashing. Native Supabase auth emails (OTP, magic
   // link, password reset) are sent by Supabase via custom SMTP, not from here.
   RESEND_API_KEY: z.string().min(1).optional(),
-  ENQUIRY_TO_EMAIL: z.string().email().optional(),
+  // Owner inboxes that receive enquiries — one address, or several separated by
+  // commas so a copy lands in each. Split and validated here so a typo fails at
+  // boot, where it's obvious, rather than silently at send time.
+  ENQUIRY_TO_EMAIL: z
+    .string()
+    .optional()
+    .transform((v) =>
+      (v ?? "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+    )
+    .pipe(z.array(z.string().email())),
   // FROM fields may carry a display name ("Name <addr@domain>"), so not .email().
   ENQUIRY_FROM_EMAIL: z.string().min(1).optional(),
   // Branded sender for client-invite emails, e.g. "Join the Jashn <hello@jointhejashn.com>".
