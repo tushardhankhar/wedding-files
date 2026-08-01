@@ -1,5 +1,6 @@
 "use client";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 import { cn } from "@/lib/utils";
 import { env } from "@/lib/env";
 
@@ -39,6 +40,11 @@ function WhatsAppIcon({ className }: { className?: string }) {
  * Prominent "Book Now" call-to-action that opens a WhatsApp chat with a
  * pre-filled booking message. On-brand emerald so it reads as distinct from the
  * pink "See a live demo" CTA and clearly signals WhatsApp.
+ *
+ * The click is announced to the tag layer, because this — not the enquiry form —
+ * is where most people convert. Leaving it untracked meant the ad platforms were
+ * optimising for form-fillers while the visitors who actually wanted to buy left
+ * for WhatsApp invisibly, which is the opposite of what the spend should chase.
  */
 export function BookNowButton({
   className,
@@ -52,6 +58,10 @@ export function BookNowButton({
       href={bookingHref()}
       target="_blank"
       rel="noopener noreferrer"
+      // Fires before navigation, and the link opens a new tab so this page is
+      // never torn down mid-push — no need for the `sendBeacon` gymnastics an
+      // in-place outbound link would require.
+      onClick={() => sendGTMEvent({ event: "whatsapp_click", cta_label: label })}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--l-emerald)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(8,127,91,.7)] transition-transform hover:-translate-y-0.5",
         className
