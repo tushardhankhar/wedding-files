@@ -1,9 +1,11 @@
 import { GoogleTagManager } from "@next/third-parties/google";
 import { gtmId } from "@/lib/env";
+import { SpaPageview } from "./spa-pageview";
 
 /**
  * Layout for the PUBLIC marketing surface — the landing page, /about, /terms
- * and the live theme demos. Its only job is to load Google Tag Manager.
+ * and the live theme demos. Its only job is to load Google Tag Manager and tell
+ * it about client-side navigation.
  *
  * GTM is the single tag layer: GA4 itself is configured as a tag INSIDE the GTM
  * container, not loaded here. That's why there is no gtag.js / measurement ID in
@@ -33,7 +35,14 @@ export default function MarketingLayout({
 
   return (
     <>
-      {containerId ? <GoogleTagManager gtmId={containerId} /> : null}
+      {/* Both gated on the same id, so with analytics switched off nothing pushes
+          to a dataLayer that no container is listening to. */}
+      {containerId ? (
+        <>
+          <GoogleTagManager gtmId={containerId} />
+          <SpaPageview />
+        </>
+      ) : null}
       {children}
     </>
   );

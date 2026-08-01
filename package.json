@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "capture:cards": "node scripts/capture-theme-cards.mjs",
-    "capture:ad": "node scripts/capture-ad-carousel.mjs"
+    "capture:ad": "node scripts/capture-ad-carousel.mjs",
+    "capture:post": "node scripts/capture-ad-post.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1084.0",
