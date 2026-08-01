@@ -1,6 +1,7 @@
 "use client";
 
 import { TT } from "./bilingual";
+import { GuestCountField } from "./guest-count-field";
 import { Divider } from "./sections";
 import { useSelfRsvp, type ExistingSelfRsvp } from "./use-rsvp";
 
@@ -77,13 +78,10 @@ export function SelfRsvp({ slug, events, existing }: SelfRsvpData) {
               <label htmlFor="rsvp-size">
                 <TT en="How many are coming?" hi="कितने लोग आ रहे हैं?" />
               </label>
-              <input
+              <GuestCountField
                 id="rsvp-size"
-                type="number"
-                min={1}
-                max={50}
                 value={rsvp.size}
-                onChange={(e) => rsvp.setSize(Number(e.target.value))}
+                onChange={rsvp.setSize}
               />
             </div>
             <div>

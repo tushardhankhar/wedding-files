@@ -1,6 +1,7 @@
 "use client";
 
 import { TT } from "./bilingual";
+import { GuestCountField } from "./guest-count-field";
 import { Divider } from "./sections";
 import { useGroupRsvp, type GroupRsvpData } from "./use-rsvp";
 
@@ -67,13 +68,10 @@ export function GroupRsvp({ slug, events, existing }: GroupRsvpData) {
                         <TT en="No" hi="नहीं" />
                       </button>
                       {en.attending ? (
-                        <input
-                          type="number"
-                          min={1}
-                          max={50}
+                        <GuestCountField
                           value={en.partySize}
-                          onChange={(ev) => r.setSize(e.id, Number(ev.target.value))}
-                          aria-label={`Guests for ${e.name}`}
+                          onChange={(n) => r.setSize(e.id, n)}
+                          ariaLabel={`Guests for ${e.name}`}
                           style={{ width: "4.5rem" }}
                         />
                       ) : null}

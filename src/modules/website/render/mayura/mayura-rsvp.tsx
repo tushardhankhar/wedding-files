@@ -7,6 +7,7 @@ import {
   type ExistingSelfRsvp,
 } from "@/modules/guest-access/server/share-rsvp";
 import { useGroupRsvp, type ExistingGroupRsvp } from "../use-rsvp";
+import { GuestCountField, clampParty } from "../guest-count-field";
 import { TT } from "../bilingual";
 
 /* A gold-edged ceremonial choice card (not a radio button). */
@@ -134,7 +135,7 @@ export function MayuraGroupRsvp({
               {en.attending ? (
                 <label className="flex items-center gap-2 text-sm text-[color:var(--myr-champagne)]">
                   <TT en="How many?" hi="कितने?" />
-                  <input type="number" min={1} max={50} value={en.partySize} onChange={(ev) => r.setSize(e.id, Number(ev.target.value))} className={numField} />
+                  <GuestCountField value={en.partySize} onChange={(n) => r.setSize(e.id, n)} className={numField} />
                 </label>
               ) : null}
             </div>
@@ -189,11 +190,12 @@ export function MayuraSelfRsvp({
   function submit() {
     setError(null);
     const ids = [...selected];
+    const partySize = clampParty(size);
     startTransition(async () => {
-      const res = await submitShareRsvpAction(slug, name, size, ids);
+      const res = await submitShareRsvpAction(slug, name, partySize, ids);
       if (res?.error) setError(res.error);
       else {
-        setSavedRsvp({ name: name.trim(), partySize: size, eventIds: ids });
+        setSavedRsvp({ name: name.trim(), partySize, eventIds: ids });
         setEditing(false);
         onSaved();
       }
@@ -241,7 +243,7 @@ export function MayuraSelfRsvp({
         <label htmlFor="myr-size" className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-[color:var(--myr-gold-lite)]">
           <TT en="Guests in your party" hi="आपके साथ कितने लोग" />
         </label>
-        <input id="myr-size" type="number" min={1} max={50} value={size} onChange={(e) => setSize(Number(e.target.value))} className={field} />
+        <GuestCountField id="myr-size" value={size} onChange={setSize} className={field} />
       </div>
       <div>
         <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-[color:var(--myr-gold-lite)]">

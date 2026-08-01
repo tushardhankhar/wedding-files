@@ -4,6 +4,7 @@ import { THEMES, getTheme } from "@/modules/website/themes/registry";
 import { buildSiteProps } from "@/modules/website/render/build";
 import { SiteView } from "@/modules/website/render/site";
 import { getDemoData } from "@/modules/website/demo-data";
+import { SHOWCASE_THEMES } from "@/components/landing/data";
 import { ThemeDock } from "./theme-dock";
 
 /**
@@ -11,6 +12,20 @@ import { ThemeDock } from "./theme-dock";
  * wedding. No auth, no real data. Linked from the landing page's theme gallery
  * and "Experience a Live Wedding" CTAs.
  */
+
+/**
+ * The dock lists themes in the same order as the landing page's theme gallery —
+ * arriving from a gallery card and finding the chips reshuffled reads as a
+ * different set of themes. The registry's own order is a build order, not a
+ * presentation one, so the showcase list drives it and anything absent from the
+ * gallery falls in behind, still in registry order.
+ */
+const DOCK_THEMES = [
+  ...SHOWCASE_THEMES.map((s) => THEMES.find((t) => t.id === s.demo)).filter(
+    (t): t is (typeof THEMES)[number] => Boolean(t),
+  ),
+  ...THEMES.filter((t) => !SHOWCASE_THEMES.some((s) => s.demo === t.id)),
+].map((t) => ({ id: t.id, name: t.name }));
 
 export function generateStaticParams() {
   return THEMES.map((t) => ({ themeId: t.id }));
@@ -70,10 +85,7 @@ export default async function DemoPage({
         chip={{ en: "Live demo", hi: "डेमो" }}
       />
 
-      <ThemeDock
-        themes={THEMES.map((t) => ({ id: t.id, name: t.name }))}
-        activeId={theme.id}
-      />
+      <ThemeDock themes={DOCK_THEMES} activeId={theme.id} />
     </>
   );
 }

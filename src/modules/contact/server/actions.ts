@@ -28,7 +28,15 @@ const enquirySchema = z.object({
     .trim()
     .min(1, "Please tell us how we can help.")
     .max(4000),
-  // Honeypot — real users leave this blank; bots tend to fill every field.
+  /**
+   * Honeypot — real users leave this blank; bots tend to fill every field.
+   *
+   * `company` is still accepted so an older cached bundle keeps working, but the
+   * live field is `trap`: browsers autofilled a field named `company` from the
+   * "organization" slot of a saved address, and password managers filled it as a
+   * username because it was the first input in the form. See `enquiry.tsx`.
+   */
+  trap: z.string().optional(),
   company: z.string().optional(),
 });
 
@@ -41,16 +49,29 @@ export async function submitEnquiryAction(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Please check your details." };
   }
-  const { name, email, phone, query, company } = parsed.data;
+  const { name, email, phone, query, trap, company } = parsed.data;
 
-  // Honeypot tripped → pretend success, send nothing.
-  if (company && company.trim().length > 0) return { ok: true };
+  /**
+   * Honeypot as a *signal*, not a gate.
+   *
+   * This used to `return { ok: true }` and send nothing, which lost real
+   * enquiries in the worst possible way: the visitor saw "your enquiry is on its
+   * way", the form cleared, and the analytics counted a conversion that never
+   * reached anyone. Autofill trips this far more often than bots do.
+   *
+   * A honeypot is weak protection here anyway — this is a server action, and a
+   * bot POSTing it directly just omits the field. So the mail always goes out,
+   * flagged in the subject, and a human decides. Zero lost leads is worth some
+   * spam in the inbox.
+   */
+  const suspected = [trap, company].some((v) => v && v.trim().length > 0);
 
   const apiKey = serverEnv.RESEND_API_KEY;
   const to = serverEnv.ENQUIRY_TO_EMAIL || "hello@jointhejashn.com";
   const from =
     serverEnv.ENQUIRY_FROM_EMAIL || "Join the Jashn <onboarding@resend.dev>";
   if (!apiKey) {
+    console.error("[enquiry] RESEND_API_KEY is not set — nothing was sent.");
     return { error: "Enquiries aren't set up yet — please email us directly." };
   }
 
@@ -61,6 +82,13 @@ export async function submitEnquiryAction(
     <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
     <p><strong>Query:</strong></p>
     <p style="white-space:pre-wrap">${escapeHtml(query)}</p>
+    ${
+      suspected
+        ? `<hr><p style="color:#8e1838"><strong>Spam check:</strong> the hidden
+             honeypot field was filled. Usually browser autofill on a real
+             enquiry, occasionally a bot. Judge it by the message above.</p>`
+        : ""
+    }
   `;
 
   try {
@@ -74,14 +102,21 @@ export async function submitEnquiryAction(
         from,
         to: [to],
         reply_to: email,
-        subject: `New enquiry from ${name}`,
+        subject: suspected ? `[check] New enquiry from ${name}` : `New enquiry from ${name}`,
         html,
       }),
     });
     if (!res.ok) {
+      // Resend explains refusals in the body — an unverified sending domain, a
+      // `from` the account doesn't own, a revoked key. Swallowing it left no way
+      // to tell "form is broken" from "mail was never configured", so it goes to
+      // the server log where Vercel keeps it.
+      const detail = await res.text().catch(() => "<no body>");
+      console.error(`[enquiry] Resend refused: ${res.status} ${detail}`);
       return { error: "Couldn't send right now. Please try again." };
     }
-  } catch {
+  } catch (err) {
+    console.error("[enquiry] Resend request failed:", err);
     return { error: "Couldn't send right now. Please try again." };
   }
 
