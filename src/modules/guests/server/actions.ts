@@ -1,8 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { env } from "@/lib/env";
-import { shareUrl } from "../share-url";
+import { inviteUrl, shareUrl } from "../link-urls";
 import { groupSchema, guestSchema } from "../schema";
 import {
   createGroup,
@@ -117,6 +116,12 @@ export async function toggleInviteAction(
 
 export type InviteLinkState = { url?: string; error?: string };
 
+/**
+ * Mints a NEW invitation link for a group, invalidating any previous one. Since
+ * 0021 the plaintext is persisted, so this is only needed to create the first
+ * link or to deliberately revoke an old one — re-displaying no longer requires
+ * regenerating. The UI confirms before calling this when a link already exists.
+ */
 export async function generateInviteLinkAction(
   groupId: string,
   weddingId: string,
@@ -124,9 +129,8 @@ export async function generateInviteLinkAction(
 ): Promise<InviteLinkState> {
   try {
     const token = await generateGroupInvite(groupId);
-    const base = env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
     revalidate(weddingId);
-    return { url: `${base}/w/${slug}/invite/${token}` };
+    return { url: inviteUrl(slug, token) };
   } catch {
     return { error: "Could not generate an invite link." };
   }

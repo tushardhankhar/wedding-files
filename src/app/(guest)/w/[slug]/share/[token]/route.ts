@@ -9,17 +9,22 @@ import {
 } from "@/modules/guest-access/server/session";
 
 /**
- * Shareable/broadcast landing. Verifies the share token for this slug, mints a
- * share-scoped guest session cookie, and redirects to the wedding site.
+ * Shareable/broadcast landing — a PERMANENT public contract, same rule as the
+ * invite route: never unmount this path, only ever add alongside it.
+ *
+ * Verifies the share token (slug-independent), mints a share-scoped guest
+ * session cookie, and redirects to the wedding's CURRENT url.
  */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string; token: string }> }
 ) {
   const { slug, token } = await params;
-  const result = await resolveShareToken(slug, token);
+  const result = await resolveShareToken(token);
 
-  const dest = new URL(`/w/${slug}`, req.url);
+  // Canonical slug on success (the link may predate a rename); the arrival slug
+  // on failure, since there is no wedding to name.
+  const dest = new URL(`/w/${result?.slug ?? slug}`, req.url);
   if (!result) dest.searchParams.set("invalid", "1");
 
   const res = NextResponse.redirect(dest);
@@ -40,7 +45,7 @@ export async function GET(
         shareLinkId: result.shareLinkId,
         respondentId,
         weddingId: result.weddingId,
-        slug,
+        slug: result.slug,
       },
       Math.floor(Date.now() / 1000)
     );

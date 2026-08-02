@@ -135,21 +135,64 @@ function sortEvents(rows: EventRow[]): WeddingEvent[] {
 }
 
 /**
- * ⭐ THE GATE. Loads exactly what the current guest session may see for `slug`:
- * a personal group's invited events (+ members for RSVP), or a broadcast share
- * link's scoped events (+ self-RSVP). Uninvited events are never selected.
+ * What `/w/[slug]` should do with the current guest session.
+ *   ok       — render `data`.
+ *   redirect — the session is valid but the URL uses a stale slug (the wedding
+ *              was renamed after the link went out); send them to `slug`.
+ *   none     — no session for this wedding; show the private-invitation wall.
  */
-export async function loadGuestSite(slug: string): Promise<GuestSiteData | null> {
+export type GuestSiteResult =
+  | { status: "ok"; data: GuestSiteData }
+  | { status: "redirect"; slug: string }
+  | { status: "none" };
+
+/** Is there a live wedding at this slug? Used only to disambiguate a mismatch. */
+async function slugExists(slug: string): Promise<boolean> {
+  const svc = createSupabaseServiceClient();
+  const { data } = await svc
+    .from("weddings")
+    .select("id")
+    .eq("slug", slug)
+    .maybeSingle<{ id: string }>();
+  return data != null;
+}
+
+/**
+ * ⭐ THE GATE. Loads exactly what the current guest session may see: a personal
+ * group's invited events, or a broadcast share link's scoped events (+
+ * self-RSVP). Uninvited events are never selected.
+ *
+ * The session is bound to a GROUP ID / SHARE LINK ID, never to a slug — those
+ * ids each belong to exactly one wedding, so they are the authorization
+ * authority and the slug is pure cosmetics. That is what lets a wedding be
+ * renamed without stranding guests who already hold a session or a link.
+ *
+ * A slug mismatch is therefore a routing question, not an access one:
+ *   - the requested slug is some OTHER live wedding → this guest has no session
+ *     there, so `none` (exactly as before; no cross-tenant read is possible,
+ *     since the query is keyed by the session's own ids).
+ *   - the requested slug matches nothing → it is a stale name for the guest's
+ *     own wedding, so `redirect` them to the current one.
+ */
+export async function loadGuestSite(slug: string): Promise<GuestSiteResult> {
   const session = await readGuestSession();
-  if (!session || session.slug !== slug) return null;
-  return session.kind === "share"
-    ? loadShareSite(session, slug)
-    : loadGroupSite(session, slug);
+  if (!session) return { status: "none" };
+
+  const data =
+    session.kind === "share"
+      ? await loadShareSite(session)
+      : await loadGroupSite(session);
+  if (!data) return { status: "none" };
+
+  if (data.wedding.slug !== slug) {
+    if (await slugExists(slug)) return { status: "none" };
+    return { status: "redirect", slug: data.wedding.slug };
+  }
+  return { status: "ok", data };
 }
 
 async function loadGroupSite(
-  session: Extract<GuestSession, { kind: "group" }>,
-  slug: string
+  session: Extract<GuestSession, { kind: "group" }>
 ): Promise<GuestSiteData | null> {
   const svc = createSupabaseServiceClient();
 
@@ -157,7 +200,6 @@ async function loadGroupSite(
     .from("guest_groups")
     .select(`id, name, wedding_id, weddings!inner(${WEDDING_COLS})`)
     .eq("id", session.groupId)
-    .eq("weddings.slug", slug)
     .maybeSingle<{ id: string; name: string; weddings: WeddingJoin }>();
   if (!group) return null;
 
@@ -194,8 +236,7 @@ async function loadGroupSite(
 }
 
 async function loadShareSite(
-  session: Extract<GuestSession, { kind: "share" }>,
-  slug: string
+  session: Extract<GuestSession, { kind: "share" }>
 ): Promise<GuestSiteData | null> {
   const svc = createSupabaseServiceClient();
 
@@ -203,7 +244,6 @@ async function loadShareSite(
     .from("share_links")
     .select(`id, label, all_events, wedding_id, weddings!inner(${WEDDING_COLS})`)
     .eq("id", session.shareLinkId)
-    .eq("weddings.slug", slug)
     .maybeSingle<{
       id: string;
       label: string;

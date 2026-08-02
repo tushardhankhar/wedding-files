@@ -1,28 +1,44 @@
 import "server-only";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
-import { sha256Hex } from "@/lib/crypto";
+import { hashGuestToken } from "../tokens";
+
+export interface ResolvedShareLink {
+  shareLinkId: string;
+  weddingId: string;
+  /** The wedding's CURRENT slug — the canonical URL to send the guest to. */
+  slug: string;
+}
 
 /**
- * Verifies a shareable-link token for a wedding slug. Service-role client
- * (guests are unauthenticated); the authorization is the explicit hash + slug
- * match. Returns null on mismatch.
+ * Verifies a broadcast-link token. Service-role client (guests are
+ * unauthenticated); the authorization is the explicit hash match.
+ *
+ * Slug-independent for the same reason as `resolveInviteToken`:
+ * `share_links.token_hash` is globally unique (0009), so the token alone
+ * identifies one link. Returns the wedding's canonical slug.
  */
 export async function resolveShareToken(
-  slug: string,
   token: string
-): Promise<{ shareLinkId: string; weddingId: string } | null> {
-  if (!token || !slug) return null;
+): Promise<ResolvedShareLink | null> {
+  if (!token) return null;
 
-  const hash = await sha256Hex(token);
+  const hash = await hashGuestToken(token);
   const svc = createSupabaseServiceClient();
 
   const { data, error } = await svc
     .from("share_links")
     .select("id, wedding_id, weddings!inner(slug)")
     .eq("token_hash", hash)
-    .eq("weddings.slug", slug)
-    .maybeSingle();
+    .maybeSingle<{
+      id: string;
+      wedding_id: string;
+      weddings: { slug: string };
+    }>();
 
   if (error || !data) return null;
-  return { shareLinkId: data.id, weddingId: data.wedding_id };
+  return {
+    shareLinkId: data.id,
+    weddingId: data.wedding_id,
+    slug: data.weddings.slug,
+  };
 }

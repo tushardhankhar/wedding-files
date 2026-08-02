@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import {
   loadGuestSite,
   loadSiteIdentity,
@@ -51,7 +52,13 @@ export default async function GuestHome({
 }) {
   const { slug } = await params;
   const { invalid } = await searchParams;
-  const data = await loadGuestSite(slug);
+  const result = await loadGuestSite(slug);
+
+  // The wedding was renamed after this guest bookmarked it (or after their link
+  // was sent). Their session is still valid — just move them to the live URL.
+  if (result.status === "redirect") redirect(`/w/${result.slug}`);
+
+  const data = result.status === "ok" ? result.data : null;
 
   if (!data) {
     return (

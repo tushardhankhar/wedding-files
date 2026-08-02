@@ -8,18 +8,26 @@ import {
 } from "@/modules/guest-access/server/session";
 
 /**
- * Invitation landing. Verifies the token for this slug, mints a signed
- * HTTP-only guest session cookie (separate from the token), and redirects to
- * the wedding site. Invalid tokens redirect with ?invalid=1 and set no cookie.
+ * Invitation landing — a PERMANENT public contract. This path is printed into
+ * WhatsApp threads months before the event, so it must stay mounted forever;
+ * if the link shape ever changes, add the new one and keep this redirecting.
+ *
+ * Verifies the token (slug-independent — see `resolveInviteToken`), mints a
+ * signed HTTP-only guest session cookie (separate from the token), and
+ * redirects to the wedding's CURRENT url. Invalid tokens redirect with
+ * ?invalid=1 and set no cookie.
  */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string; token: string }> }
 ) {
   const { slug, token } = await params;
-  const result = await resolveInviteToken(slug, token);
+  const result = await resolveInviteToken(token);
 
-  const dest = new URL(`/w/${slug}`, req.url);
+  // On success go to the canonical slug, which may differ from the one baked
+  // into this link if the wedding was renamed after it was sent. On failure we
+  // have no wedding to name, so fall back to the slug the guest arrived with.
+  const dest = new URL(`/w/${result?.slug ?? slug}`, req.url);
   if (!result) dest.searchParams.set("invalid", "1");
 
   const res = NextResponse.redirect(dest);
@@ -29,7 +37,7 @@ export async function GET(
         kind: "group",
         groupId: result.groupId,
         weddingId: result.weddingId,
-        slug,
+        slug: result.slug,
       },
       Math.floor(Date.now() / 1000)
     );
