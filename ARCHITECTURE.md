@@ -168,6 +168,48 @@ src/
    selected by the guest data layer.
 9. Env validated at boot — a missing secret fails loudly.
 
+## ⚠️ The guest link contract (one-way doors)
+
+A guest link is not an internal URL. It is a bearer token pasted into a WhatsApp
+thread, opened months later, that we can never edit, recall, or re-issue without
+the host personally re-contacting every family. Four things about it are a
+**permanent public contract** — read this before changing any of them.
+
+| Frozen | Owned by | Breaking it |
+|---|---|---|
+| Hash algorithm | `modules/guest-access/tokens.ts` | Every live link, all tenants, at once |
+| URL path shape | `modules/guests/link-urls.ts` | Every link already sent |
+| Origin (`NEXT_PUBLIC_SITE_URL`) | `modules/guests/link-urls.ts` | Every link already sent |
+| The two landing routes | `app/(guest)/w/[slug]/{invite,share}/[token]/route.ts` | Every link already sent |
+
+Rules that keep these survivable:
+
+- **Plaintext tokens are persisted on purpose** — `guest_groups.invite_token`
+  (0021) and `share_links.token` (0011). This is what makes a shape change
+  *recoverable*: links can be re-rendered in a new format and re-sent. Removing
+  that persistence turns every row above from "recoverable" into "fatal". Don't.
+- **Add, never replace.** A new link shape ships alongside the old routes, which
+  stay mounted forever as redirects. Same for a domain move: keep every origin
+  the app has ever published alive.
+- **Dual-read if hashing must change.** New column, write both on mint, read
+  new-then-old, backfill from the persisted plaintext, retire the old column
+  last.
+- **Regeneration is destructive.** It mints a *different* token and kills the
+  link the family already holds. It is a revoke, not a refresh — always confirm.
+
+What is deliberately **not** frozen, and free to change:
+
+- **The slug.** Tokens are globally unique, so lookup ignores the URL's slug
+  entirely (`resolveInviteToken` / `resolveShareToken`) and returns the wedding's
+  canonical one. A rename redirects instead of breaking. The slug is cosmetic —
+  it only makes the link recognisable in a chat thread.
+- **The session cookie** — name, `GUEST_SESSION_SECRET`, payload shape, TTL.
+  Invalidating it costs a guest exactly one re-click of their link, so
+  `readGuestSession` is free to tighten what it accepts (it already rejects
+  pre-`respondentId` share cookies and tolerates pre-`kind` group cookies).
+- **Everything downstream of the gate** — renderers, themes, RSVP logic, admin
+  UI. None of it is reachable from the link's identity.
+
 ## Roadmap
 
 - **Phase 0 — Foundation** ✅ scaffold, env validation, both Supabase clients,

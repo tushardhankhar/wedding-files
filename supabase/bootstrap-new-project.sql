@@ -1,7 +1,7 @@
 -- ============================================================================
 -- BOOTSTRAP A NEW SUPABASE PROJECT — run this once, top to bottom.
 --
--- GENERATED from supabase/migrations/0001…0020 concatenated in order. It is a
+-- GENERATED from supabase/migrations/0001…0021 concatenated in order. It is a
 -- convenience for standing up a fresh project (e.g. production); the migration
 -- files remain the source of truth. Regenerate after adding a migration —
 -- do NOT hand-edit this file.
@@ -1252,6 +1252,32 @@ begin
   return new;
 end;
 $$;
+
+
+-- ============================================================================
+-- ▼ 0021_guest_link_durability.sql
+-- ============================================================================
+
+-- Persist the group invite plaintext so a link can be re-displayed and
+-- re-shared instead of regenerated (regeneration mints a different token and
+-- silently breaks the family's existing link). Mirrors the trade-off already
+-- taken for broadcast links in 0011. See the migration file for the full
+-- rationale, including the slug-decoupling change that ships alongside it in
+-- the application layer.
+
+alter table public.guest_groups
+  add column if not exists invite_token text;
+
+comment on column public.guest_groups.invite_token is
+  'Plaintext invite token, kept so the admin can re-display and re-share the '
+  'SAME link instead of regenerating (which would break the family''s existing '
+  'link). Lookup still goes through invite_token_hash. NULL for groups created '
+  'before 0021. See supabase/migrations/0021_guest_link_durability.sql.';
+
+comment on column public.guest_groups.invite_token_hash is
+  'SHA-256 of invite_token. THE lookup key for /w/[slug]/invite/[token] and a '
+  'one-way door: changing the hash algorithm invalidates every live invitation '
+  'across every wedding. If it ever must change, add a column and dual-read.';
 
 
 commit;

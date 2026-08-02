@@ -10,7 +10,7 @@ import {
   toggleShareLinkEventAction,
   type InviteLinkState,
 } from "@/modules/guests/server/actions";
-import { shareUrl } from "@/modules/guests/share-url";
+import { shareUrl } from "@/modules/guests/link-urls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";

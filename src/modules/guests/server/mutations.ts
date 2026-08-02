@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { randomToken, sha256Hex } from "@/lib/crypto";
+import { hashGuestToken, newGuestToken } from "@/modules/guest-access/tokens";
 
 export async function createGroup(
   weddingId: string,
@@ -50,17 +50,20 @@ export async function deleteGuest(id: string): Promise<void> {
 }
 
 /**
- * Generates a fresh invitation token for a group, stores only its hash, and
- * returns the raw token once (for building the shareable link). Regenerating
- * invalidates any previous link.
+ * Generates a fresh invitation token for a group and returns it.
+ *
+ * Stores BOTH the hash (the lookup key) and the plaintext (0021), so the admin
+ * can re-display and re-share the same link forever instead of regenerating —
+ * regeneration mints a different token and silently breaks whatever the family
+ * already has. Callers must treat this as destructive when a link exists.
  */
 export async function generateGroupInvite(groupId: string): Promise<string> {
-  const token = randomToken(32);
-  const tokenHash = await sha256Hex(token);
+  const token = newGuestToken();
+  const tokenHash = await hashGuestToken(token);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("guest_groups")
-    .update({ invite_token_hash: tokenHash })
+    .update({ invite_token: token, invite_token_hash: tokenHash })
     .eq("id", groupId);
   if (error) throw error;
   return token;
@@ -71,8 +74,8 @@ export async function createShareLink(
   weddingId: string,
   label: string
 ): Promise<{ id: string; token: string }> {
-  const token = randomToken(32);
-  const tokenHash = await sha256Hex(token);
+  const token = newGuestToken();
+  const tokenHash = await hashGuestToken(token);
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("share_links")
@@ -90,8 +93,8 @@ export async function createShareLink(
 }
 
 export async function regenerateShareToken(id: string): Promise<string> {
-  const token = randomToken(32);
-  const tokenHash = await sha256Hex(token);
+  const token = newGuestToken();
+  const tokenHash = await hashGuestToken(token);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("share_links")

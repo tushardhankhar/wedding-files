@@ -24,5 +24,12 @@ export interface GroupDetail {
   name: string;
   guests: GuestLite[];
   invitedEventIds: string[];
+  /** True once an invite has ever been generated, plaintext recoverable or not. */
   hasInvite: boolean;
+  /**
+   * Plaintext invite token, so the admin can re-display and re-share the SAME
+   * link. Null for groups whose link predates 0021 — those still show the
+   * "Regenerate to reveal" fallback, since their plaintext is unrecoverable.
+   */
+  inviteToken: string | null;
 }

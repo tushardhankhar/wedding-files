@@ -11,6 +11,7 @@ import {
   generateInviteLinkAction,
   type FormState,
 } from "@/modules/guests/server/actions";
+import { inviteUrl } from "@/modules/guests/link-urls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,24 +42,45 @@ export function GroupCard({
   const [busy, setBusy] = useState<"rename" | "delete" | null>(null);
   const spinning = (kind: typeof busy) => pending && busy === kind;
 
-  // Invite link
-  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  // Invite link. The plaintext token is persisted (0021), so the link survives
+  // a reload and never has to be regenerated just to be seen again — `freshUrl`
+  // only covers the instant after generating, before revalidation flows the new
+  // token back down through `group`.
+  const [freshUrl, setFreshUrl] = useState<string | null>(null);
   const [inviteErr, setInviteErr] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [generating, startGenerate] = useTransition();
 
+  const link =
+    freshUrl ?? (group.inviteToken ? inviteUrl(slug, group.inviteToken) : null);
+  // A link exists but was minted before 0021, so its plaintext is unrecoverable
+  // and the only way back to a shareable URL is a (destructive) regenerate.
+  const legacyHidden = group.hasInvite && !link;
+
   function generateInvite() {
+    // Regenerating silently kills the link the family already has — the exact
+    // failure this feature exists to prevent. Never do it without a confirm.
+    if (
+      group.hasInvite &&
+      !window.confirm(
+        `Replace ${group.name}'s invitation link?\n\n` +
+          "The link they already have will stop working immediately, and you'll " +
+          "need to send them the new one."
+      )
+    ) {
+      return;
+    }
     setInviteErr(null);
     startGenerate(async () => {
       const res = await generateInviteLinkAction(group.id, weddingId, slug);
       if (res.error) setInviteErr(res.error);
-      else setInviteUrl(res.url ?? null);
+      else setFreshUrl(res.url ?? null);
     });
   }
 
   async function copyInvite() {
-    if (!inviteUrl) return;
-    await navigator.clipboard.writeText(inviteUrl);
+    if (!link) return;
+    await navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
@@ -101,9 +123,9 @@ export function GroupCard({
   }
   */
 
-  const waHref = inviteUrl
+  const waHref = link
     ? `https://wa.me/?text=${encodeURIComponent(
-        `You're invited to ${group.name ? "our celebrations" : "our wedding"}! View your invitation & RSVP: ${inviteUrl}`
+        `You're invited to our celebrations! View your invitation & RSVP: ${link}`
       )}`
     : undefined;
 
@@ -111,8 +133,8 @@ export function GroupCard({
   // generated + that guest's phone). The message carries the group invite URL.
   function guestWa(g: { name: string; phone: string | null }): string | null {
     const digits = (g.phone ?? "").replace(/[^0-9]/g, "");
-    if (!inviteUrl || !digits) return null;
-    const text = `Hi ${g.name}! You're invited to ${group.name} 🎉 View your invitation & RSVP: ${inviteUrl}`;
+    if (!link || !digits) return null;
+    const text = `Hi ${g.name}! You're invited to ${group.name} 🎉 View your invitation & RSVP: ${link}`;
     return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
   }
 
@@ -298,7 +320,7 @@ export function GroupCard({
               {addingGuest ? "Adding…" : "Add"}
             </Button>
           </form>
-          {group.guests.some((g) => g.phone) && !inviteUrl ? (
+          {group.guests.some((g) => g.phone) && !link ? (
             <p className="text-xs text-muted-foreground">
               Generate the invite link below to message guests on WhatsApp.
             </p>
@@ -360,14 +382,18 @@ export function GroupCard({
               {generating ? <Spinner /> : null}
               {generating
                 ? "Generating…"
-                : group.hasInvite || inviteUrl
+                : group.hasInvite
                   ? "Regenerate link"
                   : "Generate invite link"}
             </Button>
-            {group.hasInvite && !inviteUrl ? (
+            {legacyHidden ? (
               <span className="text-xs text-muted-foreground">
-                A link exists. Regenerate to see it again (the old one stops
-                working).
+                This link was created before links became re-viewable.
+                Regenerate to see it again — the old one stops working.
+              </span>
+            ) : link ? (
+              <span className="text-xs text-muted-foreground">
+                Same link every time — safe to re-share.
               </span>
             ) : null}
           </div>
@@ -376,10 +402,10 @@ export function GroupCard({
               {inviteErr}
             </p>
           ) : null}
-          {inviteUrl ? (
+          {link ? (
             <div className="space-y-2">
               <div className="flex gap-2">
-                <Input readOnly value={inviteUrl} className="font-mono text-xs" />
+                <Input readOnly value={link} className="font-mono text-xs" />
                 <Button type="button" variant="secondary" size="sm" onClick={copyInvite}>
                   {copied ? "Copied" : "Copy"}
                 </Button>

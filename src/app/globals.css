@@ -3341,13 +3341,25 @@
 
 /* ── Back-to-top button (shared across all themed guest sites) ─────────────── */
 .gtt {
-  position: fixed; right: 22px; bottom: 22px; z-index: 60;
+  position: fixed; right: 22px; z-index: 60;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
   width: 46px; height: 46px; border-radius: 999px;
   display: grid; place-items: center;
   border: 0; cursor: pointer; color: #fff;
   opacity: 0; transform: translateY(16px) scale(0.85); pointer-events: none;
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+
+/* On the theme demo, the dock owns the bottom of the screen. Left alone, this
+   46px button sat right on top of the rail's last chips at phone widths. The
+   dock measures itself into --theme-dock-h (it wraps to several rows from `sm`
+   up), so the lift always clears whatever it currently is. */
+.has-theme-dock .gtt {
+  bottom: calc(
+    env(safe-area-inset-bottom, 0px) + var(--theme-dock-h, 44px) + 2.75rem
+  );
+}
+
 .gtt-on { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
 .gtt-on:hover { transform: translateY(-3px) scale(1.06); }
 .gtt-on:active { transform: translateY(-1px) scale(0.98); }
