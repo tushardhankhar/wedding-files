@@ -35,6 +35,15 @@ export interface WebsiteViewProps {
   selfRsvp?: SelfRsvpData;
   /** Owner preview → show the "guests will RSVP here" hint on events. */
   ownerPreview?: boolean;
+  /**
+   * Start past the themes that open behind a ceremonial gate (Maharaja's palace
+   * doors, Kalyanam, Anand Karaj). Only the landing hero's embedded phone asks
+   * for this: the gate is the right first moment for a guest, but in a preview
+   * nobody can click it, so it would freeze the site on its cover and hide the
+   * countdown, gallery and RSVP the preview exists to show. Ungated themes
+   * ignore it.
+   */
+  openImmediately?: boolean;
 }
 
 export function WebsiteView({

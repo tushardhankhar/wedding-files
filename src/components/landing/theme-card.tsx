@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ShowcaseTheme } from "./data";
+import { LiveFrame } from "./live-frame";
 
 /**
  * The card's natural, unscaled box: 272px wide (the gallery column) by the sum
@@ -61,6 +62,22 @@ export function cardScaleFor(format: ShotFormat) {
 /** Dimensions of the phone frame alone, shadow excluded. */
 export const PHONE_NATURAL = { width: 266, height: 538 } as const;
 
+/** The mock's screen — the box a preview has to end up filling. */
+const SCREEN = { width: 248, height: 520 } as const;
+
+/**
+ * The viewport a touring preview renders at before being scaled into SCREEN.
+ *
+ * 248px is narrower than any phone, and the themes are built for real ones: at
+ * that width their display type bottoms out on the low end of its clamp (the
+ * Maharaja's names are `clamp(3.2rem,11vw,9rem)`, so 11vw = 27px loses to the
+ * 3.2rem floor) and runs edge to edge, while the hero's bottom meta strip falls
+ * off the screen. Laying out at a true phone width and scaling the whole render
+ * down fixes both at once, and shows the site as a guest will actually see it.
+ */
+const TOUR_VIEWPORT = { width: 390, height: 818 } as const;
+const TOUR_SCALE = SCREEN.width / TOUR_VIEWPORT.width;
+
 /**
  * The iPhone frame around a live guest site: notch, side buttons, LIVE pill and
  * the real /demo iframe. Reused by the gallery card and the split social card,
@@ -69,9 +86,15 @@ export const PHONE_NATURAL = { width: 266, height: 538 } as const;
 export function ThemePhone({
   theme: t,
   capture = false,
+  tour = false,
+  onStopChange,
 }: {
   theme: ShowcaseTheme;
   capture?: boolean;
+  /** Slowly scroll the embedded demo through its sections (hero use). */
+  tour?: boolean;
+  /** Called with each section id the tour arrives at, so callers can follow along. */
+  onStopChange?: (stopId: string) => void;
 }) {
   return (
     <div className="group relative rounded-[2.5rem] border border-black/10 bg-[#0d0710] p-2 shadow-[0_44px_90px_-32px_rgba(59,16,34,.6)] ring-1 ring-white/5">
@@ -86,38 +109,64 @@ export function ThemePhone({
         // matching backdrop makes them invisible on light and dark themes alike.
         style={capture ? { background: t.palette[0] } : undefined}
       >
-        {/* notch */}
-        <span
-          aria-hidden="true"
-          className="absolute left-1/2 top-2 z-30 h-5 w-20 -translate-x-1/2 rounded-full bg-black"
-        />
-        {/* live status pill — opaque for a capture, where a theme with its own
-            top-right control (the Jodi's MENU) otherwise bleeds through the
-            translucent pill and reads as a rendering fault in a still image */}
-        <span
-          className={`absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white ${
-            capture ? "bg-black/85" : "bg-black/45 backdrop-blur-sm"
-          }`}
-        >
-          <span className="size-1.5 rounded-full bg-[#37d67a]" />
-          Live
-        </span>
+        {/* Notch and LIVE pill, but not on a touring frame. A tour starts the
+            site past its cover, which puts the site's own fixed header at the
+            top of the screen — and the mock chrome lands squarely on it, the
+            notch clipping the theme's MENU. A gated card has its cover in the
+            way, so nothing collides there. The phone still reads as a phone
+            from the frame, side buttons and rounded screen, and the hero's
+            caption carries the "running live" message the pill was making. */}
+        {!tour && (
+          <>
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-2 z-30 h-5 w-20 -translate-x-1/2 rounded-full bg-black"
+            />
+            {/* live status pill — opaque for a capture, where a theme with its own
+                top-right control (the Jodi's MENU) otherwise bleeds through the
+                translucent pill and reads as a rendering fault in a still image */}
+            <span
+              className={`absolute right-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-white ${
+                capture ? "bg-black/85" : "bg-black/45 backdrop-blur-sm"
+              }`}
+            >
+              <span className="size-1.5 rounded-full bg-[#37d67a]" />
+              Live
+            </span>
+          </>
+        )}
 
-        {/* the actual guest site, rendered live and non-interactive */}
-        <iframe
-          // A capture suppresses the demo's own "Live demo" chip — the LIVE pill
-          // above sits in the same corner, and both at once looks like a bug.
-          src={`/demo/${t.demo}?embed=1${capture ? "&chip=0" : ""}`}
-          title={`${t.name} theme — live preview`}
-          loading={capture ? "eager" : "lazy"}
-          scrolling="no"
-          tabIndex={-1}
-          aria-hidden="true"
-          // Rounded on the iframe itself, not just clipped by the parent: under a
-          // fractional transform the iframe composites on its own layer and its
-          // square corners otherwise show through as light slivers.
-          className="pointer-events-none absolute inset-0 h-full w-full rounded-[2rem] border-0"
-        />
+        {/* The actual guest site, rendered live and non-interactive. A touring
+            frame gets a real phone viewport scaled down to the screen (see
+            TOUR_VIEWPORT); the gallery keeps rendering at the screen's own width
+            so its cards and the captured social assets stay as they were. */}
+        <div
+          className="absolute inset-0"
+          style={
+            tour
+              ? {
+                  width: TOUR_VIEWPORT.width,
+                  height: TOUR_VIEWPORT.height,
+                  transform: `scale(${TOUR_SCALE})`,
+                  transformOrigin: "top left",
+                }
+              : undefined
+          }
+        >
+          <LiveFrame
+            // A capture suppresses the demo's own "Live demo" chip — the LIVE pill
+            // above sits in the same corner, and both at once looks like a bug.
+            // A tour also asks the demo to start past any ceremonial gate —
+            // there's nothing to scroll through until the doors are open. Gallery
+            // cards deliberately keep theirs: the cover is the theme's signature
+            // first impression, and those are one tap from the real thing.
+            src={`/demo/${t.demo}?embed=1${capture ? "&chip=0" : ""}${tour ? "&open=1" : ""}`}
+            title={`${t.name} theme — live preview`}
+            eager={capture}
+            tour={tour}
+            onStopChange={onStopChange}
+          />
+        </div>
 
         {/* tap-the-screen affordance → opens the full demo in a new tab */}
         {!capture && (

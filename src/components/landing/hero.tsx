@@ -1,54 +1,78 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { Mandala } from "@/components/brand/motifs";
 import { PetalField } from "./art";
-import { UtsavMonogram } from "./logo";
 import { BookNowButton } from "./book-now";
+import { SHOWCASE_THEMES, PRICE } from "./data";
+import { ThemePhone } from "./theme-card";
 
 const HERO_BG =
   "radial-gradient(90% 70% at 72% 18%, rgba(216,27,96,.40), transparent 60%), radial-gradient(70% 60% at 12% 88%, rgba(244,124,32,.30), transparent 60%), radial-gradient(120% 80% at 50% 118%, rgba(201,154,61,.28), transparent 55%), linear-gradient(168deg, #3b1022 0%, #57122e 48%, #2a0a18 100%)";
 
-export function LandingHero() {
-  const cardRef = useRef<HTMLDivElement>(null);
+/**
+ * The theme the hero shows off. Deliberately the same one the "See a live demo"
+ * button opens, so the phone is a preview of where that click lands rather than
+ * a different site.
+ */
+const HERO_THEME =
+  SHOWCASE_THEMES.find((t) => t.id === "maharaja") ?? SHOWCASE_THEMES[0];
 
-  // Subtle cursor parallax on the invitation card (desktop only, motion-safe).
-  function onPointerMove(e: React.PointerEvent<HTMLElement>) {
-    const card = cardRef.current;
-    if (!card || e.pointerType !== "mouse") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const { innerWidth: w, innerHeight: h } = window;
-    const dx = (e.clientX / w - 0.5) * 14;
-    const dy = (e.clientY / h - 0.5) * 10;
-    card.style.transform = `translate(${dx}px, ${dy}px)`;
-  }
+/**
+ * What the visitor is about to watch happen inside the phone. Naming the parts
+ * in text does work the screenshot can't: it survives the seconds before the
+ * live frame mounts, and it's readable by search engines and screen readers.
+ *
+ * Each chip lists the demo section ids it stands for, so the row doubles as a
+ * legend the tour lights up as it arrives — without that link the chips are a
+ * list of claims sitting next to an unrelated animation. Two ids per event chip
+ * because themes name that section either "celebrations" or "events". The
+ * bilingual chip maps to nothing: it's true of every section at once.
+ */
+const INCLUDED: Array<{ label: string; stops: string[] }> = [
+  { label: "Live countdown", stops: ["top"] },
+  { label: "Your story", stops: ["story"] },
+  { label: "Events & venue maps", stops: ["celebrations", "events"] },
+  { label: "Photo gallery", stops: ["gallery"] },
+  { label: "RSVP", stops: ["rsvp"] },
+  { label: "English + हिंदी", stops: [] },
+];
+
+export function LandingHero() {
+  // Starts on the countdown so the row has a sensible resting state before the
+  // first tour tick — and a settled one when reduced motion means no tour runs.
+  const [stop, setStop] = useState("top");
 
   return (
     <section
       className="l-grain relative flex min-h-svh flex-col overflow-hidden"
       style={{ background: HERO_BG }}
-      onPointerMove={onPointerMove}
       data-image-slot="hero"
     >
       <Mandala className="spin-slow left-1/2 top-[-260px] h-[640px] w-[640px] -translate-x-1/2 opacity-[0.14]" />
       <PetalField count={12} />
 
-      <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-12 px-5 pb-24 pt-32 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
+      <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-14 px-5 pb-20 pt-28 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
         {/* Copy */}
         <div className="text-center lg:text-left">
           <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
-            Personal invitation websites · ₹1,599
+            Invitation websites · {PRICE}
           </p>
 
-          <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.7rem,7.2vw,6.2rem)] font-semibold leading-[1.04] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
-            Your whole celebration,
-            <br />
-            in one beautiful
-            <br />
-            invitation{" "}
-            <span className="relative inline-block italic text-[color:var(--l-gold-lite)]">
-              website
+          {/* The category noun leads. Someone arriving cold from Instagram has to
+              know what this is before they can be moved by it, so "invitation
+              website" sits in the first three words rather than at the end of a
+              poetic sentence. */}
+          {/* No hard line breaks: at three balanced lines the longest word pair
+              ("invitation website") already sets the measure, and a <br /> here
+              only fights the clamp at the sizes between. */}
+          <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.3rem,4.6vw,4rem)] font-semibold leading-[1.06] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
+            The invitation website your guests{" "}
+            {/* Kept on one line so the drawn swash underneath can't be split. */}
+            <span className="relative inline-block whitespace-nowrap italic text-[color:var(--l-gold-lite)]">
+              won&apos;t forget
               <svg
                 className="l-draw absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 300 14"
@@ -67,15 +91,36 @@ export function LandingHero() {
             .
           </h1>
 
-          <p className="l-load mx-auto mt-7 max-w-md text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
-            Build your own celebration site in minutes, then share one private
-            link on WhatsApp. Every family gets an invitation made just for
-            them — showing only the events they&apos;re invited to.
+          <p className="l-load mx-auto mt-8 max-w-lg text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
+            A live countdown, your photos, RSVP, venue maps and your full
+            timeline — shared as one private WhatsApp link. And every family
+            sees only the events they&apos;re invited to.
           </p>
 
-          <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.56s" }}>
+          <ul className="l-load mt-7 flex flex-wrap justify-center gap-2 lg:justify-start" style={{ animationDelay: "0.5s" }}>
+            {INCLUDED.map(({ label, stops }) => {
+              const active = stops.includes(stop);
+              return (
+                <li
+                  key={label}
+                  // Decorative highlight only — the tour it tracks lives in an
+                  // aria-hidden iframe, so there's no state here to announce.
+                  className={cn(
+                    "rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors duration-500",
+                    active
+                      ? "border-[color:var(--l-gold)]/70 bg-[color:var(--l-gold)]/15 text-[color:var(--l-gold-lite)]"
+                      : "border-white/15 bg-white/[0.07] text-white/85",
+                  )}
+                >
+                  {label}
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.6s" }}>
             <Link
-              href="/demo/royal"
+              href={`/demo/${HERO_THEME.demo}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-8 py-4 text-center text-sm font-semibold text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 sm:w-auto"
@@ -95,47 +140,26 @@ export function LandingHero() {
             />
           </div>
 
-          <p className="l-load mt-5 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
-            Just ₹1,599 · No app · No guest accounts · Ready in minutes.
+          <p className="l-load mt-6 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
+            Just {PRICE} · No app · No guest accounts · Ready in minutes.
+          </p>
+          <p className="l-load mt-2 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/70" style={{ animationDelay: "0.76s" }}>
+            Weddings · Birthdays · Baby showers · Griha Pravesh · Anniversaries
           </p>
         </div>
 
-        {/* Floating invitation card */}
-        <div className="l-load relative mx-auto w-full max-w-sm lg:mx-0" style={{ animationDelay: "0.34s" }}>
-          <div ref={cardRef} className="transition-transform duration-300 ease-out">
-            <div className="l-float relative rounded-3xl bg-[color:var(--l-ivory)] p-7 shadow-[0_44px_90px_-28px_rgba(0,0,0,.7)]">
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-2 rounded-2xl border border-[color:var(--l-gold)]/45"
-              />
-              <div className="flex items-center justify-between">
-                <UtsavMonogram className="h-8 w-8" stroke="var(--l-gold)" />
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--l-emerald)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-[color:var(--l-emerald)]">
-                  <span className="size-1.5 rounded-full bg-[color:var(--l-emerald)]" />
-                  via WhatsApp
-                </span>
-              </div>
-
-              <p className="l-script mt-5 text-2xl leading-none text-[color:var(--l-gold)]">
-                You&apos;re invited
-              </p>
-              <p className="l-display mt-1 text-3xl font-semibold text-[color:var(--l-wine)]">
-                Aarav <span className="italic text-[color:var(--l-pink)]">&amp;</span> Meera
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-[color:var(--l-ink-soft)]">
-                Sharma Family, you&apos;re invited ✨ — three evenings of music,
-                colour and celebration await you.
-              </p>
-
-              <span className="mt-6 block rounded-full bg-[color:var(--l-wine)] px-5 py-3.5 text-center text-sm font-semibold text-[color:var(--l-gold-lite)]">
-                Open your invitation
-              </span>
-
-              <p className="l-deva mt-4 text-center text-xs text-[color:var(--l-ink-soft)]">
-                आप सादर आमंत्रित हैं
-              </p>
-            </div>
-          </div>
+        {/* The product itself: a real guest site running live inside the phone,
+            scrolling itself through countdown → events → gallery → RSVP. The
+            frame mounts after first paint, so none of this is on the critical
+            path for the headline above. */}
+        <div className="l-load relative mx-auto flex w-full flex-col items-center lg:mx-0" style={{ animationDelay: "0.34s" }}>
+          {/* Natural size: the frame is 538px tall and scaling it up pushes the
+              CTA row off a 768px laptop screen. The preview inside it does its
+              own scaling — see TOUR_VIEWPORT in theme-card. */}
+          <ThemePhone theme={HERO_THEME} tour onStopChange={setStop} />
+          <p className="mt-6 text-center text-xs text-white/60">
+            A real invitation site, running live — tap the screen to explore it.
+          </p>
         </div>
       </div>
     </section>
