@@ -33,9 +33,9 @@ function Kolam({ className, draw }: { className?: string; draw?: boolean }) {
 }
 
 export function KalyanamView(props: WebsiteViewProps) {
-  const { names, dateLabel, countdownDate, events, config, chip, rsvp, selfRsvp, ownerPreview } = props;
+  const { names, dateLabel, countdownDate, events, config, chip, rsvp, selfRsvp, ownerPreview, openImmediately } = props;
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [entered, setEntered] = useState(false);
+  const [entered, setEntered] = useState(Boolean(openImmediately));
   const [menu, setMenu] = useState(false);
 
   const pair = splitNames(names);
