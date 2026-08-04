@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { BookNowButton } from "./book-now";
 import { PhotoArt, PetalField } from "./art";
-import { PRICING_PLANS, COMING_SOON, REALITY_NOTES, CONTACT_EMAIL } from "./data";
+import {
+  PRICING_PLANS,
+  COMING_SOON,
+  REALITY_NOTES,
+  CONTACT_EMAIL,
+  PLAN_TERMS,
+  DEMO_CTA,
+} from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { CountUp } from "./count-up";
 
@@ -167,7 +174,7 @@ export function CouplesSection() {
             rel="noopener noreferrer"
             className="mt-8 inline-block rounded-full bg-[color:var(--l-wine)] px-8 py-4 text-sm font-semibold text-[color:var(--l-gold-lite)] transition-transform hover:-translate-y-0.5"
           >
-            See a live demo
+            {DEMO_CTA}
           </Link>
         </div>
       </div>
@@ -456,15 +463,47 @@ export function PricingPreview() {
                   ))}
                 </ul>
 
-                <div className="relative mt-auto flex flex-col gap-3 pt-8">
-                  <BookNowButton
-                    label="Get Started"
-                    className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
-                  />
+                <div className="relative mt-auto flex flex-col gap-2.5 pt-8">
+                  <BookNowButton className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]" />
+                  {/* Names the step before it happens. A button that silently
+                      launches WhatsApp is a surprise, and a surprise is a
+                      reason to close the tab. */}
+                  <p
+                    className={
+                      featured
+                        ? "text-center text-[11px] text-white/60"
+                        : "text-center text-[11px] text-[color:var(--l-ink-soft)]/80"
+                    }
+                  >
+                    Opens WhatsApp — no payment yet
+                  </p>
                 </div>
               </article>
             );
           })}
+        </div>
+
+        {/* Terms that hold for all three plans — hosting, edits, limits and
+            support. Buyers were being asked to commit without knowing any of
+            them, and an unanswered question at the price is a lost sale. */}
+        <div
+          className="mt-12 rounded-[22px] border border-[color:var(--l-line)] bg-white p-6 sm:p-8"
+          data-reveal
+        >
+          <p className="text-center text-[11px] font-semibold uppercase tracking-[0.24em] text-[color:var(--l-gold)]">
+            Included with every plan
+          </p>
+          <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            {PLAN_TERMS.map((t) => (
+              <li
+                key={t}
+                className="flex items-start gap-2.5 text-sm text-[color:var(--l-wine)]/85"
+              >
+                <span aria-hidden="true" className="mt-0.5 text-[color:var(--l-emerald)]">✓</span>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* live demo + coming-soon extras */}
@@ -475,7 +514,7 @@ export function PricingPreview() {
             rel="noopener noreferrer"
             className="inline-block rounded-full bg-[color:var(--l-wine)] px-9 py-4 text-sm font-semibold text-[color:var(--l-ivory)] shadow-[0_18px_44px_-14px_rgba(59,16,34,.6)] transition-transform hover:-translate-y-0.5"
           >
-            See a live demo
+            {DEMO_CTA}
           </Link>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -522,7 +561,7 @@ export function FinalCta() {
             rel="noopener noreferrer"
             className="rounded-full bg-[color:var(--l-ivory)] px-8 py-4 text-sm font-semibold text-[color:var(--l-wine)] shadow-[0_18px_44px_-14px_rgba(0,0,0,.5)] transition-transform hover:-translate-y-0.5"
           >
-            See a live demo
+            {DEMO_CTA}
           </Link>
           <a
             href="#how-it-works"
@@ -547,7 +586,7 @@ const FOOTER_COLS: { title: string; links: { label: string; href: string }[] }[]
       { label: "How it works", href: "#how-it-works" },
       { label: "Themes", href: "#themes" },
       { label: "Pricing", href: "#pricing" },
-      { label: "See a live demo", href: "/demo/royal" },
+      { label: DEMO_CTA, href: "/demo/royal" },
     ],
   },
   {

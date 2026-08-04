@@ -50,9 +50,13 @@ export default function LandingPage() {
     <div className="landing">
       <LandingNavbar />
       <main>
-        {/* Narrative: what it is (hero) → what you'll create (themes) → why it's
-            different (per-family personalisation) → how it works (process) →
-            supporting features → reassurance → the offer.
+        {/* Narrative: what it is (hero) → why it's different (per-family
+            personalisation) → what you'll create (themes) → how it works
+            (process) → supporting features → reassurance → the offer.
+            The personalisation demo sits above the theme gallery on purpose:
+            it's the only claim on the page a JPEG invitation card can't match,
+            so a cold visitor has to hit it before they hit anything they could
+            mistake for decoration.
             (ExperiencePreview, CouplesSection, RealitySection and FinalCta were
             removed as redundant; their components remain in the codebase.) */}
         <LandingHero />
@@ -69,8 +73,8 @@ export default function LandingPage() {
             ]}
           />
         </div>
-        <ThemeShowcase />
         <GuestPersonalisationDemo />
+        <ThemeShowcase />
         <ProcessFlow />
         {/* <BrandStatement /> — commented out per request */}
         <FeatureStory />

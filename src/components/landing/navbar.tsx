@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS } from "./data";
+import { NAV_LINKS, DEMO_CTA, DEMO_CTA_SHORT, BUY_CTA, BUY_CTA_SHORT } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { BookNowButton } from "./book-now";
 
@@ -71,9 +71,11 @@ export function LandingNavbar() {
               rel="noopener noreferrer"
               className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.7)] transition-transform hover:-translate-y-0.5"
             >
-              See a live demo
+              {/* Short forms here: the full labels plus four nav links overflow
+                  the bar at the narrow end of the lg breakpoint. */}
+              {DEMO_CTA_SHORT}
             </Link>
-            <BookNowButton />
+            <BookNowButton label={BUY_CTA_SHORT} />
           </div>
 
           {/* Mobile menu button */}
@@ -134,7 +136,7 @@ export function LandingNavbar() {
 
           <div className="mt-auto space-y-4 pb-4">
             <BookNowButton
-              label="Get Started on WhatsApp"
+              label={BUY_CTA}
               className="w-full px-6 py-4 text-base"
             />
             <Link
@@ -144,7 +146,7 @@ export function LandingNavbar() {
               className="block rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-6 py-4 text-center text-base font-semibold text-white"
               onClick={() => setOpen(false)}
             >
-              See a live demo
+              {DEMO_CTA}
             </Link>
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />

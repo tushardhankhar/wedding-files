@@ -49,10 +49,10 @@ export default async function DemoPage({
   searchParams,
 }: {
   params: Promise<{ themeId: string }>;
-  searchParams: Promise<{ embed?: string; chip?: string }>;
+  searchParams: Promise<{ embed?: string; chip?: string; open?: string }>;
 }) {
   const { themeId } = await params;
-  const { embed, chip } = await searchParams;
+  const { embed, chip, open } = await searchParams;
   if (!THEMES.some((t) => t.id === themeId)) notFound();
   const theme = getTheme(themeId);
 
@@ -65,12 +65,18 @@ export default async function DemoPage({
   // `?chip=0` drops the "Live demo" badge. The screenshot stages ask for it: the
   // phone mock draws its own LIVE pill in the same corner, and two badges
   // stacked on each other read as a bug in an exported image.
+  //
+  // `?open=1` starts the gated themes past their ceremonial entrance. The
+  // landing hero's phone uses it: nobody can click through a door inside a
+  // non-interactive preview, so without this the hero would sit on a cover
+  // screen instead of showing the countdown, events, gallery and RSVP.
   if (embed) {
     return (
       <SiteView
         theme={theme}
         {...props}
         ownerPreview
+        openImmediately={open === "1"}
         chip={chip === "0" ? null : { en: "Live demo", hi: "डेमो" }}
       />
     );

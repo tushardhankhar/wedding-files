@@ -3,6 +3,7 @@
 import { sendGTMEvent } from "@next/third-parties/google";
 import { cn } from "@/lib/utils";
 import { env } from "@/lib/env";
+import { BUY_CTA } from "./data";
 
 /** Pre-filled WhatsApp message the booking chat opens with. */
 const BOOKING_MESSAGE =
@@ -39,7 +40,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 /**
  * Prominent "Book Now" call-to-action that opens a WhatsApp chat with a
  * pre-filled booking message. On-brand emerald so it reads as distinct from the
- * pink "See a live demo" CTA and clearly signals WhatsApp.
+ * pink demo CTA and clearly signals WhatsApp.
  *
  * The click is announced to the tag layer, because this — not the enquiry form —
  * is where most people convert. Leaving it untracked meant the ad platforms were
@@ -48,7 +49,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
  */
 export function BookNowButton({
   className,
-  label = "Get Started",
+  label = BUY_CTA,
 }: {
   className?: string;
   label?: string;

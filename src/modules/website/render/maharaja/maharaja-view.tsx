@@ -106,10 +106,11 @@ export function MaharajaView({
   rsvp,
   selfRsvp,
   ownerPreview,
+  openImmediately,
 }: WebsiteViewProps) {
   const [lang, setLang] = useState<"en" | "hi">("en");
-  const [entered, setEntered] = useState(false);
-  const [doorsGone, setDoorsGone] = useState(false);
+  const [entered, setEntered] = useState(Boolean(openImmediately));
+  const [doorsGone, setDoorsGone] = useState(Boolean(openImmediately));
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
 
