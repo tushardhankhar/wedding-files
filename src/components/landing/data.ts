@@ -114,10 +114,44 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "shubh-aarambh", name: "The Shubh Aarambh", vibe: "Griha Pravesh & puja", tagline: "A new door opens.", art: "shubh-aarambh", palette: ["#5C2113", "#9C3B21", "#C79A3D"], demo: "shubh-aarambh", category: "other" },
 ];
 
+// ── Calls to action ────────────────────────────────────────────────────────
+// Both CTAs name the outcome rather than the mechanic: people click "see what
+// your guests see" and "get my invitation website" far more readily than "see a
+// live demo" and "get started", which describe the click instead of the reward.
+// The short forms exist only for the navbar, where the long labels plus four
+// nav links overflow the bar.
+export const DEMO_CTA = "See what your guests see";
+export const DEMO_CTA_SHORT = "See a guest's view";
+export const BUY_CTA = "Get my invitation website";
+export const BUY_CTA_SHORT = "Get my website";
+
 // ── Pricing ────────────────────────────────────────────────────────────────
 // Simple, transparent pricing. PRICE remains the flagship invitation price and
 // is still referenced by the hero, navbar & final CTA.
 export const PRICE = "₹1,599";
+
+// What the price covers beyond the feature list — the terms a buyer otherwise
+// has to ask for before they'll commit (hosting, edits, guest limits, support).
+// Shown once under all three plans, because they're identical across plans.
+export const PLAN_TERMS: string[] = [
+  "Live in minutes — you build it yourself",
+  "Unlimited guests & unlimited events",
+  "Edit it as often as you like",
+  "Your link stays live for 12 months",
+  "WhatsApp support while you build",
+  "One-time price — no subscription",
+];
+
+// Honest reasons to trust a brand-new brand. Deliberately no customer counts or
+// review stars: we don't have real ones yet, and inventing them is both a lie
+// and the easiest thing on a page to get caught on. Every claim here is
+// verifiable by the visitor in one click.
+export const TRUST_SIGNALS: string[] = [
+  `${SHOWCASE_THEMES.length} designer themes`,
+  "Open any demo — no signup",
+  "Bilingual: English + हिंदी",
+  "Made in India",
+];
 
 export const PLAN_INCLUDES: string[] = [
   "Your own bilingual celebration website (EN + हिं)",

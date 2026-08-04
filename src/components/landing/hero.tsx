@@ -6,14 +6,20 @@ import { cn } from "@/lib/utils";
 import { Mandala } from "@/components/brand/motifs";
 import { PetalField } from "./art";
 import { BookNowButton } from "./book-now";
-import { SHOWCASE_THEMES, PRICE } from "./data";
+import {
+  SHOWCASE_THEMES,
+  PRICE,
+  DEMO_CTA,
+  BUY_CTA,
+  TRUST_SIGNALS,
+} from "./data";
 import { ThemePhone } from "./theme-card";
 
 const HERO_BG =
   "radial-gradient(90% 70% at 72% 18%, rgba(216,27,96,.40), transparent 60%), radial-gradient(70% 60% at 12% 88%, rgba(244,124,32,.30), transparent 60%), radial-gradient(120% 80% at 50% 118%, rgba(201,154,61,.28), transparent 55%), linear-gradient(168deg, #3b1022 0%, #57122e 48%, #2a0a18 100%)";
 
 /**
- * The theme the hero shows off. Deliberately the same one the "See a live demo"
+ * The theme the hero shows off. Deliberately the same one the primary demo
  * button opens, so the phone is a preview of where that click lands rather than
  * a different site.
  */
@@ -93,8 +99,22 @@ export function LandingHero() {
 
           <p className="l-load mx-auto mt-8 max-w-lg text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
             A live countdown, your photos, RSVP, venue maps and your full
-            timeline — shared as one private WhatsApp link. And every family
-            sees only the events they&apos;re invited to.
+            timeline — shared as one private WhatsApp link.
+          </p>
+
+          {/* The one thing a JPEG card and every cheaper competitor can't do,
+              pulled out of the paragraph above and given its own weight. It was
+              the last clause of a three-line sentence, which is exactly where a
+              visitor skimming for three seconds never reaches — and it's the
+              reason to buy, not a footnote to the feature list. */}
+          <p
+            className="l-load mx-auto mt-5 max-w-lg border-l-2 border-[color:var(--l-gold)] pl-4 text-left text-[17px] leading-snug text-[color:var(--l-ivory)] lg:mx-0"
+            style={{ animationDelay: "0.46s" }}
+          >
+            One link.{" "}
+            <span className="font-semibold text-[color:var(--l-gold-lite)]">
+              Every family sees only the events they&apos;re invited to.
+            </span>
           </p>
 
           <ul className="l-load mt-7 flex flex-wrap justify-center gap-2 lg:justify-start" style={{ animationDelay: "0.5s" }}>
@@ -125,7 +145,7 @@ export function LandingHero() {
               rel="noopener noreferrer"
               className="w-full rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-8 py-4 text-center text-sm font-semibold text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 sm:w-auto"
             >
-              See a live demo
+              {DEMO_CTA}
             </Link>
             <a
               href="#how-it-works"
@@ -135,17 +155,30 @@ export function LandingHero() {
             </a>
             {/* Mobile-only WhatsApp CTA, under "See how it works". */}
             <BookNowButton
-              label="Get Started on WhatsApp"
+              label={BUY_CTA}
               className="w-full px-8 py-4 text-sm sm:hidden"
             />
           </div>
 
-          <p className="l-load mt-6 text-xs tracking-wide text-white/55" style={{ animationDelay: "0.7s" }}>
-            Just {PRICE} · No app · No guest accounts · Ready in minutes.
+          {/* The terms a buyer would otherwise have to hunt for, stated before
+              the WhatsApp CTA rather than after it — asking someone to open a
+              chat is a bigger step than a click, so it has to be the safest
+              thing on screen by the time they reach it. */}
+          <p className="l-load mt-6 text-xs leading-relaxed tracking-wide text-white/60" style={{ animationDelay: "0.7s" }}>
+            {PRICE} one-time · Live in minutes · Unlimited guests · Link stays
+            live 12 months · No app, no guest accounts
           </p>
-          <p className="l-load mt-2 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/70" style={{ animationDelay: "0.76s" }}>
-            Weddings · Birthdays · Baby showers · Griha Pravesh · Anniversaries
-          </p>
+
+          {/* Honest trust signals only — things the visitor can verify in one
+              click. No customer counts or review stars until they're real. */}
+          <ul className="l-load mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/75 lg:justify-start" style={{ animationDelay: "0.76s" }}>
+            {TRUST_SIGNALS.map((s) => (
+              <li key={s} className="flex items-center gap-1.5">
+                <span aria-hidden="true" className="text-[color:var(--l-gold)]">✦</span>
+                {s}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* The product itself: a real guest site running live inside the phone,
