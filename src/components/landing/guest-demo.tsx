@@ -138,12 +138,40 @@ export function GuestPersonalisationDemo() {
           )}
         </div>
 
-        <p className="mt-8 text-center text-sm text-[color:var(--l-ink-soft)]" data-reveal>
-          <span className="font-semibold text-[color:var(--l-wine)]">
-            Private by design.
-          </span>{" "}
-          Uninvited events simply don&apos;t exist in the guest experience.
-        </p>
+        {/* Absorbed from what used to be a separate 674px "Private by design"
+            section further down the page. It was making this exact argument a
+            second time, in prose, after this demo had already proved it
+            interactively — and a claim restated is a claim weakened. The real
+            guest URL and the terms are worth keeping, so they moved here, where
+            the visitor has just watched the thing they describe happen. */}
+        <div className="mt-10 text-center" data-reveal>
+          <div className="mx-auto inline-flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-2xl border border-[color:var(--l-line)] bg-white px-5 py-3 shadow-sm">
+            <span aria-hidden="true" className="text-[color:var(--l-gold)]">🔒</span>
+            <code className="text-[13px] text-[color:var(--l-wine)]">
+              jointhejashn.com/a-meera/g/
+              <span className="font-semibold text-[color:var(--l-pink)]">7FK29</span>
+            </code>
+            <span className="rounded-full bg-[color:var(--l-ivory-2)] px-3 py-1 text-[11px] font-semibold text-[color:var(--l-ink-soft)]">
+              Sharma Family only
+            </span>
+          </div>
+
+          <ul className="mt-4 flex flex-wrap justify-center gap-2">
+            {[
+              "Private link per family",
+              "No guest account",
+              "No app download",
+              "Links can be revoked",
+            ].map((p) => (
+              <li
+                key={p}
+                className="rounded-full border border-[color:var(--l-line)] bg-white px-3.5 py-1.5 text-[11px] font-medium text-[color:var(--l-ink-soft)]"
+              >
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

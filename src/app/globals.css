@@ -3339,6 +3339,90 @@
   .dak-fly-y { transform: translateY(56px) rotate(8deg); }
 }
 
+/* ── Landing page: phone section rhythm ─────────────────────────────────────
+   The sections are laid out with desktop breathing room (`py-24`/`py-28`, i.e.
+   96–112px top AND bottom) which Tailwind applies at every width. Stacked on a
+   390×844 phone that's ~200px of empty ivory between one argument and the next,
+   twelve times over — nearly three whole screens of nothing, on the exact
+   device 95% of this page's visitors are holding. Editorial whitespace scales
+   with the measure; here the measure collapses to one column and the whitespace
+   doesn't, so it stops reading as calm and starts reading as "this is over".
+
+   Clamped rather than overridden per-section so the rhythm stays uniform, and
+   `:where()` keeps specificity at zero so any section that genuinely needs more
+   room can still say so with a normal utility class.
+
+   The hero is excluded by its `data-image-slot`: it sizes itself to the
+   viewport and its padding is doing a different job, so a blanket value there
+   would fight the fold rather than tidy it. */
+@media (max-width: 767px) {
+  .landing main > :where(section:not([data-image-slot])) {
+    padding-block: clamp(2.75rem, 9vw, 4rem);
+  }
+}
+
+/* ── Landing page: pricing plans that collapse only on phones ───────────────
+   The featured plan ships with `open`; the other two don't, so on a phone they
+   cost a summary line each instead of a full feature list. From `lg` the layout
+   is a three-across comparison and a collapsed column would defeat the point,
+   so the summary is hidden and the list is forced visible.
+
+   Author CSS can override the UA's hiding of a closed <details>'s content —
+   that's what the `display: grid` below is doing. Verified in-browser rather
+   than assumed, because the UA implements this via a slot rather than a plain
+   `display: none` and the behaviour isn't obvious from the spec. */
+@media (min-width: 1024px) {
+  .landing details[data-plan] > summary { display: none; }
+  .landing details[data-plan] > div { display: block; }
+}
+
+/* ── Landing page: phone-only sticky buy bar ───────────────────────────────
+   Fixed rather than sticky so it can't be pushed out of a scroll container, and
+   translated out of view rather than display:none so it can animate in and so
+   its height is measurable while parked.
+
+   --sticky-cta-h is the bar's own box; `.has-sticky-cta` (set by the component
+   only while the bar is actually showing) lifts `.gtt` clear of it. The safe
+   area term matters here in a way it doesn't for `.gtt`: this bar spans the
+   full width and sits on the iOS home indicator. */
+:root { --sticky-cta-h: 4.25rem; }
+
+.sticky-cta {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 55;
+  padding-block: 0.625rem;
+  padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(42, 10, 24, 0.94);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(201, 154, 61, 0.35);
+  box-shadow: 0 -12px 34px -18px rgba(0, 0, 0, 0.75);
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.25s ease;
+}
+.sticky-cta-on {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-cta { transition: opacity 0.2s ease; transform: none; }
+}
+
+/* Reserve the bar's space at the foot of the page permanently rather than only
+   while it's shown: toggling padding on a class that flips during scroll would
+   shift the layout under the reader's thumb. Below `lg` only — the bar is. */
+@media (max-width: 1023px) {
+  .landing footer {
+    padding-bottom: calc(2.5rem + var(--sticky-cta-h));
+  }
+}
+
 /* ── Back-to-top button (shared across all themed guest sites) ─────────────── */
 .gtt {
   position: fixed; right: 22px; z-index: 60;
@@ -3358,6 +3442,11 @@
   bottom: calc(
     env(safe-area-inset-bottom, 0px) + var(--theme-dock-h, 44px) + 2.75rem
   );
+}
+
+/* Same problem, same fix, for the landing page's phone-only buy bar. */
+.has-sticky-cta .gtt {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sticky-cta-h) + 1rem);
 }
 
 .gtt-on { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }

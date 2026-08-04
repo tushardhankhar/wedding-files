@@ -117,11 +117,13 @@ export function ProcessFlow() {
                       <p className="l-display text-lg font-semibold leading-tight text-[color:var(--l-wine)]">
                         {s.title}
                       </p>
-                      <p
-                        className={`mt-0.5 text-sm text-[color:var(--l-ink-soft)] ${
-                          on ? "" : "hidden sm:block"
-                        }`}
-                      >
+                      {/* Shown on every step at every width. Hiding the hints
+                          of inactive steps on phones left three bare titles
+                          floating in a column of empty ivory, and a visitor who
+                          arrives mid-rotation reads that as a broken list
+                          rather than a four-step explanation. The hints are one
+                          line each; they cost less than the hole did. */}
+                      <p className="mt-0.5 text-sm text-[color:var(--l-ink-soft)]">
                         {s.hint}
                       </p>
                     </div>

@@ -9,12 +9,12 @@ import { ThemeShowcase } from "@/components/landing/sections-story";
 import { ProcessFlow } from "@/components/landing/process-flow";
 import {
   FeatureStory,
-  PlannerSection,
-  PrivacySection,
   PricingPreview,
   LandingFooter,
 } from "@/components/landing/sections-product";
 import { EnquirySection } from "@/components/landing/enquiry";
+import { GuaranteeBand, FaqSection } from "@/components/landing/faq";
+import { StickyCta } from "@/components/landing/sticky-cta";
 import { GoToTop } from "@/modules/website/render/go-to-top";
 
 const TITLE = "Join the Jashn — Personal invitation websites for every celebration · ₹1,599";
@@ -78,15 +78,27 @@ export default function LandingPage() {
         <ProcessFlow />
         {/* <BrandStatement /> — commented out per request */}
         <FeatureStory />
-        <PrivacySection />
+        {/* Objections before the number. A visitor who reaches ₹1,599 still
+            wondering whether it's a subscription, who builds the site, or what
+            happens if it's rubbish doesn't ask — they leave. So the refund
+            promise and the FAQ land first, and the price arrives at someone who
+            has run out of reasons to go. ("What happens next" is a strip inside
+            the pricing section — it's only ever wanted with a thumb over the
+            button.) */}
+        <GuaranteeBand />
+        <FaqSection />
         <PricingPreview />
         <EnquirySection />
-        {/* Different audience + "Coming soon" — demoted off the main path. */}
-        <PlannerSection />
+        {/* PrivacySection was folded into the personalisation demo, which was
+            already proving the same point interactively; PlannerSection moved
+            to /for-planners. Both components still exist. */}
       </main>
       <LandingFooter />
       {/* Back-to-top — deep wine circle + gold arrow to match the landing. */}
       <GoToTop bg="#3b1022" ring="#c99a3d" />
+      {/* Phone-only buy bar — the page is ~14 screens tall and everything
+          between the hero and the pricing had no way to act on it. */}
+      <StickyCta />
     </div>
   );
 }

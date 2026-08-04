@@ -130,6 +130,38 @@ export const BUY_CTA_SHORT = "Get my website";
 // is still referenced by the hero, navbar & final CTA.
 export const PRICE = "₹1,599";
 
+/**
+ * What a visitor is mentally comparing ₹1,599 against. Nobody arrives with a
+ * price for "invitation website" in their head, so the number floats free and
+ * lands as either random or expensive; anchored against the printed cards they
+ * were always going to buy, it reads as a rounding error.
+ *
+ * These are the two claims on this page that aren't verifiable in one click, so
+ * they have to stay defensible: `note` must stay a range, and the range must be
+ * one a real printer's quote lands inside. A buyer who prices cards at ₹8,000
+ * and reads ₹40,000 stops trusting everything else on the page.
+ *
+ * Ranges confirmed by the owner 2026-08-04. Re-check them if you start selling
+ * into a market with different printing costs.
+ */
+export const PRICE_ANCHORS: { label: string; note: string; amount: string }[] = [
+  {
+    label: "Printed cards for 300 guests",
+    note: "₹40–₹150 a card, plus courier",
+    amount: "₹12,000–₹45,000",
+  },
+  {
+    label: "A designer-built wedding website",
+    note: "typical freelance quote",
+    amount: "₹15,000–₹50,000",
+  },
+  {
+    label: "Your invitation website on Jashn",
+    note: "one-time, everything included",
+    amount: PRICE,
+  },
+];
+
 // What the price covers beyond the feature list — the terms a buyer otherwise
 // has to ask for before they'll commit (hosting, edits, guest limits, support).
 // Shown once under all three plans, because they're identical across plans.
@@ -140,6 +172,10 @@ export const PLAN_TERMS: string[] = [
   "Your link stays live for 12 months",
   "WhatsApp support while you build",
   "One-time price — no subscription",
+  // Repeated here as well as in its own band: the guarantee's whole job is to
+  // be on screen at the moment the price is, and the band sits three sections
+  // higher. See GUARANTEE for the terms this is shorthand for.
+  "7-day full refund — no reasons needed",
 ];
 
 // Honest reasons to trust a brand-new brand. Deliberately no customer counts or
@@ -164,7 +200,22 @@ export const PLAN_INCLUDES: string[] = [
   "One private link, shared on WhatsApp",
 ];
 
-// The three ways to buy. The bundle is highlighted as the best value.
+/**
+ * The three ways to buy.
+ *
+ * The ₹1,599 invitation is the featured card, not the ₹2,199 bundle. Every ad
+ * promises ₹1,599, so that has to be the number the page visibly leads with:
+ * highlighting a costlier plan makes the landing contradict the click that
+ * produced it, which reads as bait-and-switch even when it isn't. The bundle
+ * still earns its place — as an upsell beside the plan people came for, with a
+ * saving stated in arithmetic anyone can check.
+ *
+ * `mobileFirst` hoists a plan to the top of the stacked mobile column. Source
+ * order is the desktop row (cheap → flagship → bundle, so the eye lands on the
+ * middle card); on mobile that order would show ₹1,099 for a *different, lesser*
+ * product as the first price on screen, anchoring below what the ad promised
+ * and framing the real product as the expensive one.
+ */
 export type PricingPlan = {
   id: string;
   name: string;
@@ -174,6 +225,8 @@ export type PricingPlan = {
   features: string[];
   featured?: boolean;
   badge?: string;
+  /** Render first in the single-column mobile stack. */
+  mobileFirst?: boolean;
 };
 
 export const PRICING_PLANS: PricingPlan[] = [
@@ -192,35 +245,155 @@ export const PRICING_PLANS: PricingPlan[] = [
   },
   {
     id: "invitation",
-    name: "Wedding/ Other Events Invitation",
+    name: "The Full Invitation",
     price: PRICE,
-    note: "one-time",
-    blurb: "The complete invitation — everything, in one link.",
+    note: "one-time · for weddings & every other celebration",
+    blurb: "Everything your guests need, in one private link.",
     features: PLAN_INCLUDES,
+    featured: true,
+    badge: "Everything included",
+    mobileFirst: true,
   },
   {
     id: "bundle",
-    name: "Wedding + Save the Date",
+    name: "Invitation + Save the Date",
     price: "₹2,199",
     note: "one-time · save ₹499",
     blurb: "Both, together — share your date now, invite later.",
     features: [
-      "Everything in the Wedding Invitation",
+      "Everything in the Full Invitation",
       "A matching Save the Date site",
       "Announce now, send the full invite later",
       "One theme & story, start to finish",
     ],
-    featured: true,
-    badge: "Best value",
+    badge: "Save ₹499",
   },
 ];
 
-// Marketed as on the way — surfaced with a "Coming soon" tag, not sold yet.
+// ── Risk reversal ──────────────────────────────────────────────────────────
+/**
+ * The single largest unanswered objection on the page: "what if I pay ₹1,599 to
+ * a brand I've never heard of and it's rubbish?" There is no review count, no
+ * years-in-business and no logo wall to answer it with, so the answer has to be
+ * a promise the business actually keeps.
+ *
+ * BUSINESS COMMITMENT — approved by the owner 2026-08-04. This is the one block
+ * on the page that creates an obligation rather than describing the product, so
+ * treat the wording as load-bearing: the refund window is deliberately tied to
+ * the period before guest links go out, which is what makes it cheap to honour.
+ * Anyone editing this is changing what support has to do, not just what the
+ * page says — the page must never promise something support won't.
+ */
+export const GUARANTEE = {
+  title: "If you don't love it, you don't pay for it.",
+  body:
+    "Build your invitation, look at it on your own phone, and if it isn't what you hoped for, tell us within 7 days and we'll refund you in full. No forms, no reasons needed — just a message on the same WhatsApp chat you started in.",
+  chips: ["7-day full refund", "No subscription, ever", "No card details on this site"],
+};
+
+/**
+ * What actually happens after the green button. Tapping it launches WhatsApp,
+ * which is a bigger, stranger step than a click — people hesitate at it because
+ * they can't picture the other side: who answers, how fast, whether they're
+ * about to be sold to on a call. Naming the next three moves removes the only
+ * unknown left at the point of conversion.
+ *
+ * The "few hours" reply window is a promise a human has to keep — approved by
+ * the owner 2026-08-04. Widen it here the day that stops being true; a missed
+ * reply promise costs more than a slower one ever would.
+ */
+export const NEXT_STEPS: { title: string; body: string }[] = [
+  {
+    title: "You send one message",
+    body: "The chat opens with your details half-written. Add your names and your date, hit send.",
+  },
+  {
+    title: "We reply within a few hours",
+    body: "A real person, not a bot. We'll confirm your theme, your events and the price — no call unless you want one.",
+  },
+  {
+    title: "Your invitation goes live",
+    body: "You get your own login, fill in your story, events and photos, and share the link on WhatsApp the same day.",
+  },
+];
+
+// Marketed as on the way — not sold yet. Declared above FAQS because an FAQ
+// answer reads from it, and a `const` referenced before its declaration is a
+// module-evaluation crash, not a lint warning.
 export const COMING_SOON: string[] = [
-  "Planner dashboard & guest analytics",
-  "Dietary & logistics collection",
-  "Custom domain",
-  "Video hero",
+  "a planner dashboard with guest analytics",
+  "dietary & logistics collection",
+  "custom domains",
+  "video heroes",
+];
+
+// ── Objection-handling FAQ ─────────────────────────────────────────────────
+/**
+ * Every question here is one a cold visitor asks silently and then leaves
+ * over. Ordered by how often it kills the sale, not by topic: what do I get,
+ * who builds it, is it really one payment, will my family cope, can I change it.
+ *
+ * Rendered as native <details> so the answers are in the HTML for search
+ * engines and for anyone whose JS hasn't run, and mirrored into FAQPage
+ * structured data by the component.
+ */
+export const FAQS: { q: string; a: string }[] = [
+  {
+    q: `What exactly do I get for ${PRICE}?`,
+    a: "Your own invitation website on its own link — a designer theme, a live countdown, your story, every event with date, time, venue and a Google Maps link, a photo gallery, per-event RSVP, an FAQ for your guests, and a private link for each family. It's bilingual (English + हिंदी) and it works on every phone with no app to download. One payment covers all of it for 12 months.",
+  },
+  {
+    q: "Do I build it, or do you?",
+    a: "You do — and it takes minutes, not evenings. You get a login, fill in your names, dates, events and photos in a simple form, and pick a theme. There's nothing to design and nothing to install. We're on WhatsApp the whole time you're building, and if you'd rather we set it up from a list you send us, just ask in the chat.",
+  },
+  {
+    q: "Is this a subscription? Will I be charged again?",
+    a: `No. ${PRICE} is a single payment. Your link stays live for 12 months from the day you publish it, with unlimited edits and unlimited guests in that time. We don't store card details on this website and there's nothing to cancel.`,
+  },
+  {
+    q: "How quickly can it be live?",
+    a: "The same day. Most people go from their first WhatsApp message to a shareable link inside an hour, because you're filling in your own details rather than waiting on a designer's queue. If your date is this week, say so in the chat and we'll prioritise it.",
+  },
+  {
+    q: "Do my guests need an app or an account?",
+    a: "No. They tap the link in WhatsApp and the invitation opens in their phone's browser — no download, no sign-up, no password. That's deliberate: anything a 70-year-old relative has to install is an invitation that doesn't get opened.",
+  },
+  {
+    q: "Can different families see different events?",
+    a: "Yes, and it's the reason most people choose us. You group your guests — Sharma family, office, college friends — tick which events each group is invited to, and each group gets its own private link. A group that isn't invited to the Haldi never sees that a Haldi exists. No awkward conversations.",
+  },
+  {
+    q: "Can I still change things after I've sent the link out?",
+    a: "Yes. Edit anything — a venue change, a new time, extra photos, another event — and every guest who opens the link sees the update instantly. The link itself never changes, so nothing you've already shared breaks.",
+  },
+  {
+    q: "What if my relatives aren't comfortable with websites?",
+    a: "They don't have to be. The link opens like any other WhatsApp message and reads top to bottom like a card. Every event has a one-tap map link and a one-tap RSVP, and the whole thing can be read in Hindi. If someone still can't get in, message us and we'll help them.",
+  },
+  {
+    q: "Is my guest list private?",
+    a: "Yes. There's no public guest directory and no shared page — every family reaches your invitation through their own private link, which you can revoke at any time. Your guest list is never shown to your guests, and your invitation is never indexed by search engines.",
+  },
+  {
+    q: "Can I use it for something that isn't a wedding?",
+    a: "Yes — birthdays, baby showers, griha pravesh, anniversaries, naming ceremonies, engagement parties, and a save-the-date on its own. There are themes built specifically for each, and the same per-family privacy works for all of them.",
+  },
+  {
+    q: "How do I pay?",
+    a: "In the WhatsApp chat, by UPI or bank transfer, after we've confirmed exactly what you're getting. Nothing is charged from this website and you'll never be asked for card details here.",
+  },
+  {
+    q: "What if I don't like it?",
+    a: `${GUARANTEE.body}`,
+  },
+  // Moved out of a "Coming soon" chip row that used to sit directly under the
+  // price. The same list is a liability there and an asset here: volunteering
+  // your limits when someone asks reads as honesty; volunteering them at the
+  // moment of payment reads as a warning.
+  {
+    q: "Is there anything it can't do yet?",
+    a: `Yes, and we'd rather tell you now: ${COMING_SOON.join(", ")} are all on the way but not built yet. Everything described on this page works today — if something you need isn't here, ask us in the chat before you pay and we'll tell you honestly whether we can do it.`,
+  },
 ];
 
 // ── Built around how Indian weddings actually work ─────────────────────────
@@ -240,5 +413,9 @@ export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Themes", href: "#themes" },
   { label: "How it works", href: "#how-it-works" },
   { label: "Pricing", href: "#pricing" },
+  // Ahead of Contact deliberately: someone reaching for the nav with a question
+  // is looking for an answer, not a form, and the FAQ closes far more of them
+  // than an enquiry that has to wait a day for a reply.
+  { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#enquire" },
 ];
