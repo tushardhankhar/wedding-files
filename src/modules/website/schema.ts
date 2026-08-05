@@ -169,6 +169,23 @@ export const websiteConfigSchema = z.object({
         .default([]),
     })
     .optional(),
+  music: z
+    .object({
+      // On by default, but browsers block autoplay-with-sound regardless —
+      // this just controls whether the guest-facing toggle starts in the
+      // "on" visual state. Actual playback still needs a first tap.
+      enabled: z.boolean().default(true),
+      source: z.enum(["library", "custom"]).default("library"),
+      // Set when source === "library" — id into MUSIC_LIBRARY.
+      trackId: z.string().optional(),
+      // Set when source === "custom" — the client's own uploaded MP3.
+      customUrl: z.string().optional(),
+      // Loop segment, in seconds into the track. Both must be set to trim —
+      // absent (the common case) means loop the whole track.
+      loopStart: z.number().optional(),
+      loopEnd: z.number().optional(),
+    })
+    .optional(),
   family: z
     .object({
       members: z

@@ -3524,3 +3524,34 @@
   .gtt-on .gtt-arrow { animation: gtt-bob 1.8s ease-in-out infinite; }
   .gtt-on:hover .gtt-arrow { animation: none; transform: translateY(-2px); }
 }
+
+/* ── Background-music toggle (shared across all themed guest sites) ────────
+   Same corner and same visual language as `.gtt` — stacked directly above it
+   (46px button + 12px gap) so the two persistent controls read as one family
+   instead of each claiming their own corner. Always visible (not scroll-
+   gated like `.gtt`): a guest who wants to mute needs the control from the
+   first moment, not after they've scrolled past the hero. */
+.w-music {
+  position: fixed; right: 22px; z-index: 60;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px + 46px + 12px);
+  width: 46px; height: 46px; border-radius: 999px;
+  display: grid; place-items: center;
+  border: 0; cursor: pointer; color: #fff;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.w-music:hover { transform: translateY(-3px) scale(1.06); }
+.w-music:active { transform: translateY(-1px) scale(0.98); }
+
+.has-theme-dock .w-music {
+  bottom: calc(
+    env(safe-area-inset-bottom, 0px) + var(--theme-dock-h, 44px) + 2.75rem + 46px + 12px
+  );
+}
+.has-sticky-cta .w-music {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sticky-cta-h) + 1rem + 46px + 12px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes w-music-wave { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.7); } }
+  .w-music-on svg { animation: w-music-wave 1.6s ease-in-out infinite; }
+}

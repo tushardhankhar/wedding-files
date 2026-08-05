@@ -16,6 +16,7 @@ import { MayuraView } from "./mayura/mayura-view";
 import { JodiView } from "./jodi/jodi-view";
 import { DakView } from "./dak/dak-view";
 import { GoToTop } from "./go-to-top";
+import { MusicPlayer } from "./music-player";
 
 /**
  * Per-theme renderer dispatch. Each flagship theme has a standalone renderer
@@ -70,6 +71,7 @@ export function SiteView(props: WebsiteViewProps) {
   return (
     <>
       <ThemeView {...props} />
+      <MusicPlayer config={props.config} bg={vars["--w-navy"]} ring={vars["--w-gold"]} />
       <GoToTop bg={vars["--w-navy"]} ring={vars["--w-gold"]} />
     </>
   );
