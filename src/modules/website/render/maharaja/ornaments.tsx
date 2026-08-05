@@ -27,17 +27,19 @@ export function RoyalInsignia({
     <svg
       viewBox="0 0 140 160"
       fill="none"
-      className={cn("h-28 w-auto", className)}
+      className={cn("m-seal-draw h-28 w-auto", className)}
       aria-hidden="true"
     >
-      {/* seal rings */}
-      <ellipse cx="70" cy="88" rx="62" ry="66" stroke="currentColor" strokeWidth="1" opacity="0.55" />
-      <ellipse cx="70" cy="88" rx="56" ry="60" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
+      {/* seal rings — the outer ring finishes drawing first, then the inner
+          one, then the arch and finial: staggered delays read as one
+          continuous engraving rather than five lines snapping in at once. */}
+      <ellipse cx="70" cy="88" rx="62" ry="66" stroke="currentColor" strokeWidth="1" opacity="0.55" pathLength={1} />
+      <ellipse cx="70" cy="88" rx="56" ry="60" stroke="currentColor" strokeWidth="0.6" opacity="0.4" pathLength={1} style={{ animationDelay: "0.15s" }} />
       {/* arch */}
-      <path d={CUSPED_ARCH} transform="translate(20 30)" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d={CUSPED_ARCH} transform="translate(20 30)" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" pathLength={1} style={{ animationDelay: "0.3s" }} />
       {/* dome finial */}
-      <path d="M70 22 C 64 30 64 36 70 40 C 76 36 76 30 70 22 Z" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M70 22 V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M70 22 C 64 30 64 36 70 40 C 76 36 76 30 70 22 Z" stroke="currentColor" strokeWidth="1.4" pathLength={1} style={{ animationDelay: "0.75s" }} />
+      <path d="M70 22 V12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" pathLength={1} style={{ animationDelay: "0.75s" }} />
       <circle cx="70" cy="9" r="2.4" fill="currentColor" />
       {/* side stars */}
       <path d="M22 60 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 Z" fill="currentColor" opacity="0.7" transform="scale(0.7) translate(2 22)" />
@@ -56,7 +58,7 @@ export function RoyalInsignia({
         {initials}
       </text>
       {/* base rule */}
-      <path d="M40 138 H100" stroke="currentColor" strokeWidth="1" opacity="0.6" />
+      <path d="M40 138 H100" stroke="currentColor" strokeWidth="1" opacity="0.6" pathLength={1} style={{ animationDelay: "1s" }} />
       <path d="M66 138 l4 -4 4 4 -4 4 Z" fill="currentColor" />
     </svg>
   );

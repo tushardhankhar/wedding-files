@@ -8,7 +8,6 @@ import { Marquee } from "@/components/landing/marquee";
 import { ThemeShowcase } from "@/components/landing/sections-story";
 import { ProcessFlow } from "@/components/landing/process-flow";
 import {
-  FeatureStory,
   PricingPreview,
   LandingFooter,
 } from "@/components/landing/sections-product";
@@ -57,8 +56,9 @@ export default function LandingPage() {
             it's the only claim on the page a JPEG invitation card can't match,
             so a cold visitor has to hit it before they hit anything they could
             mistake for decoration.
-            (ExperiencePreview, CouplesSection, RealitySection and FinalCta were
-            removed as redundant; their components remain in the codebase.) */}
+            (ExperiencePreview, CouplesSection, RealitySection, FinalCta and
+            FeatureStory were removed as redundant; their components remain in
+            the codebase.) */}
         <LandingHero />
         <div className="border-y border-[color:var(--l-gold)]/20 bg-[color:var(--l-wine)] text-[color:var(--l-ivory)]">
           <Marquee
@@ -77,7 +77,6 @@ export default function LandingPage() {
         <ThemeShowcase />
         <ProcessFlow />
         {/* <BrandStatement /> — commented out per request */}
-        <FeatureStory />
         {/* Objections before the number. A visitor who reaches ₹1,599 still
             wondering whether it's a subscription, who builds the site, or what
             happens if it's rubbish doesn't ask — they leave. So the refund

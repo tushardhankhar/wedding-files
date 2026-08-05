@@ -73,18 +73,16 @@ export function LandingHero() {
             Invitation websites · {PRICE}
           </p>
 
-          {/* The category noun leads. Someone arriving cold from Instagram has to
-              know what this is before they can be moved by it, so "invitation
-              website" sits in the first three words rather than at the end of a
-              poetic sentence. */}
-          {/* No hard line breaks: at three balanced lines the longest word pair
-              ("invitation website") already sets the measure, and a <br /> here
-              only fights the clamp at the sizes between. */}
+          {/* Plain and literal on purpose: a cold visitor from Instagram has
+              three seconds to know what this is, and "invitation website"
+              said twice (eyebrow + here) does that job better than one
+              clever line ever did. The swash still marks the one word worth
+              lingering on — how fast it comes together. */}
           <h1 className="l-load l-display mt-4 text-balance text-[clamp(2.1rem,4.6vw,4rem)] font-semibold leading-[1.06] text-[color:var(--l-ivory)] lg:mt-6" style={{ animationDelay: "0.18s" }}>
-            The invitation website your guests{" "}
+            Your invitation website,{" "}
             {/* Kept on one line so the drawn swash underneath can't be split. */}
             <span className="relative inline-block whitespace-nowrap italic text-[color:var(--l-gold-lite)]">
-              won&apos;t forget
+              made in minutes
               <svg
                 className="l-draw absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 300 14"
