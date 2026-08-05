@@ -196,7 +196,7 @@ export const PLAN_INCLUDES: string[] = [
   "Personal invitation links for every family",
   "Selective events — each family sees only theirs",
   "Guest RSVP, event by event",
-  "Photo gallery, story, venue maps, countdown & FAQ",
+  "Photo gallery, story, venue maps, countdown, music & FAQ",
   "One private link, shared on WhatsApp",
 ];
 

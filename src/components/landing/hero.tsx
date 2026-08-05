@@ -44,6 +44,8 @@ const INCLUDED: Array<{ label: string; stops: string[] }> = [
   { label: "Photo gallery", stops: ["gallery"] },
   { label: "RSVP", stops: ["rsvp"] },
   { label: "English + हिंदी", stops: [] },
+  // Plays everywhere, not one scrollable moment — same as the bilingual chip.
+  { label: "Background music", stops: [] },
 ];
 
 export function LandingHero() {
