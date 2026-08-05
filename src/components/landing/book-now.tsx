@@ -5,10 +5,22 @@ import { cn } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { BUY_CTA } from "./data";
 
-/** Pre-filled WhatsApp message the booking chat opens with. */
-const BOOKING_MESSAGE =
-  "Hi Join the Jashn! 🎉 I'd like to book my celebration invitation.\n\n" +
-  "Names: \nEvent date: \nOccasion / theme (if decided): ";
+/**
+ * Pre-filled WhatsApp message the booking chat opens with.
+ *
+ * `plan` names the card the visitor tapped. Without it, three different buttons
+ * at three different prices all opened the identical message, so whoever
+ * answers has to start by asking which one — the first thing that happens after
+ * a decision is being asked to make it again — and there's no way to tell from
+ * the inbox which plan is actually earning the ad spend.
+ */
+function bookingMessage(plan?: string): string {
+  return (
+    "Hi Join the Jashn! 🎉 I'd like to book my celebration invitation.\n\n" +
+    (plan ? `Plan: ${plan}\n` : "") +
+    "Names: \nEvent date: \nOccasion / theme (if decided): "
+  );
+}
 
 /**
  * Builds the WhatsApp link from NEXT_PUBLIC_WHATSAPP_NUMBER, which may be a bare
@@ -17,9 +29,9 @@ const BOOKING_MESSAGE =
  * form. Until a number is set it opens WhatsApp's "choose a contact" screen
  * (wa.me with no recipient); once set, it opens that chat directly.
  */
-export function bookingHref(): string {
+export function bookingHref(plan?: string): string {
   const raw = (env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "").trim();
-  const text = encodeURIComponent(BOOKING_MESSAGE);
+  const text = encodeURIComponent(bookingMessage(plan));
   if (!raw) return `https://wa.me/?text=${text}`;
   if (/^https?:\/\//i.test(raw)) {
     const sep = raw.includes("?") ? "&" : "?";
@@ -50,19 +62,24 @@ function WhatsAppIcon({ className }: { className?: string }) {
 export function BookNowButton({
   className,
   label = BUY_CTA,
+  plan,
 }: {
   className?: string;
   label?: string;
+  /** Plan name written into the chat, e.g. "The Full Invitation — ₹1,599". */
+  plan?: string;
 }) {
   return (
     <a
-      href={bookingHref()}
+      href={bookingHref(plan)}
       target="_blank"
       rel="noopener noreferrer"
       // Fires before navigation, and the link opens a new tab so this page is
       // never torn down mid-push — no need for the `sendBeacon` gymnastics an
       // in-place outbound link would require.
-      onClick={() => sendGTMEvent({ event: "whatsapp_click", cta_label: label })}
+      onClick={() =>
+        sendGTMEvent({ event: "whatsapp_click", cta_label: label, plan: plan ?? "none" })
+      }
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--l-emerald)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(8,127,91,.7)] transition-transform hover:-translate-y-0.5",
         className

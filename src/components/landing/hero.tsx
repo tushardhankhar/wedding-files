@@ -10,7 +10,7 @@ import {
   SHOWCASE_THEMES,
   PRICE,
   DEMO_CTA,
-  BUY_CTA,
+  BUY_CTA_SHORT,
   TRUST_SIGNALS,
 } from "./data";
 import { ThemePhone } from "./theme-card";
@@ -60,25 +60,29 @@ export function LandingHero() {
       <Mandala className="spin-slow left-1/2 top-[-260px] h-[640px] w-[640px] -translate-x-1/2 opacity-[0.14]" />
       <PetalField count={12} />
 
-      <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-14 px-5 pb-20 pt-28 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
+      {/* Tight on phones, generous from `lg` up. The mobile numbers here are
+          not taste: at the old spacing the hero measured 1,630px on a 390×844
+          screen, so the phone — the only thing on the page that proves the
+          product is a live, scrolling website rather than a picture of one —
+          began ~900px down and nobody arriving from an ad ever saw it. Every
+          reduction below buys part of the ~290px that pulls it into the fold. */}
+      <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-8 px-5 pb-10 pt-24 sm:px-8 lg:gap-10 lg:pb-20 lg:pt-28 lg:grid-cols-[1.1fr_0.9fr]">
         {/* Copy */}
         <div className="text-center lg:text-left">
           <p className="l-load text-[11px] font-semibold uppercase tracking-[0.34em] text-[color:var(--l-gold-lite)]" style={{ animationDelay: "0.05s" }}>
             Invitation websites · {PRICE}
           </p>
 
-          {/* The category noun leads. Someone arriving cold from Instagram has to
-              know what this is before they can be moved by it, so "invitation
-              website" sits in the first three words rather than at the end of a
-              poetic sentence. */}
-          {/* No hard line breaks: at three balanced lines the longest word pair
-              ("invitation website") already sets the measure, and a <br /> here
-              only fights the clamp at the sizes between. */}
-          <h1 className="l-load l-display mt-6 text-balance text-[clamp(2.3rem,4.6vw,4rem)] font-semibold leading-[1.06] text-[color:var(--l-ivory)]" style={{ animationDelay: "0.18s" }}>
-            The invitation website your guests{" "}
+          {/* Plain and literal on purpose: a cold visitor from Instagram has
+              three seconds to know what this is, and "invitation website"
+              said twice (eyebrow + here) does that job better than one
+              clever line ever did. The swash still marks the one word worth
+              lingering on — how fast it comes together. */}
+          <h1 className="l-load l-display mt-4 text-balance text-[clamp(2.1rem,4.6vw,4rem)] font-semibold leading-[1.06] text-[color:var(--l-ivory)] lg:mt-6" style={{ animationDelay: "0.18s" }}>
+            Your invitation website,{" "}
             {/* Kept on one line so the drawn swash underneath can't be split. */}
             <span className="relative inline-block whitespace-nowrap italic text-[color:var(--l-gold-lite)]">
-              won&apos;t forget
+              made in minutes
               <svg
                 className="l-draw absolute -bottom-2 left-0 w-full"
                 viewBox="0 0 300 14"
@@ -97,7 +101,7 @@ export function LandingHero() {
             .
           </h1>
 
-          <p className="l-load mx-auto mt-8 max-w-lg text-pretty text-base leading-relaxed text-white/80 lg:mx-0" style={{ animationDelay: "0.42s" }}>
+          <p className="l-load mx-auto mt-5 max-w-lg text-pretty text-[15px] leading-relaxed text-white/80 lg:mt-8 lg:text-base" style={{ animationDelay: "0.42s" }}>
             A live countdown, your photos, RSVP, venue maps and your full
             timeline — shared as one private WhatsApp link.
           </p>
@@ -108,7 +112,7 @@ export function LandingHero() {
               visitor skimming for three seconds never reaches — and it's the
               reason to buy, not a footnote to the feature list. */}
           <p
-            className="l-load mx-auto mt-5 max-w-lg border-l-2 border-[color:var(--l-gold)] pl-4 text-left text-[17px] leading-snug text-[color:var(--l-ivory)] lg:mx-0"
+            className="l-load mx-auto mt-4 max-w-lg border-l-2 border-[color:var(--l-gold)] pl-4 text-left text-[16px] leading-snug text-[color:var(--l-ivory)] lg:mx-0 lg:mt-5 lg:text-[17px]"
             style={{ animationDelay: "0.46s" }}
           >
             One link.{" "}
@@ -117,7 +121,11 @@ export function LandingHero() {
             </span>
           </p>
 
-          <ul className="l-load mt-7 flex flex-wrap justify-center gap-2 lg:justify-start" style={{ animationDelay: "0.5s" }}>
+          {/* Desktop only. On a phone this row is 133px of text restating what
+              the live phone right below it is already demonstrating, and it was
+              costing the phone its place in the first screen. The legend is a
+              nice touch beside a side-by-side layout; it is not worth the fold. */}
+          <ul className="l-load mt-7 hidden flex-wrap justify-center gap-2 lg:flex lg:justify-start" style={{ animationDelay: "0.5s" }}>
             {INCLUDED.map(({ label, stops }) => {
               const active = stops.includes(stop);
               return (
@@ -138,40 +146,48 @@ export function LandingHero() {
             })}
           </ul>
 
-          <div className="l-load mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.6s" }}>
+          {/* Three stacked full-width buttons cost 195px and made the visitor
+              rank three equal-looking options before they'd seen anything. Now
+              the two that convert sit side by side in one 52px row — look, or
+              buy — and the explainer drops to a text link, which is what a
+              "learn more" always should have been next to a live demo. */}
+          <div className="l-load mt-6 grid grid-cols-2 gap-2.5 lg:mt-9 lg:flex lg:items-center lg:justify-start" style={{ animationDelay: "0.6s" }}>
             <Link
               href={`/demo/${HERO_THEME.demo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-8 py-4 text-center text-sm font-semibold text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 sm:w-auto"
+              className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-4 py-3.5 text-center text-[13px] font-semibold leading-tight text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 lg:px-8 lg:py-4 lg:text-sm"
             >
-              {DEMO_CTA}
+              <span className="lg:hidden">See a guest&apos;s view</span>
+              <span className="hidden lg:inline">{DEMO_CTA}</span>
             </Link>
+            {/* Short form on the phone: the full label wraps to two lines
+                beside a one-line demo button, and a taller, busier green
+                rectangle beside it makes the pair read as unequal choices. */}
+            <BookNowButton
+              label={BUY_CTA_SHORT}
+              className="px-4 py-3.5 text-[13px] leading-tight lg:hidden"
+            />
             <a
               href="#how-it-works"
-              className="w-full rounded-full border border-white/30 px-8 py-4 text-center text-sm font-semibold text-[color:var(--l-ivory)] transition-colors hover:border-[color:var(--l-gold-lite)] sm:w-auto"
+              className="hidden rounded-full border border-white/30 px-8 py-4 text-center text-sm font-semibold text-[color:var(--l-ivory)] transition-colors hover:border-[color:var(--l-gold-lite)] lg:block"
             >
               See how it works
             </a>
-            {/* Mobile-only WhatsApp CTA, under "See how it works". */}
-            <BookNowButton
-              label={BUY_CTA}
-              className="w-full px-8 py-4 text-sm sm:hidden"
-            />
           </div>
 
           {/* The terms a buyer would otherwise have to hunt for, stated before
               the WhatsApp CTA rather than after it — asking someone to open a
               chat is a bigger step than a click, so it has to be the safest
               thing on screen by the time they reach it. */}
-          <p className="l-load mt-6 text-xs leading-relaxed tracking-wide text-white/60" style={{ animationDelay: "0.7s" }}>
-            {PRICE} one-time · Live in minutes · Unlimited guests · Link stays
-            live 12 months · No app, no guest accounts
+          <p className="l-load mt-4 text-[11px] leading-relaxed tracking-wide text-white/60 lg:mt-6 lg:text-xs" style={{ animationDelay: "0.7s" }}>
+            {PRICE} one-time · Live in minutes · Unlimited guests · 7-day refund
+            · No app, no guest accounts
           </p>
 
           {/* Honest trust signals only — things the visitor can verify in one
               click. No customer counts or review stars until they're real. */}
-          <ul className="l-load mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/75 lg:justify-start" style={{ animationDelay: "0.76s" }}>
+          <ul className="l-load mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/75 lg:mt-4 lg:justify-start" style={{ animationDelay: "0.76s" }}>
             {TRUST_SIGNALS.map((s) => (
               <li key={s} className="flex items-center gap-1.5">
                 <span aria-hidden="true" className="text-[color:var(--l-gold)]">✦</span>
@@ -190,9 +206,18 @@ export function LandingHero() {
               CTA row off a 768px laptop screen. The preview inside it does its
               own scaling — see TOUR_VIEWPORT in theme-card. */}
           <ThemePhone theme={HERO_THEME} tour onStopChange={setStop} />
-          <p className="mt-6 text-center text-xs text-white/60">
+          <p className="mt-4 text-center text-xs text-white/60 lg:mt-6">
             A real invitation site, running live — tap the screen to explore it.
           </p>
+          {/* The explainer link the mobile CTA row gave up. Below the phone
+              rather than above it: someone who has watched the demo scroll and
+              still wants the mechanics explained is exactly who this is for. */}
+          <a
+            href="#how-it-works"
+            className="mt-3 text-xs font-semibold text-[color:var(--l-gold-lite)] underline-offset-4 hover:underline lg:hidden"
+          >
+            See how it works ↓
+          </a>
         </div>
       </div>
     </section>

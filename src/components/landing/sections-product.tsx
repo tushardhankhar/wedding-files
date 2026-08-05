@@ -3,12 +3,13 @@ import { BookNowButton } from "./book-now";
 import { PhotoArt, PetalField } from "./art";
 import {
   PRICING_PLANS,
-  COMING_SOON,
   REALITY_NOTES,
   CONTACT_EMAIL,
   PLAN_TERMS,
+  PRICE_ANCHORS,
   DEMO_CTA,
 } from "./data";
+import { NextStepsStrip } from "./faq";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { CountUp } from "./count-up";
 
@@ -94,45 +95,36 @@ export function FeatureStory() {
           />
         </div>
 
-        {/* trio of lighter features */}
-        <div className="mt-20 grid gap-5 md:grid-cols-3" data-reveal>
-          <div className="rounded-2xl border border-[color:var(--l-line)] bg-white p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[color:var(--l-gold)]">
-              Built for WhatsApp
-            </p>
-            <p className="mt-2 text-sm text-[color:var(--l-ink-soft)]">
-              Share a beautiful private invitation in seconds.
-            </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-2xl rounded-bl-sm bg-[color:var(--l-emerald)]/10 px-4 py-2.5 text-sm text-[color:var(--l-emerald)]">
-              <span className="size-2 rounded-full bg-[color:var(--l-emerald)]" />
-              jointhejashn.com/a-meera/…
-            </div>
-          </div>
-          <div className="rounded-2xl border border-[color:var(--l-line)] bg-white p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[color:var(--l-gold)]">
-              English + Hindi
-            </p>
-            <p className="mt-2 text-sm text-[color:var(--l-ink-soft)]">
-              Celebrate in the language that feels like home.
-            </p>
-            <p className="l-display mt-4 text-lg text-[color:var(--l-wine)]">You&apos;re invited</p>
-            <p className="l-deva text-lg text-[color:var(--l-pink)]">आप सादर आमंत्रित हैं</p>
-          </div>
-          <div className="rounded-2xl border border-[color:var(--l-line)] bg-white p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[color:var(--l-gold)]">
-              Every detail, one place
-            </p>
-            <p className="mt-2 text-sm text-[color:var(--l-ink-soft)]">
-              Countdowns, venues, maps, galleries, timelines and FAQs.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {["Countdown", "Venues", "Maps", "Gallery", "Timeline", "FAQs"].map((c) => (
-                <span key={c} className="rounded-full bg-[color:var(--l-ivory-2)] px-3 py-1 text-[11px] font-medium text-[color:var(--l-ink-soft)]">
-                  {c}
-                </span>
-              ))}
-            </div>
-          </div>
+        {/* Was three cards, ~400px, each restating something the hero chips,
+            the pricing feature list and the FAQ all say again. A visitor doesn't
+            need "Countdowns, venues, maps, galleries" as a headline — they need
+            to know it's all there, which a chip row says just as well in a
+            fifth of the height. The bilingual line stays as type because it's
+            the one claim that proves itself by being shown. */}
+        <div className="mt-14 text-center" data-reveal>
+          <p className="l-display text-lg text-[color:var(--l-wine)]">
+            You&apos;re invited{" "}
+            <span className="l-deva text-[color:var(--l-pink)]">आप सादर आमंत्रित हैं</span>
+          </p>
+          <ul className="mt-4 flex flex-wrap justify-center gap-1.5">
+            {[
+              "Countdown",
+              "Your story",
+              "Venues & maps",
+              "Photo gallery",
+              "Timeline",
+              "Guest FAQ",
+              "English + हिंदी",
+              "Shared on WhatsApp",
+            ].map((c) => (
+              <li
+                key={c}
+                className="rounded-full border border-[color:var(--l-line)] bg-white px-3.5 py-1.5 text-[11px] font-medium text-[color:var(--l-ink-soft)]"
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
@@ -396,17 +388,85 @@ export function PricingPreview() {
           </p>
         </div>
 
-        <div className="mt-14 grid items-stretch gap-6 lg:grid-cols-3" data-reveal>
+        {/* The comparison the visitor is running in their head anyway, made
+            explicit. ₹1,599 has no reference point of its own — nobody has ever
+            bought an "invitation website" before — so on its own it's judged
+            against zero and reads as an expense. Against the printing bill it
+            replaces, it reads as a saving, and the plan cards below inherit
+            that frame instead of having to establish one. */}
+        {/* One card of three rows on a phone, three cards across from `sm` up.
+            Stacked as three separate cards this was ~450px and, worse, you
+            could only ever see one number at a time — which is the one thing a
+            comparison has to avoid. As rows, all three prices are on screen
+            together and the argument lands in a glance. */}
+        <ul
+          className="mt-10 overflow-hidden rounded-2xl border border-[color:var(--l-line)] sm:grid sm:grid-cols-3 sm:gap-3 sm:rounded-none sm:border-0"
+          data-reveal
+        >
+          {PRICE_ANCHORS.map((a, i) => {
+            const ours = i === PRICE_ANCHORS.length - 1;
+            return (
+              <li
+                key={a.label}
+                className={[
+                  "flex items-center justify-between gap-4 border-b border-[color:var(--l-line)] px-4 py-3 last:border-b-0",
+                  "sm:block sm:rounded-2xl sm:border-b-0 sm:p-5",
+                  ours
+                    ? "bg-[color:var(--l-wine)] text-[color:var(--l-ivory)] sm:border-2 sm:border-[color:var(--l-gold)]"
+                    : "bg-white/70 sm:border sm:border-[color:var(--l-line)]",
+                ].join(" ")}
+              >
+                <p
+                  className={
+                    ours
+                      ? "min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--l-gold-lite)] sm:tracking-[0.18em]"
+                      : "min-w-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--l-ink-soft)]/70 sm:tracking-[0.18em]"
+                  }
+                >
+                  {a.label}
+                </p>
+                <p
+                  className={
+                    ours
+                      ? "l-display flex-none text-xl font-semibold tabular-nums text-[color:var(--l-gold-lite)] sm:mt-2 sm:text-2xl"
+                      : "l-display flex-none text-xl font-semibold tabular-nums text-[color:var(--l-ink-soft)] line-through decoration-[color:var(--l-pink)]/50 decoration-2 sm:mt-2 sm:text-2xl"
+                  }
+                >
+                  {a.amount}
+                </p>
+                {/* The "₹40–₹150 a card" detail is what makes the range credible
+                    rather than plucked from the air — but it's supporting
+                    evidence, and on a phone row it competes with the number it's
+                    supporting. Shown from `sm`, where the card has room for it. */}
+                <p
+                  className={
+                    ours
+                      ? "hidden text-xs text-white/70 sm:mt-1 sm:block"
+                      : "hidden text-xs text-[color:var(--l-ink-soft)]/80 sm:mt-1 sm:block"
+                  }
+                >
+                  {a.note}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3" data-reveal>
           {PRICING_PLANS.map((plan) => {
             const featured = Boolean(plan.featured);
             return (
               <article
                 key={plan.id}
-                className={
+                className={[
                   featured
                     ? "relative flex flex-col overflow-hidden rounded-[26px] bg-[color:var(--l-wine)] p-8 text-[color:var(--l-ivory)] shadow-[0_40px_90px_-32px_rgba(59,16,34,.8)] lg:-translate-y-3"
-                    : "relative flex flex-col overflow-hidden rounded-[26px] border border-[color:var(--l-line)] bg-white p-8 shadow-[0_24px_60px_-40px_rgba(59,16,34,.45)]"
-                }
+                    : "relative flex flex-col overflow-hidden rounded-[26px] border border-[color:var(--l-line)] bg-white p-8 shadow-[0_24px_60px_-40px_rgba(59,16,34,.45)]",
+                  // Source order is the desktop row; the flagship is hoisted to
+                  // the top of the stacked mobile column so the advertised
+                  // ₹1,599 is the first price a phone visitor meets.
+                  plan.mobileFirst ? "order-first lg:order-none" : "",
+                ].join(" ")}
               >
                 {featured ? (
                   <span
@@ -417,7 +477,16 @@ export function PricingPreview() {
 
                 <div className="relative">
                   {plan.badge ? (
-                    <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]">
+                    <span
+                      className={
+                        featured
+                          ? "mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold-lite)]/40 bg-[color:var(--l-gold-lite)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold-lite)]"
+                          // Gold-on-white failed to read at 10px; on the light
+                          // cards the badge takes the emerald used everywhere
+                          // else for "this saves you something".
+                          : "mb-4 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-emerald)]/30 bg-[color:var(--l-emerald)]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-emerald)]"
+                      }
+                    >
                       ✦ {plan.badge}
                     </span>
                   ) : null}
@@ -447,24 +516,62 @@ export function PricingPreview() {
                   </p>
                 </div>
 
-                <ul className="relative mt-6 grid gap-2.5">
-                  {plan.features.map((pt) => (
-                    <li
-                      key={pt}
-                      className={
-                        featured
-                          ? "flex items-start gap-2.5 text-sm text-white/90"
-                          : "flex items-start gap-2.5 text-sm text-[color:var(--l-wine)]/85"
-                      }
-                    >
-                      <span className={featured ? "mt-0.5 text-[color:var(--l-gold-lite)]" : "mt-0.5 text-[color:var(--l-pink)]"}>✦</span>
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
+                {/* On a phone, three fully-expanded feature lists stacked to
+                    3,059px of pricing — most of it belonging to the two plans
+                    the visitor didn't come for. The secondary plans now open on
+                    demand below `lg`; the plan they were promised in the ad
+                    stays open always. Native <details> so it needs no JS and no
+                    hydration, and `open` on desktop where there's room for the
+                    three-across comparison the layout is built for. */}
+                {(() => {
+                  const list = (
+                    <ul className="grid gap-2.5">
+                      {plan.features.map((pt) => (
+                        <li
+                          key={pt}
+                          className={
+                            featured
+                              ? "flex items-start gap-2.5 text-sm text-white/90"
+                              : "flex items-start gap-2.5 text-sm text-[color:var(--l-wine)]/85"
+                          }
+                        >
+                          <span className={featured ? "mt-0.5 text-[color:var(--l-gold-lite)]" : "mt-0.5 text-[color:var(--l-pink)]"}>✦</span>
+                          {pt}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+
+                  // The featured plan is the one they came for — it is never
+                  // collapsed, so it gets no <details> and no summary. Wrapping
+                  // it anyway left an always-open disclosure rendering "See
+                  // what's included" in wine on a wine card: invisible text and
+                  // a stray gold "+" floating above the feature list.
+                  if (featured) return <div className="relative mt-6">{list}</div>;
+
+                  return (
+                    <details data-plan className="group/plan relative mt-6">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-semibold text-[color:var(--l-wine)] [&::-webkit-details-marker]:hidden">
+                        See what&apos;s included
+                        <span
+                          aria-hidden="true"
+                          className="text-[color:var(--l-gold)] transition-transform duration-300 group-open/plan:rotate-45"
+                        >
+                          +
+                        </span>
+                      </summary>
+                      <div className="pt-4 lg:pt-0">{list}</div>
+                    </details>
+                  );
+                })()}
 
                 <div className="relative mt-auto flex flex-col gap-2.5 pt-8">
-                  <BookNowButton className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]" />
+                  {/* Names the plan in the chat it opens, so the reply can start
+                      with the answer instead of "which one did you mean?". */}
+                  <BookNowButton
+                    plan={`${plan.name} — ${plan.price}`}
+                    className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
+                  />
                   {/* Names the step before it happens. A button that silently
                       launches WhatsApp is a surprise, and a surprise is a
                       reason to close the tab. */}
@@ -506,27 +613,22 @@ export function PricingPreview() {
           </ul>
         </div>
 
-        {/* live demo + coming-soon extras */}
-        <div className="mt-12 flex flex-col items-center gap-8" data-reveal>
+        {/* The last thing before the decision: what actually happens next. */}
+        <NextStepsStrip />
+
+        {/* The "Coming soon" chip row that used to sit here is gone. Listing
+            what the product can't do yet, directly under the price, at the
+            moment someone is deciding to pay, is an own goal — those items live
+            in the FAQ now, where they answer a question instead of raising one. */}
+        <div className="mt-12 flex flex-col items-center" data-reveal>
           <Link
             href="/demo/royal"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-full bg-[color:var(--l-wine)] px-9 py-4 text-sm font-semibold text-[color:var(--l-ivory)] shadow-[0_18px_44px_-14px_rgba(59,16,34,.6)] transition-transform hover:-translate-y-0.5"
+            className="inline-block rounded-full border border-[color:var(--l-line)] bg-white px-9 py-3.5 text-sm font-semibold text-[color:var(--l-wine)] transition-transform hover:-translate-y-0.5"
           >
             {DEMO_CTA}
           </Link>
-
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-gold)]/40 bg-[color:var(--l-gold-lite)]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--l-gold)]">
-              Coming soon
-            </span>
-            {COMING_SOON.map((c) => (
-              <span key={c} className="rounded-full border border-[color:var(--l-line)] px-3.5 py-1.5 text-[11px] font-medium text-[color:var(--l-ink-soft)]">
-                {c}
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -586,13 +688,14 @@ const FOOTER_COLS: { title: string; links: { label: string; href: string }[] }[]
       { label: "How it works", href: "#how-it-works" },
       { label: "Themes", href: "#themes" },
       { label: "Pricing", href: "#pricing" },
+      { label: "FAQ", href: "#faq" },
       { label: DEMO_CTA, href: "/demo/royal" },
     ],
   },
   {
     title: "For Planners",
     links: [
-      { label: "Planner tools (soon)", href: "#for-planners" },
+      { label: "Planner tools (soon)", href: "/for-planners" },
       { label: "Partner with us", href: "#enquire" },
     ],
   },

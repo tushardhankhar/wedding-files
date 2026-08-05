@@ -6,13 +6,13 @@ import { DEMO_EVENTS, DEMO_FAMILIES } from "./data";
 
 /**
  * THE critical product explanation: pick a family, watch their invitation
- * change. Uninvited events don't fade — they simply don't exist.
+ * change. Every event renders for every family — invited ones live, the rest
+ * struck through and greyed — so the exclusion is seen, not just told.
  */
 export function GuestPersonalisationDemo() {
   const [familyId, setFamilyId] = useState(DEMO_FAMILIES[0].id);
   const family = DEMO_FAMILIES.find((f) => f.id === familyId) ?? DEMO_FAMILIES[0];
 
-  const invited = DEMO_EVENTS.filter((e) => family.eventIds.includes(e.id));
   const hidden = DEMO_EVENTS.filter((e) => !family.eventIds.includes(e.id));
 
   return (
@@ -23,17 +23,18 @@ export function GuestPersonalisationDemo() {
             Why Jashn is different
           </p>
           <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.6vw,3.4rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            One celebration.
+            One invitation link.
             <br />
-            Hundreds of guests.
+            A different set of events
             <br />
             <span className="italic text-[color:var(--l-pink)]">
-              A different invitation for each.
+              for every guest.
             </span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-            Most invites send everyone the same page. Jashn gives every family
-            their own — pick one below and watch the invitation change.
+            Your officemates don&apos;t need to see the Haldi. Your college
+            friends don&apos;t need the family puja. Choose who sees what —
+            pick a family below and watch the invitation change.
           </p>
         </div>
 
@@ -87,63 +88,120 @@ export function GuestPersonalisationDemo() {
           </div>
 
           <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.24em] text-[color:var(--l-gold)]">
-            Your invited celebrations
+            What the {family.label} actually sees
           </p>
 
+          {/* Every event renders in the same grid, invited or not — the
+              exclusion is the point, so it has to be visible without reading
+              a caption. Hidden events go dashed, greyed and struck through
+              right next to the ones that made the cut; a visitor reads the
+              difference in one glance instead of having to find a footnote. */}
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {invited.map((e, i) => (
-              <div
-                key={e.id}
-                className="relative overflow-hidden rounded-2xl border border-[color:var(--l-line)] bg-[color:var(--l-ivory)] p-4 duration-500 animate-in fade-in slide-in-from-bottom-2"
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-y-0 left-0 w-1"
-                  style={{ background: e.color }}
-                />
-                <div className="flex items-baseline justify-between gap-2 pl-2">
-                  <p className="l-display text-xl font-semibold text-[color:var(--l-wine)]">
-                    {e.name}{" "}
-                    <span className="l-deva text-sm font-normal text-[color:var(--l-ink-soft)]">
-                      {e.hi}
-                    </span>
-                  </p>
-                  <p className="text-xs font-semibold tabular-nums text-[color:var(--l-ink-soft)]">
-                    {e.date} · {e.time}
-                  </p>
+            {DEMO_EVENTS.map((e, i) => {
+              const isInvited = family.eventIds.includes(e.id);
+              return (
+                <div
+                  key={e.id}
+                  className={cn(
+                    "relative overflow-hidden rounded-2xl border p-4 duration-500 animate-in fade-in slide-in-from-bottom-2",
+                    isInvited
+                      ? "border-[color:var(--l-line)] bg-[color:var(--l-ivory)]"
+                      : "border-dashed border-[color:var(--l-line)] bg-[color:var(--l-ivory)]/50 opacity-55"
+                  )}
+                  style={{ animationDelay: `${i * 80}ms` }}
+                >
+                  {isInvited ? (
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-y-0 left-0 w-1"
+                      style={{ background: e.color }}
+                    />
+                  ) : null}
+                  <div className="flex items-baseline justify-between gap-2 pl-2">
+                    <p
+                      className={cn(
+                        "l-display text-xl font-semibold",
+                        isInvited
+                          ? "text-[color:var(--l-wine)]"
+                          : "text-[color:var(--l-ink-soft)] line-through decoration-2"
+                      )}
+                    >
+                      {e.name}{" "}
+                      <span className="l-deva text-sm font-normal text-[color:var(--l-ink-soft)]">
+                        {e.hi}
+                      </span>
+                    </p>
+                    {isInvited ? (
+                      <p className="text-xs font-semibold tabular-nums text-[color:var(--l-ink-soft)]">
+                        {e.date} · {e.time}
+                      </p>
+                    ) : null}
+                  </div>
+                  {isInvited ? (
+                    <>
+                      <p className="mt-1 pl-2 text-sm text-[color:var(--l-ink-soft)]">{e.venue}</p>
+                      <div className="mt-3 flex gap-2 pl-2">
+                        <span className="rounded-full bg-[color:var(--l-emerald)]/10 px-3 py-1 text-[11px] font-semibold text-[color:var(--l-emerald)]">
+                          RSVP
+                        </span>
+                        <span className="rounded-full border border-[color:var(--l-line)] px-3 py-1 text-[11px] font-medium text-[color:var(--l-ink-soft)]">
+                          Directions
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="mt-2 pl-2 text-[11px] font-medium text-[color:var(--l-ink-soft)]/70">
+                      🔒 Not shown to the {family.label}
+                    </p>
+                  )}
                 </div>
-                <p className="mt-1 pl-2 text-sm text-[color:var(--l-ink-soft)]">{e.venue}</p>
-                <div className="mt-3 flex gap-2 pl-2">
-                  <span className="rounded-full bg-[color:var(--l-emerald)]/10 px-3 py-1 text-[11px] font-semibold text-[color:var(--l-emerald)]">
-                    RSVP
-                  </span>
-                  <span className="rounded-full border border-[color:var(--l-line)] px-3 py-1 text-[11px] font-medium text-[color:var(--l-ink-soft)]">
-                    Directions
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {hidden.length > 0 ? (
-            <p className="mt-5 text-center text-[13px] italic text-[color:var(--l-ink-soft)]">
-              {hidden.map((e) => e.name).join(" & ")}? For the{" "}
-              {family.label}, those events simply don&apos;t exist.
-            </p>
-          ) : (
-            <p className="mt-5 text-center text-[13px] italic text-[color:var(--l-ink-soft)]">
-              The Kapoors are close family — they see every celebration.
-            </p>
-          )}
+          <p className="mt-5 text-center text-[13px] italic text-[color:var(--l-ink-soft)]">
+            {hidden.length > 0
+              ? `Not hidden, not blurred — for the ${family.label}, ${hidden
+                  .map((e) => e.name)
+                  .join(" & ")} simply isn't on their link.`
+              : "The Kapoors are close family — they see every celebration."}
+          </p>
         </div>
 
-        <p className="mt-8 text-center text-sm text-[color:var(--l-ink-soft)]" data-reveal>
-          <span className="font-semibold text-[color:var(--l-wine)]">
-            Private by design.
-          </span>{" "}
-          Uninvited events simply don&apos;t exist in the guest experience.
-        </p>
+        {/* Absorbed from what used to be a separate 674px "Private by design"
+            section further down the page. It was making this exact argument a
+            second time, in prose, after this demo had already proved it
+            interactively — and a claim restated is a claim weakened. The real
+            guest URL and the terms are worth keeping, so they moved here, where
+            the visitor has just watched the thing they describe happen. */}
+        <div className="mt-10 text-center" data-reveal>
+          <div className="mx-auto inline-flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-2xl border border-[color:var(--l-line)] bg-white px-5 py-3 shadow-sm">
+            <span aria-hidden="true" className="text-[color:var(--l-gold)]">🔒</span>
+            <code className="text-[13px] text-[color:var(--l-wine)]">
+              jointhejashn.com/a-meera/g/
+              <span className="font-semibold text-[color:var(--l-pink)]">7FK29</span>
+            </code>
+            <span className="rounded-full bg-[color:var(--l-ivory-2)] px-3 py-1 text-[11px] font-semibold text-[color:var(--l-ink-soft)]">
+              Sharma Family only
+            </span>
+          </div>
+
+          <ul className="mt-4 flex flex-wrap justify-center gap-2">
+            {[
+              "Private link per family",
+              "No guest account",
+              "No app download",
+              "Links can be revoked",
+            ].map((p) => (
+              <li
+                key={p}
+                className="rounded-full border border-[color:var(--l-line)] bg-white px-3.5 py-1.5 text-[11px] font-medium text-[color:var(--l-ink-soft)]"
+              >
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

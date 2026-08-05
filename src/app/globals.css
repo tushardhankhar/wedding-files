@@ -349,13 +349,72 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
-/* metallic antique gold text — subtle warm gradient, no yellow neon */
+/* metallic antique gold text — a slow shimmer, like light passing over
+   engraved gold, not yellow neon. background-size wider than the element so
+   the sweep has somewhere to travel; `alternate` makes it glint back and
+   forth rather than snapping back at the loop point. */
 .mhj .m-goldtext {
-  background: linear-gradient(172deg, #e6c98a 0%, var(--m-gold2) 38%, var(--m-gold) 62%, #8f6828 100%);
+  background: linear-gradient(
+    100deg,
+    var(--m-gold) 0%,
+    #8f6828 16%,
+    var(--m-gold) 32%,
+    #f6e7b8 48%,
+    var(--m-gold2) 64%,
+    #8f6828 80%,
+    var(--m-gold) 100%
+  );
+  background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: mhj-shimmer 6s ease-in-out infinite alternate;
 }
+@keyframes mhj-shimmer {
+  from { background-position: 0% 0; }
+  to { background-position: 100% 0; }
+}
+
+/* jewel glint — a diagonal flash of light crossing a gold surface (the seal,
+   the ceremonial buttons). Wrap any gold element in `m-glint`. */
+.mhj .m-glint { position: relative; overflow: hidden; }
+.mhj .m-glint::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(100deg, transparent 42%, rgba(255, 251, 235, 0.65) 50%, transparent 58%);
+  transform: translateX(-130%);
+  animation: mhj-glint 4.6s ease-in-out infinite;
+  animation-delay: 1.2s;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+@keyframes mhj-glint {
+  0%, 30% { transform: translateX(-130%); }
+  60%, 100% { transform: translateX(130%); }
+}
+
+/* the royal seal engraves itself — pathLength="1" on every stroke normalises
+   dasharray to 1 regardless of the path's real length, so the same two
+   keyframes draw the rings, the arch and the dome finial in sync. */
+.mhj .m-seal-draw path,
+.mhj .m-seal-draw ellipse {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: mhj-draw 1.6s ease-out forwards;
+}
+.mhj .m-seal-draw text {
+  opacity: 0;
+  animation: mhj-fade-in 0.9s ease-out 2.4s forwards;
+}
+@keyframes mhj-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* the palace clock ticking — a slow living pulse on the countdown's seconds */
+@keyframes mhj-tick {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.mhj .m-tick { animation: mhj-tick 1s steps(2, end) infinite; }
 
 /* ceremonial entrance doors — heavy, slow, deliberate */
 .mhj .m-door {
@@ -429,6 +488,12 @@
   .mhj .m-parade,
   .mhj .m-amble { animation: none; }
   .mhj .m-petal { display: none; }
+  .mhj .m-goldtext { animation: none; background-position: 45% 0; }
+  .mhj .m-glint::after { display: none; }
+  .mhj .m-seal-draw path,
+  .mhj .m-seal-draw ellipse { stroke-dashoffset: 0; animation: none; }
+  .mhj .m-seal-draw text { opacity: 1; animation: none; }
+  .mhj .m-tick { animation: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -3339,6 +3404,90 @@
   .dak-fly-y { transform: translateY(56px) rotate(8deg); }
 }
 
+/* ── Landing page: phone section rhythm ─────────────────────────────────────
+   The sections are laid out with desktop breathing room (`py-24`/`py-28`, i.e.
+   96–112px top AND bottom) which Tailwind applies at every width. Stacked on a
+   390×844 phone that's ~200px of empty ivory between one argument and the next,
+   twelve times over — nearly three whole screens of nothing, on the exact
+   device 95% of this page's visitors are holding. Editorial whitespace scales
+   with the measure; here the measure collapses to one column and the whitespace
+   doesn't, so it stops reading as calm and starts reading as "this is over".
+
+   Clamped rather than overridden per-section so the rhythm stays uniform, and
+   `:where()` keeps specificity at zero so any section that genuinely needs more
+   room can still say so with a normal utility class.
+
+   The hero is excluded by its `data-image-slot`: it sizes itself to the
+   viewport and its padding is doing a different job, so a blanket value there
+   would fight the fold rather than tidy it. */
+@media (max-width: 767px) {
+  .landing main > :where(section:not([data-image-slot])) {
+    padding-block: clamp(2.75rem, 9vw, 4rem);
+  }
+}
+
+/* ── Landing page: pricing plans that collapse only on phones ───────────────
+   The featured plan ships with `open`; the other two don't, so on a phone they
+   cost a summary line each instead of a full feature list. From `lg` the layout
+   is a three-across comparison and a collapsed column would defeat the point,
+   so the summary is hidden and the list is forced visible.
+
+   Author CSS can override the UA's hiding of a closed <details>'s content —
+   that's what the `display: grid` below is doing. Verified in-browser rather
+   than assumed, because the UA implements this via a slot rather than a plain
+   `display: none` and the behaviour isn't obvious from the spec. */
+@media (min-width: 1024px) {
+  .landing details[data-plan] > summary { display: none; }
+  .landing details[data-plan] > div { display: block; }
+}
+
+/* ── Landing page: phone-only sticky buy bar ───────────────────────────────
+   Fixed rather than sticky so it can't be pushed out of a scroll container, and
+   translated out of view rather than display:none so it can animate in and so
+   its height is measurable while parked.
+
+   --sticky-cta-h is the bar's own box; `.has-sticky-cta` (set by the component
+   only while the bar is actually showing) lifts `.gtt` clear of it. The safe
+   area term matters here in a way it doesn't for `.gtt`: this bar spans the
+   full width and sits on the iOS home indicator. */
+:root { --sticky-cta-h: 4.25rem; }
+
+.sticky-cta {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 55;
+  padding-block: 0.625rem;
+  padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));
+  background: rgba(42, 10, 24, 0.94);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(201, 154, 61, 0.35);
+  box-shadow: 0 -12px 34px -18px rgba(0, 0, 0, 0.75);
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.25s ease;
+}
+.sticky-cta-on {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-cta { transition: opacity 0.2s ease; transform: none; }
+}
+
+/* Reserve the bar's space at the foot of the page permanently rather than only
+   while it's shown: toggling padding on a class that flips during scroll would
+   shift the layout under the reader's thumb. Below `lg` only — the bar is. */
+@media (max-width: 1023px) {
+  .landing footer {
+    padding-bottom: calc(2.5rem + var(--sticky-cta-h));
+  }
+}
+
 /* ── Back-to-top button (shared across all themed guest sites) ─────────────── */
 .gtt {
   position: fixed; right: 22px; z-index: 60;
@@ -3358,6 +3507,11 @@
   bottom: calc(
     env(safe-area-inset-bottom, 0px) + var(--theme-dock-h, 44px) + 2.75rem
   );
+}
+
+/* Same problem, same fix, for the landing page's phone-only buy bar. */
+.has-sticky-cta .gtt {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sticky-cta-h) + 1rem);
 }
 
 .gtt-on { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }

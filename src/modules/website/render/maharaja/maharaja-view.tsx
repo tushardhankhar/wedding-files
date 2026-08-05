@@ -202,7 +202,9 @@ export function MaharajaView({
             data-open={entered}
             className="m-door-content absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
           >
-            <RoyalInsignia initials={seal} className="h-32 text-[color:var(--m-gold2)] sm:h-40" />
+            <div className="m-glint inline-block">
+              <RoyalInsignia initials={seal} className="h-32 text-[color:var(--m-gold2)] sm:h-40" />
+            </div>
             {pair ? (
               <div className="m-serif mt-8 max-w-full break-words text-center text-[clamp(1.9rem,5.4vw,3.4rem)] uppercase leading-tight tracking-[0.12em] text-[color:var(--m-ivory)] sm:tracking-[0.22em]">
                 <span className="block">{pair[0]}</span>
@@ -227,7 +229,7 @@ export function MaharajaView({
               onClick={enter}
               className="group mt-14 flex flex-col items-center gap-3 text-[color:var(--m-gold2)]"
             >
-              <span className="border border-[color:var(--m-gold)]/60 px-8 py-3.5 text-[10px] font-semibold uppercase tracking-[0.34em] transition-colors group-hover:border-[color:var(--m-gold2)] group-hover:text-[color:var(--m-ivory)]">
+              <span className="m-glint border border-[color:var(--m-gold)]/60 px-8 py-3.5 text-[10px] font-semibold uppercase tracking-[0.34em] transition-colors group-hover:border-[color:var(--m-gold2)] group-hover:text-[color:var(--m-ivory)]">
                 <TT en="Enter the celebration" hi="उत्सव में प्रवेश करें" />
               </span>
               <svg className="l-cue" width="12" height="18" viewBox="0 0 12 18" fill="none" aria-hidden="true">
@@ -390,7 +392,9 @@ export function MaharajaView({
           <CornerFiligree className="absolute bottom-5 left-5 -scale-y-100 text-[color:var(--m-gold)]/50" />
           <CornerFiligree className="absolute bottom-5 right-5 -scale-100 text-[color:var(--m-gold)]/50" />
           <div className="mx-auto max-w-3xl text-center" data-mreveal>
-            <RoyalInsignia initials={seal} className="mx-auto h-20 text-[color:var(--m-gold)]" />
+            <div className="m-glint inline-block">
+              <RoyalInsignia initials={seal} className="mx-auto h-20 text-[color:var(--m-gold)]" />
+            </div>
             <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.5em] text-[color:var(--m-gold)]">
               <TT en="Namaste" hi="नमस्ते" />
             </p>
@@ -601,7 +605,7 @@ export function MaharajaView({
                       </a>
                     ) : null}
                     {hasRsvp ? (
-                      <a href="#rsvp" className="inline-flex items-center justify-center border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.26em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90">
+                      <a href="#rsvp" className="m-glint inline-flex items-center justify-center border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.26em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90">
                         <TT en="Confirm attendance" hi="उपस्थिति की पुष्टि करें" />
                       </a>
                     ) : null}
@@ -786,6 +790,7 @@ export function MaharajaView({
           style={{ background: "radial-gradient(90% 70% at 50% 0%, rgba(98,15,37,.7), transparent 65%), linear-gradient(180deg, var(--m-wine) 0%, var(--m-mahog) 100%)" }}
         >
           <Jali className="text-[color:var(--m-gold)] opacity-[0.05]" />
+          <MarigoldFall className="text-[color:var(--m-gold2)]" />
           <div className="relative mx-auto max-w-3xl">
             <div className="text-center" data-mreveal>
               <h2 className="m-serif text-[clamp(2.4rem,7vw,4.6rem)] uppercase leading-tight tracking-[0.12em] text-[color:var(--m-ivory)]">
@@ -833,7 +838,9 @@ export function MaharajaView({
       <footer className="m-grain relative overflow-hidden bg-[color:var(--m-mahog)] px-6 py-20 text-center">
         <ArchColonnade className="absolute bottom-0 left-1/2 w-[160%] max-w-none -translate-x-1/2 text-[color:var(--m-gold)] opacity-[0.08]" />
         <div className="relative">
-          <RoyalInsignia initials={seal} className="mx-auto h-20 text-[color:var(--m-gold)]" />
+          <div className="m-glint inline-block">
+            <RoyalInsignia initials={seal} className="mx-auto h-20 text-[color:var(--m-gold)]" />
+          </div>
           <p className="m-serif mt-6 text-2xl uppercase tracking-[0.2em] text-[color:var(--m-ivory)]">{names}</p>
           {hashtag ? (
             <p className="m-script mt-3 text-3xl text-[color:var(--m-gold2)]">#{hashtag.replace(/^#/, "")}</p>
@@ -866,6 +873,7 @@ function RoyalCountdown({ dateIso }: { dateIso: string }) {
       style={{ background: "linear-gradient(180deg, var(--m-mahog) 0%, var(--m-wine) 100%)" }}
     >
       <ArchColonnade className="absolute bottom-0 left-1/2 w-[150%] max-w-none -translate-x-1/2 text-[color:var(--m-gold)] opacity-[0.1]" />
+      <MarigoldFall className="text-[color:var(--m-gold2)]" />
       <div className="relative" data-mreveal>
         <p className="m-serif mx-auto max-w-md text-2xl uppercase leading-snug tracking-[0.2em] text-[color:var(--m-ivory)]">
           <TT en="Until the palace comes alive" hi="जब महल जीवंत हो उठेगा" />
@@ -873,7 +881,14 @@ function RoyalCountdown({ dateIso }: { dateIso: string }) {
         <div className="mx-auto mt-10 flex max-w-2xl items-stretch justify-center">
           {units.map(([v, en, hi]) => (
             <div key={en} className="flex flex-1 flex-col items-center border-[color:var(--m-gold)]/30 px-2 sm:px-4 [&:not(:last-child)]:border-r">
-              <span className="m-goldtext m-serif text-[clamp(2.6rem,10vw,5.5rem)] font-semibold leading-none tabular-nums">{v}</span>
+              {/* Only the seconds column ticks — a full-cast shimmer on all
+                  four would read as glitching, one living pulse reads as a
+                  clock. */}
+              <span
+                className={`m-goldtext m-serif text-[clamp(2.6rem,10vw,5.5rem)] font-semibold leading-none tabular-nums ${en === "Seconds" ? "m-tick" : ""}`}
+              >
+                {v}
+              </span>
               <span className="mt-3 text-[9px] font-semibold uppercase tracking-[0.3em] text-[color:var(--m-gold2)]/85 sm:text-[10px]">
                 <TT en={en} hi={hi} />
               </span>
