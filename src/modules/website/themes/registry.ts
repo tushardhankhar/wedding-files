@@ -630,6 +630,58 @@ const THEME_BASES: ThemeBase[] = [
     } as CSSProperties,
   },
 
+  {
+    id: "rajmahal",
+    name: "The Rajmahal",
+    description:
+      "A cinematic journey into a Rajasthani palace — carved gateway doors that swing open onto the gardens, caparisoned elephants, peacocks, a jharokha balcony and marigold torans. Painted artwork, scroll-driven, unmistakably royal.",
+    swatch: ["#3E2612", "#C08F3F", "#7C2230"],
+    heroMotif: "doorway",
+    vars: {
+      /* Read off the paintings themselves, so the type and the artwork agree.
+       * Three colours only — carved sandstone · antique gold · one deep maroon.
+       * The peacocks bring teal and lapis, but ONLY inside their own artwork;
+       * nothing in the CSS is allowed to introduce a fourth hue, or the palace
+       * stops reading as one lit interior and starts reading as a swatch page. */
+      "--rjm-paper": "#FDF6EB",
+      "--rjm-paper-2": "#F6E9D3",
+      "--rjm-surface": "#FFFCF5",
+      "--rjm-sand": "#E8CFA8",
+      "--rjm-sand-2": "#D8B683",
+      "--rjm-stone": "#B99A6E",
+      "--rjm-gold": "#C08F3F",
+      "--rjm-gold-lite": "#E7CD8E",
+      "--rjm-gold-deep": "#8A6526",
+      "--rjm-wood": "#3E2612",
+      "--rjm-wood-2": "#25160A",
+      "--rjm-maroon": "#7C2230",
+      "--rjm-maroon-2": "#5A1520",
+      "--rjm-ink": "#3A2A18",
+      "--rjm-ink-soft": "#8B7358",
+      /* The warm pool of light the gateway opens into — used for the glow that
+       * spills through the doors and for every "lit" state down the page. */
+      "--rjm-glow": "rgba(231,205,142,0.55)",
+      "--w-navy": "#3E2612",
+      "--w-bg": "#FDF6EB",
+      "--w-surface": "#FFFCF5",
+      "--w-ink": "#3A2A18",
+      "--w-ink-soft": "#8B7358",
+      "--w-accent": "#7C2230",
+      "--w-gold": "#C08F3F",
+      "--w-gold-lite": "#E7CD8E",
+      "--w-line": "rgba(192,143,63,0.28)",
+      "--w-hero-ink": "#FDF6EB",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 20%, rgba(231,205,142,0.32), transparent 62%), linear-gradient(180deg, #3E2612 0%, #25160A 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": PLAYFAIR,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"❖"',
+      "--w-pattern": PATTERN.dots,
+    } as CSSProperties,
+  },
+
   /* ── "Experience" themes — non-wedding, fully bespoke interactive renderers ── */
   {
     id: "afterparty",
@@ -858,6 +910,15 @@ const THEME_META: Record<
   dak: {
     category: "wedding",
     subjectSpec: WEDDING_SUBJECT,
+    supports: WEDDING_SUPPORTS,
+  },
+  rajmahal: {
+    category: "wedding",
+    subjectSpec: WEDDING_SUBJECT,
+    // `artwork` stays off until the renderer honours `config.artwork`: the
+    // painted couple standing in the jharokha is theme art, not a client slot,
+    // and turning the switch on before the portrait is swappable would put an
+    // upload control in the editor that changes nothing on the site.
     supports: WEDDING_SUPPORTS,
   },
   afterparty: {

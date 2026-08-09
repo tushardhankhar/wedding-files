@@ -49,17 +49,18 @@ export default function LandingPage() {
     <div className="landing">
       <LandingNavbar />
       <main>
-        {/* Narrative: what it is (hero) → why it's different (per-family
-            personalisation) → what you'll create (themes) → how it works
+        {/* Narrative: what it is (hero) → what you'll create (themes) → why
+            it's different (per-family personalisation) → how it works
             (process) → supporting features → reassurance → the offer.
-            The personalisation demo sits above the theme gallery on purpose:
-            it's the only claim on the page a JPEG invitation card can't match,
-            so a cold visitor has to hit it before they hit anything they could
-            mistake for decoration.
+            Themes lead right after the hero since it's the first thing a
+            visitor wants to see; the personalisation demo follows because
+            it's the only claim on the page a JPEG invitation card can't
+            match.
             (ExperiencePreview, CouplesSection, RealitySection, FinalCta and
             FeatureStory were removed as redundant; their components remain in
             the codebase.) */}
         <LandingHero />
+        <ThemeShowcase />
         <div className="border-y border-[color:var(--l-gold)]/20 bg-[color:var(--l-wine)] text-[color:var(--l-ivory)]">
           <Marquee
             items={[
@@ -74,7 +75,6 @@ export default function LandingPage() {
           />
         </div>
         <GuestPersonalisationDemo />
-        <ThemeShowcase />
         <ProcessFlow />
         {/* <BrandStatement /> — commented out per request */}
         {/* Objections before the number. A visitor who reaches ₹1,599 still

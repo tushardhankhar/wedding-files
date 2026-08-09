@@ -3404,6 +3404,717 @@
   .dak-fly-y { transform: translateY(56px) rotate(8deg); }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE RAJMAHAL — registry id `rajmahal`, namespace `.rjm` / `--rjm-*`
+   ──────────────────────────────────────────────────────────────────────────
+   A cinematic journey into a Rajasthani palace, built on ten painted layers
+   (see render/rajmahal/ART.md). The artwork carries every illustration; this
+   stylesheet only frames, lights and moves it.
+
+   PALETTE DOCTRINE — three colours: carved sandstone, antique gold, one deep
+   maroon. The peacocks bring teal and lapis, but ONLY inside their own
+   paintings. Nothing here may introduce a fourth hue.
+
+   Bilingual (`[data-lang]` + .l-en/.l-hi) and the `[data-tw-reveal]` scroll
+   reveal are shared — see the scaffolding block near the top of this file.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rjm {
+  --rjm-shadow: 0 24px 60px -28px rgba(62, 38, 18, 0.45);
+
+  /* THE APERTURE. Measured off the two gateway paintings by differencing them,
+     not eyeballed — these four numbers are the doorway, and the clip-paths on
+     .rjm-leaf-l / .rjm-leaf-r below are derived from them. The leaves are cut
+     slightly WIDER than the stone opening so they overlap onto the jamb: when
+     they swing away they reveal identical stone from `gate-open` beneath, so the
+     overlap is invisible, whereas a gap would flash the garden at the hinge. */
+  --rjm-ap-l: 26.5%;
+  --rjm-ap-t: 16%;
+  --rjm-ap-r: 79.5%;
+  --rjm-ap-mid: 53%;
+
+  background: var(--rjm-paper);
+  color: var(--rjm-ink);
+  font-family: var(--w-sans);
+  overflow-x: clip;
+}
+
+.rjm ::selection { background: var(--rjm-gold-lite); color: var(--rjm-wood-2); }
+
+.rjm h1, .rjm h2, .rjm h3 { font-family: var(--w-display); font-weight: 600; }
+.rjm .rjm-amp { font-family: var(--w-serif); font-style: italic; opacity: .7; }
+[data-lang="hi"] .rjm h1,
+[data-lang="hi"] .rjm h2,
+[data-lang="hi"] .rjm h3 { font-family: var(--w-deva); }
+
+/* ── nav ─────────────────────────────────────────────────────────────────── */
+.rjm-nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 40;
+  display: flex; align-items: center; gap: .75rem;
+  padding: .7rem clamp(.9rem, 3vw, 1.6rem);
+  background: color-mix(in srgb, var(--rjm-paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 24%, transparent);
+}
+.rjm-nav-mark {
+  font-family: var(--w-display); font-size: .95rem; letter-spacing: .18em;
+  color: var(--rjm-gold-deep); text-decoration: none;
+}
+.rjm-nav-links { display: none; gap: 1.15rem; margin-inline-start: auto; }
+.rjm-nav-links a {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--rjm-ink-soft); text-decoration: none; transition: color .25s;
+}
+.rjm-nav-links a:hover { color: var(--rjm-gold-deep); }
+.rjm-nav-toggle { margin-inline-start: auto; color: var(--rjm-gold-deep); font-size: 1.1rem; }
+.rjm-lang {
+  font-size: .68rem; letter-spacing: .12em; padding: .34rem .7rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  border-radius: 999px; color: var(--rjm-gold-deep); white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .rjm-nav-toggle { display: none; }
+  .rjm-nav-links { display: flex; }
+}
+@media (max-width: 767px) {
+  .rjm-nav-links {
+    display: none; position: absolute; inset: 100% 0 auto 0;
+    flex-direction: column; gap: .9rem; padding: 1rem 1.4rem 1.3rem;
+    background: var(--rjm-paper); border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 24%, transparent);
+  }
+  .rjm-nav-links.open { display: flex; }
+}
+
+/* ── THE GATEWAY ─────────────────────────────────────────────────────────── */
+.rjm-hero { position: relative; height: 300vh; }
+/* Scroll marker for "Step inside" — one viewport above the hero's bottom edge,
+   which is exactly where the sticky stage stops scrubbing. */
+.rjm-hero-end {
+  position: absolute; left: 0; bottom: 100svh;
+  width: 1px; height: 1px;
+  pointer-events: none;
+}
+.rjm-hero-stage {
+  position: sticky; top: 0;
+  height: 100svh;
+  display: grid; place-items: center;
+  overflow: hidden;
+  /* The ground the palace is lit against.
+     This has to be DEEPER than the artwork, not lighter. The gateway is pale
+     carved sandstone with soft edges, so a sandstone-coloured ground made the
+     whole outer arch — columns, peacock statues, plinths — vanish into the page;
+     the first build read as doors floating on cream. A warm vignette that falls
+     to shadow at the corners gives the stone an edge to end against and reads as
+     a lit room rather than a flat wall. */
+  background:
+    radial-gradient(78% 62% at 50% 46%, #FBEBCE 0%, #EBD2A6 38%, transparent 72%),
+    radial-gradient(130% 105% at 50% 44%, transparent 46%, rgba(62, 38, 18, .40) 82%, rgba(37, 22, 10, .72) 100%),
+    linear-gradient(180deg, #C9A671 0%, #A87F4C 55%, #6E4E2C 100%);
+}
+
+.rjm-gate {
+  position: relative;
+  /* Fit the arch to BOTH axes, and NEVER let the box lose the artwork's aspect:
+     the doorway and the hinged leaves are positioned in percentages of this box,
+     so a stretched box slides the doors off their hinges. That is why the height
+     budget is an explicit `svh` term inside `min()` rather than a flex/grid track
+     with `max-width`.
+     Sizing off height alone (`height: 92%`) overflowed any viewport taller than
+     ~1.37:1 — on a 390x844 phone the gate wanted 566px and the stage's
+     `overflow: hidden` ate the outer columns and both peacock statues. */
+  width: min(94%, calc(92svh * 940 / 1290));
+  aspect-ratio: 940 / 1290;
+  /* The dolly is a scale, but the leaves swing in real 3D inside it, so the
+     perspective has to live on an ancestor of both. */
+  perspective: 1500px;
+  perspective-origin: 53% 58%;
+}
+.rjm-gate-scene {
+  position: absolute; inset: 0;
+  /* Push through the doorway, not the middle of the picture. */
+  transform-origin: 53% 58%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.rjm-gate-plate { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+/* Light out of the open doorway. Sits between the plate and the leaves so it
+   only reads once the leaves have started to turn. */
+.rjm-gate-glow {
+  position: absolute;
+  left: var(--rjm-ap-l); right: calc(100% - var(--rjm-ap-r)); top: var(--rjm-ap-t); bottom: 0;
+  opacity: 0;
+  background: radial-gradient(60% 50% at 50% 62%, var(--rjm-glow), transparent 72%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* The doorway: the exact aperture box, holding the two closed leaves.
+   `gate-doors` was cropped to these same fractions by the build script, so it
+   drops back onto the frame at 100% x 100% with no positioning maths. */
+.rjm-doorway {
+  position: absolute;
+  left: var(--rjm-ap-l);
+  right: calc(100% - var(--rjm-ap-r));
+  top: var(--rjm-ap-t);
+  bottom: 0;
+  /* Both this and .rjm-gate-scene must preserve-3d. GSAP puts a scale() on the
+     scene for the dolly, and a transformed ancestor with the default
+     `transform-style: flat` FLATTENS its descendants' 3D — the door swing would
+     render as a horizontal squash with no perspective at all. */
+  transform-style: preserve-3d;
+}
+
+/* One painting, drawn twice, each half clipped and hinged on its outer edge. */
+.rjm-leaf {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  /* `fill`, not `contain`: the crop already has the doorway's aspect, and any
+     letterboxing here would open a gap at the jamb. */
+  object-fit: fill;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.rjm-leaf-l {
+  clip-path: inset(0 50% 0 0);
+  transform-origin: left center;
+}
+.rjm-leaf-r {
+  clip-path: inset(0 0 0 50%);
+  transform-origin: right center;
+}
+
+/* The invitation, in its own zone on the deep ground — NOT over the artwork.
+   No scrim, no card, no translucent pool. An earlier version sat these lines on
+   top of the carved doors behind a soft ivory wash; against high-frequency
+   painted detail that wash read as a floating box, and the brass door rings
+   still showed through the names. Type on plain ground needs no rescuing. */
+.rjm-hero-copy {
+  position: absolute; z-index: 2;
+  bottom: clamp(3.5rem, 11vh, 7rem);
+  left: 50%; transform: translateX(-50%);
+  width: min(92vw, 34rem);
+  text-align: center;
+  color: var(--rjm-wood-2);
+  /* The copy sits over carved doors and, once they open, over a sunlit garden —
+     both busy and both light. A soft ivory pool buys contrast without a visible
+     card edge; it needs to be opaque at the centre or the names lose the
+     ampersand against the door's brass ring. */
+  padding: 1.6rem 1.4rem;
+  background: radial-gradient(72% 118% at 50% 50%,
+    color-mix(in srgb, var(--rjm-paper) 96%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-paper) 82%, transparent) 46%,
+    transparent 78%);
+}
+.rjm-hero-over {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .3em;
+  color: var(--rjm-gold-deep);
+}
+.rjm-hero-names {
+  margin-top: .55rem;
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .5rem;
+  font-size: clamp(1.85rem, 7vw, 3.4rem); line-height: 1.05;
+  color: var(--rjm-wood);
+}
+.rjm-hero-rule { width: 11rem; margin: .9rem auto 0; color: var(--rjm-gold); }
+.rjm-hero-date {
+  margin-top: .7rem; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--rjm-ink-soft);
+}
+.rjm-dot { margin: 0 .5rem; opacity: .6; }
+.rjm-hero-cta {
+  display: inline-block; margin-top: 1.15rem;
+  padding: .62rem 1.6rem; border-radius: 999px;
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .22em; text-decoration: none;
+  color: var(--rjm-paper);
+  background: linear-gradient(120deg, var(--rjm-gold-deep), var(--rjm-gold) 45%, var(--rjm-gold-lite));
+  box-shadow: 0 10px 26px -12px rgba(138, 101, 38, .8);
+}
+
+.rjm-cue {
+  position: absolute; bottom: .9rem; left: 50%; translate: -50% 0; z-index: 2;
+  width: 1px; height: 2.2rem; overflow: hidden;
+  background: color-mix(in srgb, var(--rjm-gold) 40%, transparent);
+}
+.rjm-cue span {
+  display: block; width: 100%; height: 45%;
+  background: var(--rjm-gold-deep);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-cue span { animation: rjm-cue 2.1s ease-in-out infinite; }
+  @keyframes rjm-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(240%); } }
+}
+
+/* ── section furniture ───────────────────────────────────────────────────── */
+.rjm section { position: relative; }
+.rjm-head { text-align: center; max-width: 40rem; margin-inline: auto; padding-inline: 1.25rem; }
+.rjm-head-crest { width: 3.4rem; height: auto; margin: 0 auto .6rem; color: var(--rjm-gold); display: block; }
+.rjm-over {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .3em;
+  color: var(--rjm-gold-deep);
+}
+.rjm-title {
+  margin-top: .5rem; font-size: clamp(1.7rem, 5vw, 2.7rem); line-height: 1.12;
+  color: var(--rjm-wood);
+}
+.rjm-tagline {
+  margin-top: .8rem; font-family: var(--w-serif); font-style: italic;
+  font-size: clamp(1.15rem, 3.4vw, 1.7rem); color: var(--rjm-maroon);
+}
+.rjm-head-rule { width: 12rem; margin: 1rem auto 0; color: var(--rjm-gold); }
+.rjm-rule { display: block; width: 100%; height: auto; }
+
+.rjm-link {
+  display: inline-block; margin-top: .7rem;
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--rjm-gold-deep); text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 55%, transparent);
+  padding-bottom: .15rem;
+}
+.rjm-link:hover { color: var(--rjm-maroon); }
+
+.rjm-para { position: relative; }
+.rjm-para-img { display: block; width: 100%; height: auto; }
+
+/* ── invitation ──────────────────────────────────────────────────────────── */
+.rjm-invite { padding: clamp(2rem, 6vw, 4rem) 0 clamp(2rem, 6vw, 4rem); overflow: hidden; }
+/* The toran is a FRAME, not a backdrop: its strands hang down both sides and its
+   middle is deliberately empty for content to sit in. So it has to be wider than
+   the text it frames — at 46rem the strands closed in on the measure and the
+   tagline was set straight over the garlands. */
+.rjm-toran { position: absolute; inset: 0 auto auto 0; width: 100%; display: flex; justify-content: center; pointer-events: none; }
+.rjm-toran-img { width: min(98vw, 64rem); height: auto; opacity: .95; }
+/* Clear the swags before the copy starts. Tied to vw so it tracks the toran,
+   which is sized in vw too. */
+.rjm-invite-inner { position: relative; z-index: 1; padding-top: clamp(5.5rem, 19vw, 13rem); }
+/* Insurance for the descenders that still reach the lowest jasmine strands. */
+.rjm-invite-inner > .rjm-head {
+  background: radial-gradient(62% 130% at 50% 46%,
+    color-mix(in srgb, var(--rjm-paper) 92%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-paper) 70%, transparent) 52%,
+    transparent 80%);
+}
+/* Shared box for the palace and the peacock standing on its terrace, so the bird
+   is positioned against the PALACE rather than against the viewport. */
+.rjm-palace-wrap {
+  position: relative;
+  width: min(96vw, 68rem);
+  margin: clamp(1.5rem, 5vw, 3rem) auto 0;
+}
+.rjm-palace { width: 100%; }
+/* On the terrace at the palace's left, in front of it. Offsets are POSITIVE and
+   inside the box on purpose — the negative ones this replaced pushed the bird
+   past the section's `overflow: hidden` and sliced it down the middle. */
+.rjm-peacock-side {
+  position: absolute; z-index: 1;
+  left: 1.5%; bottom: 0;
+  width: clamp(5.5rem, 14vw, 11rem);
+  pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgba(62, 38, 18, .3));
+}
+
+/* ── the couple, in the jharokha ─────────────────────────────────────────── */
+/*
+ * ARTWORK MEASUREMENTS (jharokha.webp, 640x739), taken off a percentage grid
+ * overlaid on the plate rather than estimated. Every number below derives from
+ * these, so re-measure if the plate is ever replaced:
+ *
+ *   42%  crown of the central arch — the top of the standing space
+ *   68%  top of the balustrade     — the highest point the rail occludes
+ *   76%  the balcony deck          — where feet actually rest
+ *   80%+ corbelled underside & bells — hangs below the wall, no floor here
+ */
+.rjm-couple { padding: clamp(3.5rem, 9vw, 6.5rem) 1.25rem; }
+.rjm-couple-inner {
+  max-width: 66rem; margin-inline: auto;
+  display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
+}
+@media (min-width: 900px) {
+  /* The balcony carries more visual weight than the couplet beside it, so it
+     gets the wider column — an even split left the type stranded in space. */
+  .rjm-couple-inner { grid-template-columns: 1.15fr 1fr; }
+}
+.rjm-jharokha { position: relative; }
+.rjm-jharokha-img { display: block; width: 100%; height: auto; }
+
+/* Warm interior light behind the balcony. Sits behind everything and is wider
+   than the plate so it reads as a lit wall the jharokha is set into. */
+.rjm-jharokha-wall {
+  position: absolute; inset: 6% -14% 10% -14%;
+  background: radial-gradient(58% 52% at 50% 46%,
+    color-mix(in srgb, var(--rjm-glow) 82%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-sand) 45%, transparent) 46%,
+    transparent 74%);
+  pointer-events: none;
+}
+
+/* The couple, standing on the deck (76%) inside the central bay. Sized so their
+   heads clear the arch crown at 42%: 34% of the plate's height, which at the
+   plate's 0.866 aspect and the couple's own 0.617 aspect works out at ~26% of
+   the plate's width. Nudged to 28% so they read at a glance without breaking
+   the architecture. */
+.rjm-couple-img {
+  position: absolute; z-index: 1;
+  /* `translate` (not `transform`) does the centring on purpose: they are separate
+     CSS properties, so the parallax scene is free to write `transform` on this
+     node without clobbering the -50% or needing to re-state it.
+     51.6%, not 50%: couple.webp's alpha bbox is centred but its *visual* mass
+     sits at 44.56% of the width — the bride's dupatta pads the right edge with
+     near-transparent pixels. Centring the box therefore leaves the figures
+     reading ~5.4% of their own width left of the bay. At 30% container width
+     that is a 1.6% correction. Re-measure if the plate changes. */
+  left: 51.6%; translate: -50% 0;
+  bottom: 24%;
+  width: 30%; height: auto;
+  filter: drop-shadow(0 10px 18px rgba(62, 38, 18, .34));
+}
+
+/* The railing, back in front of them. */
+.rjm-jharokha-rail {
+  position: absolute; inset: 0; z-index: 2;
+  width: 100%; height: 100%;
+  object-fit: fill;
+  clip-path: inset(68% 0 0 0);
+  pointer-events: none;
+}
+
+/* Cast shadow so the whole thing sits against the wall rather than hovering. */
+.rjm-jharokha-shadow {
+  position: absolute; z-index: 0;
+  left: 8%; right: 8%; bottom: 2%; height: 5%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(62, 38, 18, .3), transparent 72%);
+  pointer-events: none;
+}
+
+.rjm-couple-copy { text-align: center; }
+.rjm-couple-names {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .5rem;
+  font-size: clamp(1.7rem, 5.5vw, 2.9rem); color: var(--rjm-wood); margin-top: .55rem;
+}
+.rjm-couple-date {
+  margin-top: .8rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--rjm-ink-soft);
+}
+
+/* ── story / procession ──────────────────────────────────────────────────── */
+.rjm-story { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); overflow: hidden; }
+.rjm-procession {
+  position: relative;
+  height: clamp(5.5rem, 17vw, 11rem);
+  max-width: 64rem; margin: clamp(1rem, 4vw, 2.5rem) auto 0;
+}
+.rjm-eleph { position: absolute; bottom: 0; width: clamp(7rem, 21vw, 14rem); }
+.rjm-eleph-l { left: 0; }
+.rjm-eleph-r { right: 0; }
+/* The gait lives on this inner span so it cannot collide with the walk, which
+   GSAP puts on .rjm-eleph as an xPercent. Two `transform` writers on one node
+   means the loser is silently dropped. */
+.rjm-eleph-bob { display: block; }
+.rjm-eleph-img { display: block; width: 100%; height: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-eleph-bob { animation: rjm-bob 3.4s ease-in-out infinite; }
+  .rjm-eleph-bob-b { animation-duration: 3.9s; animation-delay: -1.2s; }
+  @keyframes rjm-bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(-.5deg); }
+  }
+}
+
+.rjm-timeline {
+  position: relative; max-width: 40rem; margin: clamp(1.5rem, 5vw, 3rem) auto 0;
+  padding-inline-start: 1.9rem;
+}
+/* The unlit thread. */
+.rjm-timeline::before {
+  content: ""; position: absolute; left: .42rem; top: .4rem; bottom: .4rem; width: 1px;
+  background: color-mix(in srgb, var(--rjm-gold) 22%, transparent);
+}
+/* The lit thread, drawn by a scrub. Separate element rather than a gradient on
+   ::before so its scaleY can be animated without touching the track. */
+.rjm-timeline-fill {
+  position: absolute; left: .42rem; top: .4rem; bottom: .4rem; width: 1px;
+  transform-origin: top center;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--rjm-gold) 85%, transparent),
+    var(--rjm-gold-deep));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--rjm-gold) 55%, transparent);
+}
+.rjm-mile { position: relative; padding-block: .9rem 1.5rem; }
+.rjm-mile-dot {
+  position: absolute; left: -1.72rem; top: 1.35rem; width: .55rem; height: .55rem;
+  rotate: 45deg; background: var(--rjm-gold); box-shadow: 0 0 0 4px var(--rjm-paper);
+}
+.rjm-mile-date { font-size: .66rem; letter-spacing: .24em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-mile-title { margin-top: .3rem; font-size: 1.25rem; color: var(--rjm-wood); }
+.rjm-mile-body { margin-top: .4rem; font-size: .93rem; line-height: 1.65; color: var(--rjm-ink-soft); }
+
+/* ── countdown ───────────────────────────────────────────────────────────── */
+.rjm-count { padding: clamp(3rem, 8vw, 5rem) 1.25rem; text-align: center; }
+.rjm-count-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(.5rem, 2.4vw, 1.1rem);
+  margin-top: 1.4rem;
+}
+.rjm-count-cell {
+  position: relative; display: grid; place-items: center;
+  width: clamp(4.1rem, 17vw, 5.8rem); padding: 1.5rem .4rem .8rem;
+}
+.rjm-count-plate { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--rjm-sand); }
+/* A slow gold sheen across the stone cartouches. Masked to the plate's own
+   arched silhouette would need a second SVG; instead the sweep is clipped by the
+   cell's overflow and kept faint enough that its straight edge never reads. */
+.rjm-count-cell { overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-count-cell::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 38%, color-mix(in srgb, var(--rjm-gold-lite) 55%, transparent) 50%, transparent 62%);
+    animation: rjm-sheen 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .rjm-count-cell:nth-child(2)::after { animation-delay: .5s; }
+  .rjm-count-cell:nth-child(3)::after { animation-delay: 1s; }
+  .rjm-count-cell:nth-child(4)::after { animation-delay: 1.5s; }
+  @keyframes rjm-sheen {
+    0%, 62% { transform: translateX(-120%); }
+    92%, 100% { transform: translateX(120%); }
+  }
+}
+.rjm-count-num {
+  position: relative; font-family: var(--w-display); font-size: clamp(1.35rem, 5vw, 2rem);
+  color: var(--rjm-wood); font-variant-numeric: tabular-nums;
+}
+.rjm-count-label {
+  position: relative; margin-top: .25rem;
+  font-size: .55rem; text-transform: uppercase; letter-spacing: .18em; color: var(--rjm-gold-deep);
+}
+
+/* ── celebrations ────────────────────────────────────────────────────────── */
+.rjm-events { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-events-grid {
+  display: grid; gap: clamp(1rem, 3vw, 1.8rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  max-width: 66rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-event {
+  position: relative; overflow: hidden;
+  padding: 2.4rem 1.3rem 1.6rem; text-align: center;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 30%, transparent);
+  border-radius: 1.1rem 1.1rem .4rem .4rem;
+  background: linear-gradient(180deg, var(--rjm-surface), var(--rjm-paper-2));
+  box-shadow: var(--rjm-shadow);
+  /* min-w-0 equivalent: a long venue line must wrap, not widen the grid cell —
+     the 248px theme-card iframe is unforgiving about this. */
+  min-width: 0;
+}
+/* The lamp over each archway, lit in sequence by the EventsGrid scene so the row
+   reads as a corridor being walked rather than a grid appearing.
+   CSS holds the LIT state deliberately: GSAP's fromTo sets the dark start itself
+   when the scene is created, so if JS never runs the lamps are simply already
+   on. Defaulting to opacity 0 here would leave every card looking broken on any
+   page where the scene failed to build. */
+.rjm-event-arch {
+  position: absolute; inset: 0 auto auto 0; width: 100%; height: 2.4rem;
+  background: radial-gradient(58% 190% at 50% 100%, var(--rjm-glow), transparent 72%);
+}
+.rjm-event-name { font-size: 1.2rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-event-date { margin-top: .45rem; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-event-time { margin-top: .2rem; font-size: .82rem; color: var(--rjm-maroon); }
+.rjm-event-venue { margin-top: .6rem; font-size: .9rem; color: var(--rjm-ink); overflow-wrap: anywhere; }
+.rjm-event-addr { margin-top: .15rem; font-size: .8rem; color: var(--rjm-ink-soft); overflow-wrap: anywhere; }
+
+/* ── gallery ─────────────────────────────────────────────────────────────── */
+.rjm-gallery { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-gallery-grid {
+  display: grid; gap: clamp(.7rem, 2.4vw, 1.3rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  max-width: 66rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-photo { min-width: 0; }
+.rjm-photo-frame {
+  position: relative; overflow: hidden; aspect-ratio: 4 / 5;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 42%, transparent);
+  border-radius: 999px 999px .5rem .5rem;
+  box-shadow: var(--rjm-shadow);
+}
+.rjm-photo-zoom, .rjm-photo-frame img { width: 100%; height: 100%; }
+.rjm-photo-frame img { object-fit: cover; transition: transform .7s ease; }
+.rjm-photo:hover .rjm-photo-frame img { transform: scale(1.05); }
+.rjm-photo figcaption {
+  margin-top: .5rem; text-align: center; font-size: .76rem; color: var(--rjm-ink-soft);
+}
+
+/* ── venue / family / faq ────────────────────────────────────────────────── */
+.rjm-venue, .rjm-family, .rjm-faq { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-venue-grid, .rjm-family-grid {
+  display: grid; gap: clamp(1rem, 3vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  max-width: 60rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-venue-card {
+  /* Required: the four corner brackets are absolute, and without this they
+     anchor to the section instead and pile up in its corners. */
+  position: relative;
+  min-width: 0; text-align: center; padding: 1.7rem 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 28%, transparent);
+  background: var(--rjm-surface);
+}
+.rjm-venue-card h3 { font-size: 1.1rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-venue-name { margin-top: .5rem; font-size: .92rem; color: var(--rjm-ink); overflow-wrap: anywhere; }
+.rjm-venue-addr { margin-top: .2rem; font-size: .82rem; color: var(--rjm-ink-soft); overflow-wrap: anywhere; }
+/* The fanned peacock crowning the families section. */
+.rjm-family-crest { display: flex; justify-content: center; }
+.rjm-family-peacock {
+  display: block; height: auto;
+  width: clamp(9rem, 26vw, 18rem);
+  /* Overlaps the section crest below it so the two read as one piece of ornament
+     rather than two decorations stacked on each other. */
+  margin-bottom: clamp(-2.2rem, -3vw, -1rem);
+}
+.rjm-family-side { min-width: 0; text-align: center; }
+.rjm-family-member { padding-block: .45rem; }
+.rjm-family-name { display: block; font-family: var(--w-serif); font-size: 1.1rem; color: var(--rjm-wood); }
+.rjm-family-rel { display: block; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-faq-list { max-width: 44rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0; }
+.rjm-faq-item { border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 26%, transparent); }
+.rjm-faq-item summary {
+  cursor: pointer; padding: 1rem .2rem; font-family: var(--w-serif); font-size: 1.05rem;
+  color: var(--rjm-wood); list-style: none;
+}
+.rjm-faq-item summary::-webkit-details-marker { display: none; }
+.rjm-faq-item summary::after { content: "❖"; float: inline-end; color: var(--rjm-gold); font-size: .8rem; }
+.rjm-faq-a { padding: 0 .2rem 1rem; font-size: .92rem; line-height: 1.7; color: var(--rjm-ink-soft); }
+
+/* ── RSVP ────────────────────────────────────────────────────────────────── */
+.rjm-rsvp {
+  position: relative; overflow: hidden;
+  padding: clamp(3.5rem, 10vw, 7rem) 1.25rem clamp(4rem, 11vw, 8rem);
+  background: linear-gradient(180deg, var(--rjm-paper) 0%, var(--rjm-sand) 140%);
+}
+.rjm-rsvp-wash {
+  position: absolute; inset: auto 0 -30% 0; height: 60%;
+  background: radial-gradient(50% 60% at 50% 100%, var(--rjm-glow), transparent 70%);
+  pointer-events: none;
+}
+/* The hero's gateway, reprised small to close the loop. Both layers are already
+   in cache from the hero, so this costs no new bytes. */
+.rjm-rsvp-gate {
+  position: relative;
+  width: min(74vw, 15rem);
+  margin: 0 auto clamp(1.2rem, 4vw, 2.2rem);
+}
+.rjm-rsvp-gate .rjm-gate {
+  /* Overrides the hero's viewport-relative sizing — here the gate is a motif in
+     the flow, not a stage filler. */
+  width: 100%;
+  height: auto;
+}
+
+/* ── corner brackets ─────────────────────────────────────────────────────── */
+/* One drawn corbel, mirrored four ways, rather than four SVGs. */
+.rjm-corner {
+  position: absolute; width: 1.15rem; height: auto;
+  color: var(--rjm-gold); opacity: .75; pointer-events: none;
+}
+.rjm-corner-tl { top: .35rem; left: .35rem; }
+.rjm-corner-tr { top: .35rem; right: .35rem; transform: scaleX(-1); }
+.rjm-corner-bl { bottom: .35rem; left: .35rem; transform: scaleY(-1); }
+.rjm-corner-br { bottom: .35rem; right: .35rem; transform: scale(-1); }
+
+/* (A site-wide drifting-petal layer lived here and was removed — see the note in
+   rajmahal-view.tsx for why it should not come back.) */
+.rjm-rsvp-family {
+  margin-top: 1rem; text-align: center; font-family: var(--w-serif); font-style: italic;
+  font-size: 1.15rem; color: var(--rjm-maroon);
+}
+.rjm-rsvp-body { position: relative; max-width: 34rem; margin: clamp(1.5rem, 5vw, 2.6rem) auto 0; }
+.rjm-rsvp-form { display: grid; gap: 1.1rem; }
+.rjm-rsvp-hint { text-align: center; font-size: .78rem; color: var(--rjm-ink-soft); }
+.rjm-rsvp-row {
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 30%, transparent);
+  background: color-mix(in srgb, var(--rjm-surface) 88%, transparent);
+}
+.rjm-rsvp-event { font-family: var(--w-serif); font-size: 1.02rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-choices { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .7rem; }
+.rjm-choice {
+  flex: 1 1 8rem; min-width: 0; padding: .62rem .8rem; border-radius: 999px;
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .16em;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  color: var(--rjm-gold-deep); background: transparent; transition: all .3s;
+}
+.rjm-choice:hover:not(.is-locked) { border-color: var(--rjm-gold); color: var(--rjm-maroon); }
+.rjm-choice.is-on.rjm-choice-attend {
+  background: linear-gradient(120deg, var(--rjm-gold-deep), var(--rjm-gold) 50%, var(--rjm-gold-lite));
+  border-color: var(--rjm-gold); color: var(--rjm-paper);
+}
+.rjm-choice.is-on.rjm-choice-decline {
+  background: var(--rjm-maroon); border-color: var(--rjm-maroon); color: var(--rjm-paper);
+}
+.rjm-choice.is-locked { opacity: .6; cursor: default; }
+.rjm-chiprow { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .7rem; }
+.rjm-chip {
+  padding: .45rem .9rem; border-radius: 999px; font-size: .72rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  color: var(--rjm-gold-deep); transition: all .3s; min-width: 0; overflow-wrap: anywhere;
+}
+.rjm-chip.is-on { background: var(--rjm-gold); border-color: var(--rjm-gold); color: var(--rjm-wood-2); }
+.rjm-field { display: grid; gap: .4rem; }
+.rjm-field span { font-size: .66rem; text-transform: uppercase; letter-spacing: .18em; color: var(--rjm-gold-deep); }
+.rjm-field input {
+  padding: .7rem .9rem; background: var(--rjm-surface);
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 34%, transparent);
+  color: var(--rjm-ink); font-size: 1rem;
+}
+.rjm-field input:focus-visible { outline: 2px solid var(--rjm-gold); outline-offset: 1px; }
+.rjm-count-field { margin-top: .7rem; }
+.rjm-submit {
+  padding: .85rem 1.4rem; border-radius: 999px;
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+  color: var(--rjm-paper);
+  background: linear-gradient(120deg, var(--rjm-maroon-2), var(--rjm-maroon) 55%, var(--rjm-gold-deep));
+  box-shadow: 0 14px 30px -16px rgba(90, 21, 32, .9);
+}
+.rjm-submit:disabled { opacity: .65; }
+.rjm-rsvp-error { font-size: .82rem; color: var(--rjm-maroon); text-align: center; }
+.rjm-rsvp-done { text-align: center; }
+.rjm-rsvp-thanks { font-family: var(--w-serif); font-style: italic; font-size: clamp(2rem, 8vw, 3rem); color: var(--rjm-gold-deep); }
+.rjm-rsvp-await { margin-top: .4rem; font-family: var(--w-display); font-size: 1.3rem; color: var(--rjm-maroon); }
+.rjm-rsvp-heads { margin-top: .5rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--rjm-ink-soft); }
+.rjm-rsvp-rule { width: 10rem; margin: 1rem auto; color: var(--rjm-gold); }
+
+/* ── footer ──────────────────────────────────────────────────────────────── */
+.rjm-foot {
+  position: relative; overflow: hidden; text-align: center;
+  padding: clamp(3rem, 8vw, 5rem) 1.25rem clamp(2rem, 5vw, 3rem);
+  background: linear-gradient(180deg, var(--rjm-wood) 0%, var(--rjm-wood-2) 100%);
+  color: var(--rjm-sand);
+}
+.rjm-foot-jaali { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--rjm-gold); opacity: .13; }
+.rjm-foot-inner { position: relative; }
+.rjm-foot-bell { width: 1.5rem; height: auto; margin: 0 auto .9rem; color: var(--rjm-gold); display: block; }
+.rjm-foot-names { font-family: var(--w-display); font-size: clamp(1.3rem, 4.6vw, 2rem); color: var(--rjm-gold-lite); }
+.rjm-foot-date { margin-top: .4rem; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
+.rjm-foot-tag { margin-top: .6rem; font-size: .8rem; color: var(--rjm-gold); }
+.rjm-foot-contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: .8rem; }
+.rjm-foot-contacts .rjm-link { color: var(--rjm-gold-lite); border-color: color-mix(in srgb, var(--rjm-gold) 50%, transparent); }
+.rjm-foot-rule { width: 9rem; margin: 1.2rem auto .8rem; color: var(--rjm-gold); }
+.rjm-foot-credit { color: var(--rjm-sand); }
+.rjm-jaali { display: block; }
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+/* The scenes themselves already render their FINAL state under the `still` tier
+   in use-scroll-scene (doors open, no dolly). This only has to stop the ambient
+   CSS animations and collapse the hero's scroll runway — 300vh of sticky
+   nothing is its own kind of motion sickness when the doors never move. */
+@media (prefers-reduced-motion: reduce) {
+  .rjm-hero { height: auto; }
+  .rjm-hero-stage { position: static; height: auto; min-height: 100svh; }
+  .rjm-cue { display: none; }
+  /* With the runway collapsed there is no scrub to land at the end of, so the
+     marker moves to the hero's foot — "Step inside" then simply means "past the
+     gate", which is all it can mean when the doors never move. */
+  .rjm-hero-end { bottom: 0; }
+  .rjm-photo:hover .rjm-photo-frame img { transform: none; }
+}
+
 /* ── Landing page: phone section rhythm ─────────────────────────────────────
    The sections are laid out with desktop breathing room (`py-24`/`py-28`, i.e.
    96–112px top AND bottom) which Tailwind applies at every width. Stacked on a

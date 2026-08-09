@@ -145,13 +145,8 @@ export function ThemeShowcase() {
     <section id="themes" className="scroll-mt-24 overflow-hidden bg-[color:var(--l-ivory)] py-24">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="max-w-xl" data-reveal>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--l-gold)]">
-            What you&apos;ll create
-          </p>
-          <h2 className="l-display mt-2 text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-            A designer theme for
-            <br />
-            <span className="italic text-[color:var(--l-purple)]">every celebration.</span>
+          <h2 className="l-display text-balance text-[clamp(2rem,4.4vw,3.2rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
+            Choose Your Themes
           </h2>
           <p className="mt-4 text-[15px] text-[color:var(--l-ink-soft)]">
             Polished themes for weddings, birthdays, baby showers, housewarmings &amp; more. Tap any one to open a live, interactive invitation.

@@ -94,6 +94,7 @@ export interface ShowcaseTheme {
 }
 
 export const SHOWCASE_THEMES: ShowcaseTheme[] = [
+  { id: "rajmahal", name: "The Rajmahal", vibe: "Palace · Cinematic", tagline: "The doors open for you.", art: "rajmahal", palette: ["#3E2612", "#C08F3F", "#7C2230"], demo: "rajmahal", category: "wedding" },
   { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal", category: "wedding" },
   { id: "jharokha", name: "The Jharokha", vibe: "Royal · Romantic", tagline: "A palace of love.", art: "jharokha", palette: ["#7a1f38", "#c9a24a", "#f8dbe0"], demo: "jharokha", category: "wedding" },
   { id: "mayura", name: "The Mayura", vibe: "Peacock · Colourful", tagline: "Where colours dance.", art: "mayura", palette: ["#0e6e6e", "#c9a23f", "#d81b60"], demo: "mayura", category: "wedding" },
