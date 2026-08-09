@@ -223,8 +223,13 @@ export function ThemeGround({ mood, anchor }: { mood: Mood; anchor: string }) {
 /**
  * Headline type: `\n` is a hard break, `*phrase*` is set in gold. Everything
  * else is champagne — the gold is a single accent, not the voice of the card.
+ *
+ * `foil`, off by default, swaps the flat gold tint for a metallic gradient
+ * fill — a bevelled-foil look reserved for the hero-scale creatives where the
+ * gold phrase carries the whole card, rather than the norm every headline
+ * reaches for.
  */
-export function Headline({ text, size }: { text: string; size: number }) {
+export function Headline({ text, size, foil = false }: { text: string; size: number; foil?: boolean }) {
   return (
     <h1
       style={{
@@ -239,7 +244,19 @@ export function Headline({ text, size }: { text: string; size: number }) {
     >
       {text.split(/(\*[^*]+\*)/g).map((part, i) =>
         part.length > 2 && part.startsWith("*") && part.endsWith("*") ? (
-          <span key={i} style={{ color: GOLD }}>
+          <span
+            key={i}
+            style={
+              foil
+                ? {
+                    backgroundImage: `linear-gradient(180deg, #fbe89a 0%, ${GOLD} 40%, #b6862b 78%, #8a6420 100%)`,
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    color: "transparent",
+                  }
+                : { color: GOLD }
+            }
+          >
             {part.slice(1, -1)}
           </span>
         ) : (
