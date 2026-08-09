@@ -303,37 +303,111 @@
    THE MAHARAJA — standalone royal theme (registry id: "royal").
    Unlike the token themes, this theme has its own renderer (MaharajaView) and
    visual language: palace wine + antique gold on old-ivory paper, monumental
-   Cormorant serif, heavy deliberate motion. Scoped under .mhj.
+   Cormorant display, Marcellus inscriptional caps, heavy deliberate motion
+   staged in real CSS 3D. Scoped under .mhj.
    ══════════════════════════════════════════════════════════════════════════ */
 .mhj {
-  --m-wine: #3a0717;
-  --m-maroon: #620f25;
-  --m-red: #8b1835;
-  --m-gold: #b98a3d;
-  --m-gold2: #d1aa62;
-  --m-ivory: #f7ebd3;
-  --m-ivory2: #efdfbe;
-  --m-mahog: #1d090d;
+  /* ── the ground ───────────────────────────────────────────────────────
+     Three families and no more: wine (every dark surface), gold (every
+     ornament), ivory (every page). The reds are one ramp of the SAME hue so
+     stacking them reads as depth in a single lacquer rather than as four
+     different colours competing. */
+  --m-mahog: #150409;
+  --m-wine: #310a18;
+  --m-maroon: #5e1129;
+  --m-red: #8f1c3b;
+
+  /* ── the metal ────────────────────────────────────────────────────────
+     Gold is treated as a surface, not a colour: shadowed → base → lit →
+     specular. Everything gold in the theme is a gradient built from these
+     four, which is what separates struck metal from flat yellow. The base is
+     deliberately desaturated toward bronze; saturated gold reads as plastic. */
+  --m-gold-deep: #7a5316;
+  --m-gold: #c09649;
+  --m-gold2: #e4c489;
+  --m-gold3: #fdf1cf;
+
+  --m-ivory: #faf2e0;
+  --m-ivory2: #f2e6cb;
+  --m-ink: #2a1015;
+  --m-ink-soft: #7c5d55;
   --m-emerald: #0e5b48;
-  --m-ink: #2c1218;
-  --m-ink-soft: #7d5f58;
+
+  /* One canonical rake of light, so a heading, a button and a rule all catch
+     it at the same angle and read as the same alloy. */
+  --m-foil: linear-gradient(
+    112deg,
+    var(--m-gold-deep) 0%,
+    var(--m-gold) 16%,
+    var(--m-gold3) 31%,
+    var(--m-gold2) 44%,
+    var(--m-gold-deep) 60%,
+    var(--m-gold) 76%,
+    var(--m-gold2) 92%,
+    var(--m-gold-deep) 100%
+  );
+
+  /* ── the type ─────────────────────────────────────────────────────────
+     Display is Cormorant at LIGHT weights — at 7rem a 300 is aristocratic and
+     a 600 is merely big. Caps are Marcellus, Roman inscriptional letterforms,
+     which is what makes the theme's dense uppercase microtype read as engraved
+     stone instead of as a UI sans tracked out to breaking point. */
+  --m-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --m-caps: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  --m-body: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  --m-deva-display: var(--font-tiro-deva), var(--font-noto-deva), serif;
 
   background: var(--m-ivory);
   color: var(--m-ink);
-  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-family: var(--m-body);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.68;
   overflow-x: clip;
+  /* Old paper is never pure: a whisper of warmth under everything ties the
+     ivory sections to the wine ones. */
+  text-rendering: optimizeLegibility;
 }
 .mhj[data-lang="en"] .l-hi { display: none !important; }
 .mhj[data-lang="hi"] .l-en { display: none !important; }
-.mhj .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.mhj .l-hi { font-family: var(--font-noto-deva), var(--m-body), sans-serif; }
+/* Hindi inside display type gets the serif Devanagari, so a Hindi headline
+   carries the same authority as the English one rather than dropping to UI
+   sans mid-composition. Devanagari has no uppercase and its matras collide
+   under heavy tracking, so both are unwound here. */
+.mhj .m-serif .l-hi,
+.mhj .m-caps .l-hi {
+  font-family: var(--m-deva-display);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
 
 .mhj .m-serif {
-  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+}
+/* Monumental display — the names, the chapter titles. Light weight, tight
+   leading, and a hairline of engraving so ivory type on wine has an edge. */
+.mhj .m-display {
+  font-family: var(--m-display);
+  font-weight: 300;
+  letter-spacing: 0.055em;
+}
+.mhj .m-caps {
+  font-family: var(--m-caps);
+  font-weight: 400;
 }
 .mhj .m-script {
   font-family: var(--font-great-vibes), "Segoe Script", cursive;
+}
+/* Carved relief for light type on dark grounds: a shadow below and the
+   faintest lit edge above. Two 1px shadows, nothing more — anything heavier
+   stops reading as engraving and starts reading as a drop shadow. */
+.mhj .m-engrave {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 -1px 0 rgba(255, 240, 205, 0.13),
+    0 18px 46px rgba(0, 0, 0, 0.45);
 }
 .mhj ::selection { background: var(--m-gold); color: var(--m-wine); }
 
@@ -349,30 +423,50 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
+/* Cinematic vignette — the corners of every dark scene fall away, which is
+   what makes the centre feel lit rather than merely coloured. */
+.mhj .m-vignette::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    120% 85% at 50% 42%,
+    transparent 34%,
+    rgba(10, 2, 5, 0.28) 72%,
+    rgba(10, 2, 5, 0.72) 100%
+  );
+}
+
 /* metallic antique gold text — a slow shimmer, like light passing over
    engraved gold, not yellow neon. background-size wider than the element so
    the sweep has somewhere to travel; `alternate` makes it glint back and
    forth rather than snapping back at the loop point. */
 .mhj .m-goldtext {
-  background: linear-gradient(
-    100deg,
-    var(--m-gold) 0%,
-    #8f6828 16%,
-    var(--m-gold) 32%,
-    #f6e7b8 48%,
-    var(--m-gold2) 64%,
-    #8f6828 80%,
-    var(--m-gold) 100%
-  );
+  background: var(--m-foil);
   background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: mhj-shimmer 6s ease-in-out infinite alternate;
+  animation: mhj-shimmer 7s ease-in-out infinite alternate;
 }
 @keyframes mhj-shimmer {
   from { background-position: 0% 0; }
   to { background-position: 100% 0; }
+}
+
+/* Solid gold surfaces (the ceremonial button, plaque edges) — the same alloy
+   as the text, plus the two hairlines that sell a raised edge: light along the
+   top, shadow along the bottom. */
+.mhj .m-foil-surface {
+  background: var(--m-foil);
+  background-size: 220% 100%;
+  animation: mhj-shimmer 9s ease-in-out infinite alternate;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 224, 0.6),
+    inset 0 -1px 0 rgba(60, 34, 6, 0.55),
+    0 10px 26px -12px rgba(0, 0, 0, 0.7);
 }
 
 /* jewel glint — a diagonal flash of light crossing a gold surface (the seal,
@@ -416,16 +510,173 @@
 }
 .mhj .m-tick { animation: mhj-tick 1s steps(2, end) infinite; }
 
-/* ceremonial entrance doors — heavy, slow, deliberate */
+/* ── the ceremonial entrance ───────────────────────────────────────────────
+   The doors are hinged in real 3D, not slid off-screen. Each leaf pivots on
+   its OUTER edge and swings toward the viewer, so it foreshortens as it turns
+   and briefly occludes the invitation — the read is "these are heavy objects
+   in a room", which a translate can never give. The frame owns the
+   perspective so both leaves and the invitation share one camera. */
+.mhj .m-doorframe {
+  perspective: 1600px;
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+}
 .mhj .m-door {
-  transition: transform 1.6s cubic-bezier(0.72, 0, 0.16, 1);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform, filter;
+  transition:
+    transform 2s cubic-bezier(0.62, 0.02, 0.14, 1),
+    filter 2s cubic-bezier(0.62, 0.02, 0.14, 1);
 }
-.mhj .m-door[data-open="true"][data-side="l"] { transform: translateX(-101%); }
-.mhj .m-door[data-open="true"][data-side="r"] { transform: translateX(101%); }
+.mhj .m-door[data-side="r"] { transform-origin: right center; }
+/* Just past 90° so the leaf is edge-on-to-behind at rest, and dimmed: a
+   surface turning away from the light loses it. */
+.mhj .m-door[data-open="true"][data-side="l"] { transform: rotateY(-104deg); filter: brightness(0.3); }
+.mhj .m-door[data-open="true"][data-side="r"] { transform: rotateY(104deg); filter: brightness(0.3); }
+/* Cylindrical shading across each leaf — dark at the hinge, lit at the
+   meeting edge — so a flat div reads as a panel catching raking light. */
+.mhj .m-door::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.12) 34%,
+    transparent 72%,
+    rgba(255, 226, 168, 0.12) 100%
+  );
+}
+.mhj .m-door[data-side="r"]::before { transform: scaleX(-1); }
+
+/* The invitation does not fade — the camera pushes through it as the doors
+   part. Delayed opacity so it is still solid while it grows. */
 .mhj .m-door-content {
-  transition: opacity 0.8s ease;
+  transform-style: preserve-3d;
+  transition:
+    opacity 0.85s ease 0.5s,
+    transform 1.9s cubic-bezier(0.62, 0.02, 0.14, 1);
 }
-.mhj .m-door-content[data-open="true"] { opacity: 0; }
+.mhj .m-door-content[data-open="true"] {
+  opacity: 0;
+  transform: translateZ(430px);
+}
+
+/* ── depth ────────────────────────────────────────────────────────────────
+   A scene that establishes a camera for its children. Layers inside are
+   pushed back or pulled forward on Z and counter-scaled, so scrolling and
+   pointer movement produce true parallax instead of faked offsets. */
+.mhj .m-scene {
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
+}
+.mhj .m-layers {
+  transform-style: preserve-3d;
+  /* Pointer parallax, in degrees, written by the renderer. Falls back to
+     dead-centre so the scene is correct before the first pointer event and on
+     touch devices, which never send one.
+     The easing lives in the renderer, which glides these properties toward the
+     pointer, rather than in a `transition` here. A transition would restart on
+     every write while the pointer is moving, so its remaining time — and with
+     it the camera's lag — would depend on how fast the pointer happened to be
+     travelling. Gliding the values gives one constant, predictable follow. */
+  transform: rotateX(var(--m-py, 0deg)) rotateY(var(--m-px, 0deg));
+}
+.mhj .m-far { transform: translateZ(-460px) scale(1.42); }
+.mhj .m-mid { transform: translateZ(-220px) scale(1.2); }
+.mhj .m-near { transform: translateZ(60px) scale(0.95); }
+
+/* Volumetric light through the jali — the shafts a screened window throws
+   across a dark hall. Sized in vmax so they stay diagonal on any aspect. */
+.mhj .m-shaft {
+  position: absolute;
+  top: -30%;
+  height: 170%;
+  width: 16vmax;
+  pointer-events: none;
+  transform: skewX(-11deg);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 228, 170, 0.22) 0%,
+    rgba(255, 214, 140, 0.09) 45%,
+    transparent 88%
+  );
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  animation: mhj-shaft 14s ease-in-out infinite alternate;
+}
+/* Each shaft breathes between half and full of its own brightness, so a
+   window's worth of them never pulses in unison. `--m-shaft-o` is per-shaft. */
+@keyframes mhj-shaft {
+  from { opacity: calc(var(--m-shaft-o, 0.6) * 0.45); transform: skewX(-11deg) translateX(-1.5vmax) scaleY(0.96); }
+  to { opacity: var(--m-shaft-o, 0.6); transform: skewX(-11deg) translateX(1.5vmax) scaleY(1.04); }
+}
+
+/* ── framed portraits ─────────────────────────────────────────────────────
+   Gallery frames tilt toward the pointer with a specular sheen tracking the
+   cursor, so the glass over each portrait catches the light of the room. The
+   renderer writes --m-rx/--m-ry (degrees) and --m-mx/--m-my (percentages). */
+.mhj .m-tilt { perspective: 900px; }
+.mhj .m-tilt-inner {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--m-rx, 0deg)) rotateY(var(--m-ry, 0deg)) translateZ(0);
+  /* Only box-shadow eases while tracking. A frame that lags the cursor by
+     several tenths of a second feels rubbery rather than solid — under the
+     pointer the tilt should be locked to it. It is the release that wants
+     easing, and `.m-settling` supplies it for exactly the length of the
+     return to flush. */
+  transition: box-shadow 0.7s ease;
+  box-shadow: 0 14px 34px -22px rgba(42, 16, 21, 0.75);
+}
+.mhj .m-tilt.m-settling .m-tilt-inner {
+  transition:
+    transform 0.7s cubic-bezier(0.22, 0.7, 0.2, 1),
+    box-shadow 0.7s ease;
+}
+.mhj .m-tilt:hover .m-tilt-inner {
+  box-shadow:
+    0 34px 60px -28px rgba(42, 16, 21, 0.75),
+    0 0 0 1px rgba(192, 150, 73, 0.45);
+}
+.mhj .m-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  background: radial-gradient(
+    58% 58% at var(--m-mx, 50%) var(--m-my, 50%),
+    rgba(255, 246, 220, 0.42) 0%,
+    rgba(255, 240, 200, 0.12) 38%,
+    transparent 72%
+  );
+  mix-blend-mode: soft-light;
+}
+.mhj .m-tilt:hover .m-sheen::after { opacity: 1; }
+
+/* ── carved plaques (the countdown) ───────────────────────────────────────
+   Each unit is a slab set into the wall: bevelled by two inset hairlines,
+   pitched back a degree or two so the row has a shallow curve to it. */
+.mhj .m-plaque {
+  background: linear-gradient(
+    168deg,
+    rgba(255, 236, 196, 0.09) 0%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 200, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 22px 44px -30px rgba(0, 0, 0, 0.9);
+  transform: rotateX(9deg);
+  transition: transform 0.8s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.mhj .m-plaque-row {
+  perspective: 780px;
+  transform-style: preserve-3d;
+}
 
 /* very slow cinematic scale on hero/chapter art */
 @keyframes mhj-kenburns {
@@ -434,19 +685,27 @@
 }
 .mhj .m-kenburns { animation: mhj-kenburns 30s ease-out forwards; }
 
-/* editorial scroll reveal — slower and heavier than the landing's */
+/* editorial scroll reveal — content does not slide up, it swings up out of
+   depth: pushed back on Z and pitched forward, settling flush with the page.
+   Slower and heavier than the landing's. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .mhj [data-mreveal] {
       animation: mhj-rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 38%;
+      animation-range: entry 0% entry 42%;
     }
   }
 }
 @keyframes mhj-rise {
-  from { opacity: 0; transform: translateY(42px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: perspective(900px) translate3d(0, 46px, -150px) rotateX(8deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(900px) translate3d(0, 0, 0) rotateX(0deg);
+  }
 }
 
 /* gold line that draws itself */
@@ -466,11 +725,13 @@
 }
 .mhj .m-amble { animation: mhj-amble 3.4s ease-in-out infinite; }
 
-/* drifting marigold blossoms — soft gold, slow, always falling */
+/* drifting marigold blossoms — soft gold, slow, always falling. Each blossom
+   also rotates about Y as it falls, so it catches light face-on and edge-on
+   the way a real petal tumbling through a shaft does. */
 .mhj .m-petal {
   border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
-  background: radial-gradient(circle at 32% 30%, var(--m-gold2), var(--m-gold) 68%, transparent 100%);
-  box-shadow: 0 0 4px rgba(209, 170, 98, 0.35);
+  background: radial-gradient(circle at 32% 30%, var(--m-gold3), var(--m-gold) 62%, var(--m-gold-deep) 100%);
+  box-shadow: 0 0 6px rgba(228, 196, 137, 0.4);
   opacity: 0;
   will-change: transform, opacity;
   animation-name: mhj-fall;
@@ -478,22 +739,46 @@
   animation-iteration-count: infinite;
 }
 @keyframes mhj-fall {
-  0% { transform: translate3d(0, -6vh, 0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.5; }
-  90% { opacity: 0.45; }
-  100% { transform: translate3d(var(--drift, 12px), 106vh, 0) rotate(230deg); opacity: 0; }
+  0% { transform: translate3d(0, -6vh, 0) rotate3d(1, 1, 0, 0deg); opacity: 0; }
+  10% { opacity: 0.55; }
+  90% { opacity: 0.5; }
+  100% { transform: translate3d(var(--drift, 12px), 106vh, 0) rotate3d(1, 1.6, 0.4, 900deg); opacity: 0; }
+}
+
+/* Phones pay for every blurred layer. Two of the five shafts go, and the rest
+   blur less — at phone width the wide ones already overlap, so the read is
+   unchanged and the compositor has a third of the work. */
+@media (max-width: 640px) {
+  .mhj .m-shaft { filter: blur(14px); }
+  .mhj .m-shaft:nth-child(3),
+  .mhj .m-shaft:nth-child(5) { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mhj .m-parade,
   .mhj .m-amble { animation: none; }
   .mhj .m-petal { display: none; }
+  .mhj .m-shaft { animation: none; opacity: calc(var(--m-shaft-o, 0.6) * 0.7); }
   .mhj .m-goldtext { animation: none; background-position: 45% 0; }
+  .mhj .m-foil-surface { animation: none; background-position: 40% 0; }
   .mhj .m-glint::after { display: none; }
   .mhj .m-seal-draw path,
   .mhj .m-seal-draw ellipse { stroke-dashoffset: 0; animation: none; }
   .mhj .m-seal-draw text { opacity: 1; animation: none; }
   .mhj .m-tick { animation: none; }
+  /* Depth is decoration here: flatten every stage rather than leave a
+     half-applied camera behind. */
+  .mhj .m-layers,
+  .mhj .m-far,
+  .mhj .m-mid,
+  .mhj .m-near,
+  .mhj .m-plaque,
+  .mhj .m-tilt-inner { transform: none; }
+  .mhj .m-door {
+    transition: opacity 0.4s ease;
+  }
+  .mhj .m-door[data-open="true"] { opacity: 0; transform: none; }
+  .mhj .m-door-content[data-open="true"] { transform: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
