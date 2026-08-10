@@ -16,6 +16,7 @@ import { MayuraView } from "./mayura/mayura-view";
 import { JodiView } from "./jodi/jodi-view";
 import { DakView } from "./dak/dak-view";
 import { RajmahalView } from "./rajmahal/rajmahal-view";
+import { TaqdeerView } from "./taqdeer/taqdeer-view";
 import { GoToTop } from "./go-to-top";
 import { MusicPlayer } from "./music-player";
 
@@ -61,6 +62,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <DakView {...props} />;
     case "rajmahal": // The Rajmahal — cinematic palace journey
       return <RajmahalView {...props} />;
+    case "taqdeer": // The Taqdeer — Art Deco slot machine
+      return <TaqdeerView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }

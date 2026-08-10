@@ -4551,3 +4551,877 @@
   @keyframes w-music-wave { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.7); } }
   .w-music-on svg { animation: w-music-wave 1.6s ease-in-out infinite; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE TAQDEER (id "taqdeer") — a vintage Art Deco slot machine, turned into an
+   invitation. Wine velvet, obsidian lacquer, antique gold and champagne ivory:
+   four materials, one accent metal, nothing that blinks.
+
+   THE MACHINE. Each reel is a strip of `--tqd-cell`-tall cells inside a window
+   `--tqd-win` tall, so the pay-line cell shows whole and its neighbours show as
+   slivers. The strip's top padding centres cell 0 on the pay line, which makes
+   `translateY(-n * --tqd-cell)` centre cell n — so the renderer only has to
+   count cells, and every distance stays correct at every breakpoint. One
+   keyframe animation per strip does the entire spin (kick back off the stopper,
+   long fast travel, decelerating arrival that overshoots a fraction of a cell
+   and settles); it animates `transform` only, so it lives on the compositor.
+
+   `--tqd-cell` is a clamp against the viewport rather than a set of breakpoint
+   values, so the cabinet also fits the 248px-wide phone preview on the landing
+   page without a special case.
+
+   Bilingual + [data-tw-reveal] scroll-reveal are shared (see the scaffolding
+   block above); the rest lives here.
+   ══════════════════════════════════════════════════════════════════════════ */
+.tqd {
+  color: var(--tqd-ivory, #f4e9d6);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  background: var(--tqd-obsidian, #0b0709);
+  overflow-x: clip;
+  line-height: 1.7;
+}
+.tqd-display { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
+.tqd-serif { font-family: var(--font-cormorant), Georgia, "Times New Roman", serif; }
+.tqd-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; line-height: 1.2; }
+/* The deco voice: Marcellus, wide-tracked, always in capitals. Every label,
+   plate and numeral on the page is set in it — it is the machine's engraving. */
+.tqd-caps {
+  font-family: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.tqd .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.tqd ::selection { background: var(--tqd-gold); color: var(--tqd-obsidian); }
+
+/* ── grounds ──────────────────────────────────────────────────────────────── */
+/* obsidian lacquer, lit from above */
+/* wine velvet — the nap comes from two crossed hairline gradients, not an image */
+/* champagne ivory, for the sections that have to be read at length */
+/* The sign-off. It closes the same screen the machine stands on, so it carries
+   no ground of its own — a band here would read as a second section on a page
+   that only has one. */
+.tqd-foot { background: transparent; }
+.tqd-foot-note {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.5);
+}
+
+/* ── type ─────────────────────────────────────────────────────────────────── */
+.tqd-eyebrow {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-names {
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  font-weight: 300;
+  font-size: clamp(2.3rem, 9vw, 4.3rem);
+  line-height: 1.05;
+  letter-spacing: 0.015em;
+  color: var(--tqd-ivory);
+}
+.tqd-amp { font-style: italic; color: var(--tqd-gold); }
+
+/* ── nav ──────────────────────────────────────────────────────────────────── */
+/* the one band of pattern on the page: a deco chevron trim under the bar */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE HERO STAGE
+   ══════════════════════════════════════════════════════════════════════════ */
+.tqd-hero {
+  background:
+    radial-gradient(58% 42% at 50% 34%, rgba(201, 164, 76, 0.16), rgba(201, 164, 76, 0) 68%),
+    radial-gradient(90% 70% at 50% 6%, var(--tqd-wine) 0%, rgba(84, 19, 44, 0) 62%),
+    /* Ends on the same obsidian the root is painted with, so the footer below
+       continues the screen instead of butting against a darker band. */
+    linear-gradient(180deg, #14090e 0%, var(--tqd-obsidian) 62%, var(--tqd-obsidian) 100%);
+}
+.tqd-hero-over {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1rem, 3.6vw, 1.2rem);
+  text-align: center;
+  color: rgba(244, 233, 214, 0.62);
+}
+
+.tqd-stage {
+  position: relative;
+  /* headroom for the crown, which sits entirely above the cabinet */
+  margin-top: clamp(2.6rem, 9vw, 3.6rem);
+}
+/* The sunburst behind the cabinet — wide and faint.
+   It has three things acting on it, so each one owns a DIFFERENT property and
+   they compose instead of overwriting each other: `translate` centres it and
+   carries the pointer shift, `transform` is left free for the scroll parallax,
+   and the reveal brightens it through a transition on `opacity` alone. */
+.tqd-burst {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(150%, 40rem);
+  height: auto;
+  translate: -50% -50%;
+  color: var(--tqd-gold);
+  opacity: 0.11;
+  pointer-events: none;
+  transition: opacity 2.6s ease;
+  /* The rays have to fade out rather than stop: run to the edge and they read as
+     scratches on the page. The hero's vignette sits below this layer and cannot
+     reach it, so the fade is the layer's own job. */
+  mask-image: radial-gradient(closest-side, #000 26%, rgba(0, 0, 0, 0) 76%);
+}
+/* The vignette belongs to the HERO, not the stage. Hung on the stage it was a
+   box the size of the machine, so its own edge drew a visible rectangle across
+   the wine — a scrim has to be at least as big as the thing it darkens. The hero
+   clips it, so it can simply fill the section. */
+.tqd-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    54% 44% at 50% 42%,
+    rgba(5, 3, 4, 0) 44%,
+    rgba(5, 3, 4, 0.66) 100%
+  );
+  opacity: 0.7;
+  transition: opacity 2.4s ease;
+}
+.tqd-hero[data-revealed="1"]::before { opacity: 1; }
+
+/* The camera. It exists only to own the push-in, so that the scale, the tilt
+   and the cabinet's jolt are three separate transform owners that cannot
+   clobber one another. Deliberately a flat 2D scale. */
+.tqd-camera { position: relative; z-index: 2; }
+
+/* The machine: cabinet + lever, side by side, in one tilting group.
+   The perspective lives INSIDE this element's own transform (see the tilt rule
+   below) rather than on an ancestor, and nothing here sets `preserve-3d`. That
+   combination matters: with `perspective` on the stage and `preserve-3d` on the
+   wrapper, Chrome hit-tested the entire subtree as the wrapper — the lever
+   became unclickable while still looking perfect. Flattening at the machine
+   keeps the tilt and keeps the lever pressable. */
+.tqd-machine {
+  /* THE machine's scale control, and it has to live HERE rather than on the
+     cabinet: the lever is the cabinet's SIBLING, so a variable declared on the
+     cabinet does not reach it and every calc() on the lever silently resolves to
+     invalid — which collapsed its width to the artwork's intrinsic size and
+     dropped its margins to zero. Declare shared geometry on the common ancestor.
+     The floor keeps the machine inside the 248px landing card; the cap gives it
+     presence as a hero centrepiece. */
+  --tqd-mw: clamp(9rem, 64vw, 23rem);
+  /* aperture height = 96/300 of the width; the drum cell is two thirds of that */
+  --tqd-win: calc(var(--tqd-mw) * 0.32);
+  --tqd-cell: calc(var(--tqd-win) / 1.5);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* No gap: the lever positions itself with negative margins so its pivot lands
+     on the cabinet's flank, and a gap here would push the boss back off it. */
+  gap: 0;
+}
+
+/* ── the cabinet ──────────────────────────────────────────────────────────────
+   The casting is one SVG (cabinet.tsx, viewBox 300 × 520). Everything else is
+   positioned over it in PERCENTAGES OF THAT VIEWBOX, and every size on the
+   machine derives from one variable — --tqd-mw, the machine's width. That is
+   what keeps the DOM drums registered to the hole in the artwork at every
+   breakpoint: the SVG scales by width, so a percentage of the width is a fixed
+   fraction of the drawing whatever the viewport does.
+
+   Change the geometry in cabinet.tsx and these numbers must change with it.
+   ───────────────────────────────────────────────────────────────────────────── */
+.tqd-cab {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--tqd-mw);
+}
+.tqd-cab-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.6));
+}
+/* the polish: one slow band of light travelling across the casting */
+.tqd-cab::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0) 36%,
+    rgba(255, 252, 240, 0.09) 48%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  background-size: 280% 100%;
+  background-position: 120% 0;
+}
+
+/* the column names, laid on the brass shoulder rail (SVG y 118–144) */
+.tqd-shoulder {
+  position: absolute;
+  left: 13.667%;   /* SVG x 41 / 300 */
+  width: 72.667%;  /* SVG w 218 / 300 */
+  top: 22.692%;    /* SVG y 118 / 520 */
+  height: 5%;      /* SVG h 26 / 520 */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  pointer-events: none;
+}
+.tqd-shoulder-label {
+  min-width: 0;
+  font-family: var(--font-marcellus), Georgia, serif;
+  /* A legibility floor. These were 8px with 0.24em tracking, which is not a
+     label — it is a texture. Never let a real word fall below ~10px here. */
+  /* Off --tqd-mw, not vw: these labels are engraved ON the machine, so they have
+     to grow with it. Sized against the viewport they stayed at 12px while the
+     cabinet scaled up, which is exactly why they read as hardly-there. The max()
+     floor keeps them legible in the 248px landing card. */
+  font-size: max(0.62rem, calc(var(--tqd-mw) * 0.055));
+  letter-spacing: 0.09em;
+  text-indent: 0.09em;
+  text-transform: uppercase;
+  text-align: center;
+  /* engraved into brass: dark ink with a lit edge below it */
+  color: #3A2A08;
+  text-shadow: 0 1px 0 rgba(255, 249, 230, 0.5);
+}
+
+/* ══ THE APERTURE ══════════════════════════════════════════════════════════
+   The hole in the casting (SVG x 52 y 160, w 196 h 96). The drums live here.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.tqd-aperture {
+  position: absolute;
+  left: 17.333%;              /* 52 / 300 */
+  top: 30.769%;               /* 160 / 520 */
+  width: 65.333%;             /* 196 / 300 */
+  height: var(--tqd-win);     /* 96 / 300 of the width */
+}
+/* the mullions are drawn in the SVG beneath; these gaps let them show through */
+.tqd-bay-glass {
+  display: grid;
+  /* 1 : 1.12 : 1.42 — the same split as MULLIONS in cabinet.tsx, so the brass
+     dividers drawn in the SVG land exactly in these gaps. A four-digit year needs
+     the extra width; even thirds forced the drum type down to an unreadable size. */
+  grid-template-columns: 1fr 1.12fr 1.42fr;
+  gap: calc(var(--tqd-mw) * 0.0167); /* the 5-unit mullions in cabinet.tsx */
+  height: 100%;
+}
+.tqd-window {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  /* aged reel paper, warm and close in value across the band */
+  background: linear-gradient(180deg, #e8dcc2 0%, #f4ecd9 42%, #e2d4b6 100%);
+}
+.tqd-strip {
+  /* centres cell 0 on the pay line, so translateY(-n·cell) centres cell n */
+  padding-top: calc((var(--tqd-win) - var(--tqd-cell)) / 2);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+.tqd-cell {
+  display: grid;
+  place-items: center;
+  height: var(--tqd-cell);
+  font-family: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  /* Sized off the cell, so the date scales with the machine. The widest string a
+     drum shows is a four-digit year, and the year column is the widest of the
+     three — that is what buys this back up from 0.35. */
+  font-size: calc(var(--tqd-cell) * 0.43);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--tqd-ink);
+  /* the ink of a printed reel band, not a screen glyph */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+/* The curve of the drum. It is the only thing telling the eye that the half
+   symbols above and below the pay line are the band turning out of sight, rather
+   than misaligned type. The shading is WARM — a wine-brown shadow, not black:
+   fading printed paper to black turned the drum into polished chrome. */
+.tqd-window-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(58, 26, 20, 0.62) 0%,
+    rgba(74, 40, 28, 0.34) 17%,
+    rgba(120, 80, 50, 0.08) 36%,
+    rgba(255, 250, 235, 0.05) 50%,
+    rgba(120, 80, 50, 0.08) 64%,
+    rgba(74, 40, 28, 0.36) 83%,
+    rgba(58, 26, 20, 0.66) 100%
+  );
+}
+/* the smear: what a spinning band looks like. Opacity-only, so the fade off is
+   free — the strip's own blur is stepped (below) to keep repaints countable. */
+.tqd-window-smear {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(42, 22, 32, 0.16) 0 1px,
+    rgba(255, 255, 255, 0.1) 1px 3px,
+    rgba(42, 22, 32, 0.05) 3px 5px
+  );
+}
+/* The shadow the casting throws INTO the aperture. A real bezel occludes the
+   light at the top and sides of an opening; without this the drums look pasted
+   on rather than set behind a frame. */
+.tqd-aperture-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 22%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 8%),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0) 8%);
+}
+
+/* the pay line, struck across the aperture */
+.tqd-payline {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  top: 50%;
+  translate: 0 -50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.tqd-payline::before {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 164, 76, 0) 0%,
+    rgba(201, 164, 76, 0.6) 14%,
+    rgba(239, 215, 158, 0.8) 50%,
+    rgba(201, 164, 76, 0.6) 86%,
+    rgba(201, 164, 76, 0) 100%
+  );
+}
+.tqd-payline-mark {
+  position: relative;
+  width: calc(var(--tqd-mw) * 0.038);
+  height: auto;
+  color: var(--tqd-gold-lite);
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9));
+}
+
+/* the award card, engraved on the recessed panel below the reels
+   (SVG x 52 y 278, w 196 h 52) */
+.tqd-award {
+  position: absolute;
+  left: 17.333%;
+  width: 65.333%;
+  top: 53.462%;   /* 278 / 520 */
+  height: 10%;    /* 52 / 520 */
+  display: grid;
+  place-items: center;
+  padding: 0 6%;
+  text-align: center;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  /* Two lines have to sit inside the engraved panel (52 of 520 viewBox
+     units), so this is sized to fit rather than to fill. */
+  font-size: max(0.7rem, calc(var(--tqd-mw) * 0.055));
+  line-height: 1.22;
+  color: rgba(239, 215, 158, 0.82);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+/* ── the lever ────────────────────────────────────────────────────────────── */
+/* The lever is BOLTED to the cabinet, not parked beside it. Both offsets are
+   fractions of --tqd-mw so the pivot stays registered to the reel aperture at
+   every size:
+
+     margin-top   0.169 · mw  puts the boss on the aperture's centre line
+     margin-left −0.195 · mw  puts the boss at 0.915 · mw across
+
+   The boss goes at 0.90 rather than on the casting's flank (0.863): the aperture
+   ends at 0.826 and the escutcheon is ±0.035 · mw wide, so mounting it flush with
+   the flank slid the plate over the year drum and hid the last digits. Sitting
+   slightly proud of the body is also what a real handle boss does. 0.915
+   leaves a few px of daylight rather than the 1px that -0.21 measured at.
+
+   Derivation: the boss sits at 83.8% of the lever artwork's height, and the
+   aperture centres 0.693 · mw down the machine.
+   ───────────────────────────────────────────────────────────────────────────── */
+.tqd-lever-btn {
+  --tqd-lever-w: calc(var(--tqd-mw) * 0.22);
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: calc(var(--tqd-mw) * 0.169);
+  margin-left: calc(var(--tqd-mw) * -0.195);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tqd-lever-btn:active { cursor: grabbing; }
+.tqd-lever-btn:disabled { cursor: default; }
+.tqd-lever-btn:focus-visible {
+  outline: 1px solid var(--tqd-gold);
+  outline-offset: 6px;
+  border-radius: 0.4rem;
+}
+.tqd-lever {
+  display: block;
+  width: var(--tqd-lever-w);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+
+/* ── the prompt ───────────────────────────────────────────────────────────── */
+.tqd-prompt {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.4rem;
+  text-align: center;
+}
+/* the quiet chrome that stays below the announcement */
+.tqd-chrome {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.6rem;
+  text-align: center;
+}
+.tqd-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.74rem, 2.8vw, 0.84rem);
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-hint-again {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: rgba(244, 233, 214, 0.5);
+}
+.tqd-mute {
+  display: block;
+  margin: 1rem auto 0;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.55);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.tqd-mute:hover { color: rgba(239, 215, 158, 0.7); }
+
+/* ── the reveal ───────────────────────────────────────────────────────────────
+   Mounted only when it fires, so it needs an entrance animation rather than a
+   transition from a hidden state — and it must be complete with the animation
+   switched off, which is why the resting style here IS the final style. */
+.tqd-reveal {
+  margin-top: 1.6rem;
+  text-align: center;
+}
+.tqd-reveal-eyebrow {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.62rem, 2.6vw, 0.8rem);
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-reveal-weekday {
+  margin-top: 0.7rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.75);
+}
+.tqd-reveal-date {
+  margin-top: 0.4rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(1.05rem, 5vw, 1.7rem);
+  letter-spacing: 0.2em;
+  color: var(--tqd-ivory);
+}
+.tqd-reveal-rule {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.1rem auto 0;
+  max-width: 20rem;
+  color: var(--tqd-gold);
+}
+.tqd-reveal-fan { width: 2.4rem; height: auto; opacity: 0.8; }
+.tqd-reveal-rule-mid { flex: 1 1 auto; min-width: 0; height: auto; }
+.tqd-reveal-city {
+  margin-top: 0.5rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.72rem, 2.7vw, 0.82rem);
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.7);
+}
+/* the save-the-date sign-off, when there is no programme below to point at */
+
+/* the burst: gold, twenty-two pieces, once. Not confetti — a shower of leaf. */
+.tqd-sparks {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  z-index: 3;
+}
+.tqd-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--tqd-gold-lite);
+  box-shadow: 0 0 6px rgba(239, 215, 158, 0.9);
+  opacity: 0;
+}
+.tqd-spark-star {
+  width: 5px;
+  height: 5px;
+  border-radius: 0;
+  background: var(--tqd-gold);
+  clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+}
+
+/* ── motes ────────────────────────────────────────────────────────────────── */
+.tqd-motes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tqd-mote {
+  position: absolute;
+  bottom: -6px;
+  display: block;
+  border-radius: 50%;
+  background: var(--tqd-gold-lite);
+  opacity: 0;
+}
+
+/* ── the countdown drums ──────────────────────────────────────────────────── */
+.tqd-drum {
+  position: relative;
+  padding: 0.85rem 0.3rem 0.7rem;
+  border-radius: 0.2rem;
+  background: linear-gradient(180deg, #efe6d2 0%, #fbf6ea 34%, #e5d8bf 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(138, 107, 36, 0.5),
+    inset 0 4px 8px rgba(84, 19, 44, 0.2),
+    0 10px 22px -14px rgba(0, 0, 0, 0.8);
+}
+/* the same drum curve as the reel windows, so the callback reads */
+.tqd-drum::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(42, 22, 32, 0.28) 0%,
+    rgba(42, 22, 32, 0) 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(42, 22, 32, 0) 72%,
+    rgba(42, 22, 32, 0.3) 100%
+  );
+}
+.tqd-drum-num {
+  display: block;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(1.3rem, 6.4vw, 2.1rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--tqd-ink);
+  font-variant-numeric: tabular-nums;
+}
+.tqd-drum-label {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.6rem, 2.3vw, 0.7rem);
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-deep);
+}
+
+/* ── rows, chips, buttons, fields ─────────────────────────────────────────── */
+
+.tqd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--tqd-obsidian);
+  background: linear-gradient(160deg, var(--tqd-gold-lite) 0%, var(--tqd-gold) 52%, var(--tqd-brass) 100%);
+  box-shadow: 0 12px 26px -14px rgba(201, 164, 76, 0.7);
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+.tqd-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 32px -14px rgba(201, 164, 76, 0.85); }
+.tqd-btn:active { transform: translateY(0); }
+
+/* ── the reservation card ─────────────────────────────────────────────────── */
+
+/* ── the brass switches ───────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOTION. Everything below is decoration; the page is complete and legible
+   with the whole block switched off (see the reduced-motion rules at the end).
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  /* ── the spin ─────────────────────────────────────────────────────────── */
+  /* Distances are in cells, so this is correct at every breakpoint.
+       0–5%   the reel kicks back off its stopper
+       5–86%  the long travel, decelerating hard at the end
+       86–94% it overshoots the stop by a sixth of a cell
+       94–100% the sprung stopper pulls it back and it settles */
+  @keyframes tqd-reel {
+    0% {
+      transform: translate3d(0, 0, 0);
+      animation-timing-function: cubic-bezier(0.35, 0, 0.7, 1);
+    }
+    5% {
+      transform: translate3d(0, calc(var(--tqd-cell) * 0.16), 0);
+      animation-timing-function: cubic-bezier(0.05, 0.62, 0.13, 1);
+    }
+    86% {
+      transform: translate3d(0, calc(var(--tqd-land) - var(--tqd-cell) * 0.17), 0);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    94% {
+      transform: translate3d(0, calc(var(--tqd-land) + var(--tqd-cell) * 0.055), 0);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.5, 1);
+    }
+    100% { transform: translate3d(0, var(--tqd-land), 0); }
+  }
+
+  /* The blur is STEPPED, not ramped: three discrete values instead of a value
+     per frame, so a spinning reel costs three repaints rather than a hundred
+     and eighty. The perceptual smear is carried by the streak overlay, whose
+     opacity is compositor-only. */
+  .tqd-strip[data-run="1"] {
+    animation:
+      tqd-reel var(--tqd-dur) var(--tqd-delay) both,
+      tqd-smear var(--tqd-dur) steps(1, end) var(--tqd-delay) both;
+  }
+  @keyframes tqd-smear {
+    0%, 55% { filter: blur(2.1px); }
+    55.01%, 78% { filter: blur(1.1px); }
+    78.01%, 90% { filter: blur(0.45px); }
+    90.01%, 100% { filter: blur(0); }
+  }
+  .tqd-window-smear[data-run="1"] {
+    animation: tqd-smear-fade var(--tqd-dur) linear var(--tqd-delay) both;
+  }
+  @keyframes tqd-smear-fade {
+    0%, 52% { opacity: 0.85; }
+    88%, 100% { opacity: 0; }
+  }
+
+  /* ── the cabinet's micro-vibrations ───────────────────────────────────────
+     Bumps at 53%, 74% and 96% of 3.6s = 1.90s, 2.67s and 3.45s — the three
+     moments the reels' stoppers catch (see REELS in slot-machine.tsx). The
+     first bump is the lever bottoming out. Sub-pixel on purpose: the cabinet
+     should feel like it absorbed something, not like the page jumped. */
+  .tqd-cab[data-run="1"] { animation: tqd-jolt 3.6s linear both; }
+  @keyframes tqd-jolt {
+    0%, 3% { transform: translate3d(0, 0, 0); }
+    5% { transform: translate3d(0, 1.4px, 0) rotate(0.09deg); }
+    8%, 51% { transform: translate3d(0, 0, 0); }
+    53% { transform: translate3d(0.7px, 1.6px, 0) rotate(-0.07deg); }
+    56%, 72% { transform: translate3d(0, 0, 0); }
+    74% { transform: translate3d(-0.7px, 1.8px, 0) rotate(0.07deg); }
+    77%, 94% { transform: translate3d(0, 0, 0); }
+    96% { transform: translate3d(0, 2.4px, 0) rotate(-0.1deg); }
+    98% { transform: translate3d(0, -0.8px, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+
+  /* ── the lever's throw ────────────────────────────────────────────────────
+     A CSS animation outranks the inline transform that tracks the finger, so
+     the hand-off needs nothing un-set; `--tqd-from` is the angle the finger let
+     go at, which is why there is no jump at 0%. */
+  .tqd-lever-arm.tqd-throwing { animation: tqd-throw 1s both; }
+  @keyframes tqd-throw {
+    0% {
+      transform: rotate(var(--tqd-from, 0deg));
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 1);
+    }
+    22% {
+      /* 48°, not 62°: past about fifty the arm stops reading as pulled DOWN and
+         starts reading as swung out sideways. Matches `pull * 48` in the Lever. */
+      transform: rotate(48deg);
+      animation-timing-function: ease-out;
+    }
+    30% {
+      transform: rotate(45deg);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    62% {
+      transform: rotate(-5.5deg);
+      animation-timing-function: ease-in-out;
+    }
+    80% { transform: rotate(2.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  /* ── the camera push-in ───────────────────────────────────────────────────
+     Transform only, so nothing below the hero reflows, and the vignette closes
+     with it: the frame tightens on the reels rather than the reels growing. */
+  .tqd-hero[data-revealed="1"] .tqd-camera {
+    animation: tqd-pushin 2.6s cubic-bezier(0.2, 0.72, 0.2, 1) both;
+  }
+  @keyframes tqd-pushin {
+    0% { transform: scale(1) translate3d(0, 0, 0); }
+    100% { transform: scale(1.045) translate3d(0, -1.5%, 0); }
+  }
+  /* the frame closing in with it — the reels are lit, the rest falls away */
+  .tqd-hero[data-revealed="1"] .tqd-burst { opacity: 0.18; }
+
+  /* ── the announcement arriving ──────────────────────────────────────────── */
+  .tqd-reveal { animation: tqd-reveal-in 1.3s cubic-bezier(0.2, 0.72, 0.2, 1) both; }
+  @keyframes tqd-reveal-in {
+    0% { opacity: 0; transform: translate3d(0, 14px, 0); }
+    100% { opacity: 1; transform: none; }
+  }
+  /* the date and the names land a beat apart, so the pair reads as a sentence */
+  .tqd-reveal-date { animation: tqd-reveal-in 1.1s ease 0.18s both; }
+  .tqd-reveal-rule { animation: tqd-reveal-in 1.1s ease 0.3s both; }
+  /* Scoped to the reveal on purpose: `.tqd-names` is also the footer's name
+     block, which must not inherit an entrance meant for the hero. */
+  .tqd-reveal .tqd-names {
+    animation: tqd-reveal-in 1.4s cubic-bezier(0.2, 0.72, 0.2, 1) 0.42s both;
+  }
+
+  /* ── the shower of leaf ──────────────────────────────────────────────────- */
+  .tqd-spark {
+    animation: tqd-spark var(--tqd-sd) cubic-bezier(0.2, 0.6, 0.25, 1) var(--tqd-sdelay) both;
+  }
+  @keyframes tqd-spark {
+    0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.4); }
+    18% { opacity: 1; }
+    100% {
+      opacity: 0;
+      transform: translate3d(var(--tqd-sx), var(--tqd-sy), 0) scale(1);
+    }
+  }
+
+  /* ── the polish travelling across the lacquer ─────────────────────────── */
+  .tqd-cab::after { animation: tqd-polish 9s ease-in-out infinite; }
+  @keyframes tqd-polish {
+    0%, 16% { background-position: 130% 0; }
+    54%, 100% { background-position: -30% 0; }
+  }
+
+  /* ── gold motes, rising ─────────────────────────────────────────────────── */
+  .tqd-mote { animation-name: tqd-mote; animation-timing-function: linear; animation-iteration-count: infinite; }
+  @keyframes tqd-mote {
+    0% { opacity: 0; transform: translate3d(0, 0, 0); }
+    12% { opacity: 0.55; }
+    72% { opacity: 0.4; }
+    100% { opacity: 0; transform: translate3d(18px, -100svh, 0); }
+  }
+
+  /* ── the hint's arrow, pointing at the lever ────────────────────────────── */
+  .tqd-hint-arrow { animation: tqd-nudge 2.2s ease-in-out infinite; display: inline-block; }
+  @keyframes tqd-nudge {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(5px); opacity: 1; }
+  }
+
+  /* ── the pointer parallax ────────────────────────────────────────────────
+     Driven by CSS variables the renderer writes on pointermove, so the tilt
+     never costs a React render. The machine leads, the sunburst trails. */
+  .tqd-machine {
+    transform: perspective(1100px) rotateX(var(--tqd-tilt-x, 0deg))
+      rotateY(var(--tqd-tilt-y, 0deg));
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  /* The sunburst trails the machine, and it must keep its own opacity
+     transition: a bare `transition: translate` here would replace the shorthand
+     set on the base rule and the reveal's brightening would snap. */
+  .tqd-burst {
+    translate: calc(-50% + var(--tqd-shift, 0px) * -0.6) -50%;
+    transition: translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 2.6s ease;
+  }
+
+  /* ── scroll parallax: the hero's light drifts as the page leaves ────────── */
+  @supports (animation-timeline: scroll()) {
+    .tqd-burst {
+      animation: tqd-par-burst linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100svh;
+    }
+    @keyframes tqd-par-burst {
+      to { transform: translate3d(0, 16%, 0) scale(1.14); }
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION. The machine still works — the reels still land on the date,
+   and the reveal still happens — it simply happens as a cut rather than as a
+   performance. Nothing here is load-bearing, so all of it can go.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  /* the reels jump to their answer instead of spinning to it */
+  .tqd-strip[data-run="1"] { transform: translate3d(0, var(--tqd-land), 0); }
+  .tqd-window-smear { display: none; }
+  .tqd-motes { display: none; }
+  .tqd-sparks { display: none; }
+  .tqd-cab::after { display: none; }
+  .tqd-machine { transform: none; }
+  .tqd-lever-arm.tqd-throwing { transform: rotate(0deg); }
+  .tqd-hint-arrow { animation: none; }
+  /* the announcement is simply there, at full strength, the instant it mounts */
+  .tqd-reveal,
+  .tqd-reveal-date,
+  .tqd-reveal-rule,
+  .tqd-reveal .tqd-names { animation: none; opacity: 1; transform: none; }
+}

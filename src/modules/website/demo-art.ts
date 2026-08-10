@@ -414,6 +414,7 @@ const PALETTES: Record<string, Palette> = {
   jodi: { deep: "#570b2b", deep2: "#a81e58", gold: "#c9a24a", goldLite: "#e8cd7e", accent: "#a81e58", light: "#fbf6ea", ink: "#5a2436" },
   dak: { deep: "#0d131e", deep2: "#25324a", gold: "#b4894a", goldLite: "#e3c88a", accent: "#a8332b", light: "#f5eddc", ink: "#23293a" },
   rajmahal: { deep: "#25160a", deep2: "#3e2612", gold: "#c08f3f", goldLite: "#e7cd8e", accent: "#7c2230", light: "#fdf6eb", ink: "#3a2a18" },
+  taqdeer: { deep: "#0b0709", deep2: "#54132c", gold: "#c9a44c", goldLite: "#efd79e", accent: "#6e1b3a", light: "#f4e9d6", ink: "#2a1620" },
 };
 
 const CONFETTI_C = { sky: "#60A5FA", sun: "#FACC15", coral: "#FB7185", lavender: "#A78BFA", cream: "#FFFDF5" };

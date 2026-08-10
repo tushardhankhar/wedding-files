@@ -682,6 +682,54 @@ const THEME_BASES: ThemeBase[] = [
     } as CSSProperties,
   },
 
+  {
+    id: "taqdeer",
+    name: "The Taqdeer",
+    description:
+      "A vintage Art Deco slot machine, built in wine velvet and antique gold — pull the lever and three mechanical reels spin down to the date. Luxury casino, restrained and cinematic.",
+    swatch: ["#54132C", "#C9A44C", "#0B0709"],
+    heroMotif: "seal",
+    vars: {
+      /* Four materials, no more: wine velvet · obsidian lacquer · antique gold
+       * · champagne ivory. Gold is the only bright thing on the page, so it has
+       * to earn every appearance — bezels, type and the lever, nothing else.
+       * --tqd-gold-deep is the one gold dark enough to read as text on ivory. */
+      "--tqd-wine": "#54132C",
+      "--tqd-wine-2": "#6E1B3A",
+      "--tqd-wine-deep": "#380C1D",
+      "--tqd-obsidian": "#0B0709",
+      "--tqd-obsidian-2": "#171016",
+      "--tqd-gold": "#C9A44C",
+      "--tqd-gold-lite": "#EFD79E",
+      "--tqd-gold-deep": "#8A6B24",
+      "--tqd-brass": "#A9843C",
+      "--tqd-ivory": "#F4E9D6",
+      "--tqd-ivory-2": "#FCF6EA",
+      "--tqd-ink": "#2A1620",
+      "--tqd-ink-soft": "#7A5C66",
+      /* the warm pool of light the cabinet stands in */
+      "--tqd-glow": "rgba(239,215,158,0.5)",
+      "--w-navy": "#0B0709",
+      "--w-bg": "#0B0709",
+      "--w-surface": "#171016",
+      "--w-ink": "#F4E9D6",
+      "--w-ink-soft": "#C6AEB6",
+      "--w-accent": "#54132C",
+      "--w-gold": "#C9A44C",
+      "--w-gold-lite": "#EFD79E",
+      "--w-line": "rgba(201,164,76,0.28)",
+      "--w-hero-ink": "#F4E9D6",
+      "--w-hero-bg":
+        "radial-gradient(90% 70% at 50% 8%, rgba(201,164,76,0.24), transparent 58%), linear-gradient(180deg, #54132C 0%, #0B0709 100%)",
+      "--w-serif": CORMORANT,
+      "--w-display": PLAYFAIR,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"❖"',
+      "--w-pattern": PATTERN.dots,
+    } as CSSProperties,
+  },
+
   /* ── "Experience" themes — non-wedding, fully bespoke interactive renderers ── */
   {
     id: "afterparty",
@@ -920,6 +968,14 @@ const THEME_META: Record<
     // and turning the switch on before the portrait is swappable would put an
     // upload control in the editor that changes nothing on the site.
     supports: WEDDING_SUPPORTS,
+  },
+  taqdeer: {
+    category: "save-the-date",
+    subjectSpec: { names: 2, labels: ["Name", "Second name"], required: true },
+    // The bare save-the-date baseline, exactly like the Overture and the
+    // Muhurat: an announcement, not an invitation. The machine IS the theme, so
+    // there is no illustration slot either.
+    supports: MINIMAL_SUPPORTS,
   },
   afterparty: {
     category: "party",

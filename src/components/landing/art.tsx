@@ -58,6 +58,10 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     bg: "radial-gradient(74% 46% at 50% 6%, rgba(231,205,142,.75), transparent 62%), radial-gradient(64% 42% at 50% 114%, rgba(124,34,48,.34), transparent 62%), linear-gradient(168deg, #E8CFA8 0%, #B98A46 52%, #3E2612 120%)",
     motif: "❖",
   },
+  taqdeer: {
+    bg: "radial-gradient(62% 40% at 50% 10%, rgba(201,164,76,.42), transparent 62%), radial-gradient(70% 46% at 50% 112%, rgba(84,19,44,.65), transparent 62%), linear-gradient(168deg, #54132C 0%, #2A0A17 52%, #0B0709 120%)",
+    motif: "❖",
+  },
   rajputana: {
     bg: "radial-gradient(80% 60% at 50% 20%, rgba(255,248,236,.65), transparent 62%), linear-gradient(160deg, #f3e6d2 0%, #dfa878 55%, #c96f3b 115%)",
     motif: "❖",

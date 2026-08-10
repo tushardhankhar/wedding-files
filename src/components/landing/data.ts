@@ -105,6 +105,7 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "anand-karaj", name: "The Anand Karaj", vibe: "Punjabi & Sikh", tagline: "Two souls. One path.", art: "punjabi", palette: ["#fdf1dd", "#f5a623", "#c99a3d"], demo: "punjabi", category: "wedding" },
   { id: "kalyanam", name: "The Kalyanam", vibe: "South Indian", tagline: "Sacred. Timeless. Beautiful.", art: "south", palette: ["#5c1620", "#b8860b", "#1f5c3d"], demo: "south-indian", category: "wedding" },
   { id: "vow", name: "The Vow", vibe: "Christian & contemporary", tagline: "Forever starts here.", art: "vow", palette: ["#f5f2ea", "#aebfa5", "#d8c49a"], demo: "christian", category: "wedding" },
+  { id: "taqdeer", name: "The Taqdeer", vibe: "Save the Date · Art Deco", tagline: "Pull the lever. Meet the date.", art: "taqdeer", palette: ["#54132C", "#C9A44C", "#0B0709"], demo: "taqdeer", category: "save-the-date" },
   { id: "overture", name: "The Overture", vibe: "Save the Date", tagline: "Mark your calendars.", art: "overture", palette: ["#0e3b2c", "#c9a23f", "#f7f0e0"], demo: "save-the-date", category: "save-the-date" },
   { id: "muhurat", name: "The Muhurat", vibe: "Save the Date · Indian", tagline: "The auspicious date is set.", art: "muhurat", palette: ["#4a0d1f", "#c9a23f", "#f7f0e0"], demo: "muhurat", category: "save-the-date" },
   { id: "gulistan", name: "The Gulistan", vibe: "Save the Date · Romantic", tagline: "Two hearts, one beginning.", art: "gulistan", palette: ["#f6d3d9", "#c9a24a", "#7a1f38"], demo: "gulistan", category: "save-the-date" },
