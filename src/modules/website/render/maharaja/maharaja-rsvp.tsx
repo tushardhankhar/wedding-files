@@ -26,7 +26,7 @@ function CeremonialChoice({
   children: React.ReactNode;
 }) {
   const base =
-    "flex-1 border px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.22em] transition-all duration-300";
+    "flex-1 border px-4 py-3 text-center text-[11px] m-caps uppercase tracking-[0.22em] transition-all duration-300";
   const idle =
     "border-[color:var(--m-gold)]/45 text-[color:var(--m-gold)] hover:border-[color:var(--m-gold)]";
   const on =
@@ -164,7 +164,7 @@ export function MaharajaGroupRsvp({
         type="button"
         onClick={r.submit}
         disabled={r.pending}
-        className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] m-caps uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {r.pending ? "…" : r.saved ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}
       </button>
@@ -299,7 +299,7 @@ export function MaharajaSelfRsvp({
         type="button"
         onClick={submit}
         disabled={pending}
-        className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="w-full border border-[color:var(--m-gold)] bg-[color:var(--m-gold)] px-6 py-4 text-[11px] m-caps uppercase tracking-[0.28em] text-[color:var(--m-wine)] transition-opacity hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "…" : savedRsvp ? <TT en="Save changes" hi="बदलाव सहेजें" /> : <TT en="Send our response" hi="उत्तर भेजें" />}
       </button>

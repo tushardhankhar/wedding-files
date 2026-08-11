@@ -303,37 +303,111 @@
    THE MAHARAJA — standalone royal theme (registry id: "royal").
    Unlike the token themes, this theme has its own renderer (MaharajaView) and
    visual language: palace wine + antique gold on old-ivory paper, monumental
-   Cormorant serif, heavy deliberate motion. Scoped under .mhj.
+   Cormorant display, Marcellus inscriptional caps, heavy deliberate motion
+   staged in real CSS 3D. Scoped under .mhj.
    ══════════════════════════════════════════════════════════════════════════ */
 .mhj {
-  --m-wine: #3a0717;
-  --m-maroon: #620f25;
-  --m-red: #8b1835;
-  --m-gold: #b98a3d;
-  --m-gold2: #d1aa62;
-  --m-ivory: #f7ebd3;
-  --m-ivory2: #efdfbe;
-  --m-mahog: #1d090d;
+  /* ── the ground ───────────────────────────────────────────────────────
+     Three families and no more: wine (every dark surface), gold (every
+     ornament), ivory (every page). The reds are one ramp of the SAME hue so
+     stacking them reads as depth in a single lacquer rather than as four
+     different colours competing. */
+  --m-mahog: #150409;
+  --m-wine: #310a18;
+  --m-maroon: #5e1129;
+  --m-red: #8f1c3b;
+
+  /* ── the metal ────────────────────────────────────────────────────────
+     Gold is treated as a surface, not a colour: shadowed → base → lit →
+     specular. Everything gold in the theme is a gradient built from these
+     four, which is what separates struck metal from flat yellow. The base is
+     deliberately desaturated toward bronze; saturated gold reads as plastic. */
+  --m-gold-deep: #7a5316;
+  --m-gold: #c09649;
+  --m-gold2: #e4c489;
+  --m-gold3: #fdf1cf;
+
+  --m-ivory: #faf2e0;
+  --m-ivory2: #f2e6cb;
+  --m-ink: #2a1015;
+  --m-ink-soft: #7c5d55;
   --m-emerald: #0e5b48;
-  --m-ink: #2c1218;
-  --m-ink-soft: #7d5f58;
+
+  /* One canonical rake of light, so a heading, a button and a rule all catch
+     it at the same angle and read as the same alloy. */
+  --m-foil: linear-gradient(
+    112deg,
+    var(--m-gold-deep) 0%,
+    var(--m-gold) 16%,
+    var(--m-gold3) 31%,
+    var(--m-gold2) 44%,
+    var(--m-gold-deep) 60%,
+    var(--m-gold) 76%,
+    var(--m-gold2) 92%,
+    var(--m-gold-deep) 100%
+  );
+
+  /* ── the type ─────────────────────────────────────────────────────────
+     Display is Cormorant at LIGHT weights — at 7rem a 300 is aristocratic and
+     a 600 is merely big. Caps are Marcellus, Roman inscriptional letterforms,
+     which is what makes the theme's dense uppercase microtype read as engraved
+     stone instead of as a UI sans tracked out to breaking point. */
+  --m-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --m-caps: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  --m-body: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  --m-deva-display: var(--font-tiro-deva), var(--font-noto-deva), serif;
 
   background: var(--m-ivory);
   color: var(--m-ink);
-  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  font-family: var(--m-body);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.68;
   overflow-x: clip;
+  /* Old paper is never pure: a whisper of warmth under everything ties the
+     ivory sections to the wine ones. */
+  text-rendering: optimizeLegibility;
 }
 .mhj[data-lang="en"] .l-hi { display: none !important; }
 .mhj[data-lang="hi"] .l-en { display: none !important; }
-.mhj .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.mhj .l-hi { font-family: var(--font-noto-deva), var(--m-body), sans-serif; }
+/* Hindi inside display type gets the serif Devanagari, so a Hindi headline
+   carries the same authority as the English one rather than dropping to UI
+   sans mid-composition. Devanagari has no uppercase and its matras collide
+   under heavy tracking, so both are unwound here. */
+.mhj .m-serif .l-hi,
+.mhj .m-caps .l-hi {
+  font-family: var(--m-deva-display);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
 
 .mhj .m-serif {
-  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  font-family: var(--m-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+}
+/* Monumental display — the names, the chapter titles. Light weight, tight
+   leading, and a hairline of engraving so ivory type on wine has an edge. */
+.mhj .m-display {
+  font-family: var(--m-display);
+  font-weight: 300;
+  letter-spacing: 0.055em;
+}
+.mhj .m-caps {
+  font-family: var(--m-caps);
+  font-weight: 400;
 }
 .mhj .m-script {
   font-family: var(--font-great-vibes), "Segoe Script", cursive;
+}
+/* Carved relief for light type on dark grounds: a shadow below and the
+   faintest lit edge above. Two 1px shadows, nothing more — anything heavier
+   stops reading as engraving and starts reading as a drop shadow. */
+.mhj .m-engrave {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.6),
+    0 -1px 0 rgba(255, 240, 205, 0.13),
+    0 18px 46px rgba(0, 0, 0, 0.45);
 }
 .mhj ::selection { background: var(--m-gold); color: var(--m-wine); }
 
@@ -349,30 +423,50 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 
+/* Cinematic vignette — the corners of every dark scene fall away, which is
+   what makes the centre feel lit rather than merely coloured. */
+.mhj .m-vignette::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    120% 85% at 50% 42%,
+    transparent 34%,
+    rgba(10, 2, 5, 0.28) 72%,
+    rgba(10, 2, 5, 0.72) 100%
+  );
+}
+
 /* metallic antique gold text — a slow shimmer, like light passing over
    engraved gold, not yellow neon. background-size wider than the element so
    the sweep has somewhere to travel; `alternate` makes it glint back and
    forth rather than snapping back at the loop point. */
 .mhj .m-goldtext {
-  background: linear-gradient(
-    100deg,
-    var(--m-gold) 0%,
-    #8f6828 16%,
-    var(--m-gold) 32%,
-    #f6e7b8 48%,
-    var(--m-gold2) 64%,
-    #8f6828 80%,
-    var(--m-gold) 100%
-  );
+  background: var(--m-foil);
   background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: mhj-shimmer 6s ease-in-out infinite alternate;
+  animation: mhj-shimmer 7s ease-in-out infinite alternate;
 }
 @keyframes mhj-shimmer {
   from { background-position: 0% 0; }
   to { background-position: 100% 0; }
+}
+
+/* Solid gold surfaces (the ceremonial button, plaque edges) — the same alloy
+   as the text, plus the two hairlines that sell a raised edge: light along the
+   top, shadow along the bottom. */
+.mhj .m-foil-surface {
+  background: var(--m-foil);
+  background-size: 220% 100%;
+  animation: mhj-shimmer 9s ease-in-out infinite alternate;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 224, 0.6),
+    inset 0 -1px 0 rgba(60, 34, 6, 0.55),
+    0 10px 26px -12px rgba(0, 0, 0, 0.7);
 }
 
 /* jewel glint — a diagonal flash of light crossing a gold surface (the seal,
@@ -416,16 +510,173 @@
 }
 .mhj .m-tick { animation: mhj-tick 1s steps(2, end) infinite; }
 
-/* ceremonial entrance doors — heavy, slow, deliberate */
+/* ── the ceremonial entrance ───────────────────────────────────────────────
+   The doors are hinged in real 3D, not slid off-screen. Each leaf pivots on
+   its OUTER edge and swings toward the viewer, so it foreshortens as it turns
+   and briefly occludes the invitation — the read is "these are heavy objects
+   in a room", which a translate can never give. The frame owns the
+   perspective so both leaves and the invitation share one camera. */
+.mhj .m-doorframe {
+  perspective: 1600px;
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+}
 .mhj .m-door {
-  transition: transform 1.6s cubic-bezier(0.72, 0, 0.16, 1);
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform, filter;
+  transition:
+    transform 2s cubic-bezier(0.62, 0.02, 0.14, 1),
+    filter 2s cubic-bezier(0.62, 0.02, 0.14, 1);
 }
-.mhj .m-door[data-open="true"][data-side="l"] { transform: translateX(-101%); }
-.mhj .m-door[data-open="true"][data-side="r"] { transform: translateX(101%); }
+.mhj .m-door[data-side="r"] { transform-origin: right center; }
+/* Just past 90° so the leaf is edge-on-to-behind at rest, and dimmed: a
+   surface turning away from the light loses it. */
+.mhj .m-door[data-open="true"][data-side="l"] { transform: rotateY(-104deg); filter: brightness(0.3); }
+.mhj .m-door[data-open="true"][data-side="r"] { transform: rotateY(104deg); filter: brightness(0.3); }
+/* Cylindrical shading across each leaf — dark at the hinge, lit at the
+   meeting edge — so a flat div reads as a panel catching raking light. */
+.mhj .m-door::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.12) 34%,
+    transparent 72%,
+    rgba(255, 226, 168, 0.12) 100%
+  );
+}
+.mhj .m-door[data-side="r"]::before { transform: scaleX(-1); }
+
+/* The invitation does not fade — the camera pushes through it as the doors
+   part. Delayed opacity so it is still solid while it grows. */
 .mhj .m-door-content {
-  transition: opacity 0.8s ease;
+  transform-style: preserve-3d;
+  transition:
+    opacity 0.85s ease 0.5s,
+    transform 1.9s cubic-bezier(0.62, 0.02, 0.14, 1);
 }
-.mhj .m-door-content[data-open="true"] { opacity: 0; }
+.mhj .m-door-content[data-open="true"] {
+  opacity: 0;
+  transform: translateZ(430px);
+}
+
+/* ── depth ────────────────────────────────────────────────────────────────
+   A scene that establishes a camera for its children. Layers inside are
+   pushed back or pulled forward on Z and counter-scaled, so scrolling and
+   pointer movement produce true parallax instead of faked offsets. */
+.mhj .m-scene {
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
+}
+.mhj .m-layers {
+  transform-style: preserve-3d;
+  /* Pointer parallax, in degrees, written by the renderer. Falls back to
+     dead-centre so the scene is correct before the first pointer event and on
+     touch devices, which never send one.
+     The easing lives in the renderer, which glides these properties toward the
+     pointer, rather than in a `transition` here. A transition would restart on
+     every write while the pointer is moving, so its remaining time — and with
+     it the camera's lag — would depend on how fast the pointer happened to be
+     travelling. Gliding the values gives one constant, predictable follow. */
+  transform: rotateX(var(--m-py, 0deg)) rotateY(var(--m-px, 0deg));
+}
+.mhj .m-far { transform: translateZ(-460px) scale(1.42); }
+.mhj .m-mid { transform: translateZ(-220px) scale(1.2); }
+.mhj .m-near { transform: translateZ(60px) scale(0.95); }
+
+/* Volumetric light through the jali — the shafts a screened window throws
+   across a dark hall. Sized in vmax so they stay diagonal on any aspect. */
+.mhj .m-shaft {
+  position: absolute;
+  top: -30%;
+  height: 170%;
+  width: 16vmax;
+  pointer-events: none;
+  transform: skewX(-11deg);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 228, 170, 0.22) 0%,
+    rgba(255, 214, 140, 0.09) 45%,
+    transparent 88%
+  );
+  filter: blur(22px);
+  mix-blend-mode: screen;
+  animation: mhj-shaft 14s ease-in-out infinite alternate;
+}
+/* Each shaft breathes between half and full of its own brightness, so a
+   window's worth of them never pulses in unison. `--m-shaft-o` is per-shaft. */
+@keyframes mhj-shaft {
+  from { opacity: calc(var(--m-shaft-o, 0.6) * 0.45); transform: skewX(-11deg) translateX(-1.5vmax) scaleY(0.96); }
+  to { opacity: var(--m-shaft-o, 0.6); transform: skewX(-11deg) translateX(1.5vmax) scaleY(1.04); }
+}
+
+/* ── framed portraits ─────────────────────────────────────────────────────
+   Gallery frames tilt toward the pointer with a specular sheen tracking the
+   cursor, so the glass over each portrait catches the light of the room. The
+   renderer writes --m-rx/--m-ry (degrees) and --m-mx/--m-my (percentages). */
+.mhj .m-tilt { perspective: 900px; }
+.mhj .m-tilt-inner {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--m-rx, 0deg)) rotateY(var(--m-ry, 0deg)) translateZ(0);
+  /* Only box-shadow eases while tracking. A frame that lags the cursor by
+     several tenths of a second feels rubbery rather than solid — under the
+     pointer the tilt should be locked to it. It is the release that wants
+     easing, and `.m-settling` supplies it for exactly the length of the
+     return to flush. */
+  transition: box-shadow 0.7s ease;
+  box-shadow: 0 14px 34px -22px rgba(42, 16, 21, 0.75);
+}
+.mhj .m-tilt.m-settling .m-tilt-inner {
+  transition:
+    transform 0.7s cubic-bezier(0.22, 0.7, 0.2, 1),
+    box-shadow 0.7s ease;
+}
+.mhj .m-tilt:hover .m-tilt-inner {
+  box-shadow:
+    0 34px 60px -28px rgba(42, 16, 21, 0.75),
+    0 0 0 1px rgba(192, 150, 73, 0.45);
+}
+.mhj .m-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  background: radial-gradient(
+    58% 58% at var(--m-mx, 50%) var(--m-my, 50%),
+    rgba(255, 246, 220, 0.42) 0%,
+    rgba(255, 240, 200, 0.12) 38%,
+    transparent 72%
+  );
+  mix-blend-mode: soft-light;
+}
+.mhj .m-tilt:hover .m-sheen::after { opacity: 1; }
+
+/* ── carved plaques (the countdown) ───────────────────────────────────────
+   Each unit is a slab set into the wall: bevelled by two inset hairlines,
+   pitched back a degree or two so the row has a shallow curve to it. */
+.mhj .m-plaque {
+  background: linear-gradient(
+    168deg,
+    rgba(255, 236, 196, 0.09) 0%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 200, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    0 22px 44px -30px rgba(0, 0, 0, 0.9);
+  transform: rotateX(9deg);
+  transition: transform 0.8s cubic-bezier(0.22, 0.7, 0.2, 1);
+}
+.mhj .m-plaque-row {
+  perspective: 780px;
+  transform-style: preserve-3d;
+}
 
 /* very slow cinematic scale on hero/chapter art */
 @keyframes mhj-kenburns {
@@ -434,19 +685,27 @@
 }
 .mhj .m-kenburns { animation: mhj-kenburns 30s ease-out forwards; }
 
-/* editorial scroll reveal — slower and heavier than the landing's */
+/* editorial scroll reveal — content does not slide up, it swings up out of
+   depth: pushed back on Z and pitched forward, settling flush with the page.
+   Slower and heavier than the landing's. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .mhj [data-mreveal] {
       animation: mhj-rise linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 38%;
+      animation-range: entry 0% entry 42%;
     }
   }
 }
 @keyframes mhj-rise {
-  from { opacity: 0; transform: translateY(42px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: perspective(900px) translate3d(0, 46px, -150px) rotateX(8deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(900px) translate3d(0, 0, 0) rotateX(0deg);
+  }
 }
 
 /* gold line that draws itself */
@@ -466,11 +725,13 @@
 }
 .mhj .m-amble { animation: mhj-amble 3.4s ease-in-out infinite; }
 
-/* drifting marigold blossoms — soft gold, slow, always falling */
+/* drifting marigold blossoms — soft gold, slow, always falling. Each blossom
+   also rotates about Y as it falls, so it catches light face-on and edge-on
+   the way a real petal tumbling through a shaft does. */
 .mhj .m-petal {
   border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
-  background: radial-gradient(circle at 32% 30%, var(--m-gold2), var(--m-gold) 68%, transparent 100%);
-  box-shadow: 0 0 4px rgba(209, 170, 98, 0.35);
+  background: radial-gradient(circle at 32% 30%, var(--m-gold3), var(--m-gold) 62%, var(--m-gold-deep) 100%);
+  box-shadow: 0 0 6px rgba(228, 196, 137, 0.4);
   opacity: 0;
   will-change: transform, opacity;
   animation-name: mhj-fall;
@@ -478,22 +739,46 @@
   animation-iteration-count: infinite;
 }
 @keyframes mhj-fall {
-  0% { transform: translate3d(0, -6vh, 0) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.5; }
-  90% { opacity: 0.45; }
-  100% { transform: translate3d(var(--drift, 12px), 106vh, 0) rotate(230deg); opacity: 0; }
+  0% { transform: translate3d(0, -6vh, 0) rotate3d(1, 1, 0, 0deg); opacity: 0; }
+  10% { opacity: 0.55; }
+  90% { opacity: 0.5; }
+  100% { transform: translate3d(var(--drift, 12px), 106vh, 0) rotate3d(1, 1.6, 0.4, 900deg); opacity: 0; }
+}
+
+/* Phones pay for every blurred layer. Two of the five shafts go, and the rest
+   blur less — at phone width the wide ones already overlap, so the read is
+   unchanged and the compositor has a third of the work. */
+@media (max-width: 640px) {
+  .mhj .m-shaft { filter: blur(14px); }
+  .mhj .m-shaft:nth-child(3),
+  .mhj .m-shaft:nth-child(5) { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mhj .m-parade,
   .mhj .m-amble { animation: none; }
   .mhj .m-petal { display: none; }
+  .mhj .m-shaft { animation: none; opacity: calc(var(--m-shaft-o, 0.6) * 0.7); }
   .mhj .m-goldtext { animation: none; background-position: 45% 0; }
+  .mhj .m-foil-surface { animation: none; background-position: 40% 0; }
   .mhj .m-glint::after { display: none; }
   .mhj .m-seal-draw path,
   .mhj .m-seal-draw ellipse { stroke-dashoffset: 0; animation: none; }
   .mhj .m-seal-draw text { opacity: 1; animation: none; }
   .mhj .m-tick { animation: none; }
+  /* Depth is decoration here: flatten every stage rather than leave a
+     half-applied camera behind. */
+  .mhj .m-layers,
+  .mhj .m-far,
+  .mhj .m-mid,
+  .mhj .m-near,
+  .mhj .m-plaque,
+  .mhj .m-tilt-inner { transform: none; }
+  .mhj .m-door {
+    transition: opacity 0.4s ease;
+  }
+  .mhj .m-door[data-open="true"] { opacity: 0; transform: none; }
+  .mhj .m-door-content[data-open="true"] { transform: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -3404,6 +3689,717 @@
   .dak-fly-y { transform: translateY(56px) rotate(8deg); }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE RAJMAHAL — registry id `rajmahal`, namespace `.rjm` / `--rjm-*`
+   ──────────────────────────────────────────────────────────────────────────
+   A cinematic journey into a Rajasthani palace, built on ten painted layers
+   (see render/rajmahal/ART.md). The artwork carries every illustration; this
+   stylesheet only frames, lights and moves it.
+
+   PALETTE DOCTRINE — three colours: carved sandstone, antique gold, one deep
+   maroon. The peacocks bring teal and lapis, but ONLY inside their own
+   paintings. Nothing here may introduce a fourth hue.
+
+   Bilingual (`[data-lang]` + .l-en/.l-hi) and the `[data-tw-reveal]` scroll
+   reveal are shared — see the scaffolding block near the top of this file.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rjm {
+  --rjm-shadow: 0 24px 60px -28px rgba(62, 38, 18, 0.45);
+
+  /* THE APERTURE. Measured off the two gateway paintings by differencing them,
+     not eyeballed — these four numbers are the doorway, and the clip-paths on
+     .rjm-leaf-l / .rjm-leaf-r below are derived from them. The leaves are cut
+     slightly WIDER than the stone opening so they overlap onto the jamb: when
+     they swing away they reveal identical stone from `gate-open` beneath, so the
+     overlap is invisible, whereas a gap would flash the garden at the hinge. */
+  --rjm-ap-l: 26.5%;
+  --rjm-ap-t: 16%;
+  --rjm-ap-r: 79.5%;
+  --rjm-ap-mid: 53%;
+
+  background: var(--rjm-paper);
+  color: var(--rjm-ink);
+  font-family: var(--w-sans);
+  overflow-x: clip;
+}
+
+.rjm ::selection { background: var(--rjm-gold-lite); color: var(--rjm-wood-2); }
+
+.rjm h1, .rjm h2, .rjm h3 { font-family: var(--w-display); font-weight: 600; }
+.rjm .rjm-amp { font-family: var(--w-serif); font-style: italic; opacity: .7; }
+[data-lang="hi"] .rjm h1,
+[data-lang="hi"] .rjm h2,
+[data-lang="hi"] .rjm h3 { font-family: var(--w-deva); }
+
+/* ── nav ─────────────────────────────────────────────────────────────────── */
+.rjm-nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 40;
+  display: flex; align-items: center; gap: .75rem;
+  padding: .7rem clamp(.9rem, 3vw, 1.6rem);
+  background: color-mix(in srgb, var(--rjm-paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 24%, transparent);
+}
+.rjm-nav-mark {
+  font-family: var(--w-display); font-size: .95rem; letter-spacing: .18em;
+  color: var(--rjm-gold-deep); text-decoration: none;
+}
+.rjm-nav-links { display: none; gap: 1.15rem; margin-inline-start: auto; }
+.rjm-nav-links a {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--rjm-ink-soft); text-decoration: none; transition: color .25s;
+}
+.rjm-nav-links a:hover { color: var(--rjm-gold-deep); }
+.rjm-nav-toggle { margin-inline-start: auto; color: var(--rjm-gold-deep); font-size: 1.1rem; }
+.rjm-lang {
+  font-size: .68rem; letter-spacing: .12em; padding: .34rem .7rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  border-radius: 999px; color: var(--rjm-gold-deep); white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .rjm-nav-toggle { display: none; }
+  .rjm-nav-links { display: flex; }
+}
+@media (max-width: 767px) {
+  .rjm-nav-links {
+    display: none; position: absolute; inset: 100% 0 auto 0;
+    flex-direction: column; gap: .9rem; padding: 1rem 1.4rem 1.3rem;
+    background: var(--rjm-paper); border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 24%, transparent);
+  }
+  .rjm-nav-links.open { display: flex; }
+}
+
+/* ── THE GATEWAY ─────────────────────────────────────────────────────────── */
+.rjm-hero { position: relative; height: 300vh; }
+/* Scroll marker for "Step inside" — one viewport above the hero's bottom edge,
+   which is exactly where the sticky stage stops scrubbing. */
+.rjm-hero-end {
+  position: absolute; left: 0; bottom: 100svh;
+  width: 1px; height: 1px;
+  pointer-events: none;
+}
+.rjm-hero-stage {
+  position: sticky; top: 0;
+  height: 100svh;
+  display: grid; place-items: center;
+  overflow: hidden;
+  /* The ground the palace is lit against.
+     This has to be DEEPER than the artwork, not lighter. The gateway is pale
+     carved sandstone with soft edges, so a sandstone-coloured ground made the
+     whole outer arch — columns, peacock statues, plinths — vanish into the page;
+     the first build read as doors floating on cream. A warm vignette that falls
+     to shadow at the corners gives the stone an edge to end against and reads as
+     a lit room rather than a flat wall. */
+  background:
+    radial-gradient(78% 62% at 50% 46%, #FBEBCE 0%, #EBD2A6 38%, transparent 72%),
+    radial-gradient(130% 105% at 50% 44%, transparent 46%, rgba(62, 38, 18, .40) 82%, rgba(37, 22, 10, .72) 100%),
+    linear-gradient(180deg, #C9A671 0%, #A87F4C 55%, #6E4E2C 100%);
+}
+
+.rjm-gate {
+  position: relative;
+  /* Fit the arch to BOTH axes, and NEVER let the box lose the artwork's aspect:
+     the doorway and the hinged leaves are positioned in percentages of this box,
+     so a stretched box slides the doors off their hinges. That is why the height
+     budget is an explicit `svh` term inside `min()` rather than a flex/grid track
+     with `max-width`.
+     Sizing off height alone (`height: 92%`) overflowed any viewport taller than
+     ~1.37:1 — on a 390x844 phone the gate wanted 566px and the stage's
+     `overflow: hidden` ate the outer columns and both peacock statues. */
+  width: min(94%, calc(92svh * 940 / 1290));
+  aspect-ratio: 940 / 1290;
+  /* The dolly is a scale, but the leaves swing in real 3D inside it, so the
+     perspective has to live on an ancestor of both. */
+  perspective: 1500px;
+  perspective-origin: 53% 58%;
+}
+.rjm-gate-scene {
+  position: absolute; inset: 0;
+  /* Push through the doorway, not the middle of the picture. */
+  transform-origin: 53% 58%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.rjm-gate-plate { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+/* Light out of the open doorway. Sits between the plate and the leaves so it
+   only reads once the leaves have started to turn. */
+.rjm-gate-glow {
+  position: absolute;
+  left: var(--rjm-ap-l); right: calc(100% - var(--rjm-ap-r)); top: var(--rjm-ap-t); bottom: 0;
+  opacity: 0;
+  background: radial-gradient(60% 50% at 50% 62%, var(--rjm-glow), transparent 72%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* The doorway: the exact aperture box, holding the two closed leaves.
+   `gate-doors` was cropped to these same fractions by the build script, so it
+   drops back onto the frame at 100% x 100% with no positioning maths. */
+.rjm-doorway {
+  position: absolute;
+  left: var(--rjm-ap-l);
+  right: calc(100% - var(--rjm-ap-r));
+  top: var(--rjm-ap-t);
+  bottom: 0;
+  /* Both this and .rjm-gate-scene must preserve-3d. GSAP puts a scale() on the
+     scene for the dolly, and a transformed ancestor with the default
+     `transform-style: flat` FLATTENS its descendants' 3D — the door swing would
+     render as a horizontal squash with no perspective at all. */
+  transform-style: preserve-3d;
+}
+
+/* One painting, drawn twice, each half clipped and hinged on its outer edge. */
+.rjm-leaf {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  /* `fill`, not `contain`: the crop already has the doorway's aspect, and any
+     letterboxing here would open a gap at the jamb. */
+  object-fit: fill;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.rjm-leaf-l {
+  clip-path: inset(0 50% 0 0);
+  transform-origin: left center;
+}
+.rjm-leaf-r {
+  clip-path: inset(0 0 0 50%);
+  transform-origin: right center;
+}
+
+/* The invitation, in its own zone on the deep ground — NOT over the artwork.
+   No scrim, no card, no translucent pool. An earlier version sat these lines on
+   top of the carved doors behind a soft ivory wash; against high-frequency
+   painted detail that wash read as a floating box, and the brass door rings
+   still showed through the names. Type on plain ground needs no rescuing. */
+.rjm-hero-copy {
+  position: absolute; z-index: 2;
+  bottom: clamp(3.5rem, 11vh, 7rem);
+  left: 50%; transform: translateX(-50%);
+  width: min(92vw, 34rem);
+  text-align: center;
+  color: var(--rjm-wood-2);
+  /* The copy sits over carved doors and, once they open, over a sunlit garden —
+     both busy and both light. A soft ivory pool buys contrast without a visible
+     card edge; it needs to be opaque at the centre or the names lose the
+     ampersand against the door's brass ring. */
+  padding: 1.6rem 1.4rem;
+  background: radial-gradient(72% 118% at 50% 50%,
+    color-mix(in srgb, var(--rjm-paper) 96%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-paper) 82%, transparent) 46%,
+    transparent 78%);
+}
+.rjm-hero-over {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .3em;
+  color: var(--rjm-gold-deep);
+}
+.rjm-hero-names {
+  margin-top: .55rem;
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .5rem;
+  font-size: clamp(1.85rem, 7vw, 3.4rem); line-height: 1.05;
+  color: var(--rjm-wood);
+}
+.rjm-hero-rule { width: 11rem; margin: .9rem auto 0; color: var(--rjm-gold); }
+.rjm-hero-date {
+  margin-top: .7rem; font-size: .82rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--rjm-ink-soft);
+}
+.rjm-dot { margin: 0 .5rem; opacity: .6; }
+.rjm-hero-cta {
+  display: inline-block; margin-top: 1.15rem;
+  padding: .62rem 1.6rem; border-radius: 999px;
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .22em; text-decoration: none;
+  color: var(--rjm-paper);
+  background: linear-gradient(120deg, var(--rjm-gold-deep), var(--rjm-gold) 45%, var(--rjm-gold-lite));
+  box-shadow: 0 10px 26px -12px rgba(138, 101, 38, .8);
+}
+
+.rjm-cue {
+  position: absolute; bottom: .9rem; left: 50%; translate: -50% 0; z-index: 2;
+  width: 1px; height: 2.2rem; overflow: hidden;
+  background: color-mix(in srgb, var(--rjm-gold) 40%, transparent);
+}
+.rjm-cue span {
+  display: block; width: 100%; height: 45%;
+  background: var(--rjm-gold-deep);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-cue span { animation: rjm-cue 2.1s ease-in-out infinite; }
+  @keyframes rjm-cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(240%); } }
+}
+
+/* ── section furniture ───────────────────────────────────────────────────── */
+.rjm section { position: relative; }
+.rjm-head { text-align: center; max-width: 40rem; margin-inline: auto; padding-inline: 1.25rem; }
+.rjm-head-crest { width: 3.4rem; height: auto; margin: 0 auto .6rem; color: var(--rjm-gold); display: block; }
+.rjm-over {
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .3em;
+  color: var(--rjm-gold-deep);
+}
+.rjm-title {
+  margin-top: .5rem; font-size: clamp(1.7rem, 5vw, 2.7rem); line-height: 1.12;
+  color: var(--rjm-wood);
+}
+.rjm-tagline {
+  margin-top: .8rem; font-family: var(--w-serif); font-style: italic;
+  font-size: clamp(1.15rem, 3.4vw, 1.7rem); color: var(--rjm-maroon);
+}
+.rjm-head-rule { width: 12rem; margin: 1rem auto 0; color: var(--rjm-gold); }
+.rjm-rule { display: block; width: 100%; height: auto; }
+
+.rjm-link {
+  display: inline-block; margin-top: .7rem;
+  font-size: .7rem; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--rjm-gold-deep); text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 55%, transparent);
+  padding-bottom: .15rem;
+}
+.rjm-link:hover { color: var(--rjm-maroon); }
+
+.rjm-para { position: relative; }
+.rjm-para-img { display: block; width: 100%; height: auto; }
+
+/* ── invitation ──────────────────────────────────────────────────────────── */
+.rjm-invite { padding: clamp(2rem, 6vw, 4rem) 0 clamp(2rem, 6vw, 4rem); overflow: hidden; }
+/* The toran is a FRAME, not a backdrop: its strands hang down both sides and its
+   middle is deliberately empty for content to sit in. So it has to be wider than
+   the text it frames — at 46rem the strands closed in on the measure and the
+   tagline was set straight over the garlands. */
+.rjm-toran { position: absolute; inset: 0 auto auto 0; width: 100%; display: flex; justify-content: center; pointer-events: none; }
+.rjm-toran-img { width: min(98vw, 64rem); height: auto; opacity: .95; }
+/* Clear the swags before the copy starts. Tied to vw so it tracks the toran,
+   which is sized in vw too. */
+.rjm-invite-inner { position: relative; z-index: 1; padding-top: clamp(5.5rem, 19vw, 13rem); }
+/* Insurance for the descenders that still reach the lowest jasmine strands. */
+.rjm-invite-inner > .rjm-head {
+  background: radial-gradient(62% 130% at 50% 46%,
+    color-mix(in srgb, var(--rjm-paper) 92%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-paper) 70%, transparent) 52%,
+    transparent 80%);
+}
+/* Shared box for the palace and the peacock standing on its terrace, so the bird
+   is positioned against the PALACE rather than against the viewport. */
+.rjm-palace-wrap {
+  position: relative;
+  width: min(96vw, 68rem);
+  margin: clamp(1.5rem, 5vw, 3rem) auto 0;
+}
+.rjm-palace { width: 100%; }
+/* On the terrace at the palace's left, in front of it. Offsets are POSITIVE and
+   inside the box on purpose — the negative ones this replaced pushed the bird
+   past the section's `overflow: hidden` and sliced it down the middle. */
+.rjm-peacock-side {
+  position: absolute; z-index: 1;
+  left: 1.5%; bottom: 0;
+  width: clamp(5.5rem, 14vw, 11rem);
+  pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgba(62, 38, 18, .3));
+}
+
+/* ── the couple, in the jharokha ─────────────────────────────────────────── */
+/*
+ * ARTWORK MEASUREMENTS (jharokha.webp, 640x739), taken off a percentage grid
+ * overlaid on the plate rather than estimated. Every number below derives from
+ * these, so re-measure if the plate is ever replaced:
+ *
+ *   42%  crown of the central arch — the top of the standing space
+ *   68%  top of the balustrade     — the highest point the rail occludes
+ *   76%  the balcony deck          — where feet actually rest
+ *   80%+ corbelled underside & bells — hangs below the wall, no floor here
+ */
+.rjm-couple { padding: clamp(3.5rem, 9vw, 6.5rem) 1.25rem; }
+.rjm-couple-inner {
+  max-width: 66rem; margin-inline: auto;
+  display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
+}
+@media (min-width: 900px) {
+  /* The balcony carries more visual weight than the couplet beside it, so it
+     gets the wider column — an even split left the type stranded in space. */
+  .rjm-couple-inner { grid-template-columns: 1.15fr 1fr; }
+}
+.rjm-jharokha { position: relative; }
+.rjm-jharokha-img { display: block; width: 100%; height: auto; }
+
+/* Warm interior light behind the balcony. Sits behind everything and is wider
+   than the plate so it reads as a lit wall the jharokha is set into. */
+.rjm-jharokha-wall {
+  position: absolute; inset: 6% -14% 10% -14%;
+  background: radial-gradient(58% 52% at 50% 46%,
+    color-mix(in srgb, var(--rjm-glow) 82%, transparent) 0%,
+    color-mix(in srgb, var(--rjm-sand) 45%, transparent) 46%,
+    transparent 74%);
+  pointer-events: none;
+}
+
+/* The couple, standing on the deck (76%) inside the central bay. Sized so their
+   heads clear the arch crown at 42%: 34% of the plate's height, which at the
+   plate's 0.866 aspect and the couple's own 0.617 aspect works out at ~26% of
+   the plate's width. Nudged to 28% so they read at a glance without breaking
+   the architecture. */
+.rjm-couple-img {
+  position: absolute; z-index: 1;
+  /* `translate` (not `transform`) does the centring on purpose: they are separate
+     CSS properties, so the parallax scene is free to write `transform` on this
+     node without clobbering the -50% or needing to re-state it.
+     51.6%, not 50%: couple.webp's alpha bbox is centred but its *visual* mass
+     sits at 44.56% of the width — the bride's dupatta pads the right edge with
+     near-transparent pixels. Centring the box therefore leaves the figures
+     reading ~5.4% of their own width left of the bay. At 30% container width
+     that is a 1.6% correction. Re-measure if the plate changes. */
+  left: 51.6%; translate: -50% 0;
+  bottom: 24%;
+  width: 30%; height: auto;
+  filter: drop-shadow(0 10px 18px rgba(62, 38, 18, .34));
+}
+
+/* The railing, back in front of them. */
+.rjm-jharokha-rail {
+  position: absolute; inset: 0; z-index: 2;
+  width: 100%; height: 100%;
+  object-fit: fill;
+  clip-path: inset(68% 0 0 0);
+  pointer-events: none;
+}
+
+/* Cast shadow so the whole thing sits against the wall rather than hovering. */
+.rjm-jharokha-shadow {
+  position: absolute; z-index: 0;
+  left: 8%; right: 8%; bottom: 2%; height: 5%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(62, 38, 18, .3), transparent 72%);
+  pointer-events: none;
+}
+
+.rjm-couple-copy { text-align: center; }
+.rjm-couple-names {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: .5rem;
+  font-size: clamp(1.7rem, 5.5vw, 2.9rem); color: var(--rjm-wood); margin-top: .55rem;
+}
+.rjm-couple-date {
+  margin-top: .8rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--rjm-ink-soft);
+}
+
+/* ── story / procession ──────────────────────────────────────────────────── */
+.rjm-story { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); overflow: hidden; }
+.rjm-procession {
+  position: relative;
+  height: clamp(5.5rem, 17vw, 11rem);
+  max-width: 64rem; margin: clamp(1rem, 4vw, 2.5rem) auto 0;
+}
+.rjm-eleph { position: absolute; bottom: 0; width: clamp(7rem, 21vw, 14rem); }
+.rjm-eleph-l { left: 0; }
+.rjm-eleph-r { right: 0; }
+/* The gait lives on this inner span so it cannot collide with the walk, which
+   GSAP puts on .rjm-eleph as an xPercent. Two `transform` writers on one node
+   means the loser is silently dropped. */
+.rjm-eleph-bob { display: block; }
+.rjm-eleph-img { display: block; width: 100%; height: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-eleph-bob { animation: rjm-bob 3.4s ease-in-out infinite; }
+  .rjm-eleph-bob-b { animation-duration: 3.9s; animation-delay: -1.2s; }
+  @keyframes rjm-bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(-.5deg); }
+  }
+}
+
+.rjm-timeline {
+  position: relative; max-width: 40rem; margin: clamp(1.5rem, 5vw, 3rem) auto 0;
+  padding-inline-start: 1.9rem;
+}
+/* The unlit thread. */
+.rjm-timeline::before {
+  content: ""; position: absolute; left: .42rem; top: .4rem; bottom: .4rem; width: 1px;
+  background: color-mix(in srgb, var(--rjm-gold) 22%, transparent);
+}
+/* The lit thread, drawn by a scrub. Separate element rather than a gradient on
+   ::before so its scaleY can be animated without touching the track. */
+.rjm-timeline-fill {
+  position: absolute; left: .42rem; top: .4rem; bottom: .4rem; width: 1px;
+  transform-origin: top center;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--rjm-gold) 85%, transparent),
+    var(--rjm-gold-deep));
+  box-shadow: 0 0 7px color-mix(in srgb, var(--rjm-gold) 55%, transparent);
+}
+.rjm-mile { position: relative; padding-block: .9rem 1.5rem; }
+.rjm-mile-dot {
+  position: absolute; left: -1.72rem; top: 1.35rem; width: .55rem; height: .55rem;
+  rotate: 45deg; background: var(--rjm-gold); box-shadow: 0 0 0 4px var(--rjm-paper);
+}
+.rjm-mile-date { font-size: .66rem; letter-spacing: .24em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-mile-title { margin-top: .3rem; font-size: 1.25rem; color: var(--rjm-wood); }
+.rjm-mile-body { margin-top: .4rem; font-size: .93rem; line-height: 1.65; color: var(--rjm-ink-soft); }
+
+/* ── countdown ───────────────────────────────────────────────────────────── */
+.rjm-count { padding: clamp(3rem, 8vw, 5rem) 1.25rem; text-align: center; }
+.rjm-count-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(.5rem, 2.4vw, 1.1rem);
+  margin-top: 1.4rem;
+}
+.rjm-count-cell {
+  position: relative; display: grid; place-items: center;
+  width: clamp(4.1rem, 17vw, 5.8rem); padding: 1.5rem .4rem .8rem;
+}
+.rjm-count-plate { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--rjm-sand); }
+/* A slow gold sheen across the stone cartouches. Masked to the plate's own
+   arched silhouette would need a second SVG; instead the sweep is clipped by the
+   cell's overflow and kept faint enough that its straight edge never reads. */
+.rjm-count-cell { overflow: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .rjm-count-cell::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 38%, color-mix(in srgb, var(--rjm-gold-lite) 55%, transparent) 50%, transparent 62%);
+    animation: rjm-sheen 7s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .rjm-count-cell:nth-child(2)::after { animation-delay: .5s; }
+  .rjm-count-cell:nth-child(3)::after { animation-delay: 1s; }
+  .rjm-count-cell:nth-child(4)::after { animation-delay: 1.5s; }
+  @keyframes rjm-sheen {
+    0%, 62% { transform: translateX(-120%); }
+    92%, 100% { transform: translateX(120%); }
+  }
+}
+.rjm-count-num {
+  position: relative; font-family: var(--w-display); font-size: clamp(1.35rem, 5vw, 2rem);
+  color: var(--rjm-wood); font-variant-numeric: tabular-nums;
+}
+.rjm-count-label {
+  position: relative; margin-top: .25rem;
+  font-size: .55rem; text-transform: uppercase; letter-spacing: .18em; color: var(--rjm-gold-deep);
+}
+
+/* ── celebrations ────────────────────────────────────────────────────────── */
+.rjm-events { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-events-grid {
+  display: grid; gap: clamp(1rem, 3vw, 1.8rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  max-width: 66rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-event {
+  position: relative; overflow: hidden;
+  padding: 2.4rem 1.3rem 1.6rem; text-align: center;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 30%, transparent);
+  border-radius: 1.1rem 1.1rem .4rem .4rem;
+  background: linear-gradient(180deg, var(--rjm-surface), var(--rjm-paper-2));
+  box-shadow: var(--rjm-shadow);
+  /* min-w-0 equivalent: a long venue line must wrap, not widen the grid cell —
+     the 248px theme-card iframe is unforgiving about this. */
+  min-width: 0;
+}
+/* The lamp over each archway, lit in sequence by the EventsGrid scene so the row
+   reads as a corridor being walked rather than a grid appearing.
+   CSS holds the LIT state deliberately: GSAP's fromTo sets the dark start itself
+   when the scene is created, so if JS never runs the lamps are simply already
+   on. Defaulting to opacity 0 here would leave every card looking broken on any
+   page where the scene failed to build. */
+.rjm-event-arch {
+  position: absolute; inset: 0 auto auto 0; width: 100%; height: 2.4rem;
+  background: radial-gradient(58% 190% at 50% 100%, var(--rjm-glow), transparent 72%);
+}
+.rjm-event-name { font-size: 1.2rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-event-date { margin-top: .45rem; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-event-time { margin-top: .2rem; font-size: .82rem; color: var(--rjm-maroon); }
+.rjm-event-venue { margin-top: .6rem; font-size: .9rem; color: var(--rjm-ink); overflow-wrap: anywhere; }
+.rjm-event-addr { margin-top: .15rem; font-size: .8rem; color: var(--rjm-ink-soft); overflow-wrap: anywhere; }
+
+/* ── gallery ─────────────────────────────────────────────────────────────── */
+.rjm-gallery { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-gallery-grid {
+  display: grid; gap: clamp(.7rem, 2.4vw, 1.3rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  max-width: 66rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-photo { min-width: 0; }
+.rjm-photo-frame {
+  position: relative; overflow: hidden; aspect-ratio: 4 / 5;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 42%, transparent);
+  border-radius: 999px 999px .5rem .5rem;
+  box-shadow: var(--rjm-shadow);
+}
+.rjm-photo-zoom, .rjm-photo-frame img { width: 100%; height: 100%; }
+.rjm-photo-frame img { object-fit: cover; transition: transform .7s ease; }
+.rjm-photo:hover .rjm-photo-frame img { transform: scale(1.05); }
+.rjm-photo figcaption {
+  margin-top: .5rem; text-align: center; font-size: .76rem; color: var(--rjm-ink-soft);
+}
+
+/* ── venue / family / faq ────────────────────────────────────────────────── */
+.rjm-venue, .rjm-family, .rjm-faq { padding: clamp(3rem, 9vw, 6rem) 1.25rem clamp(4rem, 10vw, 7rem); }
+.rjm-venue-grid, .rjm-family-grid {
+  display: grid; gap: clamp(1rem, 3vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  max-width: 60rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0;
+}
+.rjm-venue-card {
+  /* Required: the four corner brackets are absolute, and without this they
+     anchor to the section instead and pile up in its corners. */
+  position: relative;
+  min-width: 0; text-align: center; padding: 1.7rem 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 28%, transparent);
+  background: var(--rjm-surface);
+}
+.rjm-venue-card h3 { font-size: 1.1rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-venue-name { margin-top: .5rem; font-size: .92rem; color: var(--rjm-ink); overflow-wrap: anywhere; }
+.rjm-venue-addr { margin-top: .2rem; font-size: .82rem; color: var(--rjm-ink-soft); overflow-wrap: anywhere; }
+/* The fanned peacock crowning the families section. */
+.rjm-family-crest { display: flex; justify-content: center; }
+.rjm-family-peacock {
+  display: block; height: auto;
+  width: clamp(9rem, 26vw, 18rem);
+  /* Overlaps the section crest below it so the two read as one piece of ornament
+     rather than two decorations stacked on each other. */
+  margin-bottom: clamp(-2.2rem, -3vw, -1rem);
+}
+.rjm-family-side { min-width: 0; text-align: center; }
+.rjm-family-member { padding-block: .45rem; }
+.rjm-family-name { display: block; font-family: var(--w-serif); font-size: 1.1rem; color: var(--rjm-wood); }
+.rjm-family-rel { display: block; font-size: .68rem; letter-spacing: .2em; text-transform: uppercase; color: var(--rjm-gold-deep); }
+.rjm-faq-list { max-width: 44rem; margin: clamp(1.6rem, 5vw, 3rem) auto 0; }
+.rjm-faq-item { border-bottom: 1px solid color-mix(in srgb, var(--rjm-gold) 26%, transparent); }
+.rjm-faq-item summary {
+  cursor: pointer; padding: 1rem .2rem; font-family: var(--w-serif); font-size: 1.05rem;
+  color: var(--rjm-wood); list-style: none;
+}
+.rjm-faq-item summary::-webkit-details-marker { display: none; }
+.rjm-faq-item summary::after { content: "❖"; float: inline-end; color: var(--rjm-gold); font-size: .8rem; }
+.rjm-faq-a { padding: 0 .2rem 1rem; font-size: .92rem; line-height: 1.7; color: var(--rjm-ink-soft); }
+
+/* ── RSVP ────────────────────────────────────────────────────────────────── */
+.rjm-rsvp {
+  position: relative; overflow: hidden;
+  padding: clamp(3.5rem, 10vw, 7rem) 1.25rem clamp(4rem, 11vw, 8rem);
+  background: linear-gradient(180deg, var(--rjm-paper) 0%, var(--rjm-sand) 140%);
+}
+.rjm-rsvp-wash {
+  position: absolute; inset: auto 0 -30% 0; height: 60%;
+  background: radial-gradient(50% 60% at 50% 100%, var(--rjm-glow), transparent 70%);
+  pointer-events: none;
+}
+/* The hero's gateway, reprised small to close the loop. Both layers are already
+   in cache from the hero, so this costs no new bytes. */
+.rjm-rsvp-gate {
+  position: relative;
+  width: min(74vw, 15rem);
+  margin: 0 auto clamp(1.2rem, 4vw, 2.2rem);
+}
+.rjm-rsvp-gate .rjm-gate {
+  /* Overrides the hero's viewport-relative sizing — here the gate is a motif in
+     the flow, not a stage filler. */
+  width: 100%;
+  height: auto;
+}
+
+/* ── corner brackets ─────────────────────────────────────────────────────── */
+/* One drawn corbel, mirrored four ways, rather than four SVGs. */
+.rjm-corner {
+  position: absolute; width: 1.15rem; height: auto;
+  color: var(--rjm-gold); opacity: .75; pointer-events: none;
+}
+.rjm-corner-tl { top: .35rem; left: .35rem; }
+.rjm-corner-tr { top: .35rem; right: .35rem; transform: scaleX(-1); }
+.rjm-corner-bl { bottom: .35rem; left: .35rem; transform: scaleY(-1); }
+.rjm-corner-br { bottom: .35rem; right: .35rem; transform: scale(-1); }
+
+/* (A site-wide drifting-petal layer lived here and was removed — see the note in
+   rajmahal-view.tsx for why it should not come back.) */
+.rjm-rsvp-family {
+  margin-top: 1rem; text-align: center; font-family: var(--w-serif); font-style: italic;
+  font-size: 1.15rem; color: var(--rjm-maroon);
+}
+.rjm-rsvp-body { position: relative; max-width: 34rem; margin: clamp(1.5rem, 5vw, 2.6rem) auto 0; }
+.rjm-rsvp-form { display: grid; gap: 1.1rem; }
+.rjm-rsvp-hint { text-align: center; font-size: .78rem; color: var(--rjm-ink-soft); }
+.rjm-rsvp-row {
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 30%, transparent);
+  background: color-mix(in srgb, var(--rjm-surface) 88%, transparent);
+}
+.rjm-rsvp-event { font-family: var(--w-serif); font-size: 1.02rem; color: var(--rjm-wood); overflow-wrap: anywhere; }
+.rjm-choices { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .7rem; }
+.rjm-choice {
+  flex: 1 1 8rem; min-width: 0; padding: .62rem .8rem; border-radius: 999px;
+  font-size: .66rem; text-transform: uppercase; letter-spacing: .16em;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  color: var(--rjm-gold-deep); background: transparent; transition: all .3s;
+}
+.rjm-choice:hover:not(.is-locked) { border-color: var(--rjm-gold); color: var(--rjm-maroon); }
+.rjm-choice.is-on.rjm-choice-attend {
+  background: linear-gradient(120deg, var(--rjm-gold-deep), var(--rjm-gold) 50%, var(--rjm-gold-lite));
+  border-color: var(--rjm-gold); color: var(--rjm-paper);
+}
+.rjm-choice.is-on.rjm-choice-decline {
+  background: var(--rjm-maroon); border-color: var(--rjm-maroon); color: var(--rjm-paper);
+}
+.rjm-choice.is-locked { opacity: .6; cursor: default; }
+.rjm-chiprow { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .7rem; }
+.rjm-chip {
+  padding: .45rem .9rem; border-radius: 999px; font-size: .72rem;
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 45%, transparent);
+  color: var(--rjm-gold-deep); transition: all .3s; min-width: 0; overflow-wrap: anywhere;
+}
+.rjm-chip.is-on { background: var(--rjm-gold); border-color: var(--rjm-gold); color: var(--rjm-wood-2); }
+.rjm-field { display: grid; gap: .4rem; }
+.rjm-field span { font-size: .66rem; text-transform: uppercase; letter-spacing: .18em; color: var(--rjm-gold-deep); }
+.rjm-field input {
+  padding: .7rem .9rem; background: var(--rjm-surface);
+  border: 1px solid color-mix(in srgb, var(--rjm-gold) 34%, transparent);
+  color: var(--rjm-ink); font-size: 1rem;
+}
+.rjm-field input:focus-visible { outline: 2px solid var(--rjm-gold); outline-offset: 1px; }
+.rjm-count-field { margin-top: .7rem; }
+.rjm-submit {
+  padding: .85rem 1.4rem; border-radius: 999px;
+  font-size: .72rem; text-transform: uppercase; letter-spacing: .22em;
+  color: var(--rjm-paper);
+  background: linear-gradient(120deg, var(--rjm-maroon-2), var(--rjm-maroon) 55%, var(--rjm-gold-deep));
+  box-shadow: 0 14px 30px -16px rgba(90, 21, 32, .9);
+}
+.rjm-submit:disabled { opacity: .65; }
+.rjm-rsvp-error { font-size: .82rem; color: var(--rjm-maroon); text-align: center; }
+.rjm-rsvp-done { text-align: center; }
+.rjm-rsvp-thanks { font-family: var(--w-serif); font-style: italic; font-size: clamp(2rem, 8vw, 3rem); color: var(--rjm-gold-deep); }
+.rjm-rsvp-await { margin-top: .4rem; font-family: var(--w-display); font-size: 1.3rem; color: var(--rjm-maroon); }
+.rjm-rsvp-heads { margin-top: .5rem; font-size: .8rem; letter-spacing: .18em; text-transform: uppercase; color: var(--rjm-ink-soft); }
+.rjm-rsvp-rule { width: 10rem; margin: 1rem auto; color: var(--rjm-gold); }
+
+/* ── footer ──────────────────────────────────────────────────────────────── */
+.rjm-foot {
+  position: relative; overflow: hidden; text-align: center;
+  padding: clamp(3rem, 8vw, 5rem) 1.25rem clamp(2rem, 5vw, 3rem);
+  background: linear-gradient(180deg, var(--rjm-wood) 0%, var(--rjm-wood-2) 100%);
+  color: var(--rjm-sand);
+}
+.rjm-foot-jaali { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--rjm-gold); opacity: .13; }
+.rjm-foot-inner { position: relative; }
+.rjm-foot-bell { width: 1.5rem; height: auto; margin: 0 auto .9rem; color: var(--rjm-gold); display: block; }
+.rjm-foot-names { font-family: var(--w-display); font-size: clamp(1.3rem, 4.6vw, 2rem); color: var(--rjm-gold-lite); }
+.rjm-foot-date { margin-top: .4rem; font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; opacity: .8; }
+.rjm-foot-tag { margin-top: .6rem; font-size: .8rem; color: var(--rjm-gold); }
+.rjm-foot-contacts { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: .8rem; }
+.rjm-foot-contacts .rjm-link { color: var(--rjm-gold-lite); border-color: color-mix(in srgb, var(--rjm-gold) 50%, transparent); }
+.rjm-foot-rule { width: 9rem; margin: 1.2rem auto .8rem; color: var(--rjm-gold); }
+.rjm-foot-credit { color: var(--rjm-sand); }
+.rjm-jaali { display: block; }
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+/* The scenes themselves already render their FINAL state under the `still` tier
+   in use-scroll-scene (doors open, no dolly). This only has to stop the ambient
+   CSS animations and collapse the hero's scroll runway — 300vh of sticky
+   nothing is its own kind of motion sickness when the doors never move. */
+@media (prefers-reduced-motion: reduce) {
+  .rjm-hero { height: auto; }
+  .rjm-hero-stage { position: static; height: auto; min-height: 100svh; }
+  .rjm-cue { display: none; }
+  /* With the runway collapsed there is no scrub to land at the end of, so the
+     marker moves to the hero's foot — "Step inside" then simply means "past the
+     gate", which is all it can mean when the doors never move. */
+  .rjm-hero-end { bottom: 0; }
+  .rjm-photo:hover .rjm-photo-frame img { transform: none; }
+}
+
 /* ── Landing page: phone section rhythm ─────────────────────────────────────
    The sections are laid out with desktop breathing room (`py-24`/`py-28`, i.e.
    96–112px top AND bottom) which Tailwind applies at every width. Stacked on a
@@ -3523,4 +4519,909 @@
   @keyframes gtt-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
   .gtt-on .gtt-arrow { animation: gtt-bob 1.8s ease-in-out infinite; }
   .gtt-on:hover .gtt-arrow { animation: none; transform: translateY(-2px); }
+}
+
+/* ── Background-music toggle (shared across all themed guest sites) ────────
+   Same corner and same visual language as `.gtt` — stacked directly above it
+   (46px button + 12px gap) so the two persistent controls read as one family
+   instead of each claiming their own corner. Always visible (not scroll-
+   gated like `.gtt`): a guest who wants to mute needs the control from the
+   first moment, not after they've scrolled past the hero. */
+.w-music {
+  position: fixed; right: 22px; z-index: 60;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 22px + 46px + 12px);
+  width: 46px; height: 46px; border-radius: 999px;
+  display: grid; place-items: center;
+  border: 0; cursor: pointer; color: #fff;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.w-music:hover { transform: translateY(-3px) scale(1.06); }
+.w-music:active { transform: translateY(-1px) scale(0.98); }
+
+.has-theme-dock .w-music {
+  bottom: calc(
+    env(safe-area-inset-bottom, 0px) + var(--theme-dock-h, 44px) + 2.75rem + 46px + 12px
+  );
+}
+.has-sticky-cta .w-music {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + var(--sticky-cta-h) + 1rem + 46px + 12px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes w-music-wave { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.7); } }
+  .w-music-on svg { animation: w-music-wave 1.6s ease-in-out infinite; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE TAQDEER (id "taqdeer") — a vintage Art Deco slot machine, turned into an
+   invitation. Wine velvet, obsidian lacquer, antique gold and champagne ivory:
+   four materials, one accent metal, nothing that blinks.
+
+   THE MACHINE. Each reel is a strip of `--tqd-cell`-tall cells inside a window
+   `--tqd-win` tall, so the pay-line cell shows whole and its neighbours show as
+   slivers. The strip's top padding centres cell 0 on the pay line, which makes
+   `translateY(-n * --tqd-cell)` centre cell n — so the renderer only has to
+   count cells, and every distance stays correct at every breakpoint. One
+   keyframe animation per strip does the entire spin (kick back off the stopper,
+   long fast travel, decelerating arrival that overshoots a fraction of a cell
+   and settles); it animates `transform` only, so it lives on the compositor.
+
+   `--tqd-cell` is a clamp against the viewport rather than a set of breakpoint
+   values, so the cabinet also fits the 248px-wide phone preview on the landing
+   page without a special case.
+
+   Bilingual + [data-tw-reveal] scroll-reveal are shared (see the scaffolding
+   block above); the rest lives here.
+   ══════════════════════════════════════════════════════════════════════════ */
+.tqd {
+  color: var(--tqd-ivory, #f4e9d6);
+  font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif;
+  background: var(--tqd-obsidian, #0b0709);
+  overflow-x: clip;
+  line-height: 1.7;
+}
+.tqd-display { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
+.tqd-serif { font-family: var(--font-cormorant), Georgia, "Times New Roman", serif; }
+.tqd-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; line-height: 1.2; }
+/* The deco voice: Marcellus, wide-tracked, always in capitals. Every label,
+   plate and numeral on the page is set in it — it is the machine's engraving. */
+.tqd-caps {
+  font-family: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.tqd .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.tqd ::selection { background: var(--tqd-gold); color: var(--tqd-obsidian); }
+
+/* ── grounds ──────────────────────────────────────────────────────────────── */
+/* obsidian lacquer, lit from above */
+/* wine velvet — the nap comes from two crossed hairline gradients, not an image */
+/* champagne ivory, for the sections that have to be read at length */
+/* The sign-off. It closes the same screen the machine stands on, so it carries
+   no ground of its own — a band here would read as a second section on a page
+   that only has one. */
+.tqd-foot { background: transparent; }
+.tqd-foot-note {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.5);
+}
+
+/* ── type ─────────────────────────────────────────────────────────────────── */
+.tqd-eyebrow {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-names {
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  font-weight: 300;
+  font-size: clamp(2.3rem, 9vw, 4.3rem);
+  line-height: 1.05;
+  letter-spacing: 0.015em;
+  color: var(--tqd-ivory);
+}
+.tqd-amp { font-style: italic; color: var(--tqd-gold); }
+
+/* ── nav ──────────────────────────────────────────────────────────────────── */
+/* the one band of pattern on the page: a deco chevron trim under the bar */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE HERO STAGE
+   ══════════════════════════════════════════════════════════════════════════ */
+.tqd-hero {
+  background:
+    radial-gradient(58% 42% at 50% 34%, rgba(201, 164, 76, 0.16), rgba(201, 164, 76, 0) 68%),
+    radial-gradient(90% 70% at 50% 6%, var(--tqd-wine) 0%, rgba(84, 19, 44, 0) 62%),
+    /* Ends on the same obsidian the root is painted with, so the footer below
+       continues the screen instead of butting against a darker band. */
+    linear-gradient(180deg, #14090e 0%, var(--tqd-obsidian) 62%, var(--tqd-obsidian) 100%);
+}
+.tqd-hero-over {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(1rem, 3.6vw, 1.2rem);
+  text-align: center;
+  color: rgba(244, 233, 214, 0.62);
+}
+
+.tqd-stage {
+  position: relative;
+  /* headroom for the crown, which sits entirely above the cabinet */
+  margin-top: clamp(2.6rem, 9vw, 3.6rem);
+}
+/* The sunburst behind the cabinet — wide and faint.
+   It has three things acting on it, so each one owns a DIFFERENT property and
+   they compose instead of overwriting each other: `translate` centres it and
+   carries the pointer shift, `transform` is left free for the scroll parallax,
+   and the reveal brightens it through a transition on `opacity` alone. */
+.tqd-burst {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(150%, 40rem);
+  height: auto;
+  translate: -50% -50%;
+  color: var(--tqd-gold);
+  opacity: 0.11;
+  pointer-events: none;
+  transition: opacity 2.6s ease;
+  /* The rays have to fade out rather than stop: run to the edge and they read as
+     scratches on the page. The hero's vignette sits below this layer and cannot
+     reach it, so the fade is the layer's own job. */
+  mask-image: radial-gradient(closest-side, #000 26%, rgba(0, 0, 0, 0) 76%);
+}
+/* The vignette belongs to the HERO, not the stage. Hung on the stage it was a
+   box the size of the machine, so its own edge drew a visible rectangle across
+   the wine — a scrim has to be at least as big as the thing it darkens. The hero
+   clips it, so it can simply fill the section. */
+.tqd-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    54% 44% at 50% 42%,
+    rgba(5, 3, 4, 0) 44%,
+    rgba(5, 3, 4, 0.66) 100%
+  );
+  opacity: 0.7;
+  transition: opacity 2.4s ease;
+}
+.tqd-hero[data-revealed="1"]::before { opacity: 1; }
+
+/* The camera. It exists only to own the push-in, so that the scale, the tilt
+   and the cabinet's jolt are three separate transform owners that cannot
+   clobber one another. Deliberately a flat 2D scale. */
+.tqd-camera { position: relative; z-index: 2; }
+
+/* The machine: cabinet + lever, side by side, in one tilting group.
+   The perspective lives INSIDE this element's own transform (see the tilt rule
+   below) rather than on an ancestor, and nothing here sets `preserve-3d`. That
+   combination matters: with `perspective` on the stage and `preserve-3d` on the
+   wrapper, Chrome hit-tested the entire subtree as the wrapper — the lever
+   became unclickable while still looking perfect. Flattening at the machine
+   keeps the tilt and keeps the lever pressable. */
+.tqd-machine {
+  /* THE machine's scale control, and it has to live HERE rather than on the
+     cabinet: the lever is the cabinet's SIBLING, so a variable declared on the
+     cabinet does not reach it and every calc() on the lever silently resolves to
+     invalid — which collapsed its width to the artwork's intrinsic size and
+     dropped its margins to zero. Declare shared geometry on the common ancestor.
+     The floor keeps the machine inside the 248px landing card; the cap gives it
+     presence as a hero centrepiece. */
+  --tqd-mw: clamp(9rem, 64vw, 23rem);
+  /* aperture height = 96/300 of the width; the drum cell is two thirds of that */
+  --tqd-win: calc(var(--tqd-mw) * 0.32);
+  --tqd-cell: calc(var(--tqd-win) / 1.5);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* No gap: the lever positions itself with negative margins so its pivot lands
+     on the cabinet's flank, and a gap here would push the boss back off it. */
+  gap: 0;
+}
+
+/* ── the cabinet ──────────────────────────────────────────────────────────────
+   The casting is one SVG (cabinet.tsx, viewBox 300 × 520). Everything else is
+   positioned over it in PERCENTAGES OF THAT VIEWBOX, and every size on the
+   machine derives from one variable — --tqd-mw, the machine's width. That is
+   what keeps the DOM drums registered to the hole in the artwork at every
+   breakpoint: the SVG scales by width, so a percentage of the width is a fixed
+   fraction of the drawing whatever the viewport does.
+
+   Change the geometry in cabinet.tsx and these numbers must change with it.
+   ───────────────────────────────────────────────────────────────────────────── */
+.tqd-cab {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--tqd-mw);
+}
+.tqd-cab-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 26px 30px rgba(0, 0, 0, 0.6));
+}
+/* the polish: one slow band of light travelling across the casting */
+.tqd-cab::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    108deg,
+    rgba(255, 255, 255, 0) 36%,
+    rgba(255, 252, 240, 0.09) 48%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  background-size: 280% 100%;
+  background-position: 120% 0;
+}
+
+/* the column names, laid on the brass shoulder rail (SVG y 118–144) */
+.tqd-shoulder {
+  position: absolute;
+  left: 13.667%;   /* SVG x 41 / 300 */
+  width: 72.667%;  /* SVG w 218 / 300 */
+  top: 22.692%;    /* SVG y 118 / 520 */
+  height: 5%;      /* SVG h 26 / 520 */
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  pointer-events: none;
+}
+.tqd-shoulder-label {
+  min-width: 0;
+  font-family: var(--font-marcellus), Georgia, serif;
+  /* A legibility floor. These were 8px with 0.24em tracking, which is not a
+     label — it is a texture. Never let a real word fall below ~10px here. */
+  /* Off --tqd-mw, not vw: these labels are engraved ON the machine, so they have
+     to grow with it. Sized against the viewport they stayed at 12px while the
+     cabinet scaled up, which is exactly why they read as hardly-there. The max()
+     floor keeps them legible in the 248px landing card. */
+  font-size: max(0.62rem, calc(var(--tqd-mw) * 0.055));
+  letter-spacing: 0.09em;
+  text-indent: 0.09em;
+  text-transform: uppercase;
+  text-align: center;
+  /* engraved into brass: dark ink with a lit edge below it */
+  color: #3A2A08;
+  text-shadow: 0 1px 0 rgba(255, 249, 230, 0.5);
+}
+
+/* ══ THE APERTURE ══════════════════════════════════════════════════════════
+   The hole in the casting (SVG x 52 y 160, w 196 h 96). The drums live here.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.tqd-aperture {
+  position: absolute;
+  left: 17.333%;              /* 52 / 300 */
+  top: 30.769%;               /* 160 / 520 */
+  width: 65.333%;             /* 196 / 300 */
+  height: var(--tqd-win);     /* 96 / 300 of the width */
+}
+/* the mullions are drawn in the SVG beneath; these gaps let them show through */
+.tqd-bay-glass {
+  display: grid;
+  /* 1 : 1.12 : 1.42 — the same split as MULLIONS in cabinet.tsx, so the brass
+     dividers drawn in the SVG land exactly in these gaps. A four-digit year needs
+     the extra width; even thirds forced the drum type down to an unreadable size. */
+  grid-template-columns: 1fr 1.12fr 1.42fr;
+  gap: calc(var(--tqd-mw) * 0.0167); /* the 5-unit mullions in cabinet.tsx */
+  height: 100%;
+}
+.tqd-window {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  /* aged reel paper, warm and close in value across the band */
+  background: linear-gradient(180deg, #e8dcc2 0%, #f4ecd9 42%, #e2d4b6 100%);
+}
+.tqd-strip {
+  /* centres cell 0 on the pay line, so translateY(-n·cell) centres cell n */
+  padding-top: calc((var(--tqd-win) - var(--tqd-cell)) / 2);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+.tqd-cell {
+  display: grid;
+  place-items: center;
+  height: var(--tqd-cell);
+  font-family: var(--font-marcellus), Georgia, "Times New Roman", serif;
+  /* Sized off the cell, so the date scales with the machine. The widest string a
+     drum shows is a four-digit year, and the year column is the widest of the
+     three — that is what buys this back up from 0.35. */
+  font-size: calc(var(--tqd-cell) * 0.43);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--tqd-ink);
+  /* the ink of a printed reel band, not a screen glyph */
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+/* The curve of the drum. It is the only thing telling the eye that the half
+   symbols above and below the pay line are the band turning out of sight, rather
+   than misaligned type. The shading is WARM — a wine-brown shadow, not black:
+   fading printed paper to black turned the drum into polished chrome. */
+.tqd-window-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(58, 26, 20, 0.62) 0%,
+    rgba(74, 40, 28, 0.34) 17%,
+    rgba(120, 80, 50, 0.08) 36%,
+    rgba(255, 250, 235, 0.05) 50%,
+    rgba(120, 80, 50, 0.08) 64%,
+    rgba(74, 40, 28, 0.36) 83%,
+    rgba(58, 26, 20, 0.66) 100%
+  );
+}
+/* the smear: what a spinning band looks like. Opacity-only, so the fade off is
+   free — the strip's own blur is stepped (below) to keep repaints countable. */
+.tqd-window-smear {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(42, 22, 32, 0.16) 0 1px,
+    rgba(255, 255, 255, 0.1) 1px 3px,
+    rgba(42, 22, 32, 0.05) 3px 5px
+  );
+}
+/* The shadow the casting throws INTO the aperture. A real bezel occludes the
+   light at the top and sides of an opening; without this the drums look pasted
+   on rather than set behind a frame. */
+.tqd-aperture-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 22%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 8%),
+    linear-gradient(270deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0) 8%);
+}
+
+/* the pay line, struck across the aperture */
+.tqd-payline {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  top: 50%;
+  translate: 0 -50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.tqd-payline::before {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 164, 76, 0) 0%,
+    rgba(201, 164, 76, 0.6) 14%,
+    rgba(239, 215, 158, 0.8) 50%,
+    rgba(201, 164, 76, 0.6) 86%,
+    rgba(201, 164, 76, 0) 100%
+  );
+}
+.tqd-payline-mark {
+  position: relative;
+  width: calc(var(--tqd-mw) * 0.038);
+  height: auto;
+  color: var(--tqd-gold-lite);
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9));
+}
+
+/* the award card, engraved on the recessed panel below the reels
+   (SVG x 52 y 278, w 196 h 52) */
+.tqd-award {
+  position: absolute;
+  left: 17.333%;
+  width: 65.333%;
+  top: 53.462%;   /* 278 / 520 */
+  height: 10%;    /* 52 / 520 */
+  display: grid;
+  place-items: center;
+  padding: 0 6%;
+  text-align: center;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  /* Two lines have to sit inside the engraved panel (52 of 520 viewBox
+     units), so this is sized to fit rather than to fill. */
+  font-size: max(0.7rem, calc(var(--tqd-mw) * 0.055));
+  line-height: 1.22;
+  color: rgba(239, 215, 158, 0.82);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+/* ── the lever ────────────────────────────────────────────────────────────── */
+/* The lever is BOLTED to the cabinet, not parked beside it. Both offsets are
+   fractions of --tqd-mw so the pivot stays registered to the reel aperture at
+   every size:
+
+     margin-top   0.169 · mw  puts the boss on the aperture's centre line
+     margin-left −0.195 · mw  puts the boss at 0.915 · mw across
+
+   The boss goes at 0.90 rather than on the casting's flank (0.863): the aperture
+   ends at 0.826 and the escutcheon is ±0.035 · mw wide, so mounting it flush with
+   the flank slid the plate over the year drum and hid the last digits. Sitting
+   slightly proud of the body is also what a real handle boss does. 0.915
+   leaves a few px of daylight rather than the 1px that -0.21 measured at.
+
+   Derivation: the boss sits at 83.8% of the lever artwork's height, and the
+   aperture centres 0.693 · mw down the machine.
+   ───────────────────────────────────────────────────────────────────────────── */
+.tqd-lever-btn {
+  --tqd-lever-w: calc(var(--tqd-mw) * 0.22);
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: calc(var(--tqd-mw) * 0.169);
+  margin-left: calc(var(--tqd-mw) * -0.195);
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tqd-lever-btn:active { cursor: grabbing; }
+.tqd-lever-btn:disabled { cursor: default; }
+.tqd-lever-btn:focus-visible {
+  outline: 1px solid var(--tqd-gold);
+  outline-offset: 6px;
+  border-radius: 0.4rem;
+}
+.tqd-lever {
+  display: block;
+  width: var(--tqd-lever-w);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+
+/* ── the prompt ───────────────────────────────────────────────────────────── */
+.tqd-prompt {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.4rem;
+  text-align: center;
+}
+/* the quiet chrome that stays below the announcement */
+.tqd-chrome {
+  position: relative;
+  z-index: 2;
+  margin-top: 1.6rem;
+  text-align: center;
+}
+.tqd-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.74rem, 2.8vw, 0.84rem);
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-hint-again {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: rgba(244, 233, 214, 0.5);
+}
+.tqd-mute {
+  display: block;
+  margin: 1rem auto 0;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.55);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.tqd-mute:hover { color: rgba(239, 215, 158, 0.7); }
+
+/* ── the reveal ───────────────────────────────────────────────────────────────
+   Mounted only when it fires, so it needs an entrance animation rather than a
+   transition from a hidden state — and it must be complete with the animation
+   switched off, which is why the resting style here IS the final style. */
+.tqd-reveal {
+  margin-top: 1.6rem;
+  text-align: center;
+}
+.tqd-reveal-eyebrow {
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.62rem, 2.6vw, 0.8rem);
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-lite);
+}
+.tqd-reveal-weekday {
+  margin-top: 0.7rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.7rem, 2.6vw, 0.78rem);
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.75);
+}
+.tqd-reveal-date {
+  margin-top: 0.4rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(1.05rem, 5vw, 1.7rem);
+  letter-spacing: 0.2em;
+  color: var(--tqd-ivory);
+}
+.tqd-reveal-rule {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.1rem auto 0;
+  max-width: 20rem;
+  color: var(--tqd-gold);
+}
+.tqd-reveal-fan { width: 2.4rem; height: auto; opacity: 0.8; }
+.tqd-reveal-rule-mid { flex: 1 1 auto; min-width: 0; height: auto; }
+.tqd-reveal-city {
+  margin-top: 0.5rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.72rem, 2.7vw, 0.82rem);
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  text-transform: uppercase;
+  color: rgba(244, 233, 214, 0.7);
+}
+/* the save-the-date sign-off, when there is no programme below to point at */
+
+/* the burst: gold, twenty-two pieces, once. Not confetti — a shower of leaf. */
+.tqd-sparks {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  z-index: 3;
+}
+.tqd-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--tqd-gold-lite);
+  box-shadow: 0 0 6px rgba(239, 215, 158, 0.9);
+  opacity: 0;
+}
+.tqd-spark-star {
+  width: 5px;
+  height: 5px;
+  border-radius: 0;
+  background: var(--tqd-gold);
+  clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+}
+
+/* ── motes ────────────────────────────────────────────────────────────────── */
+.tqd-motes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tqd-mote {
+  position: absolute;
+  bottom: -6px;
+  display: block;
+  border-radius: 50%;
+  background: var(--tqd-gold-lite);
+  opacity: 0;
+}
+
+/* ── the countdown drums ──────────────────────────────────────────────────── */
+.tqd-drum {
+  position: relative;
+  padding: 0.85rem 0.3rem 0.7rem;
+  border-radius: 0.2rem;
+  background: linear-gradient(180deg, #efe6d2 0%, #fbf6ea 34%, #e5d8bf 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(138, 107, 36, 0.5),
+    inset 0 4px 8px rgba(84, 19, 44, 0.2),
+    0 10px 22px -14px rgba(0, 0, 0, 0.8);
+}
+/* the same drum curve as the reel windows, so the callback reads */
+.tqd-drum::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(42, 22, 32, 0.28) 0%,
+    rgba(42, 22, 32, 0) 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(42, 22, 32, 0) 72%,
+    rgba(42, 22, 32, 0.3) 100%
+  );
+}
+.tqd-drum-num {
+  display: block;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(1.3rem, 6.4vw, 2.1rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--tqd-ink);
+  font-variant-numeric: tabular-nums;
+}
+.tqd-drum-label {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: clamp(0.6rem, 2.3vw, 0.7rem);
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  text-transform: uppercase;
+  color: var(--tqd-gold-deep);
+}
+
+/* ── rows, chips, buttons, fields ─────────────────────────────────────────── */
+
+.tqd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--font-marcellus), Georgia, serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--tqd-obsidian);
+  background: linear-gradient(160deg, var(--tqd-gold-lite) 0%, var(--tqd-gold) 52%, var(--tqd-brass) 100%);
+  box-shadow: 0 12px 26px -14px rgba(201, 164, 76, 0.7);
+  border: 0;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+}
+.tqd-btn:hover { transform: translateY(-2px); box-shadow: 0 18px 32px -14px rgba(201, 164, 76, 0.85); }
+.tqd-btn:active { transform: translateY(0); }
+
+/* ── the reservation card ─────────────────────────────────────────────────── */
+
+/* ── the brass switches ───────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOTION. Everything below is decoration; the page is complete and legible
+   with the whole block switched off (see the reduced-motion rules at the end).
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+  /* ── the spin ─────────────────────────────────────────────────────────── */
+  /* Distances are in cells, so this is correct at every breakpoint.
+       0–5%   the reel kicks back off its stopper
+       5–86%  the long travel, decelerating hard at the end
+       86–94% it overshoots the stop by a sixth of a cell
+       94–100% the sprung stopper pulls it back and it settles */
+  @keyframes tqd-reel {
+    0% {
+      transform: translate3d(0, 0, 0);
+      animation-timing-function: cubic-bezier(0.35, 0, 0.7, 1);
+    }
+    5% {
+      transform: translate3d(0, calc(var(--tqd-cell) * 0.16), 0);
+      animation-timing-function: cubic-bezier(0.05, 0.62, 0.13, 1);
+    }
+    86% {
+      transform: translate3d(0, calc(var(--tqd-land) - var(--tqd-cell) * 0.17), 0);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    94% {
+      transform: translate3d(0, calc(var(--tqd-land) + var(--tqd-cell) * 0.055), 0);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.5, 1);
+    }
+    100% { transform: translate3d(0, var(--tqd-land), 0); }
+  }
+
+  /* The blur is STEPPED, not ramped: three discrete values instead of a value
+     per frame, so a spinning reel costs three repaints rather than a hundred
+     and eighty. The perceptual smear is carried by the streak overlay, whose
+     opacity is compositor-only. */
+  .tqd-strip[data-run="1"] {
+    animation:
+      tqd-reel var(--tqd-dur) var(--tqd-delay) both,
+      tqd-smear var(--tqd-dur) steps(1, end) var(--tqd-delay) both;
+  }
+  @keyframes tqd-smear {
+    0%, 55% { filter: blur(2.1px); }
+    55.01%, 78% { filter: blur(1.1px); }
+    78.01%, 90% { filter: blur(0.45px); }
+    90.01%, 100% { filter: blur(0); }
+  }
+  .tqd-window-smear[data-run="1"] {
+    animation: tqd-smear-fade var(--tqd-dur) linear var(--tqd-delay) both;
+  }
+  @keyframes tqd-smear-fade {
+    0%, 52% { opacity: 0.85; }
+    88%, 100% { opacity: 0; }
+  }
+
+  /* ── the cabinet's micro-vibrations ───────────────────────────────────────
+     Bumps at 53%, 74% and 96% of 3.6s = 1.90s, 2.67s and 3.45s — the three
+     moments the reels' stoppers catch (see REELS in slot-machine.tsx). The
+     first bump is the lever bottoming out. Sub-pixel on purpose: the cabinet
+     should feel like it absorbed something, not like the page jumped. */
+  .tqd-cab[data-run="1"] { animation: tqd-jolt 3.6s linear both; }
+  @keyframes tqd-jolt {
+    0%, 3% { transform: translate3d(0, 0, 0); }
+    5% { transform: translate3d(0, 1.4px, 0) rotate(0.09deg); }
+    8%, 51% { transform: translate3d(0, 0, 0); }
+    53% { transform: translate3d(0.7px, 1.6px, 0) rotate(-0.07deg); }
+    56%, 72% { transform: translate3d(0, 0, 0); }
+    74% { transform: translate3d(-0.7px, 1.8px, 0) rotate(0.07deg); }
+    77%, 94% { transform: translate3d(0, 0, 0); }
+    96% { transform: translate3d(0, 2.4px, 0) rotate(-0.1deg); }
+    98% { transform: translate3d(0, -0.8px, 0); }
+    100% { transform: translate3d(0, 0, 0); }
+  }
+
+  /* ── the lever's throw ────────────────────────────────────────────────────
+     A CSS animation outranks the inline transform that tracks the finger, so
+     the hand-off needs nothing un-set; `--tqd-from` is the angle the finger let
+     go at, which is why there is no jump at 0%. */
+  .tqd-lever-arm.tqd-throwing { animation: tqd-throw 1s both; }
+  @keyframes tqd-throw {
+    0% {
+      transform: rotate(var(--tqd-from, 0deg));
+      animation-timing-function: cubic-bezier(0.4, 0, 0.75, 1);
+    }
+    22% {
+      /* 48°, not 62°: past about fifty the arm stops reading as pulled DOWN and
+         starts reading as swung out sideways. Matches `pull * 48` in the Lever. */
+      transform: rotate(48deg);
+      animation-timing-function: ease-out;
+    }
+    30% {
+      transform: rotate(45deg);
+      animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
+    }
+    62% {
+      transform: rotate(-5.5deg);
+      animation-timing-function: ease-in-out;
+    }
+    80% { transform: rotate(2.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  /* ── the camera push-in ───────────────────────────────────────────────────
+     Transform only, so nothing below the hero reflows, and the vignette closes
+     with it: the frame tightens on the reels rather than the reels growing. */
+  .tqd-hero[data-revealed="1"] .tqd-camera {
+    animation: tqd-pushin 2.6s cubic-bezier(0.2, 0.72, 0.2, 1) both;
+  }
+  @keyframes tqd-pushin {
+    0% { transform: scale(1) translate3d(0, 0, 0); }
+    100% { transform: scale(1.045) translate3d(0, -1.5%, 0); }
+  }
+  /* the frame closing in with it — the reels are lit, the rest falls away */
+  .tqd-hero[data-revealed="1"] .tqd-burst { opacity: 0.18; }
+
+  /* ── the announcement arriving ──────────────────────────────────────────── */
+  .tqd-reveal { animation: tqd-reveal-in 1.3s cubic-bezier(0.2, 0.72, 0.2, 1) both; }
+  @keyframes tqd-reveal-in {
+    0% { opacity: 0; transform: translate3d(0, 14px, 0); }
+    100% { opacity: 1; transform: none; }
+  }
+  /* the date and the names land a beat apart, so the pair reads as a sentence */
+  .tqd-reveal-date { animation: tqd-reveal-in 1.1s ease 0.18s both; }
+  .tqd-reveal-rule { animation: tqd-reveal-in 1.1s ease 0.3s both; }
+  /* Scoped to the reveal on purpose: `.tqd-names` is also the footer's name
+     block, which must not inherit an entrance meant for the hero. */
+  .tqd-reveal .tqd-names {
+    animation: tqd-reveal-in 1.4s cubic-bezier(0.2, 0.72, 0.2, 1) 0.42s both;
+  }
+
+  /* ── the shower of leaf ──────────────────────────────────────────────────- */
+  .tqd-spark {
+    animation: tqd-spark var(--tqd-sd) cubic-bezier(0.2, 0.6, 0.25, 1) var(--tqd-sdelay) both;
+  }
+  @keyframes tqd-spark {
+    0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.4); }
+    18% { opacity: 1; }
+    100% {
+      opacity: 0;
+      transform: translate3d(var(--tqd-sx), var(--tqd-sy), 0) scale(1);
+    }
+  }
+
+  /* ── the polish travelling across the lacquer ─────────────────────────── */
+  .tqd-cab::after { animation: tqd-polish 9s ease-in-out infinite; }
+  @keyframes tqd-polish {
+    0%, 16% { background-position: 130% 0; }
+    54%, 100% { background-position: -30% 0; }
+  }
+
+  /* ── gold motes, rising ─────────────────────────────────────────────────── */
+  .tqd-mote { animation-name: tqd-mote; animation-timing-function: linear; animation-iteration-count: infinite; }
+  @keyframes tqd-mote {
+    0% { opacity: 0; transform: translate3d(0, 0, 0); }
+    12% { opacity: 0.55; }
+    72% { opacity: 0.4; }
+    100% { opacity: 0; transform: translate3d(18px, -100svh, 0); }
+  }
+
+  /* ── the hint's arrow, pointing at the lever ────────────────────────────── */
+  .tqd-hint-arrow { animation: tqd-nudge 2.2s ease-in-out infinite; display: inline-block; }
+  @keyframes tqd-nudge {
+    0%, 100% { transform: translateX(0); opacity: 0.5; }
+    50% { transform: translateX(5px); opacity: 1; }
+  }
+
+  /* ── the pointer parallax ────────────────────────────────────────────────
+     Driven by CSS variables the renderer writes on pointermove, so the tilt
+     never costs a React render. The machine leads, the sunburst trails. */
+  .tqd-machine {
+    transform: perspective(1100px) rotateX(var(--tqd-tilt-x, 0deg))
+      rotateY(var(--tqd-tilt-y, 0deg));
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  /* The sunburst trails the machine, and it must keep its own opacity
+     transition: a bare `transition: translate` here would replace the shorthand
+     set on the base rule and the reveal's brightening would snap. */
+  .tqd-burst {
+    translate: calc(-50% + var(--tqd-shift, 0px) * -0.6) -50%;
+    transition: translate 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 2.6s ease;
+  }
+
+  /* ── scroll parallax: the hero's light drifts as the page leaves ────────── */
+  @supports (animation-timeline: scroll()) {
+    .tqd-burst {
+      animation: tqd-par-burst linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100svh;
+    }
+    @keyframes tqd-par-burst {
+      to { transform: translate3d(0, 16%, 0) scale(1.14); }
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION. The machine still works — the reels still land on the date,
+   and the reveal still happens — it simply happens as a cut rather than as a
+   performance. Nothing here is load-bearing, so all of it can go.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  /* the reels jump to their answer instead of spinning to it */
+  .tqd-strip[data-run="1"] { transform: translate3d(0, var(--tqd-land), 0); }
+  .tqd-window-smear { display: none; }
+  .tqd-motes { display: none; }
+  .tqd-sparks { display: none; }
+  .tqd-cab::after { display: none; }
+  .tqd-machine { transform: none; }
+  .tqd-lever-arm.tqd-throwing { transform: rotate(0deg); }
+  .tqd-hint-arrow { animation: none; }
+  /* the announcement is simply there, at full strength, the instant it mounts */
+  .tqd-reveal,
+  .tqd-reveal-date,
+  .tqd-reveal-rule,
+  .tqd-reveal .tqd-names { animation: none; opacity: 1; transform: none; }
 }

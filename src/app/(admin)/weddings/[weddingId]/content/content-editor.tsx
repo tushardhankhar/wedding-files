@@ -25,8 +25,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ImageUpload } from "@/modules/media/client/image-upload";
+import { MusicUpload } from "@/modules/media/client/music-upload";
+import { WaveformTrimmer } from "@/modules/media/client/waveform-trimmer";
 import { FocusPicker } from "@/modules/media/client/focus-picker";
 import { ArtworkPicker } from "@/modules/media/client/artwork-picker";
+import { MUSIC_LIBRARY, getMusicTrack } from "@/modules/website/music/registry";
 import { ThemeArtworkPreview } from "@/modules/website/render/artwork-preview";
 import { resolveArtwork } from "@/modules/website/render/artwork-placement";
 
@@ -55,6 +58,14 @@ interface State {
   faqs: { q: Loc; a: Loc }[];
   hashtag: string;
   contacts: { name: string; phone: string; relation: string }[];
+  music: {
+    enabled: boolean;
+    source: "library" | "custom";
+    trackId?: string;
+    customUrl?: string;
+    loopStart?: number;
+    loopEnd?: number;
+  };
 }
 
 function normalize(c: WebsiteConfig): State {
@@ -83,6 +94,14 @@ function normalize(c: WebsiteConfig): State {
       phone: x.phone,
       relation: x.relation ?? "",
     })),
+    music: {
+      enabled: c.music?.enabled ?? true,
+      source: c.music?.source ?? "library",
+      trackId: c.music?.trackId,
+      customUrl: c.music?.customUrl,
+      loopStart: c.music?.loopStart,
+      loopEnd: c.music?.loopEnd,
+    },
   };
 }
 
@@ -131,6 +150,14 @@ function toConfig(s: State): WebsiteConfig {
           phone: c.phone.trim(),
           relation: c.relation.trim() || undefined,
         })),
+    },
+    music: {
+      enabled: s.music.enabled,
+      source: s.music.source,
+      trackId: s.music.source === "library" ? s.music.trackId : undefined,
+      customUrl: s.music.source === "custom" ? s.music.customUrl : undefined,
+      loopStart: s.music.loopStart,
+      loopEnd: s.music.loopEnd,
     },
   };
 }
@@ -710,6 +737,11 @@ export function ContentEditor({
   // starts wherever the theme's own default sits.
   const artworkOn = resolveArtwork(s.artwork, supports.artwork).show;
 
+  const currentTrackUrl =
+    s.music.source === "custom"
+      ? s.music.customUrl
+      : getMusicTrack(s.music.trackId)?.url;
+
   // Functional append so parallel uploads can't clobber each other's writes.
   const addImage = (url: string) =>
     setS((prev) => ({
@@ -1063,6 +1095,140 @@ export function ContentEditor({
         </CardContent>
       </Card>
       ) : null}
+
+      {/* Background music */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Background music</CardTitle>
+          <CardDescription>
+            Plays softly on the invite. On by default — guests can mute it
+            from a toggle on the page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={s.music.enabled}
+              onChange={(e) =>
+                set({ music: { ...s.music, enabled: e.target.checked } })
+              }
+            />
+            Play music on this invite
+          </label>
+
+          {s.music.enabled ? (
+            <>
+              <div className="flex gap-4 text-sm">
+                <label className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="music-source"
+                    checked={s.music.source === "library"}
+                    onChange={() => set({ music: { ...s.music, source: "library" } })}
+                  />
+                  Pick from our library
+                </label>
+                <label className="flex items-center gap-1.5">
+                  <input
+                    type="radio"
+                    name="music-source"
+                    checked={s.music.source === "custom"}
+                    onChange={() => set({ music: { ...s.music, source: "custom" } })}
+                  />
+                  Upload my own
+                </label>
+              </div>
+
+              {s.music.source === "library" ? (
+                <div className="space-y-1.5">
+                  <Label>Track</Label>
+                  <select
+                    value={s.music.trackId ?? ""}
+                    onChange={(e) =>
+                      set({
+                        music: {
+                          ...s.music,
+                          trackId: e.target.value || undefined,
+                          loopStart: undefined,
+                          loopEnd: undefined,
+                        },
+                      })
+                    }
+                    className="h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+                  >
+                    <option value="">Choose a track…</option>
+                    {MUSIC_LIBRARY.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.title} — {t.artist}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {s.music.customUrl ? (
+                    <div className="flex items-center gap-2">
+                      <audio controls src={s.music.customUrl} className="h-8 flex-1" />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        onClick={() =>
+                          set({
+                            music: {
+                              ...s.music,
+                              customUrl: undefined,
+                              loopStart: undefined,
+                              loopEnd: undefined,
+                            },
+                          })
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ) : (
+                    <MusicUpload
+                      weddingId={weddingId}
+                      onUploaded={(url) =>
+                        set({
+                          music: {
+                            ...s.music,
+                            customUrl: url,
+                            loopStart: undefined,
+                            loopEnd: undefined,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+              )}
+
+              {currentTrackUrl ? (
+                <div className="space-y-1.5">
+                  <Label>Loop segment</Label>
+                  <WaveformTrimmer
+                    key={currentTrackUrl}
+                    url={currentTrackUrl}
+                    value={
+                      s.music.loopStart != null && s.music.loopEnd != null
+                        ? { start: s.music.loopStart, end: s.music.loopEnd }
+                        : undefined
+                    }
+                    onChange={(range) =>
+                      set({
+                        music: { ...s.music, loopStart: range.start, loopEnd: range.end },
+                      })
+                    }
+                  />
+                </div>
+              ) : null}
+            </>
+          ) : null}
+        </CardContent>
+      </Card>
 
       {/* Family */}
       {supports.family ? (

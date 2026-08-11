@@ -15,7 +15,10 @@ import { JharokhaView } from "./jharokha/jharokha-view";
 import { MayuraView } from "./mayura/mayura-view";
 import { JodiView } from "./jodi/jodi-view";
 import { DakView } from "./dak/dak-view";
+import { RajmahalView } from "./rajmahal/rajmahal-view";
+import { TaqdeerView } from "./taqdeer/taqdeer-view";
 import { GoToTop } from "./go-to-top";
+import { MusicPlayer } from "./music-player";
 
 /**
  * Per-theme renderer dispatch. Each flagship theme has a standalone renderer
@@ -57,6 +60,10 @@ function ThemeView(props: WebsiteViewProps) {
       return <JodiView {...props} />;
     case "dak": // The Dak — airmail postcard & postage stamps
       return <DakView {...props} />;
+    case "rajmahal": // The Rajmahal — cinematic palace journey
+      return <RajmahalView {...props} />;
+    case "taqdeer": // The Taqdeer — Art Deco slot machine
+      return <TaqdeerView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }
@@ -70,6 +77,7 @@ export function SiteView(props: WebsiteViewProps) {
   return (
     <>
       <ThemeView {...props} />
+      <MusicPlayer config={props.config} bg={vars["--w-navy"]} ring={vars["--w-gold"]} />
       <GoToTop bg={vars["--w-navy"]} ring={vars["--w-gold"]} />
     </>
   );

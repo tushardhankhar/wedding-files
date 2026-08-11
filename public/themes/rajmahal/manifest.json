@@ -1,0 +1,52 @@
+{
+  "couple": {
+    "h": 1070,
+    "ratio": 0.6168,
+    "w": 660
+  },
+  "elephant-left": {
+    "h": 380,
+    "ratio": 1.2053,
+    "w": 458
+  },
+  "elephant-right": {
+    "h": 380,
+    "ratio": 1.2026,
+    "w": 457
+  },
+  "gate-doors": {
+    "h": 1084,
+    "ratio": 0.4594,
+    "w": 498
+  },
+  "gate-open": {
+    "h": 1291,
+    "ratio": 0.7281,
+    "w": 940
+  },
+  "jharokha": {
+    "h": 739,
+    "ratio": 0.866,
+    "w": 640
+  },
+  "palace": {
+    "h": 670,
+    "ratio": 1.791,
+    "w": 1200
+  },
+  "peacock-fan": {
+    "h": 514,
+    "ratio": 1.4397,
+    "w": 740
+  },
+  "peacock-side": {
+    "h": 839,
+    "ratio": 0.5959,
+    "w": 500
+  },
+  "toran": {
+    "h": 1230,
+    "ratio": 0.6667,
+    "w": 820
+  }
+}

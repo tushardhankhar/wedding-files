@@ -4,7 +4,9 @@ import {
   Raleway,
   Cormorant_Garamond,
   Noto_Sans_Devanagari,
+  Tiro_Devanagari_Hindi,
   Playfair_Display,
+  Marcellus,
   Great_Vibes,
   Space_Grotesk,
   Fredoka,
@@ -28,11 +30,25 @@ const raleway = Raleway({
   display: "swap",
 });
 
-// Elegant serif display for wedding themes.
+// Elegant serif display for wedding themes. Loaded as the variable font so the
+// whole 300–700 range is available from one file: a monumental heading set in
+// 300 reads far more expensive than the same heading in 600, and small caps
+// still want 600. Real italics too — the themes lean on italic serif for their
+// pull quotes, and a synthesised oblique gives that away instantly.
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+// Roman inscriptional caps — the lettering of engraved stone and struck coins.
+// Used by The Maharaja for every uppercase label, so its microtype reads as
+// carved rather than as a sans-serif set very wide.
+const marcellus = Marcellus({
+  variable: "--font-marcellus",
+  subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -41,6 +57,16 @@ const notoDevanagari = Noto_Sans_Devanagari({
   variable: "--font-noto-deva",
   subsets: ["devanagari"],
   weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// Serif Devanagari for Hindi *display* type on the luxury themes. Noto Sans
+// stays for body copy; headlines get a face with contrast and stroke modulation
+// so a Hindi headline carries the same weight as its English counterpart.
+const tiroDevanagari = Tiro_Devanagari_Hindi({
+  variable: "--font-tiro-deva",
+  subsets: ["devanagari"],
+  weight: ["400"],
   display: "swap",
 });
 
@@ -108,7 +134,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${notoDevanagari.variable} ${playfair.variable} ${greatVibes.variable} ${spaceGrotesk.variable} ${fredoka.variable} ${nunito.variable} ${dmSerif.variable} h-full antialiased`}
+      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${marcellus.variable} ${notoDevanagari.variable} ${tiroDevanagari.variable} ${playfair.variable} ${greatVibes.variable} ${spaceGrotesk.variable} ${fredoka.variable} ${nunito.variable} ${dmSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

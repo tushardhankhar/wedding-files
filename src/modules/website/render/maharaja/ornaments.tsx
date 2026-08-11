@@ -106,6 +106,93 @@ export function ArchColonnade({ className }: { className?: string }) {
   );
 }
 
+/**
+ * A palace silhouette receding into haze — the far plane of the hero's 3D
+ * stage. Domes, chhatris and a curtain wall, drawn as one continuous outline so
+ * it reads as architecture at a distance rather than as a row of icons.
+ *
+ * The viewBox is deliberately very wide (20:1). A distant skyline is defined by
+ * being *small in the frame*; at a squarer ratio the same drawing stretches to
+ * the full width of a desktop hero and the domes become the size of a room,
+ * which reads as ornament in the foreground — the opposite of what a far plane
+ * is for.
+ */
+export function PalaceSkyline({ className }: { className?: string }) {
+  /** One bay: a wall span, its drum, and a bulbous dome with a finial. */
+  const bay = (x: number, h: number, i: number) => (
+    <g key={i} transform={`translate(${x} ${60 - h})`}>
+      <path
+        d={`M18 ${h} V${h - 8} C4 ${h - 8} 2 ${h - 26} 18 ${h - 34} C34 ${h - 26} 32 ${h - 8} 18 ${h - 8}`}
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinejoin="round"
+      />
+      <path d={`M18 ${h - 34} V${h - 41}`} stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+      <circle cx="18" cy={h - 43} r="1.6" fill="currentColor" />
+      <path d={`M6 ${h - 8} H30`} stroke="currentColor" strokeWidth="1" />
+      <path d={`M0 ${h} H36`} stroke="currentColor" strokeWidth="1" />
+    </g>
+  );
+
+  // Heights cycle on a prime-ish run so the roofline never settles into an
+  // obvious repeat across the width of a wide screen.
+  const HEIGHTS = [46, 58, 40, 54, 44, 60, 42, 52, 48, 38, 56];
+
+  return (
+    <svg
+      viewBox="0 0 1200 60"
+      fill="none"
+      preserveAspectRatio="xMidYMax meet"
+      className={cn("w-full", className)}
+      aria-hidden="true"
+    >
+      {Array.from({ length: 27 }, (_, i) =>
+        bay(i * 44, HEIGHTS[i % HEIGHTS.length], i),
+      )}
+      {/* curtain wall tying the bays together at the base */}
+      <path d="M0 60 H1200" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+/**
+ * Volumetric light through the jali — the shafts a screened window throws
+ * across a dark hall. Positions are fixed rather than random so the server and
+ * client agree, and deliberately uneven: evenly spaced shafts read as a
+ * lighting rig, uneven ones read as a window.
+ */
+const SHAFTS: Array<{ left: string; delay: string; opacity: number; width: string }> = [
+  { left: "8%", delay: "0s", opacity: 0.5, width: "12vmax" },
+  { left: "26%", delay: "-5s", opacity: 0.8, width: "18vmax" },
+  { left: "52%", delay: "-9s", opacity: 0.45, width: "10vmax" },
+  { left: "71%", delay: "-3s", opacity: 0.75, width: "16vmax" },
+  { left: "89%", delay: "-11s", opacity: 0.4, width: "9vmax" },
+];
+
+export function LightShafts({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
+      aria-hidden="true"
+    >
+      {SHAFTS.map((s, i) => (
+        <span
+          key={i}
+          className="m-shaft"
+          style={
+            {
+              left: s.left,
+              width: s.width,
+              animationDelay: s.delay,
+              "--m-shaft-o": s.opacity,
+            } as CSSProperties
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
 /** Jali lattice texture — a repeating quatrefoil screen, very faint. */
 export function Jali({ className }: { className?: string }) {
   return (

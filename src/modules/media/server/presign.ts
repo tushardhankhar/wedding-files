@@ -19,6 +19,11 @@ const CONTENT_TYPE_EXT: Record<string, string> = {
   "image/gif": "gif",
 };
 
+/** Custom background-music uploads: MP3 only, no re-encoding step. */
+const MUSIC_CONTENT_TYPE_EXT: Record<string, string> = {
+  "audio/mpeg": "mp3",
+};
+
 const PRESIGN_TTL_SECONDS = 60;
 
 export type PresignResult =
@@ -72,6 +77,54 @@ export async function createUploadUrlAction(
   }
 
   const key = `weddings/${weddingId}/gallery/${randomId()}.${ext}`;
+  try {
+    const uploadUrl = await getSignedUrl(
+      r2.client,
+      new PutObjectCommand({
+        Bucket: r2.config.R2_BUCKET,
+        Key: key,
+        ContentType: contentType,
+      }),
+      { expiresIn: PRESIGN_TTL_SECONDS }
+    );
+    return { ok: true, uploadUrl, publicUrl: publicUrl(key) };
+  } catch {
+    return { ok: false, error: "Could not start the upload. Please try again." };
+  }
+}
+
+/**
+ * Issues a presigned PUT URL for a client's own background-music MP3, on the
+ * same auth/RLS check as `createUploadUrlAction`. Object key is server-chosen
+ * under `weddings/<their wedding>/music/`, separate from the platform-owned
+ * `music/library/` prefix the curated tracks live under.
+ */
+export async function createMusicUploadUrlAction(
+  weddingId: string,
+  contentType: string
+): Promise<PresignResult> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "Please sign in again." };
+
+  const ext = MUSIC_CONTENT_TYPE_EXT[contentType];
+  if (!ext) return { ok: false, error: "Only MP3 files are supported." };
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("weddings")
+    .select("id")
+    .eq("id", weddingId)
+    .maybeSingle();
+  if (error || !data) return { ok: false, error: "You can't edit this wedding." };
+
+  let r2;
+  try {
+    r2 = getR2();
+  } catch {
+    return { ok: false, error: "Music uploads aren't configured yet." };
+  }
+
+  const key = `weddings/${weddingId}/music/${randomId()}.${ext}`;
   try {
     const uploadUrl = await getSignedUrl(
       r2.client,
