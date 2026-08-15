@@ -66,20 +66,36 @@ export function LandingNavbar() {
             >
               ₹1,599, all in
             </a> */}
+            {/* Demo drops to a ghost button so exactly ONE thing in this bar is
+                filled. Two saturated pills side by side made the visitor rank
+                them, and the one they were ranking against was the one that
+                earns money — the demo was the brightest element on screen and
+                the buy button the dimmest. */}
             <Link
               href="/demo/royal"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.7)] transition-transform hover:-translate-y-0.5"
+              className={cn(
+                "rounded-full border px-5 py-2.5 text-[13px] font-semibold transition-colors",
+                scrolled
+                  ? "border-[color:var(--l-line)] text-[color:var(--l-wine)] hover:border-[color:var(--l-gold)]"
+                  : "border-white/30 text-[color:var(--l-ivory)] hover:border-[color:var(--l-gold-lite)]"
+              )}
             >
               {/* Short forms here: the full labels plus four nav links overflow
                   the bar at the narrow end of the lg breakpoint. */}
               {DEMO_CTA_SHORT}
             </Link>
-            {/* Self-serve is the primary action here. The WhatsApp path is one
-                scroll away in the hero and the pricing cards; a third button
-                overflows this bar at the narrow end of the lg breakpoint. */}
-            <StartButton from="navbar" label={BUY_CTA_SHORT} />
+            {/* Self-serve is the primary action. The WhatsApp path is one scroll
+                away in the hero and the pricing cards; a third button overflows
+                this bar at the narrow end of the lg breakpoint.
+                The tone follows the bar: gold reads loudest over the wine hero,
+                but would wash out once the bar turns ivory. */}
+            <StartButton
+              from="navbar"
+              tone={scrolled ? "wine" : "gold"}
+              label={`${BUY_CTA_SHORT} · ${PRICE}`}
+            />
           </div>
 
           {/* Mobile menu button */}

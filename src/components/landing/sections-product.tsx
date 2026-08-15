@@ -593,10 +593,13 @@ export function PricingPreview() {
                 <div className="relative mt-auto flex flex-col gap-2.5 pt-8">
                   {plan.selfServe ? (
                     <>
+                      {/* Tone follows the card: the flagship is wine, the
+                          parked plans render on white. */}
                       <StartButton
                         from="pricing"
+                        tone={featured ? "gold" : "wine"}
                         label={`Create mine · ${plan.price}`}
-                        className="w-full bg-[color:var(--l-pink)] px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(216,27,96,.8)]"
+                        className="w-full px-8 py-3.5 text-sm"
                       />
                       {/* Names the step before it happens, same as the WhatsApp
                           note below always did. */}

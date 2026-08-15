@@ -133,7 +133,10 @@ export function StickyCta() {
               cta_from: "sticky_bar",
             })
           }
-          className="flex h-11 flex-none items-center gap-1.5 rounded-full bg-[color:var(--l-pink)] px-4 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.8)]"
+          // Gold, like every other buy button on the page. One colour means one
+          // meaning: if the thing that takes payment looks different in each
+          // place it appears, the visitor has to re-learn it every time.
+          className="l-cta-sheen relative flex h-11 flex-none items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-b from-[color:var(--l-gold-lite)] to-[color:var(--l-gold)] px-4 text-[13px] font-bold text-[color:var(--l-wine)] shadow-[0_10px_24px_-10px_rgba(232,200,119,.8)]"
         >
           Get mine
         </Link>

@@ -191,10 +191,11 @@ export const PLAN_TERMS: string[] = [
   "Your link stays live for 12 months",
   "WhatsApp support while you build",
   "One-time price — no subscription",
-  // Repeated here as well as in its own band: the guarantee's whole job is to
-  // be on screen at the moment the price is, and the band sits three sections
-  // higher. See GUARANTEE for the terms this is shorthand for.
-  "7-day full refund — no reasons needed",
+  // Replaces a "7-day full refund" line. Payments are non-refundable under the
+  // Terms (§7), so the page must not promise otherwise — and the honest form of
+  // reassurance here is that nothing has to be taken on trust in the first
+  // place: every theme is openable, in full, before paying a rupee.
+  "Try every theme live before you pay",
 ];
 
 // Honest reasons to trust a brand-new brand. Deliberately no customer counts or
@@ -300,25 +301,33 @@ export const PARKED_PLANS: PricingPlan[] = [
   },
 ];
 
-// ── Risk reversal ──────────────────────────────────────────────────────────
+// ── Buying with confidence ─────────────────────────────────────────────────
 /**
- * The single largest unanswered objection on the page: "what if I pay to
- * a brand I've never heard of and it's rubbish?" There is no review count, no
- * years-in-business and no logo wall to answer it with, so the answer has to be
- * a promise the business actually keeps.
+ * The single largest unanswered objection on the page: "what if I pay a brand
+ * I've never heard of and it's rubbish?" There is no review count, no
+ * years-in-business and no logo wall to answer it with.
  *
- * BUSINESS COMMITMENT — approved by the owner 2026-08-04. This is the one block
- * on the page that creates an obligation rather than describing the product, so
- * treat the wording as load-bearing: the refund window is deliberately tied to
- * the period before guest links go out, which is what makes it cheap to honour.
- * Anyone editing this is changing what support has to do, not just what the
- * page says — the page must never promise something support won't.
+ * This block used to answer it with a 7-day refund. That promise is GONE, and
+ * must not come back in any wording: the Terms (§7) state payments are strictly
+ * non-refundable, so the page was contradicting the contract the buyer agrees
+ * to — the worst possible place for the two to disagree, since anyone invoking
+ * it would already be unhappy.
+ *
+ * The replacement is stronger anyway, because it removes the risk instead of
+ * compensating for it: every theme is fully live on this site, so nobody has to
+ * buy on trust. Keep it that way — the honest claim and the persuasive one are
+ * the same claim here, and each line below is verifiable by the reader in one
+ * click. Do not add anything that isn't.
  */
-export const GUARANTEE = {
-  title: "If you don't love it, you don't pay for it.",
+export const BUY_CONFIDENCE = {
+  title: "See exactly what you're buying, before you pay.",
   body:
-    "Build your invitation, look at it on your own phone, and if it isn't what you hoped for, tell us within 7 days and we'll refund you in full. No forms, no reasons needed — just a message on the same WhatsApp chat you started in.",
-  chips: ["7-day full refund", "No subscription, ever", "No card details on this site"],
+    "Every theme on this page is a real, working invitation you can open right now — no signup, no email, nothing to install. Scroll one end to end on your own phone, tap through the events, try the RSVP. Decide after that.",
+  chips: [
+    "Open any theme free",
+    "No subscription, ever",
+    "Card details never touch this site",
+  ],
 };
 
 /**
@@ -412,9 +421,15 @@ export const FAQS: { q: string; a: string }[] = [
     q: "How do I pay?",
     a: "In the WhatsApp chat, by UPI or bank transfer, after we've confirmed exactly what you're getting. Nothing is charged from this website and you'll never be asked for card details here.",
   },
+  // Answers the same question the old refund promise did, but with the truth:
+  // payments are non-refundable (Terms §7), so the honest answer is to make
+  // "don't like it" something you find out BEFORE paying, not after. Naming the
+  // theme lock here as well as in the builder is deliberate — this is where a
+  // careful buyer goes looking for the catch, and finding it stated plainly is
+  // worth more than the sale it occasionally costs.
   {
     q: "What if I don't like it?",
-    a: `${GUARANTEE.body}`,
+    a: "Look before you buy — that's why every theme on this page is a real invitation you can open and scroll in full, with no signup. Once you've paid, your content is yours to edit as often as you like, and we'll help on WhatsApp if something looks wrong. Two things to know first: your theme is fixed once your invitation is created and can't be swapped afterwards, and payments are non-refundable. So please open the theme you're drawn to and read it end to end before you pay — it takes a minute and it's the whole decision.",
   },
   // Moved out of a "Coming soon" chip row that used to sit directly under the
   // price. The same list is a liability there and an asset here: volunteering

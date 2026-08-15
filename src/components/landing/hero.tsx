@@ -10,7 +10,7 @@ import { StartButton } from "./start-button";
 import {
   SHOWCASE_THEMES,
   PRICE,
-  DEMO_CTA,
+  DEMO_CTA_SHORT,
   BUY_CTA_SHORT,
   TRUST_SIGNALS,
 } from "./data";
@@ -149,55 +149,67 @@ export function LandingHero() {
             })}
           </ul>
 
-          {/* Three stacked full-width buttons cost 195px and made the visitor
-              rank three equal-looking options before they'd seen anything. Now
-              the two that convert sit side by side in one 52px row — look, or
-              buy — and the explainer drops to a text link, which is what a
-              "learn more" always should have been next to a live demo. */}
+          {/* Buy first, look second.
+              This row used to show the demo and "See how it works" on desktop
+              and hide the buy button entirely (`lg:hidden`, left over from when
+              the only way to buy was WhatsApp) — so the highest-intent area of
+              the page offered look and learn but no way to purchase.
+              The order is deliberate too: at ₹99 buying is the low-commitment
+              action, and the proof a demo would provide is already on screen in
+              the live phone beside this copy. */}
           <div className="l-load mt-6 grid grid-cols-2 gap-2.5 lg:mt-9 lg:flex lg:items-center lg:justify-start" style={{ animationDelay: "0.6s" }}>
+            {/* Short form on the phone: the full label wraps to two lines beside
+                a one-line demo button, and a taller rectangle next to it makes
+                the pair read as unequal choices. */}
+            <StartButton
+              from="hero"
+              label={`${BUY_CTA_SHORT} · ${PRICE}`}
+              className="px-4 py-3.5 text-[13px] leading-tight lg:px-8 lg:py-4 lg:text-sm"
+            />
             <Link
               href={`/demo/${HERO_THEME.demo}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] via-[color:var(--l-pink)] to-[color:var(--l-red)] px-4 py-3.5 text-center text-[13px] font-semibold leading-tight text-white shadow-[0_16px_40px_-12px_rgba(216,27,96,.75)] transition-transform hover:-translate-y-0.5 lg:px-8 lg:py-4 lg:text-sm"
+              className="rounded-full border border-white/30 px-4 py-3.5 text-center text-[13px] font-semibold leading-tight text-[color:var(--l-ivory)] transition-colors hover:border-[color:var(--l-gold-lite)] lg:px-8 lg:py-4 lg:text-sm"
             >
-              <span className="lg:hidden">See a guest&apos;s view</span>
-              <span className="hidden lg:inline">{DEMO_CTA}</span>
+              {/* Short label on desktop too, now that this is the secondary
+                  button: at its full length it was physically wider than the
+                  primary beside it, and size is read as importance before
+                  colour is. */}
+              {DEMO_CTA_SHORT}
             </Link>
-            {/* Short form on the phone: the full label wraps to two lines
-                beside a one-line demo button, and a taller, busier rectangle
-                beside it makes the pair read as unequal choices. */}
-            <StartButton
-              from="hero"
-              label={BUY_CTA_SHORT}
-              className="px-4 py-3.5 text-[13px] leading-tight lg:hidden"
-            />
             <a
               href="#how-it-works"
-              className="hidden rounded-full border border-white/30 px-8 py-4 text-center text-sm font-semibold text-[color:var(--l-ivory)] transition-colors hover:border-[color:var(--l-gold-lite)] lg:block"
+              className="hidden text-sm font-semibold text-white/70 underline-offset-4 transition-colors hover:text-[color:var(--l-gold-lite)] hover:underline lg:ml-2 lg:block"
             >
               See how it works
             </a>
           </div>
 
+          {/* The terms a buyer would otherwise have to hunt for, sitting
+              DIRECTLY under the button — reassurance only works where the doubt
+              is felt, and four lines further down it was answering a question
+              the visitor had already resolved by leaving.
+              This line used to lead with a 7-day refund. There is no refund
+              (Terms §7), so what's lifted out of the grey now is the thing that
+              actually removes the risk: you can open the real thing first. */}
+          <p className="l-load mt-3 text-center text-[11px] leading-relaxed tracking-wide text-white/65 lg:mt-4 lg:text-left lg:text-xs" style={{ animationDelay: "0.65s" }}>
+            {PRICE} one-time ·{" "}
+            <span className="font-semibold text-[color:var(--l-gold-lite)]">
+              try every theme free first
+            </span>{" "}
+            · Live in minutes · Unlimited guests · No app, no guest accounts
+          </p>
+
           {/* Self-serve is the button; the chat is the fallback for anyone who
               would rather hand it over. Kept as a text link so the pair above
               stays a two-way choice rather than a three-way one. */}
-          <p className="l-load mt-3 text-center text-[12px] text-white/65 lg:text-left" style={{ animationDelay: "0.65s" }}>
+          <p className="l-load mt-3 text-center text-[12px] text-white/65 lg:text-left" style={{ animationDelay: "0.7s" }}>
             Prefer we set it up for you?{" "}
             <BookNowButton
               label="Message us on WhatsApp"
               className="bg-transparent px-0 py-0 text-[12px] font-semibold text-[color:var(--l-gold-lite)] shadow-none hover:translate-y-0 hover:underline"
             />
-          </p>
-
-          {/* The terms a buyer would otherwise have to hunt for, stated before
-              the WhatsApp CTA rather than after it — asking someone to open a
-              chat is a bigger step than a click, so it has to be the safest
-              thing on screen by the time they reach it. */}
-          <p className="l-load mt-4 text-[11px] leading-relaxed tracking-wide text-white/60 lg:mt-6 lg:text-xs" style={{ animationDelay: "0.7s" }}>
-            {PRICE} one-time · Live in minutes · Unlimited guests · 7-day refund
-            · No app, no guest accounts
           </p>
 
           {/* Honest trust signals only — things the visitor can verify in one

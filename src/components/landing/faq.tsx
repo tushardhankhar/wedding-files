@@ -1,4 +1,4 @@
-import { FAQS, GUARANTEE, NEXT_STEPS } from "./data";
+import { FAQS, BUY_CONFIDENCE, NEXT_STEPS } from "./data";
 import { BookNowButton } from "./book-now";
 
 /**
@@ -19,8 +19,8 @@ import { BookNowButton } from "./book-now";
  * this traffic arrives on.
  */
 
-/* ── Risk reversal ────────────────────────────────────────────────────────── */
-export function GuaranteeBand() {
+/* ── Buying with confidence ───────────────────────────────────────────────── */
+export function ConfidenceBand() {
   return (
     <section className="bg-[color:var(--l-ivory)] px-5 pb-16 pt-20 sm:px-8 sm:pb-20 sm:pt-24">
       <div
@@ -34,13 +34,13 @@ export function GuaranteeBand() {
           🛡️
         </span>
         <h2 className="l-display mt-5 text-balance text-[clamp(1.6rem,4vw,2.4rem)] font-semibold leading-tight text-[color:var(--l-wine)]">
-          {GUARANTEE.title}
+          {BUY_CONFIDENCE.title}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-[color:var(--l-ink-soft)]">
-          {GUARANTEE.body}
+          {BUY_CONFIDENCE.body}
         </p>
         <ul className="mt-6 flex flex-wrap justify-center gap-2">
-          {GUARANTEE.chips.map((c) => (
+          {BUY_CONFIDENCE.chips.map((c) => (
             <li
               key={c}
               className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--l-line)] bg-[color:var(--l-ivory-2)] px-4 py-1.5 text-xs font-semibold text-[color:var(--l-wine)]"

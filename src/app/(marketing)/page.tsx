@@ -12,7 +12,7 @@ import {
   LandingFooter,
 } from "@/components/landing/sections-product";
 import { EnquirySection } from "@/components/landing/enquiry";
-import { GuaranteeBand, FaqSection } from "@/components/landing/faq";
+import { ConfidenceBand, FaqSection } from "@/components/landing/faq";
 import { StickyCta } from "@/components/landing/sticky-cta";
 import { GoToTop } from "@/modules/website/render/go-to-top";
 
@@ -79,12 +79,12 @@ export default function LandingPage() {
         {/* <BrandStatement /> — commented out per request */}
         {/* Objections before the number. A visitor who reaches the price still
             wondering whether it's a subscription, who builds the site, or what
-            happens if it's rubbish doesn't ask — they leave. So the refund
-            promise and the FAQ land first, and the price arrives at someone who
-            has run out of reasons to go. ("What happens next" is a strip inside
-            the pricing section — it's only ever wanted with a thumb over the
-            button.) */}
-        <GuaranteeBand />
+            happens if it's rubbish doesn't ask — they leave. So the
+            look-before-you-buy band and the FAQ land first, and the price
+            arrives at someone who has run out of reasons to go. ("What happens
+            next" is a strip inside the pricing section — it's only ever wanted
+            with a thumb over the button.) */}
+        <ConfidenceBand />
         <FaqSection />
         <PricingPreview />
         <EnquirySection />

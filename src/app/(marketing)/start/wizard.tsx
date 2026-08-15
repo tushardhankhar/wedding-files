@@ -193,11 +193,32 @@ export function Wizard({ draft }: { draft: PendingSignup | null }) {
       {/* Step 2 — theme */}
       {step === 2 && category ? (
         <div className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            Tap <span className="font-medium text-foreground">See it live</span>{" "}
-            to walk through a real invitation in that theme before you choose —
-            your theme is set when your invitation is created.
-          </p>
+          {/* The theme is the ONE decision on this page that can't be undone —
+              it's admin-locked the moment the invitation is created, and
+              payments aren't refundable. Saying so quietly in grey, as this
+              used to, is how someone ends up messaging support instead of
+              enjoying their invitation. It gets a border, a lock and bold type
+              because it has to survive a skim. */}
+          <div className="flex items-start gap-3 rounded-xl border-2 border-[color:var(--gold-line)] bg-[color:var(--accent)] p-3.5">
+            <span aria-hidden className="text-lg leading-none">
+              🔒
+            </span>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              <strong className="mb-0.5 block font-heading text-sm font-bold text-[color:var(--gold-deep)]">
+                Choose carefully — your theme is final.
+              </strong>
+              Once your invitation is created, the theme{" "}
+              <strong className="font-bold text-foreground">
+                cannot be changed
+              </strong>
+              . Tap{" "}
+              <strong className="font-semibold text-foreground">
+                See it live
+              </strong>{" "}
+              on any theme below to walk through a real invitation first — it
+              opens in a new tab, so you won&apos;t lose your place here.
+            </p>
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {themesForCategory(category).map((t) => (
               <div
@@ -429,10 +450,39 @@ export function Wizard({ draft }: { draft: PendingSignup | null }) {
             </dl>
           </div>
 
+          {/* Stated again, directly above the pay button. The theme picker
+              already warns, but that was several steps and possibly several
+              minutes ago — and this is the last screen before money moves and
+              the choice becomes permanent. Naming the actual theme, rather than
+              "your theme", is what makes it checkable at a glance. */}
+          <div className="flex items-start gap-3 rounded-xl border-2 border-[color:var(--gold-line)] bg-[color:var(--accent)] p-3.5">
+            <span aria-hidden className="text-lg leading-none">
+              🔒
+            </span>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              <strong className="mb-0.5 block font-heading text-sm font-bold text-[color:var(--gold-deep)]">
+                You&apos;re choosing {theme.name} — for good.
+              </strong>
+              Your theme{" "}
+              <strong className="font-bold text-foreground">
+                cannot be changed after payment
+              </strong>
+              , and payments are non-refundable.{" "}
+              <button
+                type="button"
+                onClick={() => setStep(2)}
+                className="font-semibold text-primary underline underline-offset-2"
+              >
+                Pick a different theme
+              </button>{" "}
+              if you&apos;re not sure.
+            </p>
+          </div>
+
           <p className="text-xs leading-relaxed text-muted-foreground">
             One payment, no subscription. Your invitation is created the moment
-            payment succeeds, and everything else — photos, events, guest lists
-            and links — is editable afterwards.
+            payment succeeds, and everything else — names, dates, photos, events,
+            guest lists and links — stays editable afterwards.
           </p>
 
           {signupId ? <PayButton /> : null}
