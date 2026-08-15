@@ -44,6 +44,13 @@ client receives MUST contain that code, not only a magic link.
     login magic-link path in Phase 4) — but `{{ .Token }}` is what makes the
     claim page work. Without it, clients get a link but no code to type.
 
+> **Self-serve signup depends on the "Confirm signup" template specifically.**
+> `/start` is the only surface that passes `shouldCreateUser: true`, so a
+> brand-new buyer receives **Confirm signup**, not **Magic Link**. If only the
+> Magic Link template carries `{{ .Token }}`, buyers who read their mail on a
+> different device than they typed their address on have no code to enter — and
+> that is a lost sale, not just a lost sign-in. Put `{{ .Token }}` in **both**.
+
 ## 3. Site URL + redirect allow-list
 
 Every `emailRedirectTo` / `redirectTo` origin must be allow-listed or Supabase
@@ -81,6 +88,10 @@ Set in each environment (see `.env.example`):
 - `AUTH_FROM_EMAIL` — branded sender for the client-invite email, e.g.
   `Join the Jashn <hello@jointhejashn.com>`.
 - `ENQUIRY_TO_EMAIL`, `ENQUIRY_FROM_EMAIL` — existing enquiry-form addresses.
+- `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` — the
+  self-serve checkout at `/start`. Optional as a set; unset means the pay step
+  says "not set up yet" and everything else runs. Full walkthrough (including
+  the `payment.captured` webhook) is in `.env.example`.
 
 ## 5. OTP / rate-limit settings (revisited in Phase 6)
 

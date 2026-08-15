@@ -128,12 +128,29 @@ export const BUY_CTA = "Get my invitation website";
 export const BUY_CTA_SHORT = "Get my website";
 
 // ── Pricing ────────────────────────────────────────────────────────────────
-// Simple, transparent pricing. PRICE remains the flagship invitation price and
-// is still referenced by the hero, navbar & final CTA.
-export const PRICE = "₹1,599";
+// Simple, transparent pricing. PRICE is the flagship invitation price and is
+// referenced by the hero, navbar, sticky bar, final CTA and the checkout copy.
+//
+// ⚠️ PRICE must equal `PRICE_LABEL` in `modules/self-serve/pricing.ts`, which is
+// what the buyer is actually charged at /start. That constant is the source of
+// truth for the CHARGE; this one is the source of truth for the PAGE. They are
+// separate on purpose — marketing copy shouldn't be able to reprice a payment —
+// but a page that advertises one number and bills another is the fastest way to
+// lose someone at the moment they'd decided to trust you. Change both together.
+export const PRICE = "₹99";
 
 /**
- * What a visitor is mentally comparing ₹1,599 against. Nobody arrives with a
+ * The standing price, shown struck through beside {@link PRICE}.
+ *
+ * ₹99 with nothing beside it reads as cheap; ₹99 beside ₹1,599 reads as a
+ * deal, and it is the number every other surface — the comparison table, the
+ * ads — has been anchoring against all along. Delete this and the introductory
+ * offer stops looking like an offer.
+ */
+export const PRICE_WAS = "₹1,599";
+
+/**
+ * What a visitor is mentally comparing the price against. Nobody arrives with a
  * price for "invitation website" in their head, so the number floats free and
  * lands as either random or expensive; anchored against the printed cards they
  * were always going to buy, it reads as a rounding error.
@@ -202,26 +219,12 @@ export const PLAN_INCLUDES: string[] = [
   "One private link, shared on WhatsApp",
 ];
 
-/**
- * The three ways to buy.
- *
- * The ₹1,599 invitation is the featured card, not the ₹2,199 bundle. Every ad
- * promises ₹1,599, so that has to be the number the page visibly leads with:
- * highlighting a costlier plan makes the landing contradict the click that
- * produced it, which reads as bait-and-switch even when it isn't. The bundle
- * still earns its place — as an upsell beside the plan people came for, with a
- * saving stated in arithmetic anyone can check.
- *
- * `mobileFirst` hoists a plan to the top of the stacked mobile column. Source
- * order is the desktop row (cheap → flagship → bundle, so the eye lands on the
- * middle card); on mobile that order would show ₹1,099 for a *different, lesser*
- * product as the first price on screen, anchoring below what the ad promised
- * and framing the real product as the expensive one.
- */
 export type PricingPlan = {
   id: string;
   name: string;
   price: string;
+  /** Standing price, struck through beside `price`. Marks an offer as an offer. */
+  was?: string;
   note: string;
   blurb: string;
   features: string[];
@@ -229,9 +232,45 @@ export type PricingPlan = {
   badge?: string;
   /** Render first in the single-column mobile stack. */
   mobileFirst?: boolean;
+  /** Buyable at /start. Anything else opens WhatsApp instead. */
+  selfServe?: boolean;
 };
 
+/**
+ * What's on sale — currently ONE thing.
+ *
+ * During the introductory offer there is a single ₹99 product, so the page
+ * shows a single card. The three-plan row is parked in {@link PARKED_PLANS}
+ * rather than deleted: a ₹1,099 Save the Date and a ₹2,199 bundle sitting
+ * beside a ₹99 full invitation don't describe a choice, they describe a
+ * mistake, and nobody buys the lesser product when the better one costs less.
+ *
+ * To end the offer: restore the parked entries here, set `price` back to
+ * {@link PRICE_WAS}, drop `was`, and put {@link PRICE} back to ₹1,599 — keeping
+ * it in step with `modules/self-serve/pricing.ts`, which sets the real charge.
+ */
 export const PRICING_PLANS: PricingPlan[] = [
+  {
+    id: "invitation",
+    name: "The Full Invitation",
+    price: PRICE,
+    was: PRICE_WAS,
+    note: "introductory offer · one-time · for weddings & every other celebration",
+    blurb: "Everything your guests need, in one private link.",
+    features: PLAN_INCLUDES,
+    featured: true,
+    badge: "Everything included",
+    mobileFirst: true,
+    selfServe: true,
+  },
+];
+
+/**
+ * The plans withdrawn for the duration of the ₹99 offer. Kept here so bringing
+ * them back is a copy-paste rather than an archaeology exercise. Their prices
+ * are the pre-offer ones and would need revisiting alongside {@link PRICE}.
+ */
+export const PARKED_PLANS: PricingPlan[] = [
   {
     id: "save-the-date",
     name: "Save the Date",
@@ -244,17 +283,6 @@ export const PRICING_PLANS: PricingPlan[] = [
       "One private link, shared on WhatsApp",
       "Upgrade to the full invitation anytime",
     ],
-  },
-  {
-    id: "invitation",
-    name: "The Full Invitation",
-    price: PRICE,
-    note: "one-time · for weddings & every other celebration",
-    blurb: "Everything your guests need, in one private link.",
-    features: PLAN_INCLUDES,
-    featured: true,
-    badge: "Everything included",
-    mobileFirst: true,
   },
   {
     id: "bundle",
@@ -274,7 +302,7 @@ export const PRICING_PLANS: PricingPlan[] = [
 
 // ── Risk reversal ──────────────────────────────────────────────────────────
 /**
- * The single largest unanswered objection on the page: "what if I pay ₹1,599 to
+ * The single largest unanswered objection on the page: "what if I pay to
  * a brand I've never heard of and it's rubbish?" There is no review count, no
  * years-in-business and no logo wall to answer it with, so the answer has to be
  * a promise the business actually keeps.

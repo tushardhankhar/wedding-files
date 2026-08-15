@@ -8,7 +8,7 @@ import { BookNowButton } from "./book-now";
  *
  * Placed immediately before the pricing section on purpose. Objections are
  * cheap to hold while browsing and expensive the moment a number appears — a
- * visitor who reaches ₹1,599 still wondering whether it's a subscription, who
+ * visitor who reaches the price still wondering whether it's a subscription, who
  * builds the site, or what happens if their relatives can't use it doesn't ask,
  * they close the tab. Answering first means the price lands on a visitor who
  * has run out of reasons to leave.

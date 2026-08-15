@@ -27,9 +27,15 @@ const securityHeaders = [
   // Send the origin cross-site, the full path same-site. Keeps invite tokens in
   // the path from leaking to third parties via the Referer header.
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  // `payment` is allowed for this origin and Razorpay's checkout, and nothing
+  // else. It was previously `payment=()`, which disables the Payment Request
+  // API outright — that silently costs the self-serve checkout its Google Pay
+  // option on Chrome, since Razorpay reaches for that API from the iframe it
+  // opens. The remaining capabilities stay switched off everywhere.
   {
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=()",
+    value:
+      'camera=(), microphone=(), geolocation=(), payment=(self "https://checkout.razorpay.com" "https://api.razorpay.com")',
   },
 ];
 

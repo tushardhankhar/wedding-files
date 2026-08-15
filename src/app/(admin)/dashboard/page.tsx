@@ -9,6 +9,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Lotus } from "@/components/brand/motifs";
 import { NavLink, NavCardLink } from "@/components/brand/nav-link";
 import { occasionLabel } from "@/modules/website/themes/registry";
+import { getMyDraft } from "@/modules/self-serve/server/queries";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "Date not set";
@@ -77,6 +78,12 @@ export default async function DashboardPage() {
   ]);
   const adminMeta = isAdmin ? await getAdminInviteStatus() : null;
 
+  // A self-serve buyer who signed up but hasn't paid yet has no invitation and
+  // no planner — the "your planner hasn't shared one" empty state would be
+  // simply untrue for them, and would strand them with nothing to click.
+  const draft =
+    !isAdmin && weddings.length === 0 ? await getMyDraft() : null;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -105,12 +112,18 @@ export default async function DashboardPage() {
           <CardHeader className="items-center">
             <Lotus className="mx-auto h-10 text-[color:var(--gold-deep)]" />
             <h2 className="mt-2 text-lg font-semibold">
-              {isAdmin ? "Let the celebrations begin" : "Nothing here yet"}
+              {isAdmin
+                ? "Let the celebrations begin"
+                : draft
+                  ? "Almost there"
+                  : "Nothing here yet"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {isAdmin
                 ? "Create your first invitation to get started."
-                : "Your planner hasn't shared an invitation with you yet."}
+                : draft
+                  ? "You've picked your theme — finish checkout and your invitation is live."
+                  : "Your planner hasn't shared an invitation with you yet."}
             </p>
             {isAdmin ? (
               <NavLink
@@ -118,6 +131,10 @@ export default async function DashboardPage() {
                 className={`${buttonVariants()} mt-3`}
               >
                 ＋ New invitation
+              </NavLink>
+            ) : draft ? (
+              <NavLink href="/start" className={`${buttonVariants()} mt-3`}>
+                Finish setting up
               </NavLink>
             ) : null}
           </CardHeader>

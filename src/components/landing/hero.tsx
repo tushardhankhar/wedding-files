@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Mandala } from "@/components/brand/motifs";
 import { PetalField } from "./art";
 import { BookNowButton } from "./book-now";
+import { StartButton } from "./start-button";
 import {
   SHOWCASE_THEMES,
   PRICE,
@@ -164,9 +165,10 @@ export function LandingHero() {
               <span className="hidden lg:inline">{DEMO_CTA}</span>
             </Link>
             {/* Short form on the phone: the full label wraps to two lines
-                beside a one-line demo button, and a taller, busier green
-                rectangle beside it makes the pair read as unequal choices. */}
-            <BookNowButton
+                beside a one-line demo button, and a taller, busier rectangle
+                beside it makes the pair read as unequal choices. */}
+            <StartButton
+              from="hero"
               label={BUY_CTA_SHORT}
               className="px-4 py-3.5 text-[13px] leading-tight lg:hidden"
             />
@@ -177,6 +179,17 @@ export function LandingHero() {
               See how it works
             </a>
           </div>
+
+          {/* Self-serve is the button; the chat is the fallback for anyone who
+              would rather hand it over. Kept as a text link so the pair above
+              stays a two-way choice rather than a three-way one. */}
+          <p className="l-load mt-3 text-center text-[12px] text-white/65 lg:text-left" style={{ animationDelay: "0.65s" }}>
+            Prefer we set it up for you?{" "}
+            <BookNowButton
+              label="Message us on WhatsApp"
+              className="bg-transparent px-0 py-0 text-[12px] font-semibold text-[color:var(--l-gold-lite)] shadow-none hover:translate-y-0 hover:underline"
+            />
+          </p>
 
           {/* The terms a buyer would otherwise have to hunt for, stated before
               the WhatsApp CTA rather than after it — asking someone to open a

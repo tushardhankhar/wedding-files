@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS, DEMO_CTA, DEMO_CTA_SHORT, BUY_CTA, BUY_CTA_SHORT } from "./data";
+import { NAV_LINKS, DEMO_CTA, DEMO_CTA_SHORT, BUY_CTA, BUY_CTA_SHORT, PRICE } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { BookNowButton } from "./book-now";
+import { StartButton } from "./start-button";
 
 export function LandingNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -75,7 +76,10 @@ export function LandingNavbar() {
                   the bar at the narrow end of the lg breakpoint. */}
               {DEMO_CTA_SHORT}
             </Link>
-            <BookNowButton label={BUY_CTA_SHORT} />
+            {/* Self-serve is the primary action here. The WhatsApp path is one
+                scroll away in the hero and the pricing cards; a third button
+                overflows this bar at the narrow end of the lg breakpoint. */}
+            <StartButton from="navbar" label={BUY_CTA_SHORT} />
           </div>
 
           {/* Mobile menu button */}
@@ -135,7 +139,8 @@ export function LandingNavbar() {
           </nav>
 
           <div className="mt-auto space-y-4 pb-4">
-            <BookNowButton
+            <StartButton
+              from="mobile_menu"
               label={BUY_CTA}
               className="w-full px-6 py-4 text-base"
             />
@@ -148,9 +153,15 @@ export function LandingNavbar() {
             >
               {DEMO_CTA}
             </Link>
+            {/* There is room to keep both here, so the menu is where the
+                "rather not do it yourself" path stays reachable on a phone. */}
+            <BookNowButton
+              label="Prefer we set it up? WhatsApp us"
+              className="w-full border border-white/25 bg-transparent px-6 py-4 text-base text-white/85 shadow-none hover:translate-y-0"
+            />
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />
-              Make your own celebration invitation · ₹1,599
+              Make your own celebration invitation · {PRICE}
             </p>
           </div>
         </div>

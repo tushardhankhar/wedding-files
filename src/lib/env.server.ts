@@ -37,6 +37,22 @@ const serverSchema = z.object({
   ENQUIRY_FROM_EMAIL: z.string().min(1).optional(),
   // Branded sender for client-invite emails, e.g. "Join the Jashn <hello@jointhejashn.com>".
   AUTH_FROM_EMAIL: z.string().min(1).optional(),
+
+  // ── Payments (Razorpay) ───────────────────────────────────────────────────
+  // Self-serve checkout. Optional as a set, like the R2 and Resend vars: with
+  // them unset the app still boots and every other flow works, and only the
+  // self-serve pay step degrades to "checkout isn't set up yet". That keeps
+  // local and preview environments runnable without live payment credentials.
+  //
+  // KEY_ID is not a secret (it is handed to Razorpay's browser checkout), but
+  // it lives here rather than in `env.ts` so it is served from the create-order
+  // action alongside the order — one fewer NEXT_PUBLIC_* value inlined into
+  // every page's bundle whether or not the visitor is buying.
+  RAZORPAY_KEY_ID: z.string().min(1).optional(),
+  RAZORPAY_KEY_SECRET: z.string().min(1).optional(),
+  // Set when creating the webhook in the Razorpay dashboard. Every webhook body
+  // is HMAC-verified against this before it can touch the database.
+  RAZORPAY_WEBHOOK_SECRET: z.string().min(1).optional(),
 });
 
 const parsed = serverSchema.safeParse({
@@ -46,6 +62,9 @@ const parsed = serverSchema.safeParse({
   ENQUIRY_TO_EMAIL: process.env.ENQUIRY_TO_EMAIL,
   ENQUIRY_FROM_EMAIL: process.env.ENQUIRY_FROM_EMAIL,
   AUTH_FROM_EMAIL: process.env.AUTH_FROM_EMAIL,
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
 });
 
 if (!parsed.success) {

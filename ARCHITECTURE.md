@@ -49,6 +49,8 @@ our defense-in-depth for the admin domain only.
 ```
 users (Supabase Auth)
 admins              (email)                            -- platform-admin allowlist
+pending_signups     (user_id, contact_*, theme_id, title, razorpay_*, status,
+                     wedding_id)                       -- self-serve draft, pre-payment
 weddings            (id, created_by → users, client_id → users, slug, title,
                      config jsonb, theme_id, event_date, …)
 client_invites      (id, wedding_id, token_hash, expires_at, accepted_at, accepted_by)
@@ -70,8 +72,13 @@ from it. `is_admin()` (checks `admins` by email) drives admin-vs-client RLS.
 3. Guest session is a **stateless signed cookie** (HMAC of group_id + issued/expiry)
    for v1 — no session table, no Redis. Add a revocation table only if needed.
 4. **Admins are invite-only** (no public signup); seeded via the `admins` table.
-5. **Clients onboard via a one-time admin link** → claim (set password) → bound to
-   one wedding by the SECURITY DEFINER `claim_client_invite()`.
+5. **Clients onboard two ways.** (a) A one-time admin link → claim → bound to one
+   wedding by the SECURITY DEFINER `claim_client_invite()`. (b) **Self-serve**:
+   they sign up at `/start`, pay, and the `weddings` row is created for them by
+   `modules/self-serve/server/activate.ts` on the service-role client (see
+   `SELF-SERVE-SIGNUP-PLAN.md`). The `weddings_insert` policy still requires
+   `is_admin()` — self-serve buyers never gain insert rights of their own, and
+   the name/theme lock in #6 applies to them unchanged.
 6. **Wedding name/URL and theme are admin-only** — enforced in the UI *and* by a DB
    trigger that rejects `title`/`slug`/`theme_id` changes from non-admins.
 7. **One rendering engine** serves both the owner Preview and the live guest site —
@@ -250,6 +257,19 @@ What is deliberately **not** frozen, and free to change:
   they're stored as `weddings.theme_id`) — per-theme display fonts, hero flourish,
   and scroll-reveal.
   Remaining: SEO/OG, deploy, final security pass. (Phase 9 media deferred.)
+
+- **Phase 13 — Self-serve signup + payment** ✅ public `/start` (in the
+  `(marketing)` group, so the paid funnel is measurable): magic-link/OTP signup
+  that may CREATE a user — the one surface allowed to, versus `/login`'s
+  `shouldCreateUser: false` — then an occasion/theme/details wizard saved as a
+  `pending_signups` draft (`0022`), a Razorpay order at a server-set price, and
+  activation into a real `weddings` row via the service-role client. Two
+  activation paths (browser signature check, and a signed `payment.captured`
+  webhook at `/api/razorpay/webhook`) funnel into one idempotent
+  `activateSignup`, whose atomic claim makes a duplicate delivery a no-op.
+  Column-level GRANTs on `pending_signups` keep payment state server-owned.
+  Nothing about the guest domain, the link contract, or the name/theme lock
+  changed. See `SELF-SERVE-SIGNUP-PLAN.md`.
 
 - **Phase 11 — Shareable (broadcast) links** ✅ per-wedding `share_links` scoped to all
   or chosen events (`0009`), `/w/[slug]/share/[token]` → share-scoped guest session,
