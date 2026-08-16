@@ -18,6 +18,7 @@ Every family sees only the events they're invited to and RSVPs per event.
 |---|---|---|
 | `/` | Marketing landing (hero, how-it-works, themes gallery, pricing, enquiry) | Public |
 | `/demo/[themeId]` | Live theme preview on fictional sample data (all 12 themes) | Public, SSG |
+| `/start` | **Self-serve signup** — sign up → theme → details → pay ₹99 | Public |
 | `/login` | Owner/client auth | Public |
 | `/dashboard` | Owner's invitations list | Auth |
 | `/weddings/new` | Create an invitation | Auth |
@@ -28,6 +29,7 @@ Every family sees only the events they're invited to and RSVPs per event.
 | `/weddings/[id]/rsvps` | RSVP overview | Auth |
 | `/preview/[id]` | Owner preview (real renderer, owner's data) | Auth |
 | `/client/claim/[token]` | Client onboarding — claim a planner-created invitation | Token |
+| `/api/razorpay/webhook` | Payment backstop — activates a signup if the tab closed | Signature |
 | `/w/[slug]/invite/[token]` | Guest **group** link → sets a guest session → `/w/[slug]` | Token |
 | `/w/[slug]/share/[token]` | **Broadcast** link → self-RSVP session | Token |
 | `/w/[slug]` | Live guest site (gated to the session's invited events) | Guest session |
@@ -72,6 +74,19 @@ Broadcast: /w/[slug]/share/[token] → scoped events + self-RSVP (name + headcou
 ```
 / → themes gallery → "Preview theme" → /demo/[themeId] (real renderer, sample data)
 Enquiry form → Resend email (RESEND_API_KEY; see .env.example).
+```
+
+### 2.4 Owner — buy it yourself (self-serve, no planner)
+```
+/start → magic-link/OTP signup (the ONE surface with shouldCreateUser: true)
+  → wizard: occasion → theme → your name + phone → celebration details
+    → saved as a `pending_signups` draft. Nothing live, nothing billable yet.
+  → Razorpay checkout at the server-set ₹99
+  → payment verified (browser fast path, webhook backstop — both idempotent)
+    → the `weddings` row is created, owned by the buyer
+  → /weddings/[id] : the same editor a planner-created client gets
+Theme, title and URL stay planner-only afterwards, exactly as before.
+See SELF-SERVE-SIGNUP-PLAN.md.
 ```
 
 ---
@@ -198,3 +213,6 @@ the app.
   never selected). See `ARCHITECTURE.md` for the full security model.
 - **Media**: photo uploads → client WebP compress → R2 presigned PUT (`R2_*`).
 - **Email**: enquiry form → Resend REST API (`RESEND_API_KEY`).
+- **Payments**: self-serve checkout → Razorpay REST + signed webhook
+  (`RAZORPAY_*`). Draft-until-paid via `pending_signups` (`0022`); the amount is
+  a server constant and is never accepted from the client.

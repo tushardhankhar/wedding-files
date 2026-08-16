@@ -1091,6 +1091,26 @@
   color: var(--l-ink);
   background: var(--l-ivory);
   overflow-x: clip;
+
+  /* Lining figures, everywhere on the landing.
+     Raleway defaults to OLD-STYLE numerals — its 4, 7 and 9 drop below the
+     baseline and its 0/1/2 sit at x-height — while Playfair, which sets the
+     big prices, defaults to lining. So the same "₹99" sat on the baseline in
+     the pricing card and slumped below it in the buttons, with the ₹ left
+     hanging at cap height above digits that had wandered off. Prices are the
+     one thing on this page that must never look accidental.
+     Proportional, not tabular: these are prices in running text, not a column
+     of figures to align.
+
+     `lnum` is repeated as a low-level feature on purpose, and ONLY lnum. A
+     descendant carrying Tailwind's `tabular-nums` sets font-variant-numeric
+     outright, which would drop the inherited lining and put old-style figures
+     back in the counters and the price anchors. font-feature-settings wins over
+     font-variant-numeric for the features it names, so this pins lining
+     everywhere while leaving tabular-vs-proportional spacing to those classes —
+     which is why `pnum` is deliberately absent. */
+  font-variant-numeric: lining-nums proportional-nums;
+  font-feature-settings: "lnum" 1;
 }
 .landing .l-display {
   font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
@@ -1241,6 +1261,46 @@
 
 /* Continuous soft glow on the hero wordmark underline. */
 @keyframes l-shimmer { to { background-position: 200% center; } }
+
+/* ── Primary CTA sheen ─────────────────────────────────────────────────────
+   A light sweep across the buy button. Its job is to win the first glance on a
+   page where a dozen other things are also moving, so it is deliberately
+   asymmetric in time: the sweep takes about a fifth of the cycle and the rest
+   is stillness. A continuous shimmer reads as a loading state, and anything
+   faster reads as an advertisement — both lose the trust the price needs.
+
+   The gradient sits ABOVE the label rather than behind it. That is intentional:
+   it is translucent white, so it brightens the text as it passes instead of
+   being occluded by it, which is what makes the sweep legible on a fill this
+   light. `pointer-events: none` keeps the hit area whole. */
+.landing .l-cta-sheen { overflow: hidden; }
+.landing .l-cta-sheen::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 42%;
+  pointer-events: none;
+  transform: skewX(-18deg);
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: l-cta-sheen 5.2s ease-in-out 1.6s infinite;
+}
+@keyframes l-cta-sheen {
+  0%        { left: -60%; }
+  22%, 100% { left: 130%; }
+}
+
+/* Reduced motion keeps the button, drops the sweep — the gold fill was always
+   doing the heavy lifting. */
+@media (prefers-reduced-motion: reduce) {
+  .landing .l-cta-sheen::after { animation: none; opacity: 0; }
+}
 
 /* ── Motion ────────────────────────────────────────────────────────────────
    Gentle, celebratory movement. All of it collapses under reduced-motion. */

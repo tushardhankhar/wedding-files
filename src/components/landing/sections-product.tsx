@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { BookNowButton } from "./book-now";
+import { StartButton } from "./start-button";
 import { PhotoArt, PetalField } from "./art";
 import {
   PRICING_PLANS,
+  PRICE,
   REALITY_NOTES,
   CONTACT_EMAIL,
   PLAN_TERMS,
@@ -389,7 +391,7 @@ export function PricingPreview() {
         </div>
 
         {/* The comparison the visitor is running in their head anyway, made
-            explicit. ₹1,599 has no reference point of its own — nobody has ever
+            explicit. The price has no reference point of its own — nobody has ever
             bought an "invitation website" before — so on its own it's judged
             against zero and reads as an expense. Against the printing bill it
             replaces, it reads as a saving, and the plan cards below inherit
@@ -452,7 +454,17 @@ export function PricingPreview() {
           })}
         </ul>
 
-        <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3" data-reveal>
+        {/* Widths track how many plans are actually on sale, so parking two of
+            them during the ₹99 offer doesn't leave a lone card stranded in a
+            three-column grid. */}
+        <div
+          className={`mt-10 grid items-stretch gap-6 ${
+            PRICING_PLANS.length > 1
+              ? "lg:grid-cols-3"
+              : "mx-auto w-full max-w-lg"
+          }`}
+          data-reveal
+        >
           {PRICING_PLANS.map((plan) => {
             const featured = Boolean(plan.featured);
             return (
@@ -464,7 +476,7 @@ export function PricingPreview() {
                     : "relative flex flex-col overflow-hidden rounded-[26px] border border-[color:var(--l-line)] bg-white p-8 shadow-[0_24px_60px_-40px_rgba(59,16,34,.45)]",
                   // Source order is the desktop row; the flagship is hoisted to
                   // the top of the stacked mobile column so the advertised
-                  // ₹1,599 is the first price a phone visitor meets.
+                  // headline price is the first one a phone visitor meets.
                   plan.mobileFirst ? "order-first lg:order-none" : "",
                 ].join(" ")}
               >
@@ -502,11 +514,24 @@ export function PricingPreview() {
                   <p
                     className={
                       featured
-                        ? "l-display mt-2 text-5xl font-semibold tabular-nums"
-                        : "l-display mt-2 text-5xl font-semibold tabular-nums text-[color:var(--l-wine)]"
+                        ? "l-display mt-2 flex items-baseline gap-3 text-5xl font-semibold tabular-nums"
+                        : "l-display mt-2 flex items-baseline gap-3 text-5xl font-semibold tabular-nums text-[color:var(--l-wine)]"
                     }
                   >
                     {plan.price}
+                    {/* The struck price is what makes ₹99 read as an offer
+                        rather than as a cheap product. */}
+                    {plan.was ? (
+                      <span
+                        className={
+                          featured
+                            ? "text-2xl font-normal text-white/45 line-through"
+                            : "text-2xl font-normal text-[color:var(--l-ink-soft)]/50 line-through"
+                        }
+                      >
+                        {plan.was}
+                      </span>
+                    ) : null}
                   </p>
                   <p className={featured ? "mt-2 text-sm text-white/70" : "mt-2 text-sm text-[color:var(--l-ink-soft)]"}>
                     {plan.note}
@@ -566,24 +591,59 @@ export function PricingPreview() {
                 })()}
 
                 <div className="relative mt-auto flex flex-col gap-2.5 pt-8">
-                  {/* Names the plan in the chat it opens, so the reply can start
-                      with the answer instead of "which one did you mean?". */}
-                  <BookNowButton
-                    plan={`${plan.name} — ${plan.price}`}
-                    className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
-                  />
-                  {/* Names the step before it happens. A button that silently
-                      launches WhatsApp is a surprise, and a surprise is a
-                      reason to close the tab. */}
-                  <p
-                    className={
-                      featured
-                        ? "text-center text-[11px] text-white/60"
-                        : "text-center text-[11px] text-[color:var(--l-ink-soft)]/80"
-                    }
-                  >
-                    Opens WhatsApp — no payment yet
-                  </p>
+                  {plan.selfServe ? (
+                    <>
+                      {/* Tone follows the card: the flagship is wine, the
+                          parked plans render on white. */}
+                      <StartButton
+                        from="pricing"
+                        tone={featured ? "gold" : "wine"}
+                        label={`Create mine · ${plan.price}`}
+                        className="w-full px-8 py-3.5 text-sm"
+                      />
+                      {/* Names the step before it happens, same as the WhatsApp
+                          note below always did. */}
+                      <p
+                        className={
+                          featured
+                            ? "text-center text-[11px] text-white/60"
+                            : "text-center text-[11px] text-[color:var(--l-ink-soft)]/80"
+                        }
+                      >
+                        Pick a theme, then pay securely — live in minutes
+                      </p>
+                      {/* The chat stays available for anyone who'd rather not
+                          build it themselves; it is just no longer the only way
+                          to buy. */}
+                      <BookNowButton
+                        plan={`${plan.name} — ${plan.price}`}
+                        label="Prefer we set it up? WhatsApp us"
+                        className={
+                          featured
+                            ? "w-full border border-white/25 bg-transparent px-8 py-3 text-[13px] text-white/80 shadow-none hover:translate-y-0"
+                            : "w-full border border-[color:var(--l-line)] bg-transparent px-8 py-3 text-[13px] text-[color:var(--l-ink-soft)] shadow-none hover:translate-y-0"
+                        }
+                      />
+                    </>
+                  ) : (
+                    <>
+                      {/* Names the plan in the chat it opens, so the reply can
+                          start with the answer instead of "which one?". */}
+                      <BookNowButton
+                        plan={`${plan.name} — ${plan.price}`}
+                        className="w-full px-8 py-3.5 text-sm shadow-[0_18px_44px_-14px_rgba(8,127,91,.8)]"
+                      />
+                      <p
+                        className={
+                          featured
+                            ? "text-center text-[11px] text-white/60"
+                            : "text-center text-[11px] text-[color:var(--l-ink-soft)]/80"
+                        }
+                      >
+                        Opens WhatsApp — no payment yet
+                      </p>
+                    </>
+                  )}
                 </div>
               </article>
             );
@@ -650,7 +710,7 @@ export function FinalCta() {
       <div className="relative mx-auto max-w-2xl" data-reveal>
         <p className="l-script text-3xl text-[color:var(--l-gold-lite)]">See it for yourself</p>
         <h2 className="l-display mt-4 text-balance text-[clamp(2.2rem,5.6vw,4.2rem)] font-semibold leading-tight text-white">
-          Your invitation, live in minutes — just ₹1,599.
+          Your invitation, live in minutes — just {PRICE}.
         </h2>
         <p className="mt-5 text-base text-white/85">
           Open a real celebration built on Jashn and see exactly what your guests
@@ -720,7 +780,7 @@ export function LandingFooter() {
             <UtsavLogo tone="light" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
               Make your own Indian celebration invitation — bilingual, private, and
-              ready to share in minutes. ₹1,599.
+              ready to share in minutes. {PRICE}.
             </p>
             <div className="mt-5 space-y-1 text-sm">
               <p className="text-white/45">Questions? Say hello.</p>

@@ -1,7 +1,7 @@
 -- ============================================================================
 -- BOOTSTRAP A NEW SUPABASE PROJECT — run this once, top to bottom.
 --
--- GENERATED from supabase/migrations/0001…0021 concatenated in order. It is a
+-- GENERATED from supabase/migrations/0001…0022 concatenated in order. It is a
 -- convenience for standing up a fresh project (e.g. production); the migration
 -- files remain the source of truth. Regenerate after adding a migration —
 -- do NOT hand-edit this file.
@@ -14,7 +14,7 @@
 -- database that is ALREADY migrated fails on the 0001 index — by design, and
 -- harmlessly. The whole file is one transaction, so a failure applies nothing
 -- and leaves an existing database exactly as it was. Verified: a second run
--- errors and rolls back with all 13 tables and their data untouched.
+-- errors and rolls back with all 14 tables and their data untouched.
 --
 -- Differences from a literal replay, both deliberate:
 --   1. The three column RENAMEs (0002, 0010) are wrapped in existence checks.
@@ -1278,6 +1278,87 @@ comment on column public.guest_groups.invite_token_hash is
   'SHA-256 of invite_token. THE lookup key for /w/[slug]/invite/[token] and a '
   'one-way door: changing the hash algorithm invalidates every live invitation '
   'across every wedding. If it ever must change, add a column and dual-read.';
+
+
+-- ============================================================================
+-- ▼ 0022_pending_signups.sql
+-- ============================================================================
+
+-- The draft a self-serve visitor fills in BEFORE paying. Nothing here is
+-- billable, public or guest-visible; a real `weddings` row is created only once
+-- a payment is verified. See the migration file for the full rationale.
+--
+-- The buyer owns the CONTENT columns and the server owns the MONEY columns,
+-- enforced with column-level GRANTs because RLS cannot restrict which columns a
+-- role may write.
+
+create table if not exists public.pending_signups (
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid not null references auth.users (id) on delete cascade,
+
+  contact_name  text not null,
+  contact_phone text not null,
+  theme_id      text not null,
+  title         text not null,
+  name1         text,
+  name2         text,
+  event_date    date,
+  event_time    text,
+
+  amount_paise       integer,
+  razorpay_order_id  text unique,
+  razorpay_payment_id text,
+  status text not null default 'draft'
+    check (status in ('draft', 'paid', 'expired')),
+  wedding_id uuid references public.weddings (id) on delete set null,
+
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists pending_signups_user_id_idx
+  on public.pending_signups (user_id);
+
+create unique index if not exists pending_signups_one_draft_per_user
+  on public.pending_signups (user_id)
+  where status = 'draft';
+
+drop trigger if exists pending_signups_set_updated_at on public.pending_signups;
+create trigger pending_signups_set_updated_at
+  before update on public.pending_signups
+  for each row execute function public.set_updated_at();
+
+alter table public.pending_signups enable row level security;
+
+drop policy if exists "pending_signups_select" on public.pending_signups;
+create policy "pending_signups_select" on public.pending_signups
+  for select using (
+    user_id = (select auth.uid()) or public.is_admin()
+  );
+
+drop policy if exists "pending_signups_insert" on public.pending_signups;
+create policy "pending_signups_insert" on public.pending_signups
+  for insert with check (user_id = (select auth.uid()));
+
+drop policy if exists "pending_signups_update" on public.pending_signups;
+create policy "pending_signups_update" on public.pending_signups
+  for update
+  using (user_id = (select auth.uid()) and status = 'draft')
+  with check (user_id = (select auth.uid()));
+
+revoke all on public.pending_signups from anon, authenticated;
+
+grant select on public.pending_signups to authenticated;
+
+grant insert (
+  user_id, contact_name, contact_phone, theme_id, title,
+  name1, name2, event_date, event_time
+) on public.pending_signups to authenticated;
+
+grant update (
+  contact_name, contact_phone, theme_id, title,
+  name1, name2, event_date, event_time
+) on public.pending_signups to authenticated;
 
 
 commit;

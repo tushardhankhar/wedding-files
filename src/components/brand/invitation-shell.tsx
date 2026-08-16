@@ -12,15 +12,26 @@ export function InvitationShell({
   subtitle,
   children,
   footer,
+  size = "sm",
 }: {
   title: string;
   subtitle: string;
   children: ReactNode;
   footer?: ReactNode;
+  /** "lg" widens the card for multi-column forms (the self-serve wizard);
+   * "sm" is the single-field sign-in width. */
+  size?: "sm" | "lg";
 }) {
   return (
     <main
-      className="relative flex min-h-svh items-center justify-center overflow-hidden p-6"
+      // "lg" aligns to the top and clips only horizontally: a tall wizard is
+      // taller than the viewport, and centering it inside `overflow-hidden`
+      // would cut off its first step rather than scroll to it.
+      className={`relative flex min-h-svh justify-center p-6 ${
+        size === "lg"
+          ? "items-start overflow-x-hidden py-10 sm:py-16"
+          : "items-center overflow-hidden"
+      }`}
       style={{
         background:
           "radial-gradient(130% 100% at 50% -20%, #4a3560 0%, rgba(74,53,96,0) 58%), linear-gradient(180deg, #2b2740 0%, #201d31 100%)",
@@ -30,7 +41,7 @@ export function InvitationShell({
       <FloatingPetals />
 
       <div
-        className="relative w-full max-w-sm rounded-[5px] bg-card p-8 shadow-[0_34px_66px_-22px_rgba(0,0,0,0.6)] duration-700 animate-in fade-in zoom-in-95"
+        className={`relative w-full ${size === "lg" ? "max-w-2xl" : "max-w-sm"} rounded-[5px] bg-card p-8 shadow-[0_34px_66px_-22px_rgba(0,0,0,0.6)] duration-700 animate-in fade-in zoom-in-95`}
         style={{ outline: "1px solid var(--gold-line)", outlineOffset: "-8px" }}
       >
         <Paisley className="absolute left-3 top-3 h-10 w-10 text-[color:var(--gold-deep)] opacity-60" />

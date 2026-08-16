@@ -1,8 +1,8 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/server/user";
 import { UnauthorizedError } from "@/lib/errors";
-import { slugify } from "@/lib/slug";
 import { DEFAULT_THEME_ID } from "@/modules/website/themes/registry";
+import { insertWithUniqueSlug } from "./slug";
 import type { WebsiteConfig } from "@/modules/website/schema";
 import {
   mapWeddingRow,
@@ -14,22 +14,10 @@ import type { CreateWeddingInput, UpdateWeddingInput } from "../schema";
 const COLUMNS =
   "id, created_by, client_id, slug, title, name1, name2, event_date, client_phone, config, theme_id, created_at, updated_at";
 
-const UNIQUE_VIOLATION = "23505";
-
-function randomSuffix(): string {
-  // 4 URL-safe chars derived from Web Crypto — enough to break slug collisions.
-  const buf = new Uint8Array(3);
-  crypto.getRandomValues(buf);
-  return btoa(String.fromCharCode(...buf))
-    .replace(/[+/=]/g, "")
-    .toLowerCase()
-    .slice(0, 4);
-}
-
 /**
- * Creates a wedding owned by the current user. Generates a unique slug from the
- * title, retrying with a random suffix on collision. owner_id is set from the
- * verified session — never from client input.
+ * Creates a wedding owned by the current user. The slug is generated from the
+ * title by `insertWithUniqueSlug`, which retries on collision. created_by is
+ * set from the verified session — never from client input.
  */
 export async function createWedding(
   input: CreateWeddingInput
@@ -38,11 +26,9 @@ export async function createWedding(
   if (!user) throw new UnauthorizedError();
 
   const supabase = await createSupabaseServerClient();
-  const base = slugify(input.title) || "invite";
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const slug = attempt === 0 ? base : `${base}-${randomSuffix()}`;
-    const { data, error } = await supabase
+  const row = await insertWithUniqueSlug<WeddingRow>(input.title, (slug) =>
+    supabase
       .from("weddings")
       .insert({
         created_by: user.id,
@@ -57,14 +43,10 @@ export async function createWedding(
         config: input.eventTime ? { eventTime: input.eventTime } : {},
       })
       .select(COLUMNS)
-      .single();
+      .single()
+  );
 
-    if (!error) return mapWeddingRow(data as WeddingRow);
-    if (error.code !== UNIQUE_VIOLATION) throw error;
-    // else: slug taken, loop and try a new suffix
-  }
-
-  throw new Error("Could not generate a unique wedding URL. Please try again.");
+  return mapWeddingRow(row);
 }
 
 /**

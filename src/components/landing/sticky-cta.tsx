@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { sendGTMEvent } from "@next/third-parties/google";
-import { bookingHref } from "./book-now";
 import { PRICE } from "./data";
 
 /**
@@ -27,7 +26,7 @@ import { PRICE } from "./data";
  *    target, and two live CTAs in one viewport reads as nagging. The bar
  *    withdraws while either is visible (see `#pricing`/`#enquire` observer).
  *  - **It must carry the price.** A naked "Get my website" asks for a decision
- *    while hiding the number the decision turns on. Repeating ₹1,599 next to
+ *    while hiding the number the decision turns on. Repeating the price next to
  *    the button also keeps the ad's promise on screen for the whole scroll.
  *  - **It must not sit on the back-to-top button.** `.gtt` is fixed 22px off the
  *    bottom edge; the bar publishes its height so the shared button lifts above
@@ -121,21 +120,26 @@ export function StickyCta() {
           See a demo
         </Link>
 
-        <a
-          href={bookingHref()}
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* Was the WhatsApp chat. On a phone this bar is the last thing between
+            a decided visitor and a purchase, so it now goes straight to
+            checkout; the chat stays one tap away in the menu and the hero. */}
+        <Link
+          href="/start"
           tabIndex={on ? undefined : -1}
           onClick={() =>
-            sendGTMEvent({ event: "whatsapp_click", cta_label: "sticky_bar" })
+            sendGTMEvent({
+              event: "self_serve_start",
+              cta_label: "Get mine",
+              cta_from: "sticky_bar",
+            })
           }
-          className="flex h-11 flex-none items-center gap-1.5 rounded-full bg-[color:var(--l-emerald)] px-4 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(8,127,91,.8)]"
+          // Gold, like every other buy button on the page. One colour means one
+          // meaning: if the thing that takes payment looks different in each
+          // place it appears, the visitor has to re-learn it every time.
+          className="l-cta-sheen relative flex h-11 flex-none items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-b from-[color:var(--l-gold-lite)] to-[color:var(--l-gold)] px-4 text-[13px] font-bold text-[color:var(--l-wine)] shadow-[0_10px_24px_-10px_rgba(232,200,119,.8)]"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-4 w-4">
-            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.11.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.82c0 4.54-3.69 8.24-8.23 8.24Zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.38-1.73-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43l-.48-.01c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.54.12.16 1.72 2.62 4.16 3.68.58.25 1.04.4 1.39.51.58.19 1.11.16 1.53.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29Z" />
-          </svg>
           Get mine
-        </a>
+        </Link>
       </div>
     </div>
   );

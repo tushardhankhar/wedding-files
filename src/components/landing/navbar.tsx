@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS, DEMO_CTA, DEMO_CTA_SHORT, BUY_CTA, BUY_CTA_SHORT } from "./data";
+import { NAV_LINKS, DEMO_CTA, DEMO_CTA_SHORT, BUY_CTA, BUY_CTA_SHORT, PRICE } from "./data";
 import { UtsavLogo, UtsavMonogram } from "./logo";
 import { BookNowButton } from "./book-now";
+import { StartButton } from "./start-button";
 
 export function LandingNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,17 +66,36 @@ export function LandingNavbar() {
             >
               ₹1,599, all in
             </a> */}
+            {/* Demo drops to a ghost button so exactly ONE thing in this bar is
+                filled. Two saturated pills side by side made the visitor rank
+                them, and the one they were ranking against was the one that
+                earns money — the demo was the brightest element on screen and
+                the buy button the dimmest. */}
             <Link
               href="/demo/royal"
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gradient-to-r from-[color:var(--l-marigold)] to-[color:var(--l-pink)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(216,27,96,.7)] transition-transform hover:-translate-y-0.5"
+              className={cn(
+                "rounded-full border px-5 py-2.5 text-[13px] font-semibold transition-colors",
+                scrolled
+                  ? "border-[color:var(--l-line)] text-[color:var(--l-wine)] hover:border-[color:var(--l-gold)]"
+                  : "border-white/30 text-[color:var(--l-ivory)] hover:border-[color:var(--l-gold-lite)]"
+              )}
             >
               {/* Short forms here: the full labels plus four nav links overflow
                   the bar at the narrow end of the lg breakpoint. */}
               {DEMO_CTA_SHORT}
             </Link>
-            <BookNowButton label={BUY_CTA_SHORT} />
+            {/* Self-serve is the primary action. The WhatsApp path is one scroll
+                away in the hero and the pricing cards; a third button overflows
+                this bar at the narrow end of the lg breakpoint.
+                The tone follows the bar: gold reads loudest over the wine hero,
+                but would wash out once the bar turns ivory. */}
+            <StartButton
+              from="navbar"
+              tone={scrolled ? "wine" : "gold"}
+              label={`${BUY_CTA_SHORT} · ${PRICE}`}
+            />
           </div>
 
           {/* Mobile menu button */}
@@ -135,7 +155,8 @@ export function LandingNavbar() {
           </nav>
 
           <div className="mt-auto space-y-4 pb-4">
-            <BookNowButton
+            <StartButton
+              from="mobile_menu"
               label={BUY_CTA}
               className="w-full px-6 py-4 text-base"
             />
@@ -148,9 +169,15 @@ export function LandingNavbar() {
             >
               {DEMO_CTA}
             </Link>
+            {/* There is room to keep both here, so the menu is where the
+                "rather not do it yourself" path stays reachable on a phone. */}
+            <BookNowButton
+              label="Prefer we set it up? WhatsApp us"
+              className="w-full border border-white/25 bg-transparent px-6 py-4 text-base text-white/85 shadow-none hover:translate-y-0"
+            />
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />
-              Make your own celebration invitation · ₹1,599
+              Make your own celebration invitation · {PRICE}
             </p>
           </div>
         </div>
