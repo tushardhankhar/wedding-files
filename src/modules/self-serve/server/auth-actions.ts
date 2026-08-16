@@ -98,5 +98,13 @@ export async function verifySignupOtpAction(
     };
   }
 
-  redirect(NEXT_PATH);
+  // `?signup=new` tells the page to announce a registration to the tag layer.
+  // It rides on the redirect because the action runs on the server, where there
+  // is no dataLayer to push to.
+  //
+  // Only this path carries it. The magic-LINK path lands via /auth/callback,
+  // which cannot tell a first-time signup from a returning sign-in without an
+  // extra lookup — and tagging every sign-in as a registration would inflate
+  // the number more than missing some of it deflates it.
+  redirect(`${NEXT_PATH}?signup=new`);
 }

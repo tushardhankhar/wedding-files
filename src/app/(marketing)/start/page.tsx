@@ -7,6 +7,7 @@ import { getLatestSignup } from "@/modules/self-serve/server/queries";
 import { InvitationShell } from "@/components/brand/invitation-shell";
 import { PRICE_LABEL } from "@/modules/self-serve/pricing";
 import { SignupForm } from "./signup-form";
+import { SignupTracker } from "./signup-tracker";
 import { Wizard } from "./wizard";
 
 export const metadata: Metadata = {
@@ -24,8 +25,13 @@ export const metadata: Metadata = {
  * extra wiring — and unlike the private routes deliberately kept out of it, the
  * path `/start` identifies no couple and no guest list.
  */
-export default async function StartPage() {
+export default async function StartPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ signup?: string }>;
+}) {
   const user = await getCurrentUser();
+  const justSignedUp = (await searchParams).signup === "new";
 
   // Already has an invitation (client) or is a planner — nothing to buy here.
   if (user && (await listWeddings()).length > 0) redirect("/dashboard");
@@ -39,6 +45,9 @@ export default async function StartPage() {
 
   return (
     <>
+      {/* Only mounted on the redirect that follows a real registration, and it
+          strips the flag as soon as it has reported it. */}
+      {user && justSignedUp ? <SignupTracker /> : null}
       <Link
         href="/"
         className="fixed left-4 top-4 z-50 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/20 px-4 py-2 text-xs font-medium text-white/85 backdrop-blur-sm transition-colors hover:border-white/50 hover:text-white"

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { trackSelectTheme } from "@/modules/self-serve/client/analytics";
 import { PayButton } from "./pay-button";
 
 const TITLE_PLACEHOLDER: Record<ThemeCategory, string> = {
@@ -250,6 +251,7 @@ export function Wizard({ draft }: { draft: PendingSignup | null }) {
                     size="sm"
                     onClick={() => {
                       setThemeId(t.id);
+                      trackSelectTheme(t.id, category);
                       setStep(3);
                     }}
                   >
@@ -485,7 +487,7 @@ export function Wizard({ draft }: { draft: PendingSignup | null }) {
             guest lists and links — stays editable afterwards.
           </p>
 
-          {signupId ? <PayButton /> : null}
+          {signupId ? <PayButton themeId={theme.id} /> : null}
 
           <Button
             type="button"

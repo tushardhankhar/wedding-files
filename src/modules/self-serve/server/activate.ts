@@ -7,6 +7,7 @@ import {
   type PendingSignupRow,
 } from "../types";
 import { PRICE_PAISE } from "../pricing";
+import { reportPurchase } from "./meta-capi";
 
 /**
  * ⚠️ This module is the ONLY place a `weddings` row is created without an admin.
@@ -106,6 +107,25 @@ export async function activateSignup(
     .from("pending_signups")
     .update({ wedding_id: wedding.id })
     .eq("id", signup.id);
+
+  // ── 4. Report the sale to Meta, server-side ──────────────────────────────
+  // Deliberately here and not in the browser: this line sits AFTER the atomic
+  // claim, so it runs exactly once per purchase no matter which path arrived
+  // first — and it runs at all in the case the pixel cannot reach, where the
+  // buyer approved a UPI payment on their phone and never came back to the tab.
+  //
+  // The email comes from auth.users rather than the signup row because that is
+  // the address the account was actually verified against. Failures are
+  // swallowed by `reportPurchase`: the invitation exists and the buyer is
+  // waiting, so an analytics outage must never surface as a failed purchase.
+  const { data: authUser } = await supabase.auth.admin.getUserById(signup.userId);
+  await reportPurchase({
+    paymentId: paymentId,
+    email: authUser?.user?.email ?? null,
+    phone: signup.contactPhone,
+    themeId: signup.themeId,
+    eventTime: Math.floor(Date.now() / 1000),
+  });
 
   return { weddingId: wedding.id, created: true };
 }

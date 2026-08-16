@@ -7,6 +7,10 @@ import {
   verifyPaymentAction,
 } from "@/modules/self-serve/server/payment-actions";
 import { PRICE_LABEL } from "@/modules/self-serve/pricing";
+import {
+  trackBeginCheckout,
+  trackPurchase,
+} from "@/modules/self-serve/client/analytics";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -74,7 +78,7 @@ function loadCheckout(): Promise<void> {
  * order and is handed back only an order id to open — the amount is decided,
  * and charged, entirely server-side. `PRICE_LABEL` here is a caption.
  */
-export function PayButton() {
+export function PayButton({ themeId }: { themeId: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +108,10 @@ export function PayButton() {
       return;
     }
 
+    // Announced now rather than on the click: a click that never produced an
+    // order isn't a checkout, and counting it as one hides the failure.
+    trackBeginCheckout(order.orderId);
+
     new window.Razorpay({
       key: order.keyId,
       amount: order.amount,
@@ -131,6 +139,11 @@ export function PayButton() {
             setBusy(false);
             return;
           }
+          // Before the redirect, not after: /weddings/[id] sits outside the
+          // (marketing) group and loads no tags, so a purchase announced there
+          // is announced to nobody. This is the event campaigns optimise on —
+          // if it fires late, it doesn't fire.
+          trackPurchase(response.razorpay_payment_id, themeId);
           router.replace(`/weddings/${result.weddingId}`);
         })();
       },

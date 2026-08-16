@@ -53,6 +53,19 @@ const serverSchema = z.object({
   // Set when creating the webhook in the Razorpay dashboard. Every webhook body
   // is HMAC-verified against this before it can touch the database.
   RAZORPAY_WEBHOOK_SECRET: z.string().min(1).optional(),
+
+  // ── Meta Conversions API ──────────────────────────────────────────────────
+  // Server-side Purchase reporting. Optional as a set: unset means the browser
+  // pixel is the only reporter, which is the status quo and breaks nothing.
+  //
+  // This is the ONLY place personal data leaves the app for analytics, and it
+  // leaves SHA-256 hashed — see `modules/self-serve/server/meta-capi.ts` for
+  // why that exception exists and what is deliberately still excluded.
+  META_PIXEL_ID: z.string().min(1).optional(),
+  META_CAPI_ACCESS_TOKEN: z.string().min(1).optional(),
+  // From Events Manager → Test Events. When set, events are routed to that tab
+  // INSTEAD of production reporting — never leave it set in production.
+  META_TEST_EVENT_CODE: z.string().min(1).optional(),
 });
 
 const parsed = serverSchema.safeParse({
@@ -65,6 +78,9 @@ const parsed = serverSchema.safeParse({
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
   RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
+  META_PIXEL_ID: process.env.META_PIXEL_ID,
+  META_CAPI_ACCESS_TOKEN: process.env.META_CAPI_ACCESS_TOKEN,
+  META_TEST_EVENT_CODE: process.env.META_TEST_EVENT_CODE,
 });
 
 if (!parsed.success) {
