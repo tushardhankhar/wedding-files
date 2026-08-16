@@ -123,7 +123,11 @@ export default async function DashboardPage() {
                 ? "Create your first invitation to get started."
                 : draft
                   ? "You've picked your theme — finish checkout and your invitation is live."
-                  : "Your planner hasn't shared an invitation with you yet."}
+                  : // Neutral on purpose: this account may be waiting on a
+                    // planner OR may have signed up self-serve and not started.
+                    // Naming a planner they don't have sends them looking for
+                    // someone to chase.
+                    "No invitation is linked to this account yet."}
             </p>
             {isAdmin ? (
               <NavLink

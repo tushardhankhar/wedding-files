@@ -102,7 +102,9 @@ export default async function WeddingDetailPage({
           <CardDescription>
             {isAdmin
               ? "Choose a design, then preview the live site."
-              : "Preview your live site. The design is set by your planner."}
+              : // Same reason as the title lock: a self-serve buyer chose this
+                // theme themselves at checkout and has no planner to refer to.
+                "Preview your live site. Your theme was set when this invitation was created and can't be changed."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

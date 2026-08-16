@@ -81,8 +81,15 @@ export function WeddingForm({
         ) : (
           <>
             <Input id="title" value={values?.title ?? ""} readOnly disabled />
+            {/* Says WHY it's locked, not who locked it. Half of these clients
+                now bought the invitation themselves and never had a planner —
+                being told to ask one is confusing at best, and they meet this
+                line within a minute of paying. The reason holds for both:
+                the shareable link is built from the title, so changing it
+                would break links already sent. */}
             <p className="text-xs text-muted-foreground">
-              The name is set by your planner and can&apos;t be changed here.
+              Fixed once the invitation is created — your shareable link is
+              built from it.
             </p>
           </>
         )}
