@@ -170,10 +170,14 @@ export function LandingNavbar() {
               {DEMO_CTA}
             </Link>
             {/* There is room to keep both here, so the menu is where the
-                "rather not do it yourself" path stays reachable on a phone. */}
+                "rather not do it yourself" path stays reachable on a phone.
+                Now filled in WhatsApp green rather than a transparent outline:
+                in a full-screen wine menu a ghost button is the quietest thing
+                on screen, which is the wrong weight for the option most people
+                who open this menu are actually looking for. */}
             <BookNowButton
-              label="Prefer we set it up? WhatsApp us"
-              className="w-full border border-white/25 bg-transparent px-6 py-4 text-base text-white/85 shadow-none hover:translate-y-0"
+              label="Chat on WhatsApp"
+              className="w-full px-6 py-4 text-base"
             />
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/60">
               <UtsavMonogram className="h-4 w-4" />

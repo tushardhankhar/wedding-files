@@ -13,6 +13,8 @@ import {
 } from "@/components/landing/sections-product";
 import { EnquirySection } from "@/components/landing/enquiry";
 import { ConfidenceBand, FaqSection } from "@/components/landing/faq";
+import { ReviewsSection } from "@/components/landing/reviews";
+import { ReviewsBadge } from "@/components/landing/reviews-badge";
 import { StickyCta } from "@/components/landing/sticky-cta";
 import { GoToTop } from "@/modules/website/render/go-to-top";
 
@@ -59,7 +61,10 @@ export default function LandingPage() {
             (ExperiencePreview, CouplesSection, RealitySection, FinalCta and
             FeatureStory were removed as redundant; their components remain in
             the codebase.) */}
-        <LandingHero />
+        {/* The badge is rendered here, not inside the hero: it needs the live
+            Google rating from getReviews(), and the hero is a client component.
+            Both call sites share one API request via the cache() wrapper. */}
+        <LandingHero ratingBadge={<ReviewsBadge tone="dark" />} />
         <ThemeShowcase />
         <div className="border-y border-[color:var(--l-gold)]/20 bg-[color:var(--l-wine)] text-[color:var(--l-ivory)]">
           <Marquee
@@ -86,6 +91,10 @@ export default function LandingPage() {
             with a thumb over the button.) */}
         <ConfidenceBand />
         <FaqSection />
+        {/* Last thing before the number, and the only claim on this page we
+            don't make ourselves. Renders nothing at all when there are no real
+            Google reviews to show — see components/landing/reviews.tsx. */}
+        <ReviewsSection />
         <PricingPreview />
         <EnquirySection />
         {/* PrivacySection was folded into the personalisation demo, which was

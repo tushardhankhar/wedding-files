@@ -1084,6 +1084,16 @@
   --l-ink: #3b1022;
   --l-ink-soft: #86687a;
   --l-line: #eeddc2;
+  /* WhatsApp's own brand green. Deliberately not --l-emerald: the chat button
+     used to be the site's dark emerald, which reads as "a green button" rather
+     than "WhatsApp", and a visitor scanning for the messaging option has to
+     read the label to find it instead of spotting the colour.
+
+     Text on this is --l-wine, NOT white. White on #25d366 is 1.98:1, which is
+     unreadable and fails WCAG outright; wine is 8.25:1 and keeps the pill inside
+     the page's palette. If you ever swap the ink here, check the ratio first. */
+  --l-whatsapp: #25d366;
+  --l-whatsapp-deep: #12a150;
   /* lets the shared .mandala utility glow gold inside the landing */
   --gold-line: rgba(232, 200, 119, 0.5);
 
@@ -1229,6 +1239,59 @@
 .landing .l-gallery > * {
   scroll-snap-align: center;
   flex-shrink: 0;
+}
+
+/* Google-reviews rail. Same native-scroll approach as .l-gallery above, with
+   two differences: the cards are a fixed, readable measure rather than
+   picture-shaped, and the scrollbar is hidden because this rail has its own
+   arrows and dots (the gallery has neither, so it keeps a visible one).
+
+   `scroll-padding-inline` is what lets the first and last card sit centred at
+   the ends of the scroll range — without it, snap-align: center can never be
+   satisfied for either end card and the rail fights the user's thumb. */
+.landing .l-rev-rail {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 50%;
+  padding-block-end: 4px;
+  scrollbar-width: none;
+}
+.landing .l-rev-rail::-webkit-scrollbar {
+  display: none;
+}
+.landing .l-rev-rail:focus-visible {
+  outline: 2px solid var(--l-gold);
+  outline-offset: 6px;
+  border-radius: 22px;
+}
+.landing .l-rev-card {
+  scroll-snap-align: center;
+  flex-shrink: 0;
+  /* One card fills a phone; two sit side by side from ~720px up. The min()
+     keeps it from overflowing the smallest screens. */
+  width: min(100%, 420px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--l-line);
+  border-radius: 22px;
+  background: #fff;
+  padding: 26px;
+  box-shadow: 0 22px 50px -34px rgb(59 16 34 / 0.35);
+}
+/* The rail stretches every card to the tallest one, so a two-line review and a
+   clamped six-line one are the same height. Pinning the attribution to the
+   bottom is what makes that read as deliberate rather than as a layout bug:
+   without it the footer floats up under the short quote and leaves a hole. */
+.landing .l-rev-card > footer {
+  margin-block-start: auto;
+}
+@media (min-width: 720px) {
+  .landing .l-rev-card {
+    width: 420px;
+  }
 }
 
 /* Staggered load-in for above-the-fold hero content. Falls back to visible

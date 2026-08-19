@@ -51,8 +51,15 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 /**
  * Prominent "Book Now" call-to-action that opens a WhatsApp chat with a
- * pre-filled booking message. On-brand emerald so it reads as distinct from the
- * pink demo CTA and clearly signals WhatsApp.
+ * pre-filled booking message.
+ *
+ * Filled in WhatsApp's own brand green (`--l-whatsapp`), not the site's darker
+ * emerald. The emerald version read as "a green button"; this reads as WhatsApp
+ * from across the room, which is the whole job — someone who wants to talk to a
+ * human shouldn't have to read a label to find the way to do it.
+ *
+ * The ink is `--l-wine`, not white. White on #25d366 is 1.98:1 and genuinely
+ * unreadable; wine is 8.25:1. Check the ratio before changing either.
  *
  * The click is announced to the tag layer, because this — not the enquiry form —
  * is where most people convert. Leaving it untracked meant the ad platforms were
@@ -81,7 +88,7 @@ export function BookNowButton({
         sendGTMEvent({ event: "whatsapp_click", cta_label: label, plan: plan ?? "none" })
       }
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--l-emerald)] px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(8,127,91,.7)] transition-transform hover:-translate-y-0.5",
+        "inline-flex items-center justify-center gap-2 rounded-full bg-[color:var(--l-whatsapp)] px-5 py-2.5 text-[13px] font-bold text-[color:var(--l-wine)] shadow-[0_10px_26px_-10px_rgba(37,211,102,.75)] transition-transform hover:-translate-y-0.5 hover:bg-[color:var(--l-whatsapp-deep)]",
         className
       )}
     >
