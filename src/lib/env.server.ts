@@ -66,6 +66,28 @@ const serverSchema = z.object({
   // From Events Manager → Test Events. When set, events are routed to that tab
   // INSTEAD of production reporting — never leave it set in production.
   META_TEST_EVENT_CODE: z.string().min(1).optional(),
+
+  // ── Reviews (landing-page social proof) ───────────────────────────────────
+  // Which reader the carousel uses. Defaults to `curated`, which needs no
+  // configuration at all: it reads real reviews typed into
+  // `modules/reviews/curated-reviews.ts`, and renders nothing while that file is
+  // empty. Set `google-places` only once the two Google vars below are present.
+  REVIEWS_SOURCE: z
+    .enum(["curated", "google-places", "google-business-profile"])
+    .default("curated"),
+
+  // Only read when REVIEWS_SOURCE=google-places. Optional as a set: without them
+  // the Places reader returns nothing rather than failing, so local and preview
+  // builds don't need Google credentials — and reviews are a billed Places field,
+  // so there's no reason for every dev build to spend on them.
+  //
+  // The key is server-only on purpose. A browser fetch would both expose it and
+  // fail CORS, so the call happens in a Server Component and Next caches the
+  // response for a day (see `modules/reviews/server/google-places.ts`).
+  GOOGLE_PLACES_API_KEY: z.string().min(1).optional(),
+  // The Google Maps place identifier, not the business name. Find it with
+  // `node scripts/find-place-id.mjs "Join the Jashn"`.
+  GOOGLE_PLACE_ID: z.string().min(1).optional(),
 });
 
 const parsed = serverSchema.safeParse({
@@ -81,6 +103,9 @@ const parsed = serverSchema.safeParse({
   META_PIXEL_ID: process.env.META_PIXEL_ID,
   META_CAPI_ACCESS_TOKEN: process.env.META_CAPI_ACCESS_TOKEN,
   META_TEST_EVENT_CODE: process.env.META_TEST_EVENT_CODE,
+  REVIEWS_SOURCE: process.env.REVIEWS_SOURCE,
+  GOOGLE_PLACES_API_KEY: process.env.GOOGLE_PLACES_API_KEY,
+  GOOGLE_PLACE_ID: process.env.GOOGLE_PLACE_ID,
 });
 
 if (!parsed.success) {

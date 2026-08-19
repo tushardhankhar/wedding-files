@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Mandala } from "@/components/brand/motifs";
 import { PetalField } from "./art";
@@ -12,7 +12,7 @@ import {
   PRICE,
   DEMO_CTA_SHORT,
   BUY_CTA_SHORT,
-  TRUST_SIGNALS,
+  HERO_FACTS,
 } from "./data";
 import { ThemePhone } from "./theme-card";
 
@@ -49,7 +49,14 @@ const INCLUDED: Array<{ label: string; stops: string[] }> = [
   { label: "Background music", stops: [] },
 ];
 
-export function LandingHero() {
+/**
+ * `ratingBadge` is rendered on the server and passed in, because the live Google
+ * rating needs `getReviews()` and this component is a client component (it owns
+ * the demo tour's `stop` state). The page composes them — see
+ * `app/(marketing)/page.tsx`. It is `null` whenever there are no reviews, so
+ * nothing here has to know about that case.
+ */
+export function LandingHero({ ratingBadge }: { ratingBadge?: ReactNode }) {
   // Starts on the countdown so the row has a sensible resting state before the
   // first tour tick — and a settled one when reduced motion means no tour runs.
   const [stop, setStop] = useState("top");
@@ -186,42 +193,49 @@ export function LandingHero() {
             </a>
           </div>
 
-          {/* The terms a buyer would otherwise have to hunt for, sitting
-              DIRECTLY under the button — reassurance only works where the doubt
-              is felt, and four lines further down it was answering a question
-              the visitor had already resolved by leaving.
-              This line used to lead with a 7-day refund. There is no refund
-              (Terms §7), so what's lifted out of the grey now is the thing that
-              actually removes the risk: you can open the real thing first. */}
+          {/* Three facts, sitting DIRECTLY under the button — reassurance only
+              works where the doubt is felt.
+              This was ten claims across three stacked blocks (a five-part line,
+              a WhatsApp sentence, and a four-item bullet list), all in 11-12px
+              type, in the one place on the page where a visitor is deciding
+              rather than reading. Nobody reads ten things with a thumb over a
+              button. What's left is the cost, the risk-remover, and the guest
+              objection; the proof those adjectives were reaching for is now the
+              rating badge below, which is one line and can be checked. */}
           <p className="l-load mt-3 text-center text-[11px] leading-relaxed tracking-wide text-white/65 lg:mt-4 lg:text-left lg:text-xs" style={{ animationDelay: "0.65s" }}>
-            {PRICE} one-time ·{" "}
-            <span className="font-semibold text-[color:var(--l-gold-lite)]">
-              try every theme free first
-            </span>{" "}
-            · Live in minutes · Unlimited guests · No app, no guest accounts
-          </p>
-
-          {/* Self-serve is the button; the chat is the fallback for anyone who
-              would rather hand it over. Kept as a text link so the pair above
-              stays a two-way choice rather than a three-way one. */}
-          <p className="l-load mt-3 text-center text-[12px] text-white/65 lg:text-left" style={{ animationDelay: "0.7s" }}>
-            Prefer we set it up for you?{" "}
-            <BookNowButton
-              label="Message us on WhatsApp"
-              className="bg-transparent px-0 py-0 text-[12px] font-semibold text-[color:var(--l-gold-lite)] shadow-none hover:translate-y-0 hover:underline"
-            />
-          </p>
-
-          {/* Honest trust signals only — things the visitor can verify in one
-              click. No customer counts or review stars until they're real. */}
-          <ul className="l-load mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-[11px] tracking-wide text-[color:var(--l-gold-lite)]/75 lg:mt-4 lg:justify-start" style={{ animationDelay: "0.76s" }}>
-            {TRUST_SIGNALS.map((s) => (
-              <li key={s} className="flex items-center gap-1.5">
-                <span aria-hidden="true" className="text-[color:var(--l-gold)]">✦</span>
-                {s}
-              </li>
+            {HERO_FACTS.map((f, i) => (
+              <span key={f.label}>
+                {i > 0 ? <span className="opacity-50"> · </span> : null}
+                <span
+                  className={
+                    f.emphasis
+                      ? "font-semibold text-[color:var(--l-gold-lite)]"
+                      : undefined
+                  }
+                >
+                  {f.label}
+                </span>
+              </span>
             ))}
-          </ul>
+          </p>
+
+          {/* Two small affordances on one line: the proof, and the way to reach a
+              human. Both are chips rather than a sentence each, which is what
+              collapsed three stacked paragraphs into one row.
+              The rating badge is the only signpost to the reviews section for
+              anyone who won't scroll ten screens — the nav link is the other.
+              WhatsApp is now a filled green pill instead of a gold text link: it
+              is the path for everyone who would rather hand this to a person,
+              and as underlined text it was invisible next to two buttons. It
+              stays smaller than the gold CTA above so the hierarchy still reads
+              buy-first. */}
+          <div className="l-load mt-4 flex flex-wrap items-center justify-center gap-2.5 lg:justify-start" style={{ animationDelay: "0.72s" }}>
+            {ratingBadge}
+            <BookNowButton
+              label="Chat on WhatsApp"
+              className="min-h-11 px-4 py-2 text-[12px] sm:min-h-9"
+            />
+          </div>
         </div>
 
         {/* The product itself: a real guest site running live inside the phone,

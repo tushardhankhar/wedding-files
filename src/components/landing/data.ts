@@ -202,6 +202,30 @@ export const PLAN_TERMS: string[] = [
 // review stars: we don't have real ones yet, and inventing them is both a lie
 // and the easiest thing on a page to get caught on. Every claim here is
 // verifiable by the visitor in one click.
+/**
+ * Short-form facts under the hero CTAs.
+ *
+ * Was five items on one line plus a four-item bullet list below it — ten claims
+ * in 11px type, none of which a visitor reads while deciding whether to press a
+ * button. Now three, chosen for the objections that actually stop a purchase:
+ * what it costs, how long it takes, and whether guests have to install anything.
+ * The proof that used to be attempted by listing adjectives is now done by the
+ * rating badge, which is one line and independently verifiable.
+ */
+export const HERO_FACTS: { label: string; emphasis?: boolean }[] = [
+  { label: `${PRICE} one-time` },
+  // Kept and kept emphasised. This is the line that removes the risk of buying
+  // — you can open the real thing before paying — and it was deliberately
+  // lifted out of the grey once before. Trimming the hero is not a reason to
+  // bury it again.
+  { label: "Try every theme free", emphasis: true },
+  { label: "No app for guests" },
+];
+
+/**
+ * Kept for the pages and sections that still list them. Removed from the hero —
+ * see HERO_FACTS above for why.
+ */
 export const TRUST_SIGNALS: string[] = [
   `${SHOWCASE_THEMES.length} designer themes`,
   "Open any demo — no signup",
@@ -457,6 +481,16 @@ export const CONTACT_EMAIL = "hello@jointhejashn.com";
 export const NAV_LINKS: { label: string; href: string }[] = [
   { label: "Themes", href: "#themes" },
   { label: "How it works", href: "#how-it-works" },
+  // Before Pricing, matching the page order and the reason for it: proof lands
+  // better just before the number than just after it. This is also the only
+  // route to the reviews for someone who won't scroll ten screens — the other
+  // is the hero's rating badge.
+  //
+  // NOTE: the anchor only exists when there are reviews to show (the section
+  // renders nothing otherwise), so this link can point at nothing. It degrades
+  // to a no-op jump rather than an error, which is the acceptable end of the
+  // trade against wiring nav links to server data.
+  { label: "Reviews", href: "#reviews" },
   { label: "Pricing", href: "#pricing" },
   // Ahead of Contact deliberately: someone reaching for the nav with a question
   // is looking for an answer, not a form, and the FAQ closes far more of them
