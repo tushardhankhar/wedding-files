@@ -455,7 +455,7 @@ export function PricingPreview() {
         </ul>
 
         {/* Widths track how many plans are actually on sale, so parking two of
-            them during the ₹99 offer doesn't leave a lone card stranded in a
+            them during the ₹299 offer doesn't leave a lone card stranded in a
             three-column grid. */}
         <div
           className={`mt-10 grid items-stretch gap-6 ${
@@ -519,7 +519,7 @@ export function PricingPreview() {
                     }
                   >
                     {plan.price}
-                    {/* The struck price is what makes ₹99 read as an offer
+                    {/* The struck price is what makes ₹299 read as an offer
                         rather than as a cheap product. */}
                     {plan.was ? (
                       <span

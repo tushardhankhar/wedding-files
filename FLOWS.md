@@ -18,7 +18,7 @@ Every family sees only the events they're invited to and RSVPs per event.
 |---|---|---|
 | `/` | Marketing landing (hero, how-it-works, themes gallery, pricing, enquiry) | Public |
 | `/demo/[themeId]` | Live theme preview on fictional sample data (all 12 themes) | Public, SSG |
-| `/start` | **Self-serve signup** — sign up → theme → details → pay ₹99 | Public |
+| `/start` | **Self-serve signup** — sign up → theme → details → pay ₹299 | Public |
 | `/login` | Owner/client auth | Public |
 | `/dashboard` | Owner's invitations list | Auth |
 | `/weddings/new` | Create an invitation | Auth |
@@ -81,7 +81,7 @@ Enquiry form → Resend email (RESEND_API_KEY; see .env.example).
 /start → magic-link/OTP signup (the ONE surface with shouldCreateUser: true)
   → wizard: occasion → theme → your name + phone → celebration details
     → saved as a `pending_signups` draft. Nothing live, nothing billable yet.
-  → Razorpay checkout at the server-set ₹99
+  → Razorpay checkout at the server-set ₹299
   → payment verified (browser fast path, webhook backstop — both idempotent)
     → the `weddings` row is created, owned by the buyer
   → /weddings/[id] : the same editor a planner-created client gets

@@ -6,11 +6,11 @@
  * Paise is the unit Razorpay charges in, and it is the source of truth: the
  * amount sent to the order API is read from here on the SERVER and never from
  * the request body. A self-serve checkout that trusts a client-supplied amount
- * is the classic way to sell a ₹99 product for ₹1.
+ * is the classic way to sell a ₹299 product for ₹1.
  */
-export const PRICE_PAISE = 9_900;
+export const PRICE_PAISE = 29_900;
 
 /** Display form of {@link PRICE_PAISE}, for buttons and marketing copy. */
-export const PRICE_LABEL = "₹99";
+export const PRICE_LABEL = "₹299";
 
 export const CURRENCY = "INR";

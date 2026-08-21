@@ -37,11 +37,11 @@ This is why the `purchase` event fires on `/start` *before* redirecting to
 | `whatsapp_click` | the WhatsApp fallback is clicked | Contact | — |
 | `enquiry_submitted` | the contact form succeeds | Lead | generate_lead |
 
-`purchase` carries `value` (99), `currency` (INR), `transaction_id` and
+`purchase` carries `value` (299), `currency` (INR), `transaction_id` and
 `event_id` (both the Razorpay payment id), plus an `items` array.
 
-**Value is in rupees, not paise.** Sending 9900 would tell Meta each sale is
-worth ₹9,900 and let it bid roughly a hundred times what a buyer is actually
+**Value is in rupees, not paise.** Sending 29900 would tell Meta each sale is
+worth ₹29,900 and let it bid roughly a hundred times what a buyer is actually
 worth. The figure derives from the same `PRICE_PAISE` the server charges, so
 the number optimised on and the number banked cannot drift apart.
 
@@ -83,7 +83,7 @@ Event** in GA4 → Admin → Events, or it won't be importable as a conversion.
 ## Meta ads: what to optimise on
 
 Point the campaign at the **Purchase** event, not Lead or ViewContent. With a
-₹99 product the temptation is to optimise for something that fires more often,
+₹299 product the temptation is to optimise for something that fires more often,
 but Meta optimises for whatever you name — pick Lead and it will find people who
 sign up and never pay.
 

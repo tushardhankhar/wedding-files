@@ -73,7 +73,7 @@ export function BookNowButton({
 }: {
   className?: string;
   label?: string;
-  /** Plan name written into the chat, e.g. "The Full Invitation — ₹1,599". */
+  /** Plan name written into the chat, e.g. "The Full Invitation — ₹299". */
   plan?: string;
 }) {
   return (

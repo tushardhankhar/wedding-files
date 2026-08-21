@@ -13,8 +13,8 @@ import { CURRENCY, PRICE_PAISE } from "../pricing";
  * a click in an interface. Keep this file free of vendor SDKs.
  *
  * ── Money is in major units, and it is not the client's to decide ──────────
- * Ad platforms expect 99, not 9900 — reporting paise would tell Meta each sale
- * is worth ₹9,900 and let it bid roughly a hundred times what a buyer is worth.
+ * Ad platforms expect 299, not 29900 — reporting paise would tell Meta each sale
+ * is worth ₹29,900 and let it bid roughly a hundred times what a buyer is worth.
  * The figure is derived from the same `PRICE_PAISE` the server charges, so the
  * number optimised on and the number banked cannot drift apart.
  *
