@@ -137,12 +137,12 @@ export const BUY_CTA_SHORT = "Get my website";
 // separate on purpose — marketing copy shouldn't be able to reprice a payment —
 // but a page that advertises one number and bills another is the fastest way to
 // lose someone at the moment they'd decided to trust you. Change both together.
-export const PRICE = "₹99";
+export const PRICE = "₹299";
 
 /**
  * The standing price, shown struck through beside {@link PRICE}.
  *
- * ₹99 with nothing beside it reads as cheap; ₹99 beside ₹1,599 reads as a
+ * ₹299 with nothing beside it reads as cheap; ₹299 beside ₹1,599 reads as a
  * deal, and it is the number every other surface — the comparison table, the
  * ads — has been anchoring against all along. Delete this and the introductory
  * offer stops looking like an offer.
@@ -264,10 +264,10 @@ export type PricingPlan = {
 /**
  * What's on sale — currently ONE thing.
  *
- * During the introductory offer there is a single ₹99 product, so the page
+ * During the introductory offer there is a single ₹299 product, so the page
  * shows a single card. The three-plan row is parked in {@link PARKED_PLANS}
  * rather than deleted: a ₹1,099 Save the Date and a ₹2,199 bundle sitting
- * beside a ₹99 full invitation don't describe a choice, they describe a
+ * beside a ₹299 full invitation don't describe a choice, they describe a
  * mistake, and nobody buys the lesser product when the better one costs less.
  *
  * To end the offer: restore the parked entries here, set `price` back to
@@ -291,7 +291,7 @@ export const PRICING_PLANS: PricingPlan[] = [
 ];
 
 /**
- * The plans withdrawn for the duration of the ₹99 offer. Kept here so bringing
+ * The plans withdrawn for the duration of the ₹299 offer. Kept here so bringing
  * them back is a copy-paste rather than an archaeology exercise. Their prices
  * are the pre-offer ones and would need revisiting alongside {@link PRICE}.
  */
