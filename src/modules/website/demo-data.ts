@@ -411,11 +411,168 @@ const SHUBH_AARAMBH: DemoDataset = {
   ],
 };
 
+/* The Miramar — a Goan Catholic wedding.
+ *
+ * This theme gets its own sample rather than the shared one: the generic
+ * wedding demo is a north-Indian Hindu wedding (haldi, mehendi, sangeet, a
+ * Jaipur palace), and rendering that inside a Catholic seafarer plate would
+ * make the theme look like a recolour of another culture's invitation. The
+ * ceremonies here are the real Goan order — the roce on the eve, the nuptial
+ * mass, the reception, and a sundowner on the sand the next evening. */
+const MIRAMAR: DemoDataset = {
+  wedding: {
+    title: "Ryan & Alisha",
+    name1: "Ryan",
+    name2: "Alisha",
+    eventDate: "2026-11-14",
+    config: {
+      eventTime: "15:15",
+      hero: {
+        tagline: {
+          en: "\u201cAnd now these three remain: faith, hope and love. But the greatest of these is love.\u201d",
+          hi: "\u201cइसलिए विश्वास, आशा और प्रेम ये तीनों स्थायी हैं; पर इनमें सबसे बड़ा प्रेम है।\u201d",
+        },
+      },
+      story: {
+        milestones: [
+          {
+            when: "2019",
+            title: { en: "A monsoon in Panaji", hi: "पणजी में एक मानसून" },
+            text: {
+              en: "We met sheltering under the same awning on 18th June Road, arguing about whether the rain would stop. It did not. Neither did the conversation.",
+              hi: "हम 18 जून रोड पर एक ही छज्जे के नीचे मिले, इस बहस में कि बारिश रुकेगी या नहीं। बारिश नहीं रुकी। और बातें भी नहीं।",
+            },
+          },
+          {
+            when: "2021",
+            title: { en: "Ships passing", hi: "दूर-दूर राहें" },
+            text: {
+              en: "Two years of one of us at sea and the other ashore, counting down to shore leave and learning that distance is only water.",
+              hi: "दो साल — एक समुद्र में, दूसरा किनारे पर; छुट्टी के दिन गिनते हुए यह सीखा कि दूरी सिर्फ़ पानी है।",
+            },
+          },
+          {
+            when: "2025",
+            title: { en: "On the sand at Miramar", hi: "मिरामार की रेत पर" },
+            text: {
+              en: "One knee, one ring, and the tide coming in far faster than either of us had planned. She said yes before the wave reached us.",
+              hi: "एक घुटना, एक अंगूठी, और लहरें हमारी सोच से कहीं तेज़ आ रही थीं। लहर पहुँचने से पहले ही उसने हाँ कह दी।",
+            },
+          },
+          {
+            when: "2026",
+            title: { en: "Before God and family", hi: "प्रभु और परिवार के समक्ष" },
+            text: {
+              en: "And now, in the church we both grew up in, with everyone we love in the pews behind us, we begin. We would be honoured to have you there.",
+              hi: "और अब, उसी गिरजाघर में जहाँ हम दोनों बड़े हुए, अपने सभी प्रियजनों के साथ, हम शुरुआत करते हैं। आपकी उपस्थिति हमारा सम्मान होगी।",
+            },
+          },
+        ],
+      },
+      family: {
+        members: [
+          { name: { en: "Mr. Xavier Fernandes", hi: "श्री ज़ेवियर फ़र्नांडिस" }, relation: { en: "Father of the groom", hi: "वर के पिता" }, side: "groom" },
+          { name: { en: "Mrs. Paulina Fernandes", hi: "श्रीमती पॉलीना फ़र्नांडिस" }, relation: { en: "Mother of the groom", hi: "वर की माता" }, side: "groom" },
+          { name: { en: "Late Mr. Caetano Fernandes", hi: "स्व. श्री कायतानो फ़र्नांडिस" }, relation: { en: "Grandfather of the groom", hi: "वर के दादा" }, side: "groom" },
+          { name: { en: "Mr. Gregory D\u2019Souza", hi: "श्री ग्रेगरी डिसूज़ा" }, relation: { en: "Father of the bride", hi: "वधू के पिता" }, side: "bride" },
+          { name: { en: "Mrs. Manuela D\u2019Souza", hi: "श्रीमती मानुएला डिसूज़ा" }, relation: { en: "Mother of the bride", hi: "वधू की माता" }, side: "bride" },
+          { name: { en: "Mrs. Clementina Rodrigues", hi: "श्रीमती क्लेमेंटीना रोड्रिग्स" }, relation: { en: "Grandmother of the bride", hi: "वधू की नानी" }, side: "bride" },
+        ],
+      },
+      faq: {
+        items: [
+          {
+            q: { en: "What should I wear?", hi: "क्या पहनें?" },
+            a: {
+              en: "Church formals for the mass \u2014 shoulders covered, please. The reception is black tie optional, and the sundowner is barefoot on the sand, so bring something you can lose your shoes in.",
+              hi: "मास के लिए औपचारिक परिधान \u2014 कंधे ढके हों। स्वागत समारोह में औपचारिक वस्त्र, और सनडाउनर रेत पर नंगे पाँव है \u2014 ऐसा कुछ पहनें जिसमें जूते उतारे जा सकें।",
+            },
+          },
+          {
+            q: { en: "When should I arrive at the church?", hi: "गिरजाघर कब पहुँचें?" },
+            a: {
+              en: "By 3:00 p.m., please. The bridal party enters at 3:15 sharp and the doors are closed during the entrance hymn.",
+              hi: "कृपया दोपहर 3:00 बजे तक। वर-वधू का प्रवेश ठीक 3:15 पर होगा और प्रवेश-गीत के दौरान दरवाज़े बंद रहेंगे।",
+            },
+          },
+          {
+            q: { en: "Where should I stay?", hi: "कहाँ ठहरें?" },
+            a: {
+              en: "We have held rooms in Majorda and Colva at a family rate \u2014 mention \u201cRyan & Alisha\u201d when booking. A coach runs from both to every venue.",
+              hi: "मजोर्दा और कोलवा में पारिवारिक दर पर कमरे आरक्षित हैं \u2014 बुकिंग के समय \u201cRyan & Alisha\u201d बताएँ। दोनों जगहों से हर स्थल के लिए बस चलेगी।",
+            },
+          },
+          {
+            q: { en: "How do I reach the venues?", hi: "स्थलों तक कैसे पहुँचें?" },
+            a: {
+              en: "Every celebration card has an \u201cOpen in Maps\u201d button. Dabolim airport is 40 minutes from the church, Mopa about two hours, and we are happy to arrange pickups.",
+              hi: "हर कार्ड पर \u201cमैप खोलें\u201d का बटन है। डाबोलिम हवाई अड्डा गिरजाघर से 40 मिनट, मोपा लगभग दो घंटे; गाड़ी की व्यवस्था हम कर सकते हैं।",
+            },
+          },
+          {
+            q: { en: "Are you registered for gifts?", hi: "उपहारों के बारे में?" },
+            a: {
+              en: "Your presence and your prayers are the whole of it. If you would still like to bless us, a note towards our first home means the world.",
+              hi: "आपकी उपस्थिति और आपकी प्रार्थनाएँ ही सब कुछ हैं। फिर भी आशीर्वाद देना चाहें, तो हमारे पहले घर के लिए एक स्नेहभरा संदेश अनमोल है।",
+            },
+          },
+        ],
+      },
+      footer: {
+        hashtag: "RyanWedsAlisha",
+        contacts: [
+          { name: "Nigel", relation: "Best man", phone: "+91 98221 04567" },
+          { name: "Chandra", relation: "Maid of honour", phone: "+91 97650 31298" },
+        ],
+      },
+    } as Record<string, unknown>,
+  },
+  events: [
+    ev("mrm-1", "Roce Ceremony", "18:00", {
+      eventDate: "2026-11-12",
+      nameHi: "रोस समारोह",
+      venueName: "Fernandes House, Fatorda",
+      venueAddress: "Fatorda, Margao, Goa",
+      mapsUrl: "https://maps.google.com/?q=Fatorda+Margao+Goa",
+      description: "The eve\u2019s anointing with coconut milk, sung over by both families. Wear white \u2014 it will not survive the evening.",
+      descriptionHi: "विवाह की पूर्वसंध्या पर नारियल के दूध से अभिषेक, दोनों परिवारों के गीतों के साथ। सफ़ेद पहनें \u2014 वह शाम तक टिकेगा नहीं।",
+    }),
+    ev("mrm-2", "Nuptial Mass", "15:15", {
+      eventDate: "2026-11-14",
+      nameHi: "विवाह मिस्सा",
+      venueName: "Our Lady of the Rosary Church",
+      venueAddress: "Fatorda, Margao, Goa",
+      mapsUrl: "https://maps.google.com/?q=Our+Lady+of+the+Rosary+Church+Margao",
+      description: "The sacrament of matrimony, followed by photographs in the churchyard.",
+      descriptionHi: "विवाह संस्कार, तत्पश्चात गिरजाघर के प्रांगण में तस्वीरें।",
+    }),
+    ev("mrm-3", "Reception", "19:00", {
+      eventDate: "2026-11-14",
+      nameHi: "स्वागत समारोह",
+      venueName: "Perpetual Gardens",
+      venueAddress: "Gansua, Majorda, Goa",
+      mapsUrl: "https://maps.google.com/?q=Majorda+Goa",
+      description: "Dinner, the first dance, and a brass band that has played every wedding in the family since 1974.",
+      descriptionHi: "भोजन, पहला नृत्य, और वह ब्रास बैंड जो 1974 से परिवार की हर शादी में बजा है।",
+    }),
+    ev("mrm-4", "Sundowner by the Sea", "17:00", {
+      eventDate: "2026-11-15",
+      nameHi: "समुद्र किनारे सनडाउनर",
+      venueName: "Miramar Beach",
+      venueAddress: "Miramar, Panaji, Goa",
+      mapsUrl: "https://maps.google.com/?q=Miramar+Beach+Panaji+Goa",
+      description: "Where he asked. Feni, fish curry and the last of the light \u2014 come barefoot.",
+      descriptionHi: "जहाँ उसने पूछा था। फ़ेनी, फ़िश करी और ढलती रोशनी \u2014 नंगे पाँव आइए।",
+    }),
+  ],
+};
+
 const EXPERIENCE_DEMOS: Record<string, DemoDataset> = {
   afterparty: AFTERPARTY,
   confetti: CONFETTI,
   "little-miracle": LITTLE_MIRACLE,
   "shubh-aarambh": SHUBH_AARAMBH,
+  miramar: MIRAMAR,
 };
 
 /** The gallery a theme should show in the demo, matched to its palette/occasion. */

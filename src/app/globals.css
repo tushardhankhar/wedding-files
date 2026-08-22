@@ -5548,3 +5548,401 @@
   .tqd-reveal-rule,
   .tqd-reveal .tqd-names { animation: none; opacity: 1; transform: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE MIRAMAR (id "miramar") — a Catholic seafarer wedding: shell-ivory paper,
+   sea blue and blush rose, antique gold for the metal. Full multi-section site.
+   Bilingual + [data-tw-reveal] scroll-reveal are shared (see the scaffolding
+   block above); everything else lives here under .mrm.
+
+   PALETTE DISCIPLINE. Two colours and a metal, nothing more: sea blue carries
+   the water and the type's authority, blush rose carries the flowers and every
+   eyebrow line, antique gold draws the keylines, rules and shells. Each ground
+   is the same shell paper at a different temperature — the deep-sea sections are
+   the only inversion, and they are where the countdown, the RSVP and the footer
+   live, so the page reads paper · paper · sea · paper · sea.
+   ══════════════════════════════════════════════════════════════════════════ */
+.mrm {
+  color: var(--mrm-ink, #1e3648);
+  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  background: var(--mrm-shell, #fbf6ee);
+  overflow-x: clip;
+  line-height: 1.65;
+}
+.mrm-serif { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
+.mrm-names { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+.mrm-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+.mrm-sans { font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif; }
+.mrm .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
+.mrm ::selection { background: var(--mrm-sea); color: #fff; }
+.mrm-amp { font-size: 0.7em; color: var(--mrm-rose-deep); }
+
+/* Shimmering gold foil (the names + the hashtag). On the deep-sea grounds the
+   dark end of this ramp (#96762f) all but disappears into navy, so those
+   sections get a ramp that never drops below a readable gold. */
+.mrm-deep .mrm-foil {
+  background-image: linear-gradient(100deg, #c6a253 0%, #f2e2b8 22%, #fffaea 36%, #eedcae 50%, #c6a253 72%, #f2e2b8 100%);
+}
+.mrm-foil {
+  background: linear-gradient(100deg, #8a6b28 0%, #d9bd77 24%, #f3e0ac 36%, #d9bd77 48%, #8a6b28 72%, #d9bd77 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ── section grounds ─────────────────────────────────────────────────────── */
+
+/* THE SHORE — the ground the invitation lies on. Sky and sea above, wet sand
+   below, so the plate reads as a card set down on the beach. Every stop is a
+   colour-matched rgba() rather than the `transparent` keyword: `transparent` is
+   rgba(0,0,0,0), and interpolating to it drags the midtones toward grey — which
+   drew a visible dirty band across the sand on the first pass. */
+.mrm-shorescape {
+  background:
+    radial-gradient(78% 34% at 50% 0%, rgba(143, 191, 218, 0.55), rgba(143, 191, 218, 0) 68%),
+    radial-gradient(56% 26% at 14% 92%, rgba(217, 140, 154, 0.22), rgba(217, 140, 154, 0) 66%),
+    radial-gradient(52% 24% at 88% 84%, rgba(198, 162, 83, 0.2), rgba(198, 162, 83, 0) 64%),
+    linear-gradient(180deg, #dce9f2 0%, #e8f1f6 26%, #f3ece0 58%, #efe0cc 84%, #e9d6bd 100%);
+}
+
+/* THE PLATE — the invitation itself: one sheet of warm shell paper, lit from the
+   top, lifted off the sand by its own shadow. Bounded (see the renderer's note)
+   so the ornament has an edge to hold. */
+.mrm-sheet {
+  border-radius: 3px;
+  background:
+    radial-gradient(112% 48% at 50% -4%, rgba(232, 211, 160, 0.42), rgba(232, 211, 160, 0) 62%),
+    radial-gradient(58% 30% at 12% 96%, rgba(217, 140, 154, 0.14), rgba(217, 140, 154, 0) 62%),
+    linear-gradient(180deg, #fffcf6 0%, #fdf8ef 40%, #f8efe1 78%, #f4e8d6 100%);
+  border: 1px solid rgba(198, 162, 83, 0.4);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 2px 5px -2px rgba(11, 42, 67, 0.16),
+    0 44px 90px -44px rgba(11, 42, 67, 0.5);
+}
+.mrm-paper {
+  background-color: var(--mrm-shell);
+  background-image:
+    radial-gradient(70% 42% at 50% 0%, rgba(232, 211, 160, 0.18), transparent 64%),
+    radial-gradient(50% 34% at 100% 100%, rgba(143, 191, 218, 0.14), transparent 62%);
+}
+.mrm-paper2 {
+  background-color: var(--mrm-shell-2);
+  background-image:
+    radial-gradient(58% 40% at 0% 0%, rgba(143, 191, 218, 0.18), transparent 62%),
+    radial-gradient(52% 36% at 100% 100%, rgba(217, 140, 154, 0.16), transparent 62%),
+    radial-gradient(60% 40% at 50% 50%, rgba(232, 211, 160, 0.12), transparent 66%);
+}
+/* a cool sea-tinted panel — the one place the blue takes the whole ground while
+   the type stays dark, so the families read as a breath between paper sections */
+.mrm-tide {
+  background-color: var(--mrm-foam);
+  background-image:
+    radial-gradient(72% 52% at 0% 0%, rgba(60, 126, 166, 0.2), transparent 62%),
+    radial-gradient(72% 52% at 100% 100%, rgba(217, 140, 154, 0.16), transparent 62%),
+    radial-gradient(58% 38% at 50% 46%, rgba(232, 211, 160, 0.16), transparent 66%);
+}
+/* deep water — the countdown, the RSVP and the footer */
+.mrm-deep {
+  color: var(--mrm-shell);
+  background:
+    radial-gradient(95% 62% at 50% 0%, rgba(198, 162, 83, 0.26), transparent 64%),
+    radial-gradient(70% 50% at 82% 108%, rgba(232, 211, 160, 0.14), transparent 62%),
+    radial-gradient(56% 40% at 14% 88%, rgba(217, 140, 154, 0.12), transparent 60%),
+    linear-gradient(180deg, var(--mrm-deep) 0%, var(--mrm-deep-2) 56%, var(--mrm-deep-3) 100%);
+}
+.mrm-deep .mrm-serif { color: var(--mrm-shell); }
+
+/* ── furniture ───────────────────────────────────────────────────────────── */
+
+/* the plate's double gold keyline, inset into the hero */
+.mrm-frameline {
+  border: 1px solid rgba(198, 162, 83, 0.55);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 0 3px rgba(198, 162, 83, 0.09),
+    inset 0 0 0 4px rgba(198, 162, 83, 0.34),
+    inset 0 0 70px rgba(232, 211, 160, 0.16);
+}
+
+/* nav — frosted shell paper once scrolled */
+.mrm-nav-on {
+  background: rgba(251, 246, 238, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(198, 162, 83, 0.3);
+  box-shadow: 0 8px 30px -18px rgba(18, 60, 92, 0.35);
+}
+
+/* the twisted-rope spine down the story timeline */
+.mrm-rope {
+  /* Two strands laid against each other: the diagonal banding is the twist, the
+     vertical shading is the round of the rope. At 3px wide the banding read as a
+     dotted line, so the spine is 7px and the bands are 11px apart. */
+  /* The TWIST IS LISTED FIRST because the first background-image paints on top.
+     With the round-of-the-rope shading first, its opaque ramp covered the twist
+     completely and the spine read as a plain gold hairline. */
+  background-image:
+    repeating-linear-gradient(
+      -58deg,
+      rgba(120, 92, 32, 0.55) 0 2px,
+      rgba(255, 255, 255, 0) 2px 5px,
+      rgba(255, 253, 248, 0.75) 5px 7px,
+      rgba(255, 255, 255, 0) 7px 11px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(150, 118, 47, 0.7) 0%,
+      rgba(232, 211, 160, 0.95) 34%,
+      rgba(198, 162, 83, 0.95) 62%,
+      rgba(150, 118, 47, 0.75) 100%
+    );
+  opacity: 0.85;
+  border-radius: 999px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0), #000 10%, #000 90%, rgba(0, 0, 0, 0));
+}
+
+/* the medallion each milestone's shell sits in */
+.mrm-marker {
+  background:
+    radial-gradient(70% 70% at 50% 26%, #fffdf8 0%, #f6ecdc 100%);
+  border: 1px solid rgba(198, 162, 83, 0.65);
+  box-shadow:
+    0 0 0 4px rgba(232, 211, 160, 0.28),
+    0 10px 20px -12px rgba(18, 60, 92, 0.4);
+}
+
+/* the ship's-log card each milestone is written on */
+.mrm-log {
+  background:
+    radial-gradient(90% 60% at 50% 0%, rgba(232, 211, 160, 0.24), rgba(232, 211, 160, 0) 64%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(253, 248, 239, 0.72) 100%);
+  border: 1px solid rgba(198, 162, 83, 0.32);
+  box-shadow: 0 20px 44px -30px rgba(18, 60, 92, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* the porthole arch the shore is seen through — brass ring, glass, deep water */
+.mrm-porthole-arch {
+  border-radius: 999px 999px 14px 14px;
+  border: 1px solid rgba(198, 162, 83, 0.6);
+  box-shadow:
+    0 0 0 5px rgba(232, 211, 160, 0.28),
+    0 0 0 6px rgba(198, 162, 83, 0.5),
+    inset 0 0 44px rgba(11, 42, 67, 0.24),
+    0 26px 54px -26px rgba(18, 60, 92, 0.45);
+  background: linear-gradient(180deg, #eaf3f8 0%, #dceaf3 40%, #cfe4ef 100%);
+}
+
+/* the event card — shell paper inside an inner gold hairline */
+.mrm-event {
+  position: relative;
+  background:
+    radial-gradient(85% 56% at 50% 0%, rgba(232, 211, 160, 0.36), transparent 62%),
+    radial-gradient(60% 40% at 50% 100%, rgba(143, 191, 218, 0.14), transparent 62%),
+    linear-gradient(180deg, #fffdf8 0%, #f7ecdc 100%);
+  border: 1px solid rgba(198, 162, 83, 0.55);
+  box-shadow: 0 22px 50px -30px rgba(18, 60, 92, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.mrm-event::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(198, 162, 83, 0.3);
+  border-radius: 1.2rem;
+  pointer-events: none;
+}
+.mrm-event:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 64px -30px rgba(18, 60, 92, 0.5);
+}
+.mrm-event-icon {
+  background: radial-gradient(circle at 50% 34%, rgba(232, 211, 160, 0.55), rgba(143, 191, 218, 0.16));
+  border: 1px solid rgba(198, 162, 83, 0.65);
+  box-shadow: inset 0 0 18px rgba(198, 162, 83, 0.28), 0 6px 16px -8px rgba(18, 60, 92, 0.35);
+}
+
+/* the gallery: brass portholes and arched plates */
+.mrm-porthole {
+  border-radius: 999px;
+  padding: 6px;
+  background: conic-gradient(from 210deg, #96762f, #e8d3a0 25%, #c6a253 50%, #fff6de 68%, #96762f 100%);
+  box-shadow: 0 18px 40px -26px rgba(18, 60, 92, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+/* the six brass bolts around the rim */
+.mrm-porthole::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 999px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 3%, var(--mrm-gold-lite) 0 2px, transparent 2.6px),
+    radial-gradient(circle at 91% 27%, var(--mrm-gold-lite) 0 2px, transparent 2.6px),
+    radial-gradient(circle at 91% 73%, var(--mrm-gold-lite) 0 2px, transparent 2.6px),
+    radial-gradient(circle at 50% 97%, var(--mrm-gold-lite) 0 2px, transparent 2.6px),
+    radial-gradient(circle at 9% 73%, var(--mrm-gold-lite) 0 2px, transparent 2.6px),
+    radial-gradient(circle at 9% 27%, var(--mrm-gold-lite) 0 2px, transparent 2.6px);
+  z-index: 1;
+}
+.mrm-plate {
+  padding: 6px;
+  border-radius: 999px 999px 12px 12px;
+  background: linear-gradient(170deg, #e8d3a0 0%, #c6a253 46%, #96762f 100%);
+  box-shadow: 0 18px 40px -26px rgba(18, 60, 92, 0.4);
+}
+.mrm-plate-clip { border-radius: 999px 999px 8px 8px; }
+
+/* cards */
+.mrm-card {
+  background: rgba(251, 246, 238, 0.06);
+  border: 1px solid rgba(232, 211, 160, 0.3);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 18px 40px -28px rgba(6, 28, 46, 0.6);
+}
+.mrm-card-light {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(198, 162, 83, 0.32);
+  box-shadow: 0 18px 40px -28px rgba(18, 60, 92, 0.32);
+}
+
+/* pills / chips */
+.mrm-chip {
+  display: inline-flex; align-items: center;
+  border-radius: 999px; padding: 0.5rem 1rem;
+  font-family: var(--font-raleway), system-ui, sans-serif;
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mrm-deep);
+  border: 1px solid rgba(198, 162, 83, 0.55);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.mrm-chip:hover { background: var(--mrm-deep); color: #fff; }
+
+/* primary button — deep water inside a brass edge */
+.mrm-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-raleway), system-ui, sans-serif;
+  font-size: 0.74rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #fff; border-radius: 999px; padding: 0.9rem 2.1rem;
+  background: linear-gradient(120deg, var(--mrm-deep) 0%, var(--mrm-sea) 100%);
+  border: 1px solid var(--mrm-gold);
+  box-shadow: 0 14px 34px -14px rgba(18, 60, 92, 0.55), inset 0 0 0 1px rgba(232, 211, 160, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.mrm-btn:hover { transform: translateY(-2px); box-shadow: 0 22px 44px -16px rgba(18, 60, 92, 0.75); }
+
+/* countdown tiles + glow */
+.mrm-count {
+  position: relative;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(232, 211, 160, 0.14), transparent 66%),
+    rgba(251, 246, 238, 0.05);
+  border: 1px solid rgba(232, 211, 160, 0.36);
+  box-shadow: inset 0 0 22px rgba(232, 211, 160, 0.1), 0 16px 34px -26px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+}
+.mrm-count::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(232, 211, 160, 0.2);
+  border-radius: 0.9rem;
+  pointer-events: none;
+}
+.mrm-glowtext {
+  color: var(--mrm-gold-lite);
+  text-shadow: 0 0 18px rgba(232, 211, 160, 0.5);
+}
+
+/* ── motion. All of it decorative; all of it optional. ───────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .mrm-fade { opacity: 0; animation: mrm-fade 0.95s ease-out forwards; }
+  @keyframes mrm-fade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+  .mrm-foil { animation: mrm-shimmer 7s linear infinite; }
+  @keyframes mrm-shimmer { to { background-position: -220% 0; } }
+
+  /* the cross's radiance breathes */
+  .mrm-rays { transform-origin: 70px 62px; animation: mrm-rays 7s ease-in-out infinite; }
+  @keyframes mrm-rays {
+    0%, 100% { opacity: 0.75; transform: rotate(0deg) scale(1); }
+    50% { opacity: 1; transform: rotate(4deg) scale(1.035); }
+  }
+
+  /* the surf — three layers sliding at their own speeds over one 720 period */
+  .mrm-wave-back { animation: mrm-swell 26s linear infinite; }
+  .mrm-wave { animation: mrm-swell 17s linear infinite; }
+  .mrm-wave-fore { animation: mrm-swell 11s linear infinite reverse; }
+  @keyframes mrm-swell { to { transform: translateX(-720px); } }
+
+  /* the foam edge of the tideline, breathing in and out */
+  .mrm-foamline { animation: mrm-foam 6s ease-in-out infinite; }
+  @keyframes mrm-foam {
+    0%, 100% { opacity: 0.85; transform: translateY(0); }
+    50% { opacity: 0.55; transform: translateY(3px); }
+  }
+
+  /* gulls, crossing the sky */
+  .mrm-gull { animation: mrm-gull 26s linear infinite; }
+  .mrm-gull-alt { animation: mrm-gull 33s linear infinite; animation-delay: -9s; }
+  @keyframes mrm-gull {
+    0% { transform: translate(-14%, 6%); opacity: 0; }
+    12% { opacity: 0.75; }
+    88% { opacity: 0.75; }
+    100% { transform: translate(120%, -18%); opacity: 0; }
+  }
+
+  /* the boat, rocking on the swell */
+  .mrm-boat { animation: mrm-boat 8s ease-in-out infinite; }
+  @keyframes mrm-boat {
+    0%, 100% { transform: rotate(-1.8deg) translateY(0); }
+    50% { transform: rotate(1.8deg) translateY(-2px); }
+  }
+
+  /* the palms on the headland */
+  .mrm-palm { animation: mrm-palm 9s ease-in-out infinite; }
+  .mrm-palm-alt { animation: mrm-palm 9s ease-in-out infinite reverse; animation-delay: -2s; }
+  @keyframes mrm-palm { 0%, 100% { transform: rotate(-2.2deg); } 50% { transform: rotate(2.2deg); } }
+
+  /* the sun's glow over the water */
+  .mrm-sunglow { animation: mrm-sunglow 5.5s ease-in-out infinite; }
+  @keyframes mrm-sunglow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.68; } }
+
+  /* the lighthouse: the beam sweeps, the lamp pulses with it */
+  .mrm-beam { animation: mrm-beam 9s ease-in-out infinite; }
+  @keyframes mrm-beam {
+    0%, 100% { transform: rotate(-26deg); opacity: 0.35; }
+    50% { transform: rotate(26deg); opacity: 1; }
+  }
+  .mrm-lamp { animation: mrm-lamp 9s ease-in-out infinite; }
+  @keyframes mrm-lamp { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* the compass, turning slowly behind the story */
+  .mrm-turn { animation: mrm-turn 150s linear infinite; transform-origin: center; }
+  @keyframes mrm-turn { to { transform: rotate(360deg); } }
+
+  /* rose petals and sea foam, drifting down the page */
+  .mrm-drift {
+    position: absolute; top: -8%; left: var(--fx); --drift: var(--drift-lg);
+    animation-name: mrm-drift; animation-timing-function: linear; animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+  /* The layer is fixed at z-3: behind the hero copy (z-20), but above the static
+     text in every section below it. On a phone the copy column runs nearly edge
+     to edge, so an inner column drifts straight over the type. Below sm only the
+     two outermost run, out in the margin the copy never reaches. */
+  @media (max-width: 639px) {
+    .mrm-drift:not([data-edge="1"]) { display: none; }
+    .mrm-drift[data-edge="1"] { left: var(--fx-sm); --drift: var(--drift-sm); --fo: 0.45; }
+  }
+  .mrm-drift svg { display: block; }
+  @keyframes mrm-drift {
+    0% { transform: translate(0, -12vh) rotate(var(--rot, 0deg)); opacity: 0; }
+    12% { opacity: var(--fo, 0.7); }
+    88% { opacity: var(--fo, 0.7); }
+    100% { transform: translate(var(--drift, 20px), 112vh) rotate(calc(var(--rot, 0deg) + 260deg)); opacity: 0; }
+  }
+}
+/* The drifting layer is decorative motion only — remove it entirely (rather
+   than leave un-positioned SVGs in normal flow) when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .mrm-drift { display: none; }
+}

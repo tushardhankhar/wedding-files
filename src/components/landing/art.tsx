@@ -46,6 +46,10 @@ const RECIPES: Record<string, { bg: string; glow?: string; motif?: string }> = {
     bg: "radial-gradient(85% 55% at 50% 12%, rgba(236,208,122,.6), transparent 58%), radial-gradient(70% 55% at 50% 118%, rgba(216,27,96,.42), transparent 60%), linear-gradient(168deg, #0e7a76 0%, #0a4a4a 55%, #063231 120%)",
     motif: "❋",
   },
+  miramar: {
+    bg: "radial-gradient(72% 46% at 50% 10%, rgba(232,211,160,.6), transparent 60%), radial-gradient(62% 42% at 84% 26%, rgba(143,191,218,.5), transparent 62%), radial-gradient(58% 40% at 14% 104%, rgba(217,140,154,.42), transparent 62%), linear-gradient(168deg, #FCF7EF 0%, #DCEAF3 54%, #3C7EA6 130%)",
+    motif: "⚓",
+  },
   jodi: {
     bg: "radial-gradient(58% 34% at 22% 14%, rgba(246,220,226,.9), transparent 62%), radial-gradient(56% 32% at 84% 24%, rgba(239,199,211,.7), transparent 62%), radial-gradient(60% 36% at 50% 108%, rgba(168,30,88,.24), transparent 64%), linear-gradient(168deg, #FDFAF3 0%, #F5EDDC 60%, #EFC7D3 120%)",
     motif: "❁",

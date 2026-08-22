@@ -21,7 +21,8 @@ export type HeroMotif =
   | "giftbox"
   | "celestial"
   | "doorway"
-  | "seal";
+  | "seal"
+  | "lighthouse";
 
 export type ThemeCategory =
   | "wedding"
@@ -509,6 +510,59 @@ const THEME_BASES: ThemeBase[] = [
   },
 
   {
+    id: "miramar",
+    name: "The Miramar",
+    description:
+      "A Catholic seafarer wedding — shell-ivory paper washed with sea blue and blush rose, a radiant cross, entwined rings, shells & pearls in every corner, and the shore itself under the invitation. Brass portholes, a lighthouse and a sweeping beam. Coastal, reverent, classic.",
+    swatch: ["#3c7ea6", "#d98c9a", "#c6a253"],
+    heroMotif: "lighthouse",
+    vars: {
+      /* Read off the reference plate: warm shell paper, the sea in three
+       * depths, one blush rose, and antique gold as the only metal. Two colours
+       * and a metal — the sage is the foliage's alone, never type. */
+      "--mrm-shell": "#fbf6ee",
+      "--mrm-shell-2": "#f5ebdd",
+      "--mrm-sand": "#efe0cc",
+      "--mrm-foam": "#e8f1f6",
+      "--mrm-sea": "#3c7ea6",
+      "--mrm-sea-lite": "#8fbfda",
+      "--mrm-sea-pale": "#cfe4ef",
+      "--mrm-deep": "#123c5c",
+      "--mrm-deep-2": "#0b2a43",
+      "--mrm-deep-3": "#061c2e",
+      "--mrm-rose": "#d98c9a",
+      "--mrm-rose-lite": "#f3d2d8",
+      "--mrm-rose-deep": "#a9546a",
+      "--mrm-gold": "#c6a253",
+      "--mrm-gold-lite": "#e8d3a0",
+      "--mrm-gold-deep": "#96762f",
+      "--mrm-ink": "#1e3648",
+      "--mrm-ink-soft": "#6a8296",
+      "--mrm-pearl": "#fffdf8",
+      "--mrm-leaf": "#8aa98f",
+      /* the shared --w-* contract: nav chrome, the PDF palette, opengraph */
+      "--w-navy": "#123c5c",
+      "--w-bg": "#fbf6ee",
+      "--w-surface": "#fffdf8",
+      "--w-ink": "#1e3648",
+      "--w-ink-soft": "#6a8296",
+      "--w-accent": "#a9546a",
+      "--w-gold": "#c6a253",
+      "--w-gold-lite": "#e8d3a0",
+      "--w-line": "rgba(198,162,83,0.3)",
+      "--w-hero-ink": "#1e3648",
+      "--w-hero-bg":
+        "radial-gradient(120% 56% at 50% -6%, rgba(232,211,160,0.5), transparent 62%), linear-gradient(180deg, #fefaf3 0%, #f6ecdc 100%)",
+      "--w-serif": PLAYFAIR,
+      "--w-display": SCRIPT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"❀"',
+      "--w-pattern": PATTERN.scallop,
+    } as CSSProperties,
+  },
+
+  {
     id: "jodi",
     name: "The Jodi",
     description:
@@ -946,6 +1000,15 @@ const THEME_META: Record<
   mayura: {
     category: "wedding",
     subjectSpec: WEDDING_SUBJECT,
+    supports: WEDDING_SUPPORTS,
+  },
+  miramar: {
+    category: "wedding",
+    subjectSpec: WEDDING_SUBJECT,
+    // No illustration slot: the couple on this plate are silhouettes walking the
+    // tideline inside the shore scene — theme art, not a portrait the client
+    // swaps. Turning the switch on would put an upload control in the editor
+    // that changes nothing on the site.
     supports: WEDDING_SUPPORTS,
   },
   jodi: {
