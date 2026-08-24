@@ -116,9 +116,21 @@ export function MiramarView({
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
   const tagline = config.hero?.tagline;
-  /* The photograph behind the plate. Off until the client turns it on AND
-   * supplies one — with either missing, the drawn shore stands. */
-  const heroPhoto = config.heroPhoto?.enabled && config.heroPhoto.url ? config.heroPhoto : null;
+  /* The photograph behind the plate. Needs three things, in this order:
+   *
+   *   1. the THEME to offer it (`supports.heroPhoto`) — currently switched off,
+   *      see the miramar entry in themes/registry.ts. Checking it here and not
+   *      only in the editor is what stops an invitation that enabled the photo
+   *      earlier from still showing one after the feature is withdrawn, with no
+   *      control left anywhere to turn it off;
+   *   2. the client to have turned it on;
+   *   3. an actual file.
+   *
+   * With any of them missing, the drawn shore stands. */
+  const heroPhoto =
+    theme.supports.heroPhoto && config.heroPhoto?.enabled && config.heroPhoto.url
+      ? config.heroPhoto
+      : null;
   const heroFocus = focusStyles(heroPhoto?.focus);
   const hasRsvp = Boolean((rsvp && rsvp.events.length > 0) || selfRsvp || ownerPreview);
   const family =

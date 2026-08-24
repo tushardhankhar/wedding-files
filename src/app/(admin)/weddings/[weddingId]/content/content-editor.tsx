@@ -1102,6 +1102,20 @@ export function ContentEditor({
           <CardDescription>
             Upload photos in any size — we optimize and crop them to fit each
             theme automatically.
+            {/* The Miramar also runs photographs full-width BETWEEN its
+                sections, and it takes them from this list rather than from a
+                second uploader — one set of photographs, used twice. Without
+                this line there is nothing anywhere to tell the client that the
+                order of these uploads decides what appears between the pages,
+                which is the first thing they ask. */}
+            {themeId === "miramar" ? (
+              <>
+                {" "}
+                Your first three photos also appear full-width between the
+                sections — the first two together after “Our Story”, the third
+                after “Our Families”. Reorder them here to change which ones.
+              </>
+            ) : null}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -1125,6 +1139,14 @@ export function ContentEditor({
                       role="img"
                       aria-label={`Photo ${i + 1}`}
                     />
+                    {/* The position, shown on the photo itself. Order was
+                        invisible here, which was survivable while the gallery
+                        was one grid — but the Miramar spends photos 1–3 between
+                        its sections, so "which one is third?" became a question
+                        the screen had to answer without being counted. */}
+                    <span className="absolute left-2 top-2 rounded-full bg-background/85 px-2 py-0.5 text-xs font-medium tabular-nums shadow-sm">
+                      {i + 1}
+                    </span>
                     <Button
                       type="button"
                       variant="secondary"
@@ -1140,6 +1162,41 @@ export function ContentEditor({
                       Remove
                     </Button>
                   </div>
+
+                  {/* Reordering. Without it the only way to change which photos
+                      run between the sections was to remove everything and
+                      re-upload in a different order. Any open framing editor is
+                      closed first: it is keyed by index, so moving a photo
+                      underneath it would leave it editing whichever photo
+                      happened to land on that number. */}
+                  {s.images.length > 1 ? (
+                    <div className="flex gap-2">
+                      {(
+                        [
+                          ["Move earlier", -1, i === 0],
+                          ["Move later", 1, i === s.images.length - 1],
+                        ] as const
+                      ).map(([label, delta, disabled]) => (
+                        <Button
+                          key={label}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          disabled={disabled}
+                          onClick={() => {
+                            setEditFocus(null);
+                            const next = [...s.images];
+                            const [moved] = next.splice(i, 1);
+                            next.splice(i + delta, 0, moved);
+                            set({ images: next });
+                          }}
+                        >
+                          {label}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {img.url ? (
                     <Button

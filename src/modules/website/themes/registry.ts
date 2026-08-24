@@ -1040,10 +1040,20 @@ const THEME_META: Record<
     // swaps. Turning the switch on would put an upload control in the editor
     // that changes nothing on the site.
     //
-    // `heroPhoto` IS on, and this is the only theme where it is: the hero is a
-    // bounded plate on a drawn shore, so the shore can be swapped for the
-    // couple's own photograph without the type ever landing on it.
-    supports: { ...WEDDING_SUPPORTS, heroPhoto: true },
+    // `heroPhoto` is TEMPORARILY OFF. The Miramar is the only theme that can
+    // take one — the hero is a bounded plate on a drawn shore, so the shore can
+    // be swapped for the couple's own photograph without the type ever landing
+    // on it — and the whole feature is built and working: the schema, the
+    // editor's upload + focal-point control, and `.mrm-shorephoto`/
+    // `.mrm-shorescrim` in globals.css. It is switched off at this one line
+    // rather than deleted, so turning it back on is a one-word change.
+    //
+    // This flag is the ONLY gate. It hides the editor control (content-editor
+    // checks `supports.heroPhoto`) AND stops the renderer honouring a
+    // `config.heroPhoto` that some invitation may already have saved — without
+    // that second check, an invitation that had it on would keep showing a
+    // photograph its owner could no longer see a control for.
+    supports: { ...WEDDING_SUPPORTS, heroPhoto: false },
   },
   jodi: {
     category: "wedding",
