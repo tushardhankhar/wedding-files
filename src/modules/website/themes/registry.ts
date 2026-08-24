@@ -21,7 +21,8 @@ export type HeroMotif =
   | "giftbox"
   | "celestial"
   | "doorway"
-  | "seal";
+  | "seal"
+  | "lighthouse";
 
 export type ThemeCategory =
   | "wedding"
@@ -77,6 +78,21 @@ export interface ThemeSupports {
    * are an early announcement ("a formal invitation will follow"), not an
    * invitation to respond to. */
   rsvp: boolean;
+  /**
+   * Whether the theme can show one of the couple's own photographs *behind* its
+   * hero, and therefore offers the control for it in the content editor.
+   *
+   * This is not the gallery and it is not {@link ArtworkSupport}: it is a single
+   * backdrop, and only a theme whose hero is a bounded object with a ground
+   * behind it can take one. The Miramar's hero is a printed plate lying on a
+   * drawn shore, so the shore can become a real photograph and the plate still
+   * reads. A full-bleed hero has nowhere to put it — the photo would simply be
+   * behind the type — so this stays off for every other theme.
+   *
+   * Always opt-in: the drawn ground is the theme's signature, so the photo
+   * appears only once the client turns it on and supplies one.
+   */
+  heroPhoto: boolean;
 }
 
 export interface Theme {
@@ -509,6 +525,72 @@ const THEME_BASES: ThemeBase[] = [
   },
 
   {
+    id: "miramar",
+    name: "The Miramar",
+    description:
+      "A Catholic seafarer wedding — shell-ivory paper under deep navy and dusty blue, blush roses and hydrangea painted into every corner, a gold nautical cross, an anchor dressed with flowers and a rope knot for a rule. Brass portholes, a lighthouse and a sweeping beam. Coastal, reverent, editorial.",
+    swatch: ["#16273f", "#d99aa2", "#c3a468"],
+    heroMotif: "lighthouse",
+    vars: {
+      /* Read off the painted layers themselves (public/themes/miramar/*.webp),
+       * sampled from the anchor's body, the ferrules' brass, the hydrangea and
+       * the roses — so the page and the art are the same palette rather than
+       * two that nearly agree.
+       *
+       * Five notes and a metal: navy carries the authority, dusty blue the
+       * water, blush the flowers and every eyebrow line, ivory the paper,
+       * champagne gold the keylines. The sage is the foliage's alone, never
+       * type. The blues used to be a petrol teal (#123c5c/#3c7ea6); they are
+       * now a true navy and a French blue, which is what lets the sections read
+       * as deep water rather than as a swimming pool. */
+      "--mrm-shell": "#fbf7f0",
+      "--mrm-shell-2": "#f5eee2",
+      "--mrm-sand": "#eee2ce",
+      "--mrm-foam": "#d7e2f1",
+      /* The two coloured section grounds. Not shades of the shell — a cool one
+       * and a warm one, so the page can alternate hue rather than temperature
+       * (see the .mrm-paper/.mrm-blush block in globals.css). */
+      "--mrm-mist": "#dfe8f5",
+      "--mrm-petal": "#f7e3e5",
+      "--mrm-sea": "#4a6c96",
+      "--mrm-sea-lite": "#96afd0",
+      "--mrm-sea-pale": "#d3dfee",
+      "--mrm-deep": "#16273f",
+      "--mrm-deep-2": "#0e1b2e",
+      "--mrm-deep-3": "#07111f",
+      "--mrm-rose": "#d99aa2",
+      "--mrm-rose-lite": "#f2d4d7",
+      "--mrm-rose-deep": "#9c4a59",
+      "--mrm-gold": "#c3a468",
+      "--mrm-gold-lite": "#e8d5ac",
+      "--mrm-gold-deep": "#8f7038",
+      "--mrm-ink": "#1c2c40",
+      "--mrm-ink-soft": "#44576d",
+      "--mrm-pearl": "#fffdf8",
+      "--mrm-leaf": "#7d8a72",
+      /* the shared --w-* contract: nav chrome, the PDF palette, opengraph */
+      "--w-navy": "#16273f",
+      "--w-bg": "#fbf7f0",
+      "--w-surface": "#fffdf8",
+      "--w-ink": "#1c2c40",
+      "--w-ink-soft": "#44576d",
+      "--w-accent": "#9c4a59",
+      "--w-gold": "#c3a468",
+      "--w-gold-lite": "#e8d5ac",
+      "--w-line": "rgba(195,164,104,0.32)",
+      "--w-hero-ink": "#1c2c40",
+      "--w-hero-bg":
+        "radial-gradient(120% 56% at 50% -6%, rgba(232,213,172,0.5), transparent 62%), linear-gradient(180deg, #fefbf5 0%, #f4ecdf 100%)",
+      "--w-serif": PLAYFAIR,
+      "--w-display": SCRIPT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"❀"',
+      "--w-pattern": PATTERN.scallop,
+    } as CSSProperties,
+  },
+
+  {
     id: "jodi",
     name: "The Jodi",
     description:
@@ -892,6 +974,7 @@ const WEDDING_SUPPORTS: ThemeSupports = {
   countdown: true,
   artwork: false,
   rsvp: true,
+  heroPhoto: false,
 };
 /** Non-wedding baseline: countdown only; each theme turns on what it needs.
  * `rsvp` stays off here so save-the-dates (which use this bare baseline) never
@@ -906,6 +989,7 @@ const MINIMAL_SUPPORTS: ThemeSupports = {
   countdown: true,
   artwork: false,
   rsvp: false,
+  heroPhoto: false,
 };
 
 /** Category + subject + capability metadata, merged onto THEME_BASES below.
@@ -947,6 +1031,29 @@ const THEME_META: Record<
     category: "wedding",
     subjectSpec: WEDDING_SUBJECT,
     supports: WEDDING_SUPPORTS,
+  },
+  miramar: {
+    category: "wedding",
+    subjectSpec: WEDDING_SUBJECT,
+    // No illustration slot: the couple on this plate are silhouettes walking the
+    // tideline inside the shore scene — theme art, not a portrait the client
+    // swaps. Turning the switch on would put an upload control in the editor
+    // that changes nothing on the site.
+    //
+    // `heroPhoto` is TEMPORARILY OFF. The Miramar is the only theme that can
+    // take one — the hero is a bounded plate on a drawn shore, so the shore can
+    // be swapped for the couple's own photograph without the type ever landing
+    // on it — and the whole feature is built and working: the schema, the
+    // editor's upload + focal-point control, and `.mrm-shorephoto`/
+    // `.mrm-shorescrim` in globals.css. It is switched off at this one line
+    // rather than deleted, so turning it back on is a one-word change.
+    //
+    // This flag is the ONLY gate. It hides the editor control (content-editor
+    // checks `supports.heroPhoto`) AND stops the renderer honouring a
+    // `config.heroPhoto` that some invitation may already have saved — without
+    // that second check, an invitation that had it on would keep showing a
+    // photograph its owner could no longer see a control for.
+    supports: { ...WEDDING_SUPPORTS, heroPhoto: false },
   },
   jodi: {
     category: "wedding",

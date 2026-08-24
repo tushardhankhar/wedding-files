@@ -5,6 +5,7 @@ import type {
   WebsiteConfig,
   Focus,
   Artwork,
+  HeroPhoto,
   Experience,
 } from "@/modules/website/schema";
 import type {
@@ -54,6 +55,8 @@ interface State {
   /** The client's own illustration replacing the theme's figures (themes with
    * `supports.artwork`). */
   artwork?: Artwork;
+  /** One photograph behind the hero (themes with `supports.heroPhoto`). */
+  heroPhoto?: HeroPhoto;
   familyMembers: { name: Loc; relation: Loc; side: FamilySide }[];
   faqs: { q: Loc; a: Loc }[];
   hashtag: string;
@@ -82,6 +85,7 @@ function normalize(c: WebsiteConfig): State {
       focus: i.focus,
     })),
     artwork: c.artwork,
+    heroPhoto: c.heroPhoto,
     familyMembers: (c.family?.members ?? []).map((m) => ({
       name: L(m.name),
       relation: L(m.relation),
@@ -126,6 +130,11 @@ function toConfig(s: State): WebsiteConfig {
     // theme's figures, and dropping it would silently reset that choice.
     artwork: s.artwork
       ? { ...s.artwork, url: s.artwork.url?.trim() || undefined }
+      : undefined,
+    // Kept even with no upload, for the same reason as `artwork` above: the
+    // switch is the client's own choice, not a by-product of having a file.
+    heroPhoto: s.heroPhoto
+      ? { ...s.heroPhoto, url: s.heroPhoto.url?.trim() || undefined }
       : undefined,
     family: {
       members: s.familyMembers
@@ -727,6 +736,7 @@ export function ContentEditor({
   );
   const [urlDraft, setUrlDraft] = useState("");
   const [artUrlDraft, setArtUrlDraft] = useState("");
+  const [heroPhotoUrlDraft, setHeroPhotoUrlDraft] = useState("");
   const [editFocus, setEditFocus] = useState<number | null>(null);
   const [pending, startTransition] = useTransition();
   const [status, setStatus] = useState<{ error?: string; saved?: boolean }>({});
@@ -755,6 +765,13 @@ export function ContentEditor({
     setS((prev) => ({
       ...prev,
       artwork: { ...ARTWORK_HOME, ...prev.artwork, url },
+    }));
+
+  // A re-upload swaps the photo but keeps the framing already dialed in.
+  const setHeroPhoto = (patch: Partial<HeroPhoto>) =>
+    setS((prev) => ({
+      ...prev,
+      heroPhoto: { enabled: true, ...prev.heroPhoto, ...patch },
     }));
 
   const setFocus = (i: number, focus: Focus) =>
@@ -885,6 +902,108 @@ export function ContentEditor({
       ) : null}
 
       {/* Hero */}
+      {/* One of the couple's own photographs behind the hero. Offered only by
+          themes whose hero is a bounded object with a ground behind it — see
+          ThemeSupports.heroPhoto. */}
+      {supports.heroPhoto ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Photo behind the invitation</CardTitle>
+            <CardDescription>
+              Your theme sets the invitation down on an illustrated shore. Add one
+              of your own photographs and it lies on that instead — softened and
+              tinted to the theme&rsquo;s colours so the invitation still reads
+              clearly on top. Leave it off to keep the illustrated shore.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input
+                type="checkbox"
+                className="size-4"
+                checked={s.heroPhoto?.enabled ?? false}
+                onChange={(e) => setHeroPhoto({ enabled: e.target.checked })}
+              />
+              Show a photo behind the invitation
+            </label>
+
+            {s.heroPhoto?.enabled ? (
+              <>
+                {s.heroPhoto.url ? (
+                  <div className="space-y-2">
+                    <div
+                      className="aspect-[3/2] w-full rounded-md border bg-muted bg-cover"
+                      style={{
+                        backgroundImage: `url(${s.heroPhoto.url})`,
+                        backgroundPosition: `${(s.heroPhoto.focus?.x ?? 0.5) * 100}% ${(s.heroPhoto.focus?.y ?? 0.5) * 100}%`,
+                      }}
+                      role="img"
+                      aria-label="Photo behind the invitation"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      A wide photo works best — on a phone the invitation covers
+                      the middle, so keep the two of you off to one side, or set
+                      the framing below.
+                    </p>
+                    <div className="rounded-md border bg-muted/30 p-3">
+                      <FocusPicker
+                        url={s.heroPhoto.url}
+                        value={s.heroPhoto.focus}
+                        onChange={(focus) => setHeroPhoto({ focus })}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setHeroPhoto({ url: undefined })}
+                    >
+                      Remove photo
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <ImageUpload
+                      weddingId={weddingId}
+                      onUploaded={(url) => setHeroPhoto({ url })}
+                    />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="hero-photo-url">Or add by URL</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="hero-photo-url"
+                          value={heroPhotoUrlDraft}
+                          placeholder="https://…"
+                          onChange={(e) => setHeroPhotoUrlDraft(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && heroPhotoUrlDraft.trim()) {
+                              e.preventDefault();
+                              setHeroPhoto({ url: heroPhotoUrlDraft.trim() });
+                              setHeroPhotoUrlDraft("");
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={!heroPhotoUrlDraft.trim()}
+                          onClick={() => {
+                            setHeroPhoto({ url: heroPhotoUrlDraft.trim() });
+                            setHeroPhotoUrlDraft("");
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
       {supports.taglineHero ? (
       <Card>
         <CardHeader>
@@ -983,6 +1102,20 @@ export function ContentEditor({
           <CardDescription>
             Upload photos in any size — we optimize and crop them to fit each
             theme automatically.
+            {/* The Miramar also runs photographs full-width BETWEEN its
+                sections, and it takes them from this list rather than from a
+                second uploader — one set of photographs, used twice. Without
+                this line there is nothing anywhere to tell the client that the
+                order of these uploads decides what appears between the pages,
+                which is the first thing they ask. */}
+            {themeId === "miramar" ? (
+              <>
+                {" "}
+                Your first three photos also appear full-width between the
+                sections — the first two together after “Our Story”, the third
+                after “Our Families”. Reorder them here to change which ones.
+              </>
+            ) : null}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -1006,6 +1139,14 @@ export function ContentEditor({
                       role="img"
                       aria-label={`Photo ${i + 1}`}
                     />
+                    {/* The position, shown on the photo itself. Order was
+                        invisible here, which was survivable while the gallery
+                        was one grid — but the Miramar spends photos 1–3 between
+                        its sections, so "which one is third?" became a question
+                        the screen had to answer without being counted. */}
+                    <span className="absolute left-2 top-2 rounded-full bg-background/85 px-2 py-0.5 text-xs font-medium tabular-nums shadow-sm">
+                      {i + 1}
+                    </span>
                     <Button
                       type="button"
                       variant="secondary"
@@ -1021,6 +1162,41 @@ export function ContentEditor({
                       Remove
                     </Button>
                   </div>
+
+                  {/* Reordering. Without it the only way to change which photos
+                      run between the sections was to remove everything and
+                      re-upload in a different order. Any open framing editor is
+                      closed first: it is keyed by index, so moving a photo
+                      underneath it would leave it editing whichever photo
+                      happened to land on that number. */}
+                  {s.images.length > 1 ? (
+                    <div className="flex gap-2">
+                      {(
+                        [
+                          ["Move earlier", -1, i === 0],
+                          ["Move later", 1, i === s.images.length - 1],
+                        ] as const
+                      ).map(([label, delta, disabled]) => (
+                        <Button
+                          key={label}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          disabled={disabled}
+                          onClick={() => {
+                            setEditFocus(null);
+                            const next = [...s.images];
+                            const [moved] = next.splice(i, 1);
+                            next.splice(i + delta, 0, moved);
+                            set({ images: next });
+                          }}
+                        >
+                          {label}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {img.url ? (
                     <Button

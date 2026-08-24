@@ -13,6 +13,7 @@ import { MuhuratView } from "./muhurat/muhurat-view";
 import { GulistanView } from "./gulistan/gulistan-view";
 import { JharokhaView } from "./jharokha/jharokha-view";
 import { MayuraView } from "./mayura/mayura-view";
+import { MiramarView } from "./miramar/miramar-view";
 import { JodiView } from "./jodi/jodi-view";
 import { DakView } from "./dak/dak-view";
 import { RajmahalView } from "./rajmahal/rajmahal-view";
@@ -56,6 +57,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <JharokhaView {...props} />;
     case "mayura": // The Mayura — colourful peacock wedding
       return <MayuraView {...props} />;
+    case "miramar": // The Miramar — Catholic seafarer wedding
+      return <MiramarView {...props} />;
     case "jodi": // The Jodi — illustrated couple plate
       return <JodiView {...props} />;
     case "dak": // The Dak — airmail postcard & postage stamps

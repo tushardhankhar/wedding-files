@@ -98,6 +98,7 @@ export const SHOWCASE_THEMES: ShowcaseTheme[] = [
   { id: "maharaja", name: "The Maharaja", vibe: "Royal Indian", tagline: "Written in gold.", art: "maharaja", palette: ["#40060f", "#c99a3d", "#7a1226"], demo: "royal", category: "wedding" },
   { id: "jharokha", name: "The Jharokha", vibe: "Royal · Romantic", tagline: "A palace of love.", art: "jharokha", palette: ["#7a1f38", "#c9a24a", "#f8dbe0"], demo: "jharokha", category: "wedding" },
   { id: "mayura", name: "The Mayura", vibe: "Peacock · Colourful", tagline: "Where colours dance.", art: "mayura", palette: ["#0e6e6e", "#c9a23f", "#d81b60"], demo: "mayura", category: "wedding" },
+  { id: "miramar", name: "The Miramar", vibe: "Catholic · Coastal", tagline: "Where the sea keeps the vow.", art: "miramar", palette: ["#16273f", "#d99aa2", "#c3a468"], demo: "miramar", category: "wedding" },
   { id: "jodi", name: "The Jodi", vibe: "Illustrated · Ivory & gold", tagline: "Drawn for the two of you.", art: "jodi", palette: ["#FEFAEF", "#C29B4E", "#7A1B22"], demo: "jodi", category: "wedding" },
   { id: "dak", name: "The Dak", vibe: "Postcard & stamps", tagline: "Posted with love.", art: "dak", palette: ["#182233", "#B4894A", "#A8332B"], demo: "dak", category: "wedding" },
   // { id: "rajputana", name: "The Rajputana", vibe: "Rajasthan heritage", tagline: "Where heritage becomes celebration.", art: "rajputana", palette: ["#f3e6d2", "#c96f3b", "#8e5a2b"], demo: "rajasthani", category: "wedding" }, // temporarily disabled

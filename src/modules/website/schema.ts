@@ -54,6 +54,28 @@ export const artworkSchema = z.object({
 export type Artwork = z.infer<typeof artworkSchema>;
 
 /**
+ * One photograph behind the theme's hero — a backdrop, not the gallery.
+ *
+ * Only offered by themes whose `supports.heroPhoto` is true (today: the
+ * Miramar, whose hero is a printed plate lying on a drawn shore, so the shore
+ * can become a real photograph while the plate keeps its own ground). Reuses
+ * {@link Focus} for framing, because unlike the illustration slot this IS a
+ * photo cropped to fill a frame — the client picks the focal point and the
+ * renderer crops around it at every screen size.
+ *
+ *   - `enabled` — off until the client turns it on. The drawn ground is the
+ *                 theme's signature, so a photo is always an addition.
+ *   - `url`     — absent → the theme's own drawn ground, whatever `enabled` says.
+ *   - `focus`   — where the subject sits, so a tall crop on a phone keeps them.
+ */
+export const heroPhotoSchema = z.object({
+  enabled: z.boolean().default(false),
+  url: z.string().optional(),
+  focus: focusSchema.optional(),
+});
+export type HeroPhoto = z.infer<typeof heroPhotoSchema>;
+
+/**
  * The website content config, stored in weddings.config (jsonb). Everything is
  * optional — sections without content are simply not rendered. Content
  * authoring UI arrives in Phase 4; the renderer already reads all of it.
@@ -143,6 +165,9 @@ export const websiteConfigSchema = z.object({
    * replace them with the client's own drawing. Only themes whose
    * `supports.artwork` is truthy offer (and render) it. */
   artwork: artworkSchema.optional(),
+  /** One photograph behind the hero. Only themes whose `supports.heroPhoto` is
+   * true offer (and render) it. */
+  heroPhoto: heroPhotoSchema.optional(),
   story: z
     .object({
       milestones: z
