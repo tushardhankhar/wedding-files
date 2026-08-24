@@ -10,7 +10,6 @@ import { useCountdown, pad2 } from "../use-countdown";
 import { splitNames, fitName, shouldStack, longDate, clockTime, gcalUrl } from "../format";
 import {
   RadiantCross,
-  Rings,
   Anchor,
   Compass,
   Lighthouse,
@@ -30,6 +29,12 @@ import {
   FoamDrift,
   CeremonyIcon,
 } from "./ornaments";
+/* The painted layers. Every one of them is passed the drawn ornament it
+ * replaced as its `fallback`, so a deployment that never ran
+ * `scripts/build-miramar-art.py` degrades to the hand-drawn theme rather than to
+ * a page of broken images. */
+import { Art } from "./art";
+import { useLightbox, MiramarLightbox, MiramarPhotoBreak } from "./miramar-gallery";
 import { MiramarGroupRsvp, MiramarSelfRsvp, MiramarRsvpDemo } from "./miramar-rsvp";
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
@@ -111,6 +116,10 @@ export function MiramarView({
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
   const tagline = config.hero?.tagline;
+  /* The photograph behind the plate. Off until the client turns it on AND
+   * supplies one — with either missing, the drawn shore stands. */
+  const heroPhoto = config.heroPhoto?.enabled && config.heroPhoto.url ? config.heroPhoto : null;
+  const heroFocus = focusStyles(heroPhoto?.focus);
   const hasRsvp = Boolean((rsvp && rsvp.events.length > 0) || selfRsvp || ownerPreview);
   const family =
     rsvp && chip
@@ -129,6 +138,17 @@ export function MiramarView({
 
   const heroCta = hasRsvp ? "#rsvp" : events.length ? "#celebrations" : "#story";
 
+  /* Every photograph on the page — the wall and the breaks between sections —
+   * opens into one lightbox, indexed against this one array. */
+  const lightbox = useLightbox(images);
+  /* The photographs that run full-bleed between the sections. Thresholds, not
+   * slices of whatever is there: with a single photograph a full-width band
+   * followed immediately by a one-tile "wall" is the same picture twice in a
+   * screen, and the second break only earns its place once there is a third
+   * photograph that has not already had its own moment. */
+  const breakOne = images.length >= 2 ? images.slice(0, 2) : [];
+  const breakTwo = images.length >= 3 ? images.slice(2, 3) : [];
+
   return (
     <div className="mrm" data-lang={lang} style={theme.vars}>
       {/* rose petals & sea foam drift over the whole site */}
@@ -137,7 +157,7 @@ export function MiramarView({
       {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
       <header
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${
-          scrolled ? "mrm-nav-on" : "bg-transparent"
+          scrolled ? "mrm-nav-on" : "mrm-nav-over bg-transparent"
         }`}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 sm:px-8">
@@ -248,32 +268,81 @@ export function MiramarView({
       <section
         id="top"
         className="mrm-shorescape relative flex min-h-svh flex-col items-center overflow-hidden px-2 pb-10 pt-14 sm:px-6 sm:pb-16 sm:pt-24"
+        data-photo={heroPhoto ? "1" : undefined}
       >
-        <Seagulls className="pointer-events-none absolute right-[6%] top-[7%] z-0 h-14 w-28 opacity-70 sm:h-20 sm:w-44" />
-        <Seagulls className="pointer-events-none absolute left-[8%] top-[16%] z-0 hidden h-14 w-28 opacity-50 lg:block" />
+        {/* The couple's own photograph as the ground the plate lies on. It sits
+            under a scrim in the theme's own palette (see .mrm-shorephoto): a
+            photograph at full strength would take the plate's edge with it and
+            put the nav's dark ink on unpredictable tone. The scrim is heaviest
+            at the top, which is exactly where the nav sits. */}
+        {heroPhoto ? (
+          <div className="mrm-shorephoto pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+            <div className="h-full w-full" style={heroFocus.zoom}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- couple-provided photo URL */}
+              <img
+                src={heroPhoto.url}
+                alt=""
+                style={heroFocus.image}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="mrm-shorescrim absolute inset-0" />
+          </div>
+        ) : null}
+
+        <Seagulls className="pointer-events-none absolute right-[6%] top-[7%] z-[1] h-14 w-28 opacity-70 sm:h-20 sm:w-44" />
+        <Seagulls className="pointer-events-none absolute left-[8%] top-[16%] z-[1] hidden h-14 w-28 opacity-50 lg:block" />
 
         <div className="mrm-sheet relative z-10 w-full max-w-[38rem] overflow-hidden">
-          {/* the sea washing into two opposite corners of the plate */}
-          <ShoreWash
-            corner="tr"
-            className="pointer-events-none absolute -right-10 -top-10 z-0 h-56 w-56 sm:h-[22rem] sm:w-[22rem]"
-          />
+          {/* The sea washing into the foot of the plate. There used to be a
+              second wash in the top-right corner; with the painted crown up
+              there its pale arc read as a scratch across the flowers, so the
+              head of the plate is now the florals' alone. */}
           <ShoreWash
             corner="bl"
             className="pointer-events-none absolute -bottom-10 -left-10 z-0 h-56 w-56 sm:h-[22rem] sm:w-[22rem]"
           />
-          {/* the plate's gold keyline */}
-          <div className="mrm-frameline pointer-events-none absolute inset-2 z-[2] sm:inset-3" />
+          {/* The plate's keyline, ABOVE the sprays (z-6 against their z-4).
+              Engraved stationery draws the rule right across the flowers rather
+              than stopping at them — underneath, the corners swallowed the top
+              of the frame and the plate lost its edge along its whole head. */}
+          <div className="mrm-frameline pointer-events-none absolute inset-2 z-[6] sm:inset-3" />
 
-          {/* the corner sprays: florals above, the shore's treasures below */}
-          <CornerBloom className="pointer-events-none absolute left-0 top-0 z-[4] h-auto w-[32%] sm:w-[38%] max-w-[224px]" />
-          <CornerBloom className="pointer-events-none absolute right-0 top-0 z-[4] h-auto w-[32%] sm:w-[38%] max-w-[224px] -scale-x-100" />
-          <CornerShells className="pointer-events-none absolute bottom-0 left-0 z-[4] h-auto w-[36%] sm:w-[42%] max-w-[244px]" />
-          <CornerShells className="pointer-events-none absolute bottom-0 right-0 z-[4] h-auto w-[36%] sm:w-[42%] max-w-[244px] -scale-x-100" />
+          {/* THE CORNER SPRAYS. One painting, laid into all four corners and
+              flipped on each axis, which is exactly how a printed border is
+              made. The head pair runs full size; the foot pair is pulled back
+              (smaller, softer) so the plate reads top-down instead of as four
+              equal weights fighting for the middle — and so it clears the surf
+              running along the bottom edge. */}
+          <Art
+            slot="spray-corner"
+            fallback={<CornerBloom className="h-auto w-full" />}
+            className="mrm-art pointer-events-none absolute left-0 top-0 z-[4] h-auto w-[46%] max-w-[292px] sm:w-[48%]"
+          />
+          <Art
+            slot="spray-corner"
+            fallback={<CornerBloom className="h-auto w-full -scale-x-100" />}
+            className="mrm-art pointer-events-none absolute right-0 top-0 z-[4] h-auto w-[46%] max-w-[292px] -scale-x-100 sm:w-[48%]"
+          />
+          <Art
+            slot="spray-corner"
+            fallback={<CornerShells className="h-auto w-full" />}
+            className="mrm-art pointer-events-none absolute bottom-0 left-0 z-[4] h-auto w-[36%] max-w-[224px] -scale-y-100 opacity-[0.8]"
+          />
+          <Art
+            slot="spray-corner"
+            fallback={<CornerShells className="h-auto w-full -scale-x-100" />}
+            className="mrm-art pointer-events-none absolute bottom-0 right-0 z-[4] h-auto w-[36%] max-w-[224px] -scale-100 opacity-[0.8]"
+          />
 
           <div className="relative z-20 mx-auto flex w-full flex-col items-center px-5 pb-20 pt-8 text-center sm:px-12 sm:pb-24 sm:pt-12">
+            {/* the nautical cross: gold tracery on navy, a rose at its foot */}
             <div className="mrm-fade" style={{ animationDelay: "0.35s" }}>
-              <RadiantCross className="h-16 w-12 sm:h-24 sm:w-20" />
+              <Art
+                slot="cross"
+                fallback={<RadiantCross className="h-16 w-12 sm:h-24 sm:w-20" />}
+                className="mrm-art-sm h-[4.5rem] w-auto sm:h-28"
+              />
             </div>
 
             {/* the scripture */}
@@ -326,13 +395,21 @@ export function MiramarView({
               </h1>
             </div>
 
-            {/* the rings */}
-            <div className="mrm-fade" style={{ animationDelay: "1.35s" }}>
-              <Rings className="h-14 w-24 sm:h-[4.5rem] sm:w-32" />
-            </div>
-
-            <div className="mrm-fade flex w-full max-w-sm items-center justify-center" style={{ animationDelay: "1.5s" }}>
-              <GoldDivider className="w-56" />
+            {/* THE KNOT, where the rings and a gold rule used to be stacked one
+                above the other. Navy laid through ivory, gold ferrules at both
+                ends — it is the theme's own wedding mark, and one object does
+                the work the two were splitting. */}
+            <div
+              className="mrm-fade mt-1 flex w-full max-w-[20rem] justify-center"
+              style={{ animationDelay: "1.4s" }}
+            >
+              <div className="mrm-knotrule">
+                <Art
+                  slot="knot"
+                  fallback={<GoldDivider className="w-40 shrink-0" />}
+                  className="mrm-art-sm h-auto w-[9.5rem] shrink-0 sm:w-[11.5rem]"
+                />
+              </div>
             </div>
 
             {dateLabel ? (
@@ -364,16 +441,32 @@ export function MiramarView({
             </div>
           </div>
 
-          {/* the surf, running along the foot of the plate */}
-          <SurfLine className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-12 w-full sm:h-14" />
+          {/* The surf, running along the foot of the plate — UNDER the corner
+              sprays (z-3 against their z-4) and held back. Over them its crest
+              line crossed the roses and read as a stray squiggle; the flowers
+              own the foot of the plate now, and the surf is just the tone
+              underneath them. */}
+          <SurfLine className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-12 w-full opacity-70 sm:h-14" />
         </div>
       </section>
 
       {/* ── GUEST WELCOME ──────────────────────────────────────────────── */}
       {family ? (
-        <section className="mrm-paper relative px-6 py-24 sm:py-28">
+        <section className="mrm-paper relative overflow-hidden px-6 py-24 sm:py-28">
           <RopeRule className="absolute inset-x-0 top-0 h-3.5 w-full" />
-          <div className="mx-auto max-w-2xl text-center" data-tw-reveal>
+          {/* the garland down both margins — the same painting the plate's
+              corners come from, run at full length. Wide screens only: on a
+              phone the copy column reaches the margin and the flowers would
+              land on the type. */}
+          <Art
+            slot="garland"
+            className="mrm-art pointer-events-none absolute -left-6 top-2 z-0 hidden h-auto w-40 opacity-90 lg:block xl:w-48"
+          />
+          <Art
+            slot="garland"
+            className="mrm-art pointer-events-none absolute -right-6 bottom-2 z-0 hidden h-auto w-40 -scale-100 opacity-90 lg:block xl:w-48"
+          />
+          <div className="relative z-10 mx-auto max-w-2xl text-center" data-tw-reveal>
             <div className="mx-auto mb-2 flex justify-center">
               <Dove className="h-16 w-24" />
             </div>
@@ -403,8 +496,15 @@ export function MiramarView({
 
       {/* ── OUR STORY ──────────────────────────────────────────────────── */}
       {milestones.length > 0 ? (
-        <section id="story" className="mrm-paper2 relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-28">
-          <Compass className="mrm-turn pointer-events-none absolute -right-20 top-12 h-64 w-64 opacity-[0.12]" />
+        <section id="story" className="mrm-blush relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-28">
+          {/* the ship's wheel turning behind the log. Held at 0.1: its mahogany
+              is a warmth this palette does not otherwise carry, and at any
+              stronger it stops being a watermark and becomes a fourth colour. */}
+          <Art
+            slot="wheel"
+            fallback={<Compass className="h-full w-full" />}
+            className="mrm-turn pointer-events-none absolute -right-24 top-10 z-0 h-auto w-72 opacity-[0.1] sm:w-96"
+          />
           <div className="mx-auto max-w-4xl">
             <SectionHead over={{ en: "Our Chronicle", hi: "गाथा" }} title={{ en: "How We Set Sail", hi: "हमारी कहानी" }} />
             <div className="relative mt-16 space-y-16">
@@ -457,13 +557,26 @@ export function MiramarView({
         </section>
       ) : null}
 
+      {/* ── PHOTOGRAPHS, between the chapters ──────────────────────────── */}
+      {breakOne.length > 0 ? (
+        <MiramarPhotoBreak images={breakOne} from={0} lightbox={lightbox} />
+      ) : null}
+
       {/* ── FAMILIES ───────────────────────────────────────────────────── */}
       {familyMembers.length > 0 ? (
-        <section id="family" className="mrm-tide relative scroll-mt-16 px-6 py-24 sm:py-28">
-          <div className="mx-auto max-w-4xl">
+        <section id="family" className="mrm-tide relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-28">
+          <div className="relative z-10 mx-auto max-w-4xl">
             <SectionHead over={{ en: "With Blessings", hi: "आशीर्वाद सहित" }} title={{ en: "Our Families", hi: "हमारे परिवार" }} />
-            <div className="mt-8 flex justify-center">
-              <Dove className="h-16 w-24" />
+            {/* The bouquet, standing between the two families. It replaces the
+                dove that used to sit here — the dove stays in the welcome above,
+                where it is the only mark, and one ornament under a heading that
+                already carries a flourish and a rule is the limit. */}
+            <div className="mt-6 flex justify-center">
+              <Art
+                slot="bouquet"
+                fallback={<Dove className="h-16 w-24" />}
+                className="mrm-art h-auto w-28 sm:w-36"
+              />
             </div>
             <div className={`mt-10 grid gap-12 ${groomFamily.length && brideFamily.length ? "md:grid-cols-2" : ""}`}>
               {[
@@ -499,6 +612,10 @@ export function MiramarView({
             </div>
           </div>
         </section>
+      ) : null}
+
+      {breakTwo.length > 0 ? (
+        <MiramarPhotoBreak images={breakTwo} from={2} lightbox={lightbox} />
       ) : null}
 
       {/* ── COUNTDOWN ──────────────────────────────────────────────────── */}
@@ -579,7 +696,7 @@ export function MiramarView({
 
       {/* ── GALLERY — the photographs, through brass portholes ─────────── */}
       {images.length > 0 ? (
-        <section id="gallery" className="mrm-paper relative scroll-mt-16 px-6 py-24 sm:py-28">
+        <section id="gallery" className="mrm-blush relative scroll-mt-16 px-6 py-24 sm:py-28">
           <div className="mx-auto max-w-5xl">
             <SectionHead over={{ en: "The Collection", hi: "संग्रह" }} title={{ en: "Our Portraits", hi: "हमारे चित्र" }} />
             <div className="mt-14 grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3">
@@ -590,12 +707,21 @@ export function MiramarView({
                 const round = i % 3 === 0;
                 const fs = focusStyles(img.focus);
                 return (
-                  <figure
+                  /* A BUTTON, not a figure. Every frame here crops to fill — a
+                     portrait in a round porthole loses its top and its bottom —
+                     so the wall is a set of previews and the photograph itself
+                     lives in the lightbox. Button rather than a div with onClick
+                     so it is reachable by tab, fires on Enter and Space, and
+                     announces itself. */
+                  <button
                     key={i}
-                    className={`group relative min-w-0 ${round ? "mrm-porthole aspect-square" : "mrm-plate aspect-[3/4]"}`}
+                    type="button"
+                    onClick={() => lightbox.open(i)}
+                    aria-label="View photograph"
+                    className={`mrm-shot group relative block min-w-0 ${round ? "mrm-porthole aspect-square" : "mrm-plate aspect-[3/4]"}`}
                     data-tw-reveal
                   >
-                    <div className={`h-full w-full overflow-hidden ${round ? "rounded-full" : "mrm-plate-clip"}`} style={fs.zoom}>
+                    <span className={`block h-full w-full overflow-hidden ${round ? "rounded-full" : "mrm-plate-clip"}`} style={fs.zoom}>
                       {/* eslint-disable-next-line @next/next/no-img-element -- couple-provided gallery URLs */}
                       <img
                         src={img.url}
@@ -604,13 +730,13 @@ export function MiramarView({
                         style={fs.image}
                         className="h-full w-full object-cover transition-transform duration-[2.2s] ease-out group-hover:scale-[1.05]"
                       />
-                    </div>
+                    </span>
                     {img.caption ? (
-                      <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color:var(--mrm-deep-3)]/80 to-transparent px-3 pb-3 pt-10 text-center text-[10px] uppercase tracking-[0.18em] text-white opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                      <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[color:var(--mrm-deep-3)]/80 to-transparent px-3 pb-3 pt-10 text-center text-[10px] uppercase tracking-[0.18em] text-white opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                         <T value={img.caption} />
-                      </figcaption>
+                      </span>
                     ) : null}
-                  </figure>
+                  </button>
                 );
               })}
             </div>
@@ -624,7 +750,11 @@ export function MiramarView({
           <div className="mx-auto max-w-3xl">
             <SectionHead over={{ en: "For Our Guests", hi: "अतिथियों हेतु" }} title={{ en: "Charts & Bearings", hi: "विवरण" }} />
             <div className="mt-8 flex justify-center">
-              <Compass className="h-16 w-16" />
+              <Art
+                slot="anchor"
+                fallback={<Compass className="h-16 w-16" />}
+                className="mrm-art-sm h-24 w-auto sm:h-28"
+              />
             </div>
             <div className="mt-8 space-y-6">
               {faqs.map((f, i) => (
@@ -662,7 +792,18 @@ export function MiramarView({
       {hasRsvp ? (
         <section id="rsvp" className="mrm-deep relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-32">
           <SurfLine className="pointer-events-none absolute inset-x-0 top-0 h-14 w-full opacity-60" />
-          <div className="relative mx-auto max-w-3xl">
+          {/* Pale flowers are the one thing that reads beautifully on deep
+              water — the navy anchor would disappear into it, so the bouquets
+              take the margins here instead. */}
+          <Art
+            slot="bouquet"
+            className="mrm-art-deep pointer-events-none absolute -left-10 bottom-0 z-0 hidden h-auto w-44 opacity-70 xl:block"
+          />
+          <Art
+            slot="bouquet"
+            className="mrm-art-deep pointer-events-none absolute -right-10 top-16 z-0 hidden h-auto w-44 -scale-x-100 opacity-70 xl:block"
+          />
+          <div className="relative z-10 mx-auto max-w-3xl">
             <div className="text-center" data-tw-reveal>
               <p className="mrm-script text-5xl text-[color:var(--mrm-gold-lite)]">
                 <TT en="Will you join us?" hi="क्या आप पधारेंगे?" />
@@ -673,8 +814,14 @@ export function MiramarView({
                   hi="आपकी उपस्थिति और आशीर्वाद हमारे उत्सव को पूर्ण बनाएंगे।"
                 />
               </p>
-              <div className="mt-6 flex justify-center">
-                <GoldDivider className="w-56" />
+              <div className="mx-auto mt-6 flex w-full max-w-sm justify-center">
+                <div className="mrm-knotrule">
+                  <Art
+                    slot="knot"
+                    fallback={<GoldDivider className="w-40 shrink-0" />}
+                    className="mrm-art-deep h-auto w-36 shrink-0 sm:w-44"
+                  />
+                </div>
               </div>
             </div>
             <div className="mt-12">
@@ -700,8 +847,13 @@ export function MiramarView({
         <SurfLine className="pointer-events-none absolute inset-x-0 top-0 h-14 w-full opacity-60" />
         <Lighthouse className="pointer-events-none absolute -left-6 bottom-0 h-56 w-40 opacity-40 sm:left-6 sm:h-72 sm:w-52 sm:opacity-60" />
         <div className="relative">
-          <div className="mx-auto mb-5 flex justify-center">
-            <Anchor className="h-20 w-14 opacity-90" />
+          {/* the signature: the anchor dressed with roses, lit off the navy */}
+          <div className="mx-auto mb-6 flex justify-center">
+            <Art
+              slot="anchor-floral"
+              fallback={<Anchor className="h-20 w-14 opacity-90" />}
+              className="mrm-art-deep h-40 w-auto sm:h-52"
+            />
           </div>
           <p
             className="mrm-names mrm-foil leading-[1.1]"
@@ -715,8 +867,14 @@ export function MiramarView({
           {dateLabel ? (
             <p className="mt-3 text-[10px] uppercase tracking-[0.4em] text-[color:var(--mrm-shell)]/60">{dateLabel}</p>
           ) : null}
-          <div className="mx-auto mt-6 flex justify-center">
-            <GoldDivider className="w-56 opacity-80" />
+          <div className="mx-auto mt-6 flex w-full max-w-sm justify-center">
+            <div className="mrm-knotrule">
+              <Art
+                slot="knot"
+                fallback={<GoldDivider className="w-40 shrink-0 opacity-80" />}
+                className="mrm-art-deep h-auto w-32 shrink-0 opacity-90 sm:w-40"
+              />
+            </div>
           </div>
           <p className="mrm-serif mx-auto mt-6 max-w-md text-lg italic text-[color:var(--mrm-shell)]/80">
             <TT
@@ -733,6 +891,9 @@ export function MiramarView({
           <JashnCredit className="mt-3 text-[color:var(--mrm-gold-lite)]/50" />
         </div>
       </footer>
+
+      {/* the opened photograph — one per page, shared by the wall and the breaks */}
+      <MiramarLightbox {...lightbox} />
     </div>
   );
 }

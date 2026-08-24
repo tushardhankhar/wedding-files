@@ -688,7 +688,7 @@ export function Lighthouse({ className }: { className?: string }) {
         <linearGradient id={beam} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#f2e2b8" stopOpacity="0.5" />
           <stop offset="40%" stopColor="#eeddb0" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#e8d3a0" stopOpacity="0" />
+          <stop offset="100%" stopColor="#e8d5ac" stopOpacity="0" />
         </linearGradient>
       </defs>
       {/* the beam, pivoting at the lamp */}
@@ -779,12 +779,12 @@ export function ShoreScene({ className }: { className?: string }) {
         <radialGradient id={sunId}>
           <stop offset="0%" stopColor="#fff6de" stopOpacity="0.95" />
           <stop offset="42%" stopColor="#f2e2b8" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#e8d3a0" stopOpacity="0" />
+          <stop offset="100%" stopColor="#e8d5ac" stopOpacity="0" />
         </radialGradient>
         <linearGradient id={seaId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#a8cfe3" />
-          <stop offset="34%" stopColor="#6ba7c8" />
-          <stop offset="100%" stopColor="#2f6d94" />
+          <stop offset="0%" stopColor="#a9c1dd" />
+          <stop offset="34%" stopColor="#7396c0" />
+          <stop offset="100%" stopColor="#22406a" />
         </linearGradient>
         {/* the glints in the sun's road fade out as they come ashore */}
         <linearGradient id={roadId} x1="0" y1="0" x2="0" y2="1">
@@ -1171,10 +1171,10 @@ export function ShoreWash({ corner, className }: { corner: "tr" | "bl"; classNam
       <defs>
         {/* the water, deepest in the corner it bleeds from */}
         <radialGradient id={body} cx="100%" cy="0%" r="118%">
-          <stop offset="0%" stopColor="#3c7ea6" stopOpacity="0.62" />
-          <stop offset="34%" stopColor="#6ba7c8" stopOpacity="0.44" />
-          <stop offset="62%" stopColor="#a8cfe3" stopOpacity="0.24" />
-          <stop offset="100%" stopColor="#cfe4ef" stopOpacity="0" />
+          <stop offset="0%" stopColor="#4a6c96" stopOpacity="0.62" />
+          <stop offset="34%" stopColor="#7d99c1" stopOpacity="0.44" />
+          <stop offset="62%" stopColor="#b3c6e0" stopOpacity="0.24" />
+          <stop offset="100%" stopColor="#d3dfee" stopOpacity="0" />
         </radialGradient>
         {/* a feathered edge, so the wash has no boundary of its own */}
         <radialGradient id={feather} cx="100%" cy="0%" r="112%">

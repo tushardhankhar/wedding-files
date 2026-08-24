@@ -78,6 +78,21 @@ export interface ThemeSupports {
    * are an early announcement ("a formal invitation will follow"), not an
    * invitation to respond to. */
   rsvp: boolean;
+  /**
+   * Whether the theme can show one of the couple's own photographs *behind* its
+   * hero, and therefore offers the control for it in the content editor.
+   *
+   * This is not the gallery and it is not {@link ArtworkSupport}: it is a single
+   * backdrop, and only a theme whose hero is a bounded object with a ground
+   * behind it can take one. The Miramar's hero is a printed plate lying on a
+   * drawn shore, so the shore can become a real photograph and the plate still
+   * reads. A full-bleed hero has nowhere to put it — the photo would simply be
+   * behind the type — so this stays off for every other theme.
+   *
+   * Always opt-in: the drawn ground is the theme's signature, so the photo
+   * appears only once the client turns it on and supplies one.
+   */
+  heroPhoto: boolean;
 }
 
 export interface Theme {
@@ -513,46 +528,59 @@ const THEME_BASES: ThemeBase[] = [
     id: "miramar",
     name: "The Miramar",
     description:
-      "A Catholic seafarer wedding — shell-ivory paper washed with sea blue and blush rose, a radiant cross, entwined rings, shells & pearls in every corner, and the shore itself under the invitation. Brass portholes, a lighthouse and a sweeping beam. Coastal, reverent, classic.",
-    swatch: ["#3c7ea6", "#d98c9a", "#c6a253"],
+      "A Catholic seafarer wedding — shell-ivory paper under deep navy and dusty blue, blush roses and hydrangea painted into every corner, a gold nautical cross, an anchor dressed with flowers and a rope knot for a rule. Brass portholes, a lighthouse and a sweeping beam. Coastal, reverent, editorial.",
+    swatch: ["#16273f", "#d99aa2", "#c3a468"],
     heroMotif: "lighthouse",
     vars: {
-      /* Read off the reference plate: warm shell paper, the sea in three
-       * depths, one blush rose, and antique gold as the only metal. Two colours
-       * and a metal — the sage is the foliage's alone, never type. */
-      "--mrm-shell": "#fbf6ee",
-      "--mrm-shell-2": "#f5ebdd",
-      "--mrm-sand": "#efe0cc",
-      "--mrm-foam": "#e8f1f6",
-      "--mrm-sea": "#3c7ea6",
-      "--mrm-sea-lite": "#8fbfda",
-      "--mrm-sea-pale": "#cfe4ef",
-      "--mrm-deep": "#123c5c",
-      "--mrm-deep-2": "#0b2a43",
-      "--mrm-deep-3": "#061c2e",
-      "--mrm-rose": "#d98c9a",
-      "--mrm-rose-lite": "#f3d2d8",
-      "--mrm-rose-deep": "#a9546a",
-      "--mrm-gold": "#c6a253",
-      "--mrm-gold-lite": "#e8d3a0",
-      "--mrm-gold-deep": "#96762f",
-      "--mrm-ink": "#1e3648",
-      "--mrm-ink-soft": "#6a8296",
+      /* Read off the painted layers themselves (public/themes/miramar/*.webp),
+       * sampled from the anchor's body, the ferrules' brass, the hydrangea and
+       * the roses — so the page and the art are the same palette rather than
+       * two that nearly agree.
+       *
+       * Five notes and a metal: navy carries the authority, dusty blue the
+       * water, blush the flowers and every eyebrow line, ivory the paper,
+       * champagne gold the keylines. The sage is the foliage's alone, never
+       * type. The blues used to be a petrol teal (#123c5c/#3c7ea6); they are
+       * now a true navy and a French blue, which is what lets the sections read
+       * as deep water rather than as a swimming pool. */
+      "--mrm-shell": "#fbf7f0",
+      "--mrm-shell-2": "#f5eee2",
+      "--mrm-sand": "#eee2ce",
+      "--mrm-foam": "#d7e2f1",
+      /* The two coloured section grounds. Not shades of the shell — a cool one
+       * and a warm one, so the page can alternate hue rather than temperature
+       * (see the .mrm-paper/.mrm-blush block in globals.css). */
+      "--mrm-mist": "#dfe8f5",
+      "--mrm-petal": "#f7e3e5",
+      "--mrm-sea": "#4a6c96",
+      "--mrm-sea-lite": "#96afd0",
+      "--mrm-sea-pale": "#d3dfee",
+      "--mrm-deep": "#16273f",
+      "--mrm-deep-2": "#0e1b2e",
+      "--mrm-deep-3": "#07111f",
+      "--mrm-rose": "#d99aa2",
+      "--mrm-rose-lite": "#f2d4d7",
+      "--mrm-rose-deep": "#9c4a59",
+      "--mrm-gold": "#c3a468",
+      "--mrm-gold-lite": "#e8d5ac",
+      "--mrm-gold-deep": "#8f7038",
+      "--mrm-ink": "#1c2c40",
+      "--mrm-ink-soft": "#44576d",
       "--mrm-pearl": "#fffdf8",
-      "--mrm-leaf": "#8aa98f",
+      "--mrm-leaf": "#7d8a72",
       /* the shared --w-* contract: nav chrome, the PDF palette, opengraph */
-      "--w-navy": "#123c5c",
-      "--w-bg": "#fbf6ee",
+      "--w-navy": "#16273f",
+      "--w-bg": "#fbf7f0",
       "--w-surface": "#fffdf8",
-      "--w-ink": "#1e3648",
-      "--w-ink-soft": "#6a8296",
-      "--w-accent": "#a9546a",
-      "--w-gold": "#c6a253",
-      "--w-gold-lite": "#e8d3a0",
-      "--w-line": "rgba(198,162,83,0.3)",
-      "--w-hero-ink": "#1e3648",
+      "--w-ink": "#1c2c40",
+      "--w-ink-soft": "#44576d",
+      "--w-accent": "#9c4a59",
+      "--w-gold": "#c3a468",
+      "--w-gold-lite": "#e8d5ac",
+      "--w-line": "rgba(195,164,104,0.32)",
+      "--w-hero-ink": "#1c2c40",
       "--w-hero-bg":
-        "radial-gradient(120% 56% at 50% -6%, rgba(232,211,160,0.5), transparent 62%), linear-gradient(180deg, #fefaf3 0%, #f6ecdc 100%)",
+        "radial-gradient(120% 56% at 50% -6%, rgba(232,213,172,0.5), transparent 62%), linear-gradient(180deg, #fefbf5 0%, #f4ecdf 100%)",
       "--w-serif": PLAYFAIR,
       "--w-display": SCRIPT,
       "--w-sans": SANS,
@@ -946,6 +974,7 @@ const WEDDING_SUPPORTS: ThemeSupports = {
   countdown: true,
   artwork: false,
   rsvp: true,
+  heroPhoto: false,
 };
 /** Non-wedding baseline: countdown only; each theme turns on what it needs.
  * `rsvp` stays off here so save-the-dates (which use this bare baseline) never
@@ -960,6 +989,7 @@ const MINIMAL_SUPPORTS: ThemeSupports = {
   countdown: true,
   artwork: false,
   rsvp: false,
+  heroPhoto: false,
 };
 
 /** Category + subject + capability metadata, merged onto THEME_BASES below.
@@ -1009,7 +1039,11 @@ const THEME_META: Record<
     // tideline inside the shore scene — theme art, not a portrait the client
     // swaps. Turning the switch on would put an upload control in the editor
     // that changes nothing on the site.
-    supports: WEDDING_SUPPORTS,
+    //
+    // `heroPhoto` IS on, and this is the only theme where it is: the hero is a
+    // bounded plate on a drawn shore, so the shore can be swapped for the
+    // couple's own photograph without the type ever landing on it.
+    supports: { ...WEDDING_SUPPORTS, heroPhoto: true },
   },
   jodi: {
     category: "wedding",
