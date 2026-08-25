@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import type { WeddingEvent } from "@/modules/events/types";
+import type { Localized } from "../../schema";
 import type { WebsiteViewProps } from "../website-view";
 import { JashnCredit } from "../jashn-credit";
-import { T, TT } from "../bilingual";
+import { T } from "../bilingual";
 import { focusStyles } from "../image-focus";
 import { useCountdown, pad2 } from "../use-countdown";
 import { splitNames, fitName, shouldStack, longDate, clockTime, gcalUrl } from "../format";
@@ -36,6 +37,8 @@ import {
 import { Art } from "./art";
 import { useLightbox, MiramarLightbox, MiramarPhotoBreak } from "./miramar-gallery";
 import { MiramarGroupRsvp, MiramarSelfRsvp, MiramarRsvpDemo } from "./miramar-rsvp";
+/* Every fixed line this theme prints, and the client's rewrites of them. */
+import { miramarCopy, hasCopy, type MiramarCopy } from "./copy";
 
 /* ── helpers ──────────────────────────────────────────────────────────────── */
 function cityOf(events: WeddingEvent[]): string | null {
@@ -48,15 +51,6 @@ function cityOf(events: WeddingEvent[]): string | null {
   }
   return null;
 }
-
-/* The scripture on the plate. The couple's own tagline replaces it the moment
- * they write one; until then the invitation reads as a Catholic invitation
- * rather than as an empty frame. */
-const DEFAULT_VERSE = {
-  en: "“No one has ever seen God; but if we love one another, God lives in us and his love is made complete in us.”",
-  hi: "“परमेश्वर को किसी ने कभी नहीं देखा; परन्तु यदि हम एक दूसरे से प्रेम रखें, तो परमेश्वर हम में बना रहता है और उसका प्रेम हम में सिद्ध होता है।”",
-};
-const VERSE_REF = "1 John 4:12";
 
 /* `mrm-names` is Great Vibes — a script face, so its average advance is much
  * narrower than a serif's.
@@ -115,7 +109,10 @@ export function MiramarView({
   const faqs = config.faq?.items ?? [];
   const contacts = config.footer?.contacts ?? [];
   const hashtag = config.footer?.hashtag;
-  const tagline = config.hero?.tagline;
+  /* Every fixed line on this page, after the client's rewrites. `hasCopy`
+     guards each one at its use: a line they cleared takes its own element with
+     it rather than leaving an empty flourish behind. */
+  const copy = miramarCopy(config);
   /* The photograph behind the plate. Needs three things, in this order:
    *
    *   1. the THEME to offer it (`supports.heroPhoto`) — currently switched off,
@@ -140,13 +137,21 @@ export function MiramarView({
         ? { en: "Honoured Guests", hi: "सम्मानित अतिथिगण" }
         : null;
 
-  const links: Array<[string, string, string]> = [];
-  if (milestones.length) links.push(["#story", "Our Story", "हमारी कहानी"]);
-  if (familyMembers.length) links.push(["#family", "Families", "परिवार"]);
-  if (events.length) links.push(["#celebrations", "Celebrations", "आयोजन"]);
-  if (images.length) links.push(["#gallery", "Gallery", "गैलरी"]);
-  if (faqs.length || contacts.length) links.push(["#details", "Details", "विवरण"]);
-  if (hasRsvp) links.push(["#rsvp", "RSVP", "उत्तर"]);
+  /* A link needs both a section to point at and a label to click. Clearing the
+     label in the editor is how you drop a section from the menu while leaving
+     its content on the page. */
+  const links: Array<[string, Localized]> = (
+    [
+      ["#story", copy.navStory, milestones.length > 0],
+      ["#family", copy.navFamily, familyMembers.length > 0],
+      ["#celebrations", copy.navEvents, events.length > 0],
+      ["#gallery", copy.navGallery, images.length > 0],
+      ["#details", copy.navDetails, faqs.length > 0 || contacts.length > 0],
+      ["#rsvp", copy.navRsvp, hasRsvp],
+    ] as Array<[string, Localized, boolean]>
+  )
+    .filter(([, label, present]) => present && hasCopy(label))
+    .map(([href, label]) => [href, label]);
 
   const heroCta = hasRsvp ? "#rsvp" : events.length ? "#celebrations" : "#story";
 
@@ -177,13 +182,13 @@ export function MiramarView({
             {pair ? `${pair[0][0]} & ${pair[1][0]}` : names}
           </a>
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
-            {links.map(([href, en, hi]) => (
+            {links.map(([href, label]) => (
               <a
                 key={href}
                 href={href}
                 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[color:var(--mrm-ink)] transition-colors hover:text-[color:var(--mrm-rose-deep)]"
               >
-                <TT en={en} hi={hi} />
+                <T value={label} />
               </a>
             ))}
           </nav>
@@ -210,7 +215,7 @@ export function MiramarView({
               className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[color:var(--mrm-deep)] lg:hidden"
               aria-expanded={menu}
             >
-              Menu
+              <T value={copy.navMenu} />
             </button>
           </div>
         </div>
@@ -232,11 +237,11 @@ export function MiramarView({
               onClick={() => setMenu(false)}
               className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[color:var(--mrm-deep)]"
             >
-              Close
+              <T value={copy.navClose} />
             </button>
           </div>
           <nav className="mt-16 flex flex-col items-center gap-8" aria-label="Primary mobile">
-            {links.map(([href, en, hi], i) => (
+            {links.map(([href, label], i) => (
               <a
                 key={href}
                 href={href}
@@ -244,7 +249,7 @@ export function MiramarView({
                 className="mrm-serif text-3xl text-[color:var(--mrm-deep)] duration-500 animate-in fade-in slide-in-from-bottom-3"
                 style={{ animationDelay: `${90 + i * 70}ms` }}
               >
-                <TT en={en} hi={hi} />
+                <T value={label} />
               </a>
             ))}
             <div className="mt-4 flex gap-3">
@@ -358,29 +363,37 @@ export function MiramarView({
             </div>
 
             {/* the scripture */}
-            <div className="mrm-fade mt-2 max-w-md" style={{ animationDelay: "0.6s" }}>
-              <p className="mrm-serif text-[0.78rem] italic leading-relaxed text-[color:var(--mrm-ink)]/85 sm:text-base">
-                {tagline ? <T value={tagline} /> : <T value={DEFAULT_VERSE} />}
-              </p>
-              {tagline ? null : (
-                <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.34em] text-[color:var(--mrm-gold-deep)]">
-                  {VERSE_REF}
-                </p>
-              )}
-            </div>
+            {hasCopy(copy.verse) || hasCopy(copy.verseRef) ? (
+              <div className="mrm-fade mt-2 max-w-md" style={{ animationDelay: "0.6s" }}>
+                {hasCopy(copy.verse) ? (
+                  <p className="mrm-serif text-[0.78rem] italic leading-relaxed text-[color:var(--mrm-ink)]/85 sm:text-base">
+                    <T value={copy.verse} />
+                  </p>
+                ) : null}
+                {hasCopy(copy.verseRef) ? (
+                  <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.34em] text-[color:var(--mrm-gold-deep)]">
+                    <T value={copy.verseRef} />
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
 
-            <p
-              className="mrm-sans mrm-fade mt-5 text-[0.55rem] font-semibold uppercase tracking-[0.2em] text-[color:var(--mrm-sea)] sm:mt-6 sm:text-[0.66rem] sm:tracking-[0.4em]"
-              style={{ animationDelay: "0.85s" }}
-            >
-              <TT en="Together with their families" hi="अपने परिवारों सहित" />
-            </p>
-            <p
-              className="mrm-sans mrm-fade mt-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-[color:var(--mrm-ink-soft)] sm:text-[0.66rem] sm:tracking-[0.3em]"
-              style={{ animationDelay: "1s" }}
-            >
-              <TT en="invite you to the wedding of" hi="आपको विवाह में आमंत्रित करते हैं" />
-            </p>
+            {hasCopy(copy.heroTogether) ? (
+              <p
+                className="mrm-sans mrm-fade mt-5 text-[0.55rem] font-semibold uppercase tracking-[0.2em] text-[color:var(--mrm-sea)] sm:mt-6 sm:text-[0.66rem] sm:tracking-[0.4em]"
+                style={{ animationDelay: "0.85s" }}
+              >
+                <T value={copy.heroTogether} />
+              </p>
+            ) : null}
+            {hasCopy(copy.heroInvite) ? (
+              <p
+                className="mrm-sans mrm-fade mt-1.5 text-[0.55rem] uppercase tracking-[0.18em] text-[color:var(--mrm-ink-soft)] sm:text-[0.66rem] sm:tracking-[0.3em]"
+                style={{ animationDelay: "1s" }}
+              >
+                <T value={copy.heroInvite} />
+              </p>
+            ) : null}
 
             <div className="mrm-fade mt-2 w-full" style={{ animationDelay: "1.15s" }}>
               <h1
@@ -442,7 +455,7 @@ export function MiramarView({
             ) : null}
 
             <a href={heroCta} className="mrm-btn mrm-fade mt-6" style={{ animationDelay: "1.85s" }}>
-              <TT en="Celebrate with us" hi="हमारे साथ जश्न मनाइए" />
+              <T value={copy.heroCta} />
             </a>
 
             {/* the shore, seen through a porthole arch */}
@@ -482,21 +495,22 @@ export function MiramarView({
             <div className="mx-auto mb-2 flex justify-center">
               <Dove className="h-16 w-24" />
             </div>
-            <p className="mrm-script text-5xl text-[color:var(--mrm-rose-deep)]">
-              <TT en="Peace be with you" hi="आप पर शांति हो" />
-            </p>
+            {hasCopy(copy.welcomeGreeting) ? (
+              <p className="mrm-script text-5xl text-[color:var(--mrm-rose-deep)]">
+                <T value={copy.welcomeGreeting} />
+              </p>
+            ) : null}
             <h2 className="mrm-serif mt-2 text-[clamp(1.9rem,6vw,3.3rem)] text-[color:var(--mrm-deep)]">
               <T value={family} />
             </h2>
             <div className="mx-auto mt-5 flex justify-center">
               <GoldDivider className="w-56" />
             </div>
-            <p className="mrm-serif mx-auto mt-6 max-w-xl text-xl italic leading-relaxed text-[color:var(--mrm-ink)]">
-              <TT
-                en="With grateful hearts and the blessing of our families, we invite you to the church, to the shore, and to every moment in between."
-                hi="कृतज्ञ हृदय और अपने परिवारों के आशीर्वाद सहित, हम आपको गिरजाघर, समुद्र तट और बीच के हर पल में आमंत्रित करते हैं।"
-              />
-            </p>
+            {hasCopy(copy.welcomeBody) ? (
+              <p className="mrm-serif mx-auto mt-6 max-w-xl text-xl italic leading-relaxed text-[color:var(--mrm-ink)]">
+                <T value={copy.welcomeBody} />
+              </p>
+            ) : null}
             {rsvp && chip ? (
               <p className="mrm-serif mt-6 text-lg uppercase tracking-[0.24em] text-[color:var(--mrm-rose-deep)]">
                 <T value={chip} />
@@ -518,7 +532,7 @@ export function MiramarView({
             className="mrm-turn pointer-events-none absolute -right-24 top-10 z-0 h-auto w-72 opacity-[0.1] sm:w-96"
           />
           <div className="mx-auto max-w-4xl">
-            <SectionHead over={{ en: "Our Chronicle", hi: "गाथा" }} title={{ en: "How We Set Sail", hi: "हमारी कहानी" }} />
+            <SectionHead over={copy.storyEyebrow} title={copy.storyTitle} />
             <div className="relative mt-16 space-y-16">
               {/* the rope spine */}
               <span
@@ -578,7 +592,7 @@ export function MiramarView({
       {familyMembers.length > 0 ? (
         <section id="family" className="mrm-tide relative scroll-mt-16 overflow-hidden px-6 py-24 sm:py-28">
           <div className="relative z-10 mx-auto max-w-4xl">
-            <SectionHead over={{ en: "With Blessings", hi: "आशीर्वाद सहित" }} title={{ en: "Our Families", hi: "हमारे परिवार" }} />
+            <SectionHead over={copy.familyEyebrow} title={copy.familyTitle} />
             {/* The bouquet, standing between the two families. It replaces the
                 dove that used to sit here — the dove stays in the welcome above,
                 where it is the only mark, and one ornament under a heading that
@@ -592,18 +606,18 @@ export function MiramarView({
             </div>
             <div className={`mt-10 grid gap-12 ${groomFamily.length && brideFamily.length ? "md:grid-cols-2" : ""}`}>
               {[
-                { list: groomFamily, en: "Groom's Family", hi: "वर पक्ष", border: brideFamily.length > 0 },
-                { list: brideFamily, en: "Bride's Family", hi: "वधू पक्ष", border: false },
+                { side: "groom", list: groomFamily, label: copy.familyGroomLabel, border: brideFamily.length > 0 },
+                { side: "bride", list: brideFamily, label: copy.familyBrideLabel, border: false },
               ]
                 .filter((g) => g.list.length > 0)
                 .map((g) => (
                   <div
-                    key={g.en}
+                    key={g.side}
                     className={`text-center ${g.border ? "md:border-r md:border-[color:var(--mrm-gold)]/30 md:pr-12" : ""}`}
                     data-tw-reveal
                   >
                     <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--mrm-rose-deep)]">
-                      <TT en={g.en} hi={g.hi} />
+                      <T value={g.label} />
                     </p>
                     <div className="mt-5 space-y-4">
                       {g.list.map((m, i) => (
@@ -631,19 +645,18 @@ export function MiramarView({
       ) : null}
 
       {/* ── COUNTDOWN ──────────────────────────────────────────────────── */}
-      {countdownDate ? <MiramarCountdown dateIso={countdownDate} time={config.eventTime} /> : null}
+      {countdownDate ? (
+        <MiramarCountdown dateIso={countdownDate} time={config.eventTime} copy={copy} />
+      ) : null}
 
       {/* ── CELEBRATIONS ───────────────────────────────────────────────── */}
       {events.length > 0 ? (
         <section id="celebrations" className="mrm-paper2 relative scroll-mt-16 px-6 py-24 sm:py-28">
           <div className="mx-auto max-w-5xl">
-            <SectionHead over={{ en: "The Celebrations", hi: "आयोजन" }} title={{ en: "The Order of Days", hi: "समारोह" }} />
-            {!ownerPreview && rsvp ? (
+            <SectionHead over={copy.eventsEyebrow} title={copy.eventsTitle} />
+            {!ownerPreview && rsvp && hasCopy(copy.eventsNote) ? (
               <p className="mx-auto mt-4 max-w-md text-center text-sm italic text-[color:var(--mrm-ink-soft)]">
-                <TT
-                  en="Only the celebrations chosen for your family appear here."
-                  hi="यहाँ केवल वही आयोजन हैं जो आपके परिवार के लिए चुने गए हैं।"
-                />
+                <T value={copy.eventsNote} />
               </p>
             ) : null}
             <div className="mt-14 grid gap-8 sm:grid-cols-2">
@@ -683,18 +696,23 @@ export function MiramarView({
                     ) : null}
                     {e.hostedByEnabled && e.hostedBy ? (
                       <p className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--mrm-ink-soft)]">
-                        <TT en="Hosted by" hi="मेज़बान" /> {e.hostedBy}
+                        {hasCopy(copy.eventsHostedBy) ? (
+                          <>
+                            <T value={copy.eventsHostedBy} />{" "}
+                          </>
+                        ) : null}
+                        {e.hostedBy}
                       </p>
                     ) : null}
                     <div className="mt-5 flex flex-wrap justify-center gap-2">
                       {e.mapsUrl ? (
                         <a href={e.mapsUrl} target="_blank" rel="noopener noreferrer" className="mrm-chip">
-                          <TT en="View venue" hi="स्थान देखें" />
+                          <T value={copy.eventsVenueCta} />
                         </a>
                       ) : null}
                       {cal ? (
                         <a href={cal} target="_blank" rel="noopener noreferrer" className="mrm-chip">
-                          <TT en="Add to calendar" hi="कैलेंडर" />
+                          <T value={copy.eventsCalendarCta} />
                         </a>
                       ) : null}
                     </div>
@@ -710,7 +728,7 @@ export function MiramarView({
       {images.length > 0 ? (
         <section id="gallery" className="mrm-blush relative scroll-mt-16 px-6 py-24 sm:py-28">
           <div className="mx-auto max-w-5xl">
-            <SectionHead over={{ en: "The Collection", hi: "संग्रह" }} title={{ en: "Our Portraits", hi: "हमारे चित्र" }} />
+            <SectionHead over={copy.galleryEyebrow} title={copy.galleryTitle} />
             <div className="mt-14 grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3">
               {images.map((img, i) => {
                 // Every third photograph is a round brass porthole; the rest
@@ -760,7 +778,7 @@ export function MiramarView({
       {faqs.length > 0 || contacts.length > 0 ? (
         <section id="details" className="mrm-paper2 relative scroll-mt-16 px-6 py-24 sm:py-28">
           <div className="mx-auto max-w-3xl">
-            <SectionHead over={{ en: "For Our Guests", hi: "अतिथियों हेतु" }} title={{ en: "Charts & Bearings", hi: "विवरण" }} />
+            <SectionHead over={copy.detailsEyebrow} title={copy.detailsTitle} />
             <div className="mt-8 flex justify-center">
               <Art
                 slot="anchor"
@@ -782,9 +800,11 @@ export function MiramarView({
             </div>
             {contacts.length > 0 ? (
               <div className="mt-12 text-center" data-tw-reveal>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--mrm-rose-deep)]">
-                  <TT en="With love, reach us at" hi="स्नेह सहित, संपर्क करें" />
-                </p>
+                {hasCopy(copy.detailsContacts) ? (
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-[color:var(--mrm-rose-deep)]">
+                    <T value={copy.detailsContacts} />
+                  </p>
+                ) : null}
                 <div className="mt-3 flex flex-wrap justify-center gap-x-8 gap-y-2">
                   {contacts.map((c, i) => (
                     <p key={i} className="mrm-serif text-lg text-[color:var(--mrm-deep)]">
@@ -817,15 +837,16 @@ export function MiramarView({
           />
           <div className="relative z-10 mx-auto max-w-3xl">
             <div className="text-center" data-tw-reveal>
-              <p className="mrm-script text-5xl text-[color:var(--mrm-gold-lite)]">
-                <TT en="Will you join us?" hi="क्या आप पधारेंगे?" />
-              </p>
-              <p className="mrm-serif mt-4 text-lg italic text-[color:var(--mrm-shell)]/85">
-                <TT
-                  en="Your presence and blessings would make our celebration complete."
-                  hi="आपकी उपस्थिति और आशीर्वाद हमारे उत्सव को पूर्ण बनाएंगे।"
-                />
-              </p>
+              {hasCopy(copy.rsvpGreeting) ? (
+                <p className="mrm-script text-5xl text-[color:var(--mrm-gold-lite)]">
+                  <T value={copy.rsvpGreeting} />
+                </p>
+              ) : null}
+              {hasCopy(copy.rsvpNote) ? (
+                <p className="mrm-serif mt-4 text-lg italic text-[color:var(--mrm-shell)]/85">
+                  <T value={copy.rsvpNote} />
+                </p>
+              ) : null}
               <div className="mx-auto mt-6 flex w-full max-w-sm justify-center">
                 <div className="mrm-knotrule">
                   <Art
@@ -838,16 +859,23 @@ export function MiramarView({
             </div>
             <div className="mt-12">
               {rsvp ? (
-                <MiramarGroupRsvp slug={rsvp.slug} events={events} existing={rsvp.existing} onSaved={() => {}} />
+                <MiramarGroupRsvp
+                  slug={rsvp.slug}
+                  events={events}
+                  existing={rsvp.existing}
+                  onSaved={() => {}}
+                  copy={copy}
+                />
               ) : selfRsvp ? (
                 <MiramarSelfRsvp
                   slug={selfRsvp.slug}
                   events={selfRsvp.events}
                   existing={selfRsvp.existing}
                   onSaved={() => {}}
+                  copy={copy}
                 />
               ) : (
-                <MiramarRsvpDemo events={events} />
+                <MiramarRsvpDemo events={events} copy={copy} />
               )}
             </div>
           </div>
@@ -888,18 +916,21 @@ export function MiramarView({
               />
             </div>
           </div>
-          <p className="mrm-serif mx-auto mt-6 max-w-md text-lg italic text-[color:var(--mrm-shell)]/80">
-            <TT
-              en="“Whither thou goest, I will go.”"
-              hi="“जहाँ तू जाएगा, वहीं मैं भी जाऊँगी।”"
-            />
-          </p>
-          <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.34em] text-[color:var(--mrm-gold-lite)]/70">
-            Ruth 1:16
-          </p>
-          <p className="mt-10 text-[9px] uppercase tracking-[0.3em] text-[color:var(--mrm-shell)]/40">
-            <TT en="Crafted with love · Jashn" hi="प्रेम से बनाया गया · जश्न" />
-          </p>
+          {hasCopy(copy.footerVerse) ? (
+            <p className="mrm-serif mx-auto mt-6 max-w-md text-lg italic text-[color:var(--mrm-shell)]/80">
+              <T value={copy.footerVerse} />
+            </p>
+          ) : null}
+          {hasCopy(copy.footerVerseRef) ? (
+            <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.34em] text-[color:var(--mrm-gold-lite)]/70">
+              <T value={copy.footerVerseRef} />
+            </p>
+          ) : null}
+          {hasCopy(copy.footerCredit) ? (
+            <p className="mt-10 text-[9px] uppercase tracking-[0.3em] text-[color:var(--mrm-shell)]/40">
+              <T value={copy.footerCredit} />
+            </p>
+          ) : null}
           <JashnCredit className="mt-3 text-[color:var(--mrm-gold-lite)]/50" />
         </div>
       </footer>
@@ -911,24 +942,26 @@ export function MiramarView({
 }
 
 /* ── a reusable ornamented section heading ────────────────────────────────── */
-function SectionHead({
-  over,
-  title,
-}: {
-  over: { en: string; hi: string };
-  title: { en: string; hi: string };
-}) {
+function SectionHead({ over, title }: { over: Localized; title: Localized }) {
+  /* Both lines cleared means the client wants the section to arrive unheaded —
+     so the flourish and the rule go with them, rather than a bare pair of
+     ornaments hanging over the content with nothing between. */
+  if (!hasCopy(over) && !hasCopy(title)) return null;
   return (
     <div className="text-center" data-tw-reveal>
       <div className="mx-auto mb-4 flex justify-center">
         <HeadFlourish className="h-8 w-48" />
       </div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-[color:var(--mrm-rose-deep)]">
-        <TT en={over.en} hi={over.hi} />
-      </p>
-      <h2 className="mrm-serif mt-2 text-[clamp(1.9rem,6vw,3.5rem)] text-[color:var(--mrm-deep)]">
-        <TT en={title.en} hi={title.hi} />
-      </h2>
+      {hasCopy(over) ? (
+        <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-[color:var(--mrm-rose-deep)]">
+          <T value={over} />
+        </p>
+      ) : null}
+      {hasCopy(title) ? (
+        <h2 className="mrm-serif mt-2 text-[clamp(1.9rem,6vw,3.5rem)] text-[color:var(--mrm-deep)]">
+          <T value={title} />
+        </h2>
+      ) : null}
       <div className="mx-auto mt-4 flex justify-center">
         <GoldDivider className="w-56" />
       </div>
@@ -937,30 +970,40 @@ function SectionHead({
 }
 
 /* ── the countdown, kept by the lighthouse ────────────────────────────────── */
-function MiramarCountdown({ dateIso, time }: { dateIso: string; time?: string }) {
+function MiramarCountdown({
+  dateIso,
+  time,
+  copy,
+}: {
+  dateIso: string;
+  time?: string;
+  copy: MiramarCopy;
+}) {
   const { ready, days, hours, minutes, seconds } = useCountdown(dateIso, time ? `${time}:00` : undefined);
-  const units: Array<[string, string, string]> = [
-    [ready ? String(days) : "—", "Days", "दिन"],
-    [pad2(hours, ready), "Hours", "घंटे"],
-    [pad2(minutes, ready), "Minutes", "मिनट"],
-    [pad2(seconds, ready), "Seconds", "सेकंड"],
+  const units: Array<[string, string, Localized]> = [
+    ["days", ready ? String(days) : "—", copy.countdownDays],
+    ["hours", pad2(hours, ready), copy.countdownHours],
+    ["minutes", pad2(minutes, ready), copy.countdownMinutes],
+    ["seconds", pad2(seconds, ready), copy.countdownSeconds],
   ];
   return (
     <section className="mrm-deep relative overflow-hidden px-6 py-24 text-center sm:py-28">
       <SurfLine className="pointer-events-none absolute inset-x-0 top-0 h-14 w-full opacity-60" />
       <Lighthouse className="pointer-events-none absolute -right-8 bottom-0 h-56 w-40 opacity-45 sm:right-4 sm:h-72 sm:w-52" />
       <div className="relative" data-tw-reveal>
-        <p className="mrm-script text-5xl text-[color:var(--mrm-gold-lite)]">
-          <TT en="Counting every tide" hi="हर लहर गिनते हुए" />
-        </p>
+        {hasCopy(copy.countdownGreeting) ? (
+          <p className="mrm-script text-5xl text-[color:var(--mrm-gold-lite)]">
+            <T value={copy.countdownGreeting} />
+          </p>
+        ) : null}
         <div className="mx-auto mt-10 grid max-w-2xl grid-cols-4 gap-3 sm:gap-5">
-          {units.map(([v, en, hi]) => (
-            <div key={en} className="mrm-count flex min-w-0 flex-col items-center rounded-2xl px-1.5 py-5 sm:px-4">
+          {units.map(([unit, v, label]) => (
+            <div key={unit} className="mrm-count flex min-w-0 flex-col items-center rounded-2xl px-1.5 py-5 sm:px-4">
               <span className="mrm-serif mrm-glowtext text-[clamp(1.7rem,8vw,3.6rem)] font-semibold leading-none tabular-nums">
                 {v}
               </span>
               <span className="mt-2 text-[8px] font-semibold uppercase tracking-[0.24em] text-[color:var(--mrm-shell)]/75 sm:text-[10px] sm:tracking-[0.28em]">
-                <TT en={en} hi={hi} />
+                <T value={label} />
               </span>
             </div>
           ))}

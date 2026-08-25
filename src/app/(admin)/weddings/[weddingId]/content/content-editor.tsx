@@ -7,6 +7,7 @@ import type {
   Artwork,
   HeroPhoto,
   Experience,
+  Localized,
 } from "@/modules/website/schema";
 import type {
   ThemeSupports,
@@ -33,6 +34,12 @@ import { ArtworkPicker } from "@/modules/media/client/artwork-picker";
 import { MUSIC_LIBRARY, getMusicTrack } from "@/modules/website/music/registry";
 import { ThemeArtworkPreview } from "@/modules/website/render/artwork-preview";
 import { resolveArtwork } from "@/modules/website/render/artwork-placement";
+import {
+  MIRAMAR_COPY,
+  MIRAMAR_COPY_GROUPS,
+  miramarCopy,
+  type MiramarCopyKey,
+} from "@/modules/website/render/miramar/copy";
 
 type Loc = { en: string; hi: string };
 const L = (v?: { en: string; hi?: string }): Loc => ({
@@ -307,6 +314,44 @@ function serializeExp(
     default:
       return undefined;
   }
+}
+
+// ── Theme wording (the Miramar's fixed lines) ───────────────────────────────
+/**
+ * Every line the theme prints, prefilled with the wording the client saw in the
+ * preview — NOT with placeholders. Placeholder grey reads as "we will write
+ * something here"; the point of this section is that the beautiful default is
+ * already theirs and they are editing it, so the real words have to be sitting
+ * in the boxes, selectable and deletable.
+ */
+type CopyState = Partial<Record<MiramarCopyKey, Loc>>;
+
+function normalizeCopy(c: WebsiteConfig): CopyState {
+  const resolved = miramarCopy(c);
+  const out: CopyState = {};
+  for (const key of Object.keys(MIRAMAR_COPY) as MiramarCopyKey[]) {
+    out[key] = L(resolved[key]);
+  }
+  return out;
+}
+
+/**
+ * Only what the client actually changed goes to the database. Storing all
+ * fifty-six every time would freeze this invitation's wording against the
+ * theme's — a later fix to a translation or a typo in the defaults would reach
+ * every invitation except the ones whose owner had opened this form once.
+ */
+function serializeCopy(state: CopyState): Record<string, Localized> | undefined {
+  const out: Record<string, Localized> = {};
+  for (const key of Object.keys(MIRAMAR_COPY) as MiramarCopyKey[]) {
+    const v = state[key];
+    if (!v) continue;
+    const own = loc(v);
+    const base = MIRAMAR_COPY[key];
+    if (own.en === base.en && (own.hi ?? "") === (base.hi ?? "")) continue;
+    out[key] = own;
+  }
+  return Object.keys(out).length ? out : undefined;
 }
 
 // ── small building blocks ──────────────────────────────────────────────────
@@ -710,6 +755,101 @@ function ExperienceEditor({
   return null;
 }
 
+/**
+ * THE MIRAMAR — "Words on your website".
+ *
+ * Fifty-six fields is a lot of form, so it is grouped the way the site is read
+ * (invitation → welcome → story → … → footer) and each group starts collapsed
+ * with the first one open. Someone here to change one heading opens one group;
+ * someone rewriting the whole invitation opens them in order and works down the
+ * page.
+ */
+function ThemeCopyEditor({
+  copy,
+  setCopy,
+}: {
+  copy: CopyState;
+  setCopy: React.Dispatch<React.SetStateAction<CopyState>>;
+}) {
+  const [open, setOpen] = useState<string | null>(
+    MIRAMAR_COPY_GROUPS[0]?.title ?? null
+  );
+
+  const changed = (Object.keys(MIRAMAR_COPY) as MiramarCopyKey[]).filter((k) => {
+    const v = copy[k];
+    if (!v) return false;
+    const base = MIRAMAR_COPY[k];
+    return v.en.trim() !== base.en || (v.hi.trim() || undefined) !== base.hi;
+  }).length;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Words on your website</CardTitle>
+        <CardDescription>
+          Every fixed line your theme prints — the scripture, the headings above
+          each section, the buttons, the closing verse. They start as the wording
+          you saw in the preview; change any of them and your site follows. Clear
+          a line to remove it altogether (buttons and menu items keep their
+          wording, since an unlabelled button is a dead one).
+          {changed > 0 ? (
+            <>
+              {" "}
+              <span className="font-medium text-foreground">
+                {changed} line{changed === 1 ? "" : "s"} changed.
+              </span>
+            </>
+          ) : null}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {MIRAMAR_COPY_GROUPS.map((g) => {
+          const isOpen = open === g.title;
+          return (
+            <div key={g.title} className="rounded-lg border">
+              <button
+                type="button"
+                onClick={() => setOpen(isOpen ? null : g.title)}
+                aria-expanded={isOpen}
+                className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left"
+              >
+                <span className="text-sm font-medium">{g.title}</span>
+                <span className="text-muted-foreground">{isOpen ? "−" : "+"}</span>
+              </button>
+              {isOpen ? (
+                <div className="space-y-4 border-t px-3 py-3">
+                  {g.hint ? (
+                    <p className="text-xs text-muted-foreground">{g.hint}</p>
+                  ) : null}
+                  {g.fields.map((f) => (
+                    <LocField
+                      key={f.key}
+                      label={f.label}
+                      multiline={f.multiline}
+                      value={copy[f.key] ?? L(MIRAMAR_COPY[f.key])}
+                      onChange={(v) =>
+                        setCopy((prev) => ({ ...prev, [f.key]: v }))
+                      }
+                    />
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+        <Button
+          type="button"
+          variant="outline"
+          disabled={changed === 0}
+          onClick={() => setCopy(normalizeCopy({}))}
+        >
+          Reset all wording to the theme&rsquo;s
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function ContentEditor({
   weddingId,
   initial,
@@ -733,6 +873,12 @@ export function ContentEditor({
   const [s, setS] = useState<State>(() => normalize(initial));
   const [exp, setExp] = useState<ExpState>(() =>
     normalizeExp(initial.experience)
+  );
+  /* The Miramar is the one theme that publishes its own copy list. Other themes
+     get no wording section — and none of this state ever reaches their save. */
+  const editableCopy = themeId === "miramar";
+  const [copy, setCopy] = useState<CopyState>(() =>
+    editableCopy ? normalizeCopy(initial) : {}
   );
   const [urlDraft, setUrlDraft] = useState("");
   const [artUrlDraft, setArtUrlDraft] = useState("");
@@ -786,6 +932,15 @@ export function ContentEditor({
     const cfg: WebsiteConfig = experience
       ? { ...toConfig(s), experience }
       : toConfig(s);
+    if (editableCopy) {
+      const miramar = serializeCopy(copy);
+      cfg.themeCopy = miramar ? { miramar } : undefined;
+    } else {
+      // Saving from a theme that has no wording section must not throw away the
+      // wording another theme's section wrote — switching theme to look at
+      // something else and switching back is a normal afternoon.
+      cfg.themeCopy = initial.themeCopy;
+    }
     startTransition(async () => {
       const res = await saveWebsiteConfigAction(weddingId, cfg);
       setStatus(res);
@@ -1004,7 +1159,17 @@ export function ContentEditor({
         </Card>
       ) : null}
 
-      {supports.taglineHero ? (
+      {/* Every word the theme prints, editable. Placed here — above the
+          content sections — because it is where a client goes to change what
+          the site SAYS, as opposed to what is on it. */}
+      {editableCopy ? <ThemeCopyEditor copy={copy} setCopy={setCopy} /> : null}
+
+      {/* The tagline is the older, single-field way to replace a theme's hero
+          line. A theme with its own wording section already offers it there (on
+          the Miramar it is "Scripture / opening quote", prefilled from whatever
+          tagline this invitation already had), and two boxes writing the same
+          line is how one of them silently loses. */}
+      {supports.taglineHero && !editableCopy ? (
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Hero</CardTitle>
