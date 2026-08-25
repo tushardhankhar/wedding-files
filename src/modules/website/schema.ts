@@ -155,11 +155,30 @@ export const experienceSchema = z
 
 export type Experience = z.infer<typeof experienceSchema>;
 
+/**
+ * Per-theme copy overrides — the fixed lines a bespoke theme prints (its
+ * headings, its eyebrows, its scripture, its button labels), made editable.
+ *
+ * Keyed by theme id, then by that theme's own field key. Deliberately a record
+ * rather than a hand-written object of forty keys: the renderer is the
+ * authority on which keys exist (see render/miramar/copy.ts), it reads only the
+ * ones it knows, and a key left behind by an edit to that list is inert instead
+ * of failing the whole config's parse.
+ */
+export const themeCopySchema = z.object({
+  miramar: z.record(z.string(), localizedSchema).optional(),
+});
+
+export type ThemeCopy = z.infer<typeof themeCopySchema>;
+
 export const websiteConfigSchema = z.object({
   /** Time of day (HH:MM) for the event — makes theme countdowns exact. Stored
    * alongside the wedding's date (which is a date-only column). */
   eventTime: z.string().optional(),
   hero: z.object({ tagline: localizedSchema.optional() }).optional(),
+  /** The wording of the theme's own fixed lines. Only bespoke themes that
+   * publish a copy list (today: the Miramar) offer it. */
+  themeCopy: themeCopySchema.optional(),
   experience: experienceSchema,
   /** The theme's illustration slot — switch it off, keep the theme's figures, or
    * replace them with the client's own drawing. Only themes whose
