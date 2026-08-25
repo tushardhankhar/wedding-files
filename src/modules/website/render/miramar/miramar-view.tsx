@@ -52,7 +52,7 @@ function cityOf(events: WeddingEvent[]): string | null {
   return null;
 }
 
-/* `mrm-names` is Great Vibes — a script face, so its average advance is much
+/* `mrm-names` is Rouge Script — a script face, so its average advance is much
  * narrower than a serif's.
  *
  * The measure is NOT a plain vw here, because on this theme the names do not
@@ -60,17 +60,33 @@ function cityOf(events: WeddingEvent[]): string | null {
  * padding). A vw-only measure told the estimate it had 1094px to play with at a
  * 1440 desktop when the real measure is ~512, so `min()` never kicked in and
  * "Ryan & Alisha" broke after the "&". Capped at the plate's own inner width, it
- * steps down correctly at every size. 0.52em/char, not 0.46: measured against
- * what the face actually set at 248px, where the wrap first showed up. */
+ * steps down correctly at every size.
+ *
+ * 0.60em/char, measured in the browser against Rouge as it actually renders
+ * (0.541 for the widest mixed-case name; Great Vibes was 0.44 and carried 0.52).
+ * Verified with no overflow at 248/320/360/390/414/768/1024/1440 across eight
+ * name pairs, including "Priyadarshini & Krishnamurthy".
+ *
+ * It does NOT hold for a name typed in ALL CAPS — "MOHAMMED" overruns the plate
+ * by ~17%. That is a pre-existing hole in the estimate, not a new one: caps are
+ * far wider than the per-character average this formula assumes, and the old
+ * Great Vibes setting overran the same name by 64%. Closing it properly means
+ * weighting capitals inside fitName (shared by every theme), not inflating this
+ * constant — the value that covers ALL CAPS also shrinks every ordinary name by
+ * about a quarter, which is the wrong trade for an edge case.
+ *
+ * MEASURE IN THE BROWSER if the face changes again, and check the computed
+ * font-family first: a stale Turbopack CSS chunk will happily serve the old
+ * face while the source says otherwise, and then every number here is fiction. */
 const NAME_FIT = {
   max: "clamp(2.9rem,15vw,5.8rem)",
-  emPerChar: 0.52,
+  emPerChar: 0.6,
   measure: "min(74vw, 30rem)",
 };
 /* The footer's names are full-bleed, so they get their own, wider measure. */
 const FOOTER_NAME_FIT = {
   max: "clamp(2.3rem,10vw,3.9rem)",
-  emPerChar: 0.52,
+  emPerChar: 0.6,
   measure: "min(88vw, 44rem)",
 };
 
@@ -398,7 +414,19 @@ export function MiramarView({
             <div className="mrm-fade mt-2 w-full" style={{ animationDelay: "1.15s" }}>
               <h1
                 className="mrm-names mrm-foil leading-[1.05]"
-                style={pair ? fitName(longerOf(pair), NAME_FIT) : fitName(names, NAME_FIT)}
+                /* Size on what actually shares a line. Stacked, that is the
+                   longer of the two names; unstacked, it is the whole
+                   "A & B" — measuring only the longer name there ignores the
+                   other one and the ampersand entirely, and the browser wraps
+                   after the "&". Great Vibes was narrow enough to hide it. */
+                style={fitName(
+                  pair
+                    ? shouldStack(pair)
+                      ? longerOf(pair)
+                      : `${pair[0]} & ${pair[1]}`
+                    : names,
+                  NAME_FIT
+                )}
               >
                 {pair ? (
                   shouldStack(pair) ? (

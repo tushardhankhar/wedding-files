@@ -5570,8 +5570,16 @@
   line-height: 1.65;
 }
 .mrm-serif { font-family: var(--font-playfair), Georgia, "Times New Roman", serif; }
-.mrm-names { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
-.mrm-script { font-family: var(--font-great-vibes), "Segoe Script", cursive; }
+/* Rouge Script, not Great Vibes. Great Vibes draws its capital A as a swash
+   form with an ascender loop, which on a page that exists to print two names
+   reads as a lowercase "a" — "Angelus" came out "angelus", and the nav monogram
+   (a bare "A & P" in .mrm-script) had nowhere to hide it. Rouge Script draws a
+   clear peaked capital and keeps the weight Great Vibes had — a thin script
+   leaves this plate pale, which is what ruled out Pinyon. Both classes move
+   together: the monogram and the hero names are the same two letters, and two
+   scripts on one plate reads as an accident. */
+.mrm-names { font-family: var(--font-rouge), "Segoe Script", cursive; }
+.mrm-script { font-family: var(--font-rouge), "Segoe Script", cursive; }
 .mrm-sans { font-family: var(--font-raleway), "Segoe UI", system-ui, sans-serif; }
 .mrm .l-hi { font-family: var(--font-noto-deva), var(--font-raleway), sans-serif; }
 .mrm ::selection { background: var(--mrm-sea); color: #fff; }

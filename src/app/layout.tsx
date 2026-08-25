@@ -8,6 +8,7 @@ import {
   Playfair_Display,
   Marcellus,
   Great_Vibes,
+  Rouge_Script,
   Space_Grotesk,
   Fredoka,
   Nunito,
@@ -85,6 +86,22 @@ const greatVibes = Great_Vibes({
   display: "swap",
 });
 
+// The Miramar's script. Great Vibes sets its capital A as a swash form with an
+// ascender loop — beautiful in isolation, but on a page whose whole job is to
+// print two names it reads as a lowercase "a", so "Angelus" came out "angelus".
+//
+// Rouge Script keeps the romantic weight Great Vibes had — the plate goes pale
+// under a thin face, which is why Pinyon Script (tried first) was wrong — while
+// drawing its capital A with a clear peaked stroke that cannot be misread.
+// Wider per character than Great Vibes; see NAME_FIT in miramar-view, and
+// measure in the browser before changing that constant.
+const rougeScript = Rouge_Script({
+  variable: "--font-rouge",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
 // ── "Experience" themes (afterparty / confetti / little-miracle / shubh-aarambh) ──
 // Nightclub-grade grotesque for The Afterparty. Variable → full weight range.
 const spaceGrotesk = Space_Grotesk({
@@ -134,7 +151,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${marcellus.variable} ${notoDevanagari.variable} ${tiroDevanagari.variable} ${playfair.variable} ${greatVibes.variable} ${spaceGrotesk.variable} ${fredoka.variable} ${nunito.variable} ${dmSerif.variable} h-full antialiased`}
+      className={`${poppins.variable} ${raleway.variable} ${cormorant.variable} ${marcellus.variable} ${notoDevanagari.variable} ${tiroDevanagari.variable} ${playfair.variable} ${greatVibes.variable} ${rougeScript.variable} ${spaceGrotesk.variable} ${fredoka.variable} ${nunito.variable} ${dmSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
