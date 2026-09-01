@@ -161,7 +161,7 @@ export function LandingHero({ ratingBadge }: { ratingBadge?: ReactNode }) {
               and hide the buy button entirely (`lg:hidden`, left over from when
               the only way to buy was WhatsApp) — so the highest-intent area of
               the page offered look and learn but no way to purchase.
-              The order is deliberate too: at ₹299 buying is the low-commitment
+              The order is deliberate too: at ₹499 buying is the low-commitment
               action, and the proof a demo would provide is already on screen in
               the live phone beside this copy. */}
           <div className="l-load mt-6 grid grid-cols-2 gap-2.5 lg:mt-9 lg:flex lg:items-center lg:justify-start" style={{ animationDelay: "0.6s" }}>

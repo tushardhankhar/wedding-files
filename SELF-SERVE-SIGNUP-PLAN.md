@@ -23,7 +23,7 @@ Confirmed 2026-08-15, superseding the 2026-08-05 proposal where they differ.
 
 | Decision | Choice |
 |---|---|
-| Price | **₹299**, a single introductory offer. No plan/SKU concept — the landing page's Save the Date and bundle plans stay WhatsApp-booked. |
+| Price | **₹499**, a single introductory offer. No plan/SKU concept — the landing page's Save the Date and bundle plans stay WhatsApp-booked. |
 | Provider | **Razorpay**, direct REST + webhook. Not on the Vercel Marketplace (only Stripe is), but Stripe India's UPI support is weaker and UPI is how most buyers at this price pay. |
 | Auth | **Magic link + OTP only.** No Google OAuth, no passwords — reuses `modules/auth` as-is. |
 | Sequencing | **Draft-until-paid.** Answers live in `pending_signups`; the `weddings` row exists only after payment verifies. No unpaid ghost sites. |
@@ -86,7 +86,7 @@ A hand-crafted PostgREST call with a valid user JWT still cannot set its own
 - The charged amount is `PRICE_PAISE` in `modules/self-serve/pricing.ts`, read
   **server-side only**. It is never a parameter to `createOrder` and never
   travels inbound. A checkout that accepts an amount from its caller is one
-  crafted request away from selling a ₹299 product for ₹1.
+  crafted request away from selling a ₹499 product for ₹1.
 - Both activation paths verify an HMAC before touching the database
   (`hmacSha256Hex` + `timingSafeEqualHex`, already in `lib/crypto.ts`). The
   webhook hashes the **raw** body — re-serialized JSON would never match.
@@ -107,7 +107,7 @@ A hand-crafted PostgREST call with a valid user JWT still cannot set its own
 3. **One test-mode payment** end to end with `success@razorpay`.
 ## 6. Pricing copy
 
-`PRICE` (`components/landing/data.ts`) is ₹299 and `PRICE_WAS` is ₹1,599, shown
+`PRICE` (`components/landing/data.ts`) is ₹499 and `PRICE_WAS` is ₹1,599, shown
 struck through beside it. ₹1,599 now appears in exactly one visible place on the
 landing page — that strike-through.
 
@@ -120,7 +120,7 @@ results and WhatsApp link previews.
 
 While the offer runs, the pricing section shows **one card**. Save the Date
 (₹1,099) and the bundle (₹2,199) are parked in `PARKED_PLANS`, not deleted: they
-don't describe a choice next to a ₹299 full invitation. To end the offer, restore
+don't describe a choice next to a ₹499 full invitation. To end the offer, restore
 them, set the flagship back to `PRICE_WAS`, drop its `was`, and reset both price
 constants.
 

@@ -18,9 +18,9 @@ import { ReviewsBadge } from "@/components/landing/reviews-badge";
 import { StickyCta } from "@/components/landing/sticky-cta";
 import { GoToTop } from "@/modules/website/render/go-to-top";
 
-const TITLE = "Join the Jashn — Personal invitation websites for every celebration · ₹299";
+const TITLE = "Join the Jashn — Personal invitation websites for every celebration · ₹499";
 const DESCRIPTION =
-  "Build your own bilingual invitation website for any celebration — weddings, birthdays, baby showers, housewarmings & more. Share one private WhatsApp link, and every family gets an invitation made just for them, showing only the events they're invited to. Introductory price, ₹299. No app, no guest accounts.";
+  "Build your own bilingual invitation website for any celebration — weddings, birthdays, baby showers, housewarmings & more. Share one private WhatsApp link, and every family gets an invitation made just for them, showing only the events they're invited to. Introductory price, ₹499. No app, no guest accounts.";
 
 export const metadata: Metadata = {
   title: TITLE,
