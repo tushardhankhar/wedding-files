@@ -104,7 +104,7 @@ export async function reportPurchase(event: PurchaseEvent): Promise<boolean> {
         custom_data: {
           currency: CURRENCY,
           // Rupees, not paise — same reason as the browser event: reporting
-          // 29900 would let Meta bid a hundred times what a buyer is worth.
+          // 49900 would let Meta bid a hundred times what a buyer is worth.
           value: PRICE_PAISE / 100,
           content_type: "product",
           content_ids: ["self-serve-invitation"],

@@ -72,7 +72,7 @@ function loadCheckout(): Promise<void> {
 }
 
 /**
- * The ₹299 checkout.
+ * The ₹499 checkout.
  *
  * Note what this component never sees: a price. It asks the server to create an
  * order and is handed back only an order id to open — the amount is decided,

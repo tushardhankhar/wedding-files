@@ -43,7 +43,7 @@ export interface RazorpayOrder {
  *
  * The amount is read from `PRICE_PAISE` here, inside the server module — it is
  * never a parameter. A checkout that accepts an amount from its caller is one
- * crafted request away from selling a ₹299 product for ₹1, and making it a
+ * crafted request away from selling a ₹499 product for ₹1, and making it a
  * parameter is what would let that request exist.
  *
  * `receipt` and `notes` both carry the signup id so a payment can be traced
