@@ -442,9 +442,13 @@ export const FAQS: { q: string; a: string }[] = [
     q: "Can I use it for something that isn't a wedding?",
     a: "Yes — birthdays, baby showers, griha pravesh, anniversaries, naming ceremonies, engagement parties, and a save-the-date on its own. There are themes built specifically for each, and the same per-family privacy works for all of them.",
   },
+  // Must describe the /start checkout the buy buttons actually lead to. This
+  // once promised "nothing is charged from this website", which went false the
+  // day self-serve Razorpay shipped — a visitor who read it and then met a
+  // payment screen had every reason to back out.
   {
     q: "How do I pay?",
-    a: "In the WhatsApp chat, by UPI or bank transfer, after we've confirmed exactly what you're getting. Nothing is charged from this website and you'll never be asked for card details here.",
+    a: "On this site, when you create your invitation — by UPI, card, netbanking or wallet, through Razorpay's secure checkout. Card details go to Razorpay, never to us. Would rather talk first? Message us on WhatsApp and you can pay by UPI or bank transfer there instead.",
   },
   // Answers the same question the old refund promise did, but with the truth:
   // payments are non-refundable (Terms §7), so the honest answer is to make
