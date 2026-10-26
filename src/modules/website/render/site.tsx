@@ -18,6 +18,7 @@ import { JodiView } from "./jodi/jodi-view";
 import { DakView } from "./dak/dak-view";
 import { RajmahalView } from "./rajmahal/rajmahal-view";
 import { TaqdeerView } from "./taqdeer/taqdeer-view";
+import { RoshniView } from "./roshni/roshni-view";
 import { GoToTop } from "./go-to-top";
 import { MusicPlayer } from "./music-player";
 
@@ -67,6 +68,8 @@ function ThemeView(props: WebsiteViewProps) {
       return <RajmahalView {...props} />;
     case "taqdeer": // The Taqdeer — Art Deco slot machine
       return <TaqdeerView {...props} />;
+    case "roshni": // The Roshni — Diwali, festival of lights
+      return <RoshniView {...props} />;
     default:
       return <WebsiteView {...props} />;
   }

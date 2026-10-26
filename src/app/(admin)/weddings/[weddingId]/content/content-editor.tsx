@@ -34,6 +34,7 @@ import { ArtworkPicker } from "@/modules/media/client/artwork-picker";
 import { MUSIC_LIBRARY, getMusicTrack } from "@/modules/website/music/registry";
 import { ThemeArtworkPreview } from "@/modules/website/render/artwork-preview";
 import { resolveArtwork } from "@/modules/website/render/artwork-placement";
+import { ROSHNI_DEFAULTS } from "@/modules/website/render/roshni/copy";
 import {
   MIRAMAR_COPY,
   MIRAMAR_COPY_GROUPS,
@@ -208,13 +209,30 @@ interface ExpState {
   saTitle: Loc;
   blessing: Loc;
   rangoli: string[];
+  // roshni (festival) — English-only; prefilled with the theme's own wording.
+  rsHost: string;
+  rsWhatsapp: string;
+  rs: Record<RoshniKey, string>;
 }
+
+type RoshniKey = keyof typeof ROSHNI_DEFAULTS;
+const ROSHNI_FIELDS: Array<{ key: RoshniKey; label: string; multiline?: boolean }> = [
+  { key: "headline", label: "Headline" },
+  { key: "intro", label: "Supporting line" },
+  { key: "invitation", label: "Invitation", multiline: true },
+  { key: "letterTitle", label: "Letter heading" },
+  { key: "letterBody", label: "Letter", multiline: true },
+  { key: "closingTitle", label: "RSVP heading" },
+  { key: "closingLine", label: "RSVP line" },
+  { key: "blessing", label: "Closing blessing" },
+];
 
 function normalizeExp(x: Experience): ExpState {
   const ap = x?.afterparty;
   const cf = x?.confetti;
   const lm = x?.littleMiracle;
   const sa = x?.shubhAarambh;
+  const rs = x?.roshni;
   return {
     eventTitle: L(ap?.eventTitle),
     guestLabel: ap?.guestLabel ?? "",
@@ -242,6 +260,11 @@ function normalizeExp(x: Experience): ExpState {
     saTitle: L(sa?.title),
     blessing: L(sa?.blessing),
     rangoli: sa?.rangoliColors ?? [],
+    rsHost: rs?.host?.en ?? "",
+    rsWhatsapp: rs?.whatsapp ?? "",
+    rs: Object.fromEntries(
+      ROSHNI_FIELDS.map(({ key }) => [key, rs?.[key]?.en ?? ROSHNI_DEFAULTS[key]]),
+    ) as Record<RoshniKey, string>,
   };
 }
 
@@ -311,6 +334,21 @@ function serializeExp(
           rangoliColors: e.rangoli.map((c) => c.trim()).filter(Boolean),
         },
       };
+    case "festival": {
+      // Store only what the host changed, so the theme's own wording can keep
+      // improving for everyone who left a line as it was.
+      const changed = (k: RoshniKey) => {
+        const v = e.rs[k].trim();
+        return v && v !== ROSHNI_DEFAULTS[k] ? { en: v } : undefined;
+      };
+      return {
+        roshni: {
+          host: e.rsHost.trim() ? { en: e.rsHost.trim() } : undefined,
+          whatsapp: e.rsWhatsapp.replace(/\D/g, "") || undefined,
+          ...Object.fromEntries(ROSHNI_FIELDS.map(({ key }) => [key, changed(key)])),
+        },
+      };
+    }
     default:
       return undefined;
   }
@@ -676,6 +714,56 @@ function ExperienceEditor({
                 </div>
               </>
             ) : null}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (category === "festival") {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Invitation wording</CardTitle>
+          <CardDescription>
+            Every line your guests read. Date, time and venue come from your events.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="rs-host">Hosted by</Label>
+            <Input
+              id="rs-host"
+              value={exp.rsHost}
+              onChange={(e) => up({ rsHost: e.target.value })}
+              placeholder="e.g. The Kapoor Family"
+            />
+          </div>
+          {ROSHNI_FIELDS.map(({ key, label, multiline }) => {
+            const Field = multiline ? Textarea : Input;
+            return (
+              <div key={key} className="space-y-1.5">
+                <Label htmlFor={`rs-${key}`}>{label}</Label>
+                <Field
+                  id={`rs-${key}`}
+                  value={exp.rs[key]}
+                  onChange={(e) => up({ rs: { ...exp.rs, [key]: e.target.value } })}
+                />
+              </div>
+            );
+          })}
+          <div className="space-y-1.5">
+            <Label htmlFor="rs-wa">WhatsApp number for replies (optional)</Label>
+            <Input
+              id="rs-wa"
+              inputMode="tel"
+              value={exp.rsWhatsapp}
+              onChange={(e) => up({ rsWhatsapp: e.target.value })}
+              placeholder="e.g. 91 98100 00000 — with country code"
+            />
+            <p className="text-xs text-muted-foreground">
+              Adds a &ldquo;Reply on WhatsApp&rdquo; option with a ready-written message.
+            </p>
           </div>
         </CardContent>
       </Card>

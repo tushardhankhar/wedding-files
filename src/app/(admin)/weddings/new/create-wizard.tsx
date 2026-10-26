@@ -24,6 +24,7 @@ const TITLE_PLACEHOLDER: Record<ThemeCategory, string> = {
   "baby-shower": "e.g. Aisha & Kabir",
   housewarming: "e.g. The Sharma Family",
   party: "e.g. Rohan's Bachelor Party",
+  festival: "e.g. Kapoor Family Diwali",
 };
 
 /** A sensible default title (and therefore URL slug) per occasion, until the
@@ -40,6 +41,8 @@ function suggestTitle(cat: ThemeCategory, n1: string, n2: string): string {
       return a ? `${a}'s Party` : "";
     case "housewarming":
       return a ? `${a} Housewarming` : both;
+    case "festival":
+      return a ? `${a.replace(/^the\s+/i, "")} Diwali` : both;
     default:
       return both;
   }
