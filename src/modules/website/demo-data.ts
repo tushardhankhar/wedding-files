@@ -411,6 +411,46 @@ const SHUBH_AARAMBH: DemoDataset = {
   ],
 };
 
+// 21 · The Roshni — a Diwali evening at home. Dated to Diwali 2026 (Lakshmi
+// Puja falls on Sunday 8 November) so the demo countdown is a real one.
+const ROSHNI: DemoDataset = {
+  wedding: {
+    title: "Kapoor Family Diwali",
+    name1: "The Kapoor Family",
+    name2: null,
+    eventDate: "2026-11-08",
+    config: {
+      eventTime: "18:30",
+      experience: {
+        roshni: {
+          host: { en: "The Kapoor Family" },
+        },
+      },
+      music: { enabled: true, source: "library", trackId: "jashn-e-bahaaraa" },
+      footer: { hashtag: "KapoorKiDiwali" },
+    } as Record<string, unknown>,
+  },
+  events: [
+    ev("rs-1", "Lakshmi Puja", "18:30", {
+      eventDate: "2026-11-08",
+      nameHi: "लक्ष्मी पूजा",
+      description: "We begin together, with prayers and the first diya.",
+      venueName: "The Kapoor Residence",
+      venueAddress: "C-14, Vasant Vihar, New Delhi 110057",
+    }),
+    ev("rs-2", "Diyas & Phuljhadiyan", "19:30", {
+      eventDate: "2026-11-08",
+      nameHi: "दीये और फुलझड़ियाँ",
+      description: "Light up the terrace with us — sparklers on the house.",
+    }),
+    ev("rs-3", "Diwali Dinner & Mithai", "20:30", {
+      eventDate: "2026-11-08",
+      nameHi: "दिवाली भोज",
+      description: "Chaat, a long dinner table and far too many sweets.",
+    }),
+  ],
+};
+
 /* The Miramar — a Goan Catholic wedding.
  *
  * This theme gets its own sample rather than the shared one: the generic
@@ -573,6 +613,7 @@ const EXPERIENCE_DEMOS: Record<string, DemoDataset> = {
   "little-miracle": LITTLE_MIRACLE,
   "shubh-aarambh": SHUBH_AARAMBH,
   miramar: MIRAMAR,
+  roshni: ROSHNI,
 };
 
 /** The gallery a theme should show in the demo, matched to its palette/occasion. */

@@ -128,8 +128,21 @@ export function FloatingParticles({
     });
     ro.observe(parent);
 
+    // Off-screen canvases stop their loop, so a page with several of them only
+    // ever animates the one(s) in view.
+    const io = new IntersectionObserver(([entry]) => {
+      if (reduce) return;
+      if (entry.isIntersecting && raf == null) raf = requestAnimationFrame(loop);
+      else if (!entry.isIntersecting && raf != null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    });
+    io.observe(canvas);
+
     return () => {
       ro.disconnect();
+      io.disconnect();
       if (raf != null) cancelAnimationFrame(raf);
     };
   }, [colors, density, maxCount, minR, maxR, speed, mode]);

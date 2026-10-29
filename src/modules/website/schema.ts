@@ -150,6 +150,25 @@ export const experienceSchema = z
         rangoliColors: z.array(z.string()).default([]), // palette dots (hex)
       })
       .optional(),
+
+    /** The Roshni — Diwali / festival-of-lights gathering. Every line the
+     * invitation prints is the host's to rewrite; absent lines fall back to
+     * the renderer's own wording. */
+    roshni: z
+      .object({
+        host: localizedSchema.optional(), // "The Kapoor Family"
+        headline: localizedSchema.optional(),
+        intro: localizedSchema.optional(),
+        invitation: localizedSchema.optional(),
+        letterTitle: localizedSchema.optional(),
+        letterBody: localizedSchema.optional(),
+        closingTitle: localizedSchema.optional(),
+        closingLine: localizedSchema.optional(),
+        blessing: localizedSchema.optional(),
+        /** Digits only, with country code — enables "Reply on WhatsApp". */
+        whatsapp: z.string().optional(),
+      })
+      .optional(),
   })
   .optional();
 

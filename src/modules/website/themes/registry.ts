@@ -22,7 +22,8 @@ export type HeroMotif =
   | "celestial"
   | "doorway"
   | "seal"
-  | "lighthouse";
+  | "lighthouse"
+  | "diya";
 
 export type ThemeCategory =
   | "wedding"
@@ -30,7 +31,8 @@ export type ThemeCategory =
   | "party"
   | "kids-birthday"
   | "baby-shower"
-  | "housewarming";
+  | "housewarming"
+  | "festival";
 
 /**
  * Whether a theme has an illustration slot — a place where the couple is drawn
@@ -957,6 +959,46 @@ const THEME_BASES: ThemeBase[] = [
       "--w-pattern":
         "conic-gradient(from 45deg, var(--sa-saffron) 0 25%, transparent 0 50%, var(--sa-saffron) 0 75%, transparent 0) 0 0/16px 16px",
     } as CSSProperties,
+  },  {
+    id: "roshni",
+    name: "The Roshni",
+    description:
+      "Wine & antique gold, diyas that light one by one, a rangoli that draws itself — Diwali.",
+    swatch: ["#54132C", "#D9A52E", "#F6EFE3"],
+    heroMotif: "diya",
+    vars: {
+      /* Three-colour system: wine · antique gold · ivory. Marigold is a
+       * flower, not a colour — it appears only in the toran and the petals. */
+      "--rsh-wine": "#54132C",
+      "--rsh-wine-deep": "#3A0C1E",
+      "--rsh-night": "#22060F",
+      "--rsh-gold": "#D9A52E",
+      "--rsh-glow": "#F0C35A",
+      "--rsh-gold-deep": "#8C6414", // gold dark enough to read on ivory
+      "--rsh-ivory": "#F6EFE3",
+      "--rsh-paper": "#FBF6EC",
+      "--rsh-ink": "#3A0C1E",
+      "--rsh-ink-soft": "#6E4A52",
+      "--rsh-marigold": "#E8891C",
+      "--w-navy": "#3A0C1E",
+      "--w-bg": "#54132C",
+      "--w-surface": "#FBF6EC",
+      "--w-ink": "#3A0C1E",
+      "--w-ink-soft": "#6E4A52",
+      "--w-accent": "#D9A52E",
+      "--w-gold": "#D9A52E",
+      "--w-gold-lite": "#F0C35A",
+      "--w-line": "#E7D6B4",
+      "--w-hero-ink": "#F6EFE3",
+      "--w-hero-bg":
+        "radial-gradient(70% 55% at 50% 40%, rgba(240,195,90,0.22) 0%, rgba(240,195,90,0) 65%), linear-gradient(180deg, #22060F 0%, #54132C 100%)",
+      "--w-serif": CORMORANT,
+      "--w-sans": SANS,
+      "--w-deva": DEVA,
+      "--w-divider": '"✦"',
+      "--w-pattern":
+        "radial-gradient(circle, var(--rsh-gold) 1.2px, transparent 1.7px) center/18px 100% repeat-x",
+    } as CSSProperties,
   },
 ];
 
@@ -1104,6 +1146,11 @@ const THEME_META: Record<
     subjectSpec: { names: 1, labels: ["Family name"] },
     supports: { ...MINIMAL_SUPPORTS, events: true, rsvp: true },
   },
+  roshni: {
+    category: "festival",
+    subjectSpec: { names: 1, labels: ["Host / family name"] },
+    supports: { ...MINIMAL_SUPPORTS, events: true, rsvp: true },
+  },
 };
 
 export const THEMES: Theme[] = THEME_BASES.map((t) => {
@@ -1142,6 +1189,7 @@ export const CATEGORIES: CategoryInfo[] = [
   { id: "baby-shower", label: "Baby Shower", blurb: "Dreamy & celestial. Gender-neutral.", emoji: "🌙", noun: "baby shower" },
   { id: "housewarming", label: "Housewarming", blurb: "Griha Pravesh, puja & family.", emoji: "🪔", noun: "housewarming" },
   { id: "party", label: "Party", blurb: "Bachelor/ette & nightlife.", emoji: "⚡", noun: "party" },
+  { id: "festival", label: "Festival", blurb: "Diwali & festive gatherings.", emoji: "✨", noun: "celebration" },
 ];
 
 const CATEGORY_INFO: Record<ThemeCategory, CategoryInfo> = Object.fromEntries(
@@ -1186,6 +1234,8 @@ export function occasionInvite(
       return `You're invited to ${names}'s housewarming.`;
     case "party":
       return `You're invited to ${names}'s party.`;
+    case "festival":
+      return `You're invited to celebrate with ${names}.`;
   }
 }
 

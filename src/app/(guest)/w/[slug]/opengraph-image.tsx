@@ -26,6 +26,7 @@ const TAGLINE: Record<ThemeCategory, string> = {
   "baby-shower": "With Love",
   housewarming: "You're Invited",
   party: "Let's Party",
+  festival: "Shubh Deepavali",
 };
 
 export default async function Image({
